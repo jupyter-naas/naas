@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+if [[ ! $@ ]]; then
+    python3 -m naas -h
+else
+    python3 -m naas $@
+fi
