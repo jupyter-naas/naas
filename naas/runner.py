@@ -6,6 +6,7 @@ from functools import wraps, update_wrapper
 from gevent.pywsgi import WSGIServer
 from .proxy import escape_kubernet, get_proxy_url
 from .logger import Logger
+from .notifications import Notifications
 import apscheduler.schedulers.base
 from daemonize import Daemonize
 from time import strftime
@@ -43,6 +44,7 @@ class Runner():
     __version_API = 'v1'
     __single_user_api_path = os.environ.get('SINGLEUSER_PATH', '.jupyter-single-user.dev.svc.cluster.local')
     __html_files = 'html'
+    __assets_files = 'assets'
     __manager_index = 'index.html'
     __manager_error = 'index.html'
     __log_filename = 'logs.csv'
@@ -89,6 +91,7 @@ class Runner():
             raise Exception(f"root not autorized, use {os.environ.get('JUPYTERHUB_USER')} instead")
         # Init loggin system
         self.logger = Logger()
+        self.notif = Notifications(self.logger)
         self.jobs = Jobs(uid, self.logger)
         # Init scheduling system
         self.scheduler = BackgroundScheduler()
@@ -180,15 +183,15 @@ class Runner():
                                     'filepath': file_filepath, 'output_filepath': file_filepath_out}))
         res['duration'] = (time.time() - start_time)
         if(res.get('error')):
-            self.send_error_notif(uid, str(res.get('error')), file_filepath)
+            self.notif.send_error(uid, str(res.get('error')), file_filepath)
             if (notif_down and current_type == t_scheduler):
-                self.send_scheduler_notif(uid, 'down', notif_down, file_filepath, value)
+                self.notif.send_scheduler(uid, 'down', notif_down, file_filepath, value)
             elif (notif_down):
-                self.send_notif(uid, 'down', notif_down, file_filepath, current_type)
+                self.notif.send(uid, 'down', notif_down, file_filepath, current_type)
         elif (notif_up and current_type == t_scheduler):
-            self.send_scheduler_notif(uid, 'up', notif_down, file_filepath, value)
+            self.notif.send_scheduler(uid, 'up', notif_down, file_filepath, value)
         elif (notif_up):
-            self.send_notif(uid, 'up', notif_up, file_filepath, current_type)
+            self.notif.send(uid, 'up', notif_up, file_filepath, current_type)
         return res
 
     @app.errorhandler(404)
@@ -252,57 +255,6 @@ class Runner():
         except Exception:
             print('No need to create brain')
         os.system(f'chown -R ftp {self.__path_naas_files}')
-
-
-    def send_error_notif(self, uid, error, file_path):
-        dk = bob.darkknight()
-        email = os.environ.get('JUPYTERHUB_USER', None)
-        if email is not None:
-            content = f"Your {file_path} got Errors : {error},  during run N: {uid} \n Check the Logs on your manager below :"
-            status_url = f"{dk.base_public_url}/public/ko.svg"
-            message_bytes = file_path.encode('ascii')
-            base64_bytes = base64.b64encode(message_bytes)
-            file_path_base64 = base64_bytes.decode('ascii')
-            link_url = f"{dk.get_proxy_url('manager')}/?filter={file_path_base64}"
-            try:
-                dk.notification(email, f'Manager Error',
-                                content, status_url, link_url)
-            except Exception as err:
-                self.logger.write.error(json.dumps(
-                    {'id': uid, 'type': 'notification error', 'error': str(err)}))
-
-    def send_notif(self, uid, status, email, file_path, current_type):
-        dk = bob.darkknight()
-        content = f"Your {file_path} accesible as {current_type} is {status}, check the Logs on your manager below :"
-        status_url = f"{dk.base_public_url}/public/{status}.svg"
-        message_bytes = file_path.encode('ascii')
-        base64_bytes = base64.b64encode(message_bytes)
-        file_path_base64 = base64_bytes.decode('ascii')
-        link_url = f"{dk.get_notebook_public_url('manager')}/?filter={file_path_base64}"
-        try:
-            dk.notification(
-                email, f'{current_type.capitalize()} {status}', content, status_url, link_url)
-        except Exception as err:
-            self.logger.write.error(json.dumps(
-                {'id': uid, 'type': 'notification error', 'error': str(err)}))
-
-
-    def send_scheduler_notif(self, uid, status, email, file_path, cron_str):
-        dk = bob.darkknight()
-        cron_string = pretty_cron.prettify_cron(cron_str)
-        content = f"Your {file_path} who run {cron_string} is {status}, check the Logs on your manager below :"
-        status_url = f"{dk.base_public_url}/public/{status}.svg"
-        message_bytes = file_path.encode('ascii')
-        base64_bytes = base64.b64encode(message_bytes)
-        file_path_base64 = base64_bytes.decode('ascii')
-        link_url = f"{dk.get_notebook_public_url('manager')}/?filter={file_path_base64}"
-        try:
-            dk.notification(
-                email, f'Sheduler {status}', content, status_url, link_url)
-        except Exception as err:
-            self.logger.write.error(json.dumps(
-                {'id': uid, 'type': 'notification error', 'error': str(err)}))
-
 
     def send_response(self, uid, res, t_notebook, duration, params):
         next_url = params.get('next_url', None)
@@ -442,6 +394,15 @@ class Runner():
             {'id': uid, 'type': t_task, 'status': updated['status']}))
         return jsonify(updated), 200
 
+    @app.route(f'/{__version_API}/assets/<string:token>')
+    def resAssets(self, token):
+        file_filepath = os.path.join(self.__path_lib_files, self.__assets_files, token)
+        file_filename = os.path.basename(file_filepath)
+        try:
+            res = send_file(file_filepath, attachment_filename=file_filename)
+            return res
+        except Exception as e:
+            return self.html_error(json.dumps({"error": e})), 404
 
     @app.route(f'/{__version_API}/static/manager')
     def res_manager(self):
@@ -459,11 +420,9 @@ class Runner():
             {'id': uid, 'type': t_static, 'status': 'send', 'filepath': 'status'}))
         return jsonify(status), 200
 
-
     @app.route(f'/{__version_API}/static')
     def statusRun(self):
         return jsonify({'status': 'ready'}), 200
-
 
     @app.route(f'/{__version_API}/static/<string:token>')
     def resStatic(self, token):

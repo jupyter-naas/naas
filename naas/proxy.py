@@ -28,4 +28,4 @@ def get_proxy_url(token=''):
     message_bytes = clientEncoded.encode('ascii')
     base64_bytes = b64encode(message_bytes)
     username_base64 = base64_bytes.decode('ascii')
-    return f"{base_public_url}/notebook/{username_base64}/{token}"
+    return f"{base_public_url}/{username_base64}/{token}"
