@@ -16,7 +16,6 @@ import pandas as pd
 import pretty_cron
 import traceback
 import datetime
-import argparse
 import getpass
 import string
 import shutil
@@ -500,18 +499,3 @@ class Runner():
         self.logger.write.error(json.dumps({'id': uid, 'type': t_notebook, 'status': t_error,
                                 'token': token, 'error': 'Cannot find your token'}))
         return jsonify({'id': uid, "error": "Cannot find your token"}), 401
-
-def check_options():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-K', '--kill', action='store_false')
-    parser.add_argument('-S', '--skip', action='store_false')
-    parser.add_argument('-P', '--port', action='store_false')
-    args = parser.parse_args()
-    return args
-
-if __name__ == '__main__':
-    args = check_options()
-    runner = Runner(args.skip, args.port)
-    if (args.kill):
-        runner.kill()
-    runner.start()
