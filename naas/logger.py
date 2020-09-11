@@ -46,6 +46,9 @@ class Logger():
                             datefmt='%Y-%m-%d %H:%M:%S')
         self.write = self.log
 
+    def get_file_path(self):
+        return self.__path_logs_file
+    
     def get(self, uid: str, skip: int = 0, limit: int = 0, search: str = '', filters: list = None):
         df = None
         try:

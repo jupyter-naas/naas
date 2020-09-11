@@ -348,6 +348,19 @@ class Runner():
         self.scheduler.start()
         atexit.register(lambda: self.scheduler.shutdown())
 
+    @app.route(f'/{__version_API}/')
+    def statusRun(self):
+        return jsonify({'status': t_health}), 200
+    
+    @app.route(f'/{__version_API}/env')
+    def res_env(self):
+        env = {
+            'JUPYTERHUB_USER': os.environ.get('JUPYTERHUB_USER', ''),
+            'PUBLIC_DATASCIENCE': os.environ.get('PUBLIC_DATASCIENCE', ''),
+            'PUBLIC_PROXY_API': os.environ.get('PUBLIC_PROXY_API', ''),
+            'TZ': os.environ.get('TZ', '')
+        }
+        return jsonify(env), 200
 
     @app.route(f'/{__version_API}/scheduler/<string:mode>')
     def mode_scheduler(self, mode):
@@ -363,20 +376,33 @@ class Runner():
         elif (self.scheduler.state == apscheduler.schedulers.base.STATE_PAUSED):
             status = 'paused'
         return jsonify({"status": status}), 200
+    
+    @app.route(f'/{__version_API}/logs')
+    def res_logs(self):
+        as_file = request.args.get('as_file', False)
+        if as_file:
+            res = send_file(self.logger.get_file_path(), attachment_filename='logs.csv')
+            return res           
+        else:
+            uid = str(uuid.uuid4())
+            limit = int(request.args.get('limit', 0))
+            skip = int(request.args.get('skip', 0))
+            search = str(request.args.get('search', ''))
+            clean_logs = bool(request.args.get('clean_logs', False))
+            logs = self.logger.get(uid, skip, limit, search, clean_logs)
+            self.logger.write.info(json.dumps(
+                {'id': uid, 'type': t_static, 'status': 'send', 'filepath': 'logs', 'skip': skip, 'limit': limit, 'search': search, 'clean_logs': clean_logs}))
+            return jsonify(logs), 200
 
-
-    @app.route(f'/{__version_API}/static/env')
-    def res_env(self):
-        env = {
-            'JUPYTERHUB_USER': os.environ.get('JUPYTERHUB_USER', ''),
-            'PUBLIC_DATASCIENCE': os.environ.get('PUBLIC_DATASCIENCE', ''),
-            'PUBLIC_PROXY_API': os.environ.get('PUBLIC_PROXY_API', ''),
-            'TZ': os.environ.get('TZ', '')
-        }
-        return jsonify(env), 200
-
-
-    @app.route(f'/{__version_API}/tasks', methods=['POST'])
+    @app.route(f'/{__version_API}/jobs', methods=['GET'])
+    def res_status(self):
+        uid = str(uuid.uuid4())
+        status = self.jobs.get(uid)
+        self.logger.write.info(json.dumps(
+            {'id': uid, 'type': t_static, 'status': 'send', 'filepath': 'status'}))
+        return jsonify(status), 200
+    
+    @app.route(f'/{__version_API}/jobs', methods=['POST'])
     def res_tasks(self):
         uid = str(uuid.uuid4())
         data = request.get_json()
@@ -394,37 +420,34 @@ class Runner():
             {'id': uid, 'type': t_task, 'status': updated['status']}))
         return jsonify(updated), 200
 
-    @app.route(f'/{__version_API}/assets/<string:token>')
-    def resAssets(self, token):
-        file_filepath = os.path.join(self.__path_lib_files, self.__assets_files, token)
-        file_filename = os.path.basename(file_filepath)
-        try:
-            res = send_file(file_filepath, attachment_filename=file_filename)
-            return res
-        except Exception as e:
-            return self.html_error(json.dumps({"error": e})), 404
-
-    @app.route(f'/{__version_API}/static/manager')
+    @app.route(f'/{__version_API}/manager')
     def res_manager(self):
         uid = str(uuid.uuid4())
         self.logger.write.info(json.dumps(
             {'id': uid, 'type': t_static, 'status': 'send', 'filepath': self.__path_manager_index}))
         return send_file(self.__path_manager_index), 200
 
-
-    @app.route(f'/{__version_API}/static/status')
-    def res_status(self):
-        uid = str(uuid.uuid4())
-        status = self.jobs.get(uid)
-        self.logger.write.info(json.dumps(
-            {'id': uid, 'type': t_static, 'status': 'send', 'filepath': 'status'}))
-        return jsonify(status), 200
-
-    @app.route(f'/{__version_API}/static')
-    def statusRun(self):
-        return jsonify({'status': 'ready'}), 200
-
-    @app.route(f'/{__version_API}/static/<string:token>')
+    @app.route(f'/{__version_API}/{t_static}/up')
+    def resUp(self):
+        file_filename = 'up.png'
+        file_filepath = os.path.join(self.__path_lib_files, self.__assets_files, file_filename)
+        try:
+            res = send_file(file_filepath, attachment_filename=file_filename)
+            return res
+        except Exception as e:
+            return self.html_error(json.dumps({"error": e})), 404
+        
+    @app.route(f'/{__version_API}/{t_static}/down')
+    def resDown(self, token):
+        file_filename = 'down.png'
+        file_filepath = os.path.join(self.__path_lib_files, self.__assets_files, file_filename)
+        try:
+            res = send_file(file_filepath, attachment_filename=file_filename)
+            return res
+        except Exception as e:
+            return self.html_error(json.dumps({"error": e})), 404
+        
+    @app.route(f'/{__version_API}/{t_static}/<string:token>')
     def resStatic(self, token):
         uid = str(uuid.uuid4())
         task = self.jobs.find_by_value(uid, token, t_static)
@@ -452,20 +475,7 @@ class Runner():
         return self.html_error(json.dumps({'id': uid, "error": "Cannot find your token", 'token': token})), 401
 
 
-    @app.route(f'/{__version_API}/start/logs')
-    def res_logs(self):
-        uid = str(uuid.uuid4())
-        limit = int(request.args.get('limit', 0))
-        skip = int(request.args.get('skip', 0))
-        search = str(request.args.get('search', ''))
-        clean_logs = bool(request.args.get('clean_logs', False))
-        logs = self.logger.get(uid, skip, limit, search, clean_logs)
-        self.logger.write.info(json.dumps(
-            {'id': uid, 'type': t_static, 'status': 'send', 'filepath': 'logs', 'skip': skip, 'limit': limit, 'search': search, 'clean_logs': clean_logs}))
-        return jsonify(logs), 200
-
-
-    @app.route(f'/{__version_API}/start/<string:token>')
+    @app.route(f'/{__version_API}/{t_notebook}/<string:token>')
     def startNotebook(self, token):
         uid = str(uuid.uuid4())
         task = self.jobs.find_by_value(uid, token, t_notebook)

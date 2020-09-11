@@ -235,7 +235,7 @@ class FileManager():
         obj['path'] = self.get_prod_path(obj.get('path'))
         if "type" in obj and "path" in obj and "params" in obj and "value" in obj:
             self.__copy_file_in_prod(dev_path)
-            r = requests.post(f"{local_api}/v1/tasks", json={**obj, **{'status': t_add}})
+            r = requests.post(f"{local_api}/v1/jobs", json={**obj, **{'status': t_add}})
             if not silent:
                 print(f'{r.json()["status"]} ==> {obj}')
             return obj
@@ -245,7 +245,7 @@ class FileManager():
     def del_prod(self, obj, silent):
         obj['path'] = self.get_prod_path(obj.get('path'))
         if "type" in obj and "path" in obj:
-            r = requests.post(f"{local_api}/v1/tasks", json={**obj, **{'status': t_delete}})
+            r = requests.post(f"{local_api}/v1/jobs", json={**obj, **{'status': t_delete}})
             if not silent:
                 print(f'{r.json()["status"]} ==> {obj}')
             return obj

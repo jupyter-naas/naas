@@ -26,7 +26,7 @@ def version():
         return {'error': 'version error'}
 
 def manager():
-    public_url = get_proxy_url('manager')
+    public_url = f'{get_proxy_url()}/manager'
     print('You can check your current tasks list here :')
     display(HTML(f'<a href="{public_url}"">Manager</a>'))
 
