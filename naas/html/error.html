@@ -1,0 +1,42 @@
+<body>
+<div class="bg">
+<h1>This URL is not accessible for the moment</h1>
+<p>Please copy this error and contactyour admin for more info :</p>
+<pre id="json" class="error">{ERROR}</pre>
+</div>
+<style>
+body {
+  font-family: "Roboto", Arial, Helvetica, sans-serif;
+  color:white;
+  margin:0px;
+  height: 100vh;
+}
+.jstring { color: lightcyan; }
+.number { color: darkorange; }
+.boolean { color: blue; }
+.null { color: magenta; }
+.key { color: black; }
+
+.bg {
+  background-color: #43C181;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.error {
+  max-width: 80%;
+  margin-top: 30px;
+  padding-top: 40px;
+  padding-bottom: 40px;
+  padding-right: 15px;
+  padding-left: 15px;
+  border-radius: 50px;
+  background: #43C181;
+  white-space: pre-wrap;
+  box-shadow:  20px 20px 60px #39a46e,
+               -20px -20px 60px #4dde94;
+}
+</style>
+</body>

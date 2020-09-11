@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vue-good-table@2.19.3/dist/vue-good-table.min.css"
+        integrity="sha256-xltCgYXRolPa/qWvt82I4qxUBcQ96d1boWhO6C6KChg=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/1.4.6/tailwind.min.css"
+        integrity="sha256-CAI/7ThhltsmP2L2zKBYa7FknB3ZwFbD0nqL8FCdxdc=" crossorigin="anonymous" />
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' id='svg' version='1.1' width='400' height='400' viewBox='0, 0, 400,400'%3E%3Cg id='svgg'%3E%3Cpath id='path0' d='M229.809 140.032 C 228.312 142.614,219.827 157.206,210.953 172.458 C 202.079 187.710,194.656 200.547,194.457 200.984 C 194.127 201.707,230.479 266.171,232.157 267.840 C 232.930 268.608,308.409 268.726,309.116 267.961 C 309.409 267.643,316.740 255.166,325.406 240.234 C 334.072 225.303,342.603 210.607,344.362 207.578 L 347.562 202.070 342.214 192.734 C 339.272 187.600,330.830 172.852,323.454 159.961 C 316.077 147.070,309.798 136.260,309.499 135.938 C 309.024 135.424,304.202 135.351,270.744 135.344 L 232.531 135.336 229.809 140.032 M309.106 173.145 C 315.047 183.511,319.956 192.138,320.013 192.316 C 320.231 192.994,276.882 193.447,276.214 192.773 C 275.698 192.253,254.688 155.000,254.688 154.605 C 254.688 154.435,264.501 154.297,276.495 154.297 L 298.303 154.297 309.106 173.145 M242.541 171.975 C 244.992 176.324,249.715 184.690,253.037 190.565 C 256.359 196.441,259.155 201.544,259.250 201.907 C 259.347 202.280,257.154 206.451,254.187 211.536 C 242.603 231.391,238.691 238.166,238.450 238.794 C 237.968 240.052,237.520 239.357,227.115 221.191 C 221.362 211.147,216.485 202.647,216.276 202.302 C 215.936 201.739,237.205 164.129,237.891 164.082 C 237.998 164.074,240.091 167.626,242.541 171.975 M318.804 213.770 C 318.158 214.897,313.232 223.379,307.857 232.617 L 298.085 249.414 276.289 249.278 C 264.301 249.203,254.448 249.100,254.395 249.050 C 254.342 249.000,255.172 247.480,256.240 245.671 C 257.308 243.863,262.115 235.615,266.923 227.344 L 275.664 212.305 282.851 212.096 C 286.805 211.981,296.776 211.849,305.009 211.803 L 319.979 211.719 318.804 213.770 ' stroke='none' fill='%233edb7c' fill-rule='evenodd' /%3E%3Cpath id='path1' d='M129.149 77.832 C 128.842 78.315,117.564 97.783,104.087 121.094 C 90.609 144.404,76.323 169.102,72.339 175.977 C 68.355 182.852,63.365 191.479,61.250 195.149 L 57.405 201.822 76.871 235.579 C 87.577 254.145,103.797 282.298,112.915 298.141 L 129.492 326.945 201.747 326.851 L 274.001 326.758 290.929 297.907 C 300.240 282.038,307.801 268.999,307.732 268.930 C 307.663 268.861,302.986 268.748,297.339 268.679 L 287.071 268.555 275.268 288.672 L 263.465 308.789 226.752 308.911 C 206.560 308.979,178.755 308.914,164.963 308.767 L 139.888 308.500 109.171 255.198 C 92.277 225.881,78.542 201.688,78.650 201.436 C 78.758 201.183,92.640 177.158,109.500 148.047 L 140.154 95.117 201.815 95.117 L 263.477 95.117 264.585 96.875 C 265.195 97.842,270.469 106.807,276.304 116.797 L 286.914 134.961 297.363 135.065 C 303.110 135.122,307.813 135.066,307.812 134.941 C 307.812 134.815,300.221 121.717,290.942 105.833 L 274.072 76.953 201.889 76.953 L 129.706 76.953 129.149 77.832 ' stroke='none' fill='%233c3c3c' fill-rule='evenodd' /%3E%3C/g%3E%3C/svg%3E">
+    <title>CashStory | Automation Manager</title>
+    <style>
+        #cs_loader_wrap {
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+            height: 100vh;
+            width: 100vw;
+            position: absolute;
+            background-color: white;
+            z-index: 4210;
+        }
+
+        #cs_logo_wrap {
+            display: flex;
+            width: 150px;
+            height: 150px;
+            background: white;
+            border-radius: 50%;
+            margin: 0 auto;
+        }
+
+        #cs_logo_loading {
+            display: flex;
+            height: 120px;
+            margin: auto;
+            opacity: 0.7;
+        }
+
+        #cs_spinner_loading {
+            width: 150px;
+            height: 150px;
+            position: absolute;
+            border-top: 3px solid #3edb7c;
+            border-right: 3px solid rgba(0, 0, 0, 0);
+            border-left: 3px solid rgba(0, 0, 0, 0);
+            border-radius: 50%;
+            animation: spin-bot 1s ease-in-out infinite;
+        }
+
+        @keyframes spin-bot {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+    <script type="module">
+        import Vue from 'https://cdn.jsdelivr.net/npm/vue@2.6.11/dist/vue.esm.browser.js';
+        import VueGoodTablePlugin from 'https://cdn.jsdelivr.net/npm/vue-good-table@2.19.3/dist/vue-good-table.esm.js';
+
+        function switchCSLoader(kind) {
+            const csl = document.getElementById("cs_loader_wrap");
+            if (csl && ((kind && kind == 'off') || (!kind && csl.style.display === "block"))) {
+                csl.style.display = "none";
+            } else if (csl && ((kind && kind == 'on') || (!kind && csl.style.display === "none"))) {
+                csl.style.display = "flex";
+            }
+        }
+        Vue.use(VueGoodTablePlugin);
+        const load = (path) => {
+            return new Promise((resolve, reject) => {
+                const xobj = new XMLHttpRequest();
+                xobj.overrideMimeType("application/json");
+                xobj.open('GET', path, true);
+                xobj.onreadystatechange = function () {
+                    if (xobj.readyState == 4 && xobj.status == "200") {
+                        resolve(JSON.parse(xobj.responseText));
+                    }
+                };
+                xobj.send(null);
+            });
+        };
+        const app = new Vue({
+            el: '#app',
+            data: {
+                filter: '',
+                columns_logs: [
+                    {
+                        label: 'Date',
+                        field: 'asctime',
+                    },
+                    {
+                        label: 'Uuid',
+                        field: 'id',
+                    },
+                    {
+                        label: 'Type',
+                        field: 'type',
+                    },
+                    {
+                        label: 'Status',
+                        field: 'status',
+                    },
+                    {
+                        label: 'File',
+                        field: 'filepath',
+                    },
+                    {
+                        label: 'Error',
+                        field: 'error',
+                    },
+                ],
+                columns_tasks: [
+                    {
+                        label: 'Date',
+                        field: 'lastUpdate',
+                    },
+                    {
+                        label: 'Last uuid',
+                        field: 'id',
+                    },
+                    {
+                        label: 'Job',
+                        field: 'path',
+                    },
+                    {
+                        label: 'Type',
+                        field: 'type',
+                    },
+                    {
+                        label: 'Status',
+                        field: 'status',
+                    },
+                    {
+                        label: 'Last duration',
+                        field: 'lastRun',
+                    },
+                    {
+                        label: 'Total duration',
+                        field: 'totalRun',
+                    },
+                    {
+                        label: 'Value',
+                        field: 'value',
+                    },
+
+                ],
+                env: {},
+                info_bob: {},
+                logs: [],
+                totalRecords: 0,
+                tasks: []
+            },
+            methods: {
+                getUrl: function (value, type) {
+                    let urlList = window.location.href.split('/');
+                    urlList.pop()
+                    let newUrl = `${urlList.join('/')}/${value}`
+                    if (type === 'api') {
+                        newUrl = `${newUrl}/start`
+                    }
+                    return newUrl
+                },
+                load_data: function () {
+                    const all_loads = [];
+
+                    all_loads.push(load('env').then((response) => {
+                        if (response && !response.error) {
+                            try {
+                                this.env = response;
+                            } catch (err) {
+                                console.error(err);
+                            }
+                        }
+                    }));
+                    all_loads.push(load('status').then((response) => {
+                        if (response && !response.error) {
+                            try {
+                                this.tasks = response;
+                            } catch (err) {
+                                console.error(err);
+                            }
+                        }
+                    }));
+                    all_loads.push(load('info_bob').then((response) => {
+                        if (response && !response.error) {
+                            try {
+                                this.info_bob = response;
+                            } catch (err) {
+                                console.error(err);
+                            }
+                        }
+                    }));
+                    all_loads.push(load('logs/start').then((response) => {
+                        if (response && !response.error) {
+                            try {
+                                console.log('response', response);
+                                this.logs = response.data;
+                                // this.totalRecords = res.totalRecords;
+                            } catch (err) {
+                                console.error(err);
+                            }
+                        }
+                    }));
+                    return Promise.all(all_loads);
+                },
+                setFilter: function(filter){
+                    this.filter = filter;
+                },
+                reload_data: function () {
+                    switchCSLoader('on');
+                    this.load_data().then(() => {
+                        switchCSLoader('off');
+                    });
+                },
+                linkTojup: function (link) {
+                    const partial = link.replace('/home/brain', 'ftp');
+                    return `${this.env.PUBLIC_DATASCIENCE}/user/${this.env.JUPYTERHUB_USER}/lab/workspaces/auto-C/tree/${partial}`;
+                },
+                go_bob: function () {
+                    window.open(this.env.PUBLIC_BOB, '_blank');
+                },
+                go_jup: function () {
+                    window.open(this.env.PUBLIC_DATASCIENCE, '_blank');
+                }
+            },
+            created: function () {
+                const uri = window.location.href.split('?');
+                if (uri.length == 2) {
+                    const vars = uri[1].split('&');
+                    const getVars = {};
+                    let tmp = '';
+                    vars.forEach(function (v) {
+                        tmp = v.split('=');
+                        if (tmp.length == 2)
+                            getVars[tmp[0]] = atob(tmp[1]);
+                    });
+                    // console.log('getVars', getVars);
+                    if (getVars["filter"]) {
+                        this.filter = getVars["filter"]
+                    }
+                }
+                this.load_data().then(() => {
+                    switchCSLoader('off');
+                });
+            }
+        });
+    </script>
+</head>
+
+<body>
+    <div id="cs_loader_wrap">
+        <div id="cs_logo_wrap">
+            <svg id="cs_logo_loading" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                id="svg" version="1.1" width="400" height="400" viewBox="0, 0, 400,400">
+                <g id="svgg">
+                    <path id="path0"
+                        d="M229.809 140.032 C 228.312 142.614,219.827 157.206,210.953 172.458 C 202.079 187.710,194.656 200.547,194.457 200.984 C 194.127 201.707,230.479 266.171,232.157 267.840 C 232.930 268.608,308.409 268.726,309.116 267.961 C 309.409 267.643,316.740 255.166,325.406 240.234 C 334.072 225.303,342.603 210.607,344.362 207.578 L 347.562 202.070 342.214 192.734 C 339.272 187.600,330.830 172.852,323.454 159.961 C 316.077 147.070,309.798 136.260,309.499 135.938 C 309.024 135.424,304.202 135.351,270.744 135.344 L 232.531 135.336 229.809 140.032 M309.106 173.145 C 315.047 183.511,319.956 192.138,320.013 192.316 C 320.231 192.994,276.882 193.447,276.214 192.773 C 275.698 192.253,254.688 155.000,254.688 154.605 C 254.688 154.435,264.501 154.297,276.495 154.297 L 298.303 154.297 309.106 173.145 M242.541 171.975 C 244.992 176.324,249.715 184.690,253.037 190.565 C 256.359 196.441,259.155 201.544,259.250 201.907 C 259.347 202.280,257.154 206.451,254.187 211.536 C 242.603 231.391,238.691 238.166,238.450 238.794 C 237.968 240.052,237.520 239.357,227.115 221.191 C 221.362 211.147,216.485 202.647,216.276 202.302 C 215.936 201.739,237.205 164.129,237.891 164.082 C 237.998 164.074,240.091 167.626,242.541 171.975 M318.804 213.770 C 318.158 214.897,313.232 223.379,307.857 232.617 L 298.085 249.414 276.289 249.278 C 264.301 249.203,254.448 249.100,254.395 249.050 C 254.342 249.000,255.172 247.480,256.240 245.671 C 257.308 243.863,262.115 235.615,266.923 227.344 L 275.664 212.305 282.851 212.096 C 286.805 211.981,296.776 211.849,305.009 211.803 L 319.979 211.719 318.804 213.770 "
+                        stroke="none" fill="#3edb7c" fill-rule="evenodd" />
+                    <path id="path1"
+                        d="M129.149 77.832 C 128.842 78.315,117.564 97.783,104.087 121.094 C 90.609 144.404,76.323 169.102,72.339 175.977 C 68.355 182.852,63.365 191.479,61.250 195.149 L 57.405 201.822 76.871 235.579 C 87.577 254.145,103.797 282.298,112.915 298.141 L 129.492 326.945 201.747 326.851 L 274.001 326.758 290.929 297.907 C 300.240 282.038,307.801 268.999,307.732 268.930 C 307.663 268.861,302.986 268.748,297.339 268.679 L 287.071 268.555 275.268 288.672 L 263.465 308.789 226.752 308.911 C 206.560 308.979,178.755 308.914,164.963 308.767 L 139.888 308.500 109.171 255.198 C 92.277 225.881,78.542 201.688,78.650 201.436 C 78.758 201.183,92.640 177.158,109.500 148.047 L 140.154 95.117 201.815 95.117 L 263.477 95.117 264.585 96.875 C 265.195 97.842,270.469 106.807,276.304 116.797 L 286.914 134.961 297.363 135.065 C 303.110 135.122,307.813 135.066,307.812 134.941 C 307.812 134.815,300.221 121.717,290.942 105.833 L 274.072 76.953 201.889 76.953 L 129.706 76.953 129.149 77.832 "
+                        stroke="none" fill="#3c3c3c" fill-rule="evenodd" />
+                </g>
+            </svg>
+            <div id="cs_spinner_loading"></div>
+        </div>
+    </div>
+    <div id="app" class="w-full">
+        <nav class="bg-white shadow-lg">
+            <div class="md:flex items-center justify-between py-2 px-8 md:px-12">
+                <div class="flex justify-between items-center">
+                    <div class="mb-2 sm:mb-0 flex flex-row
+                    ">
+                        <div class="h-10 w-10 self-center mr-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                                version="1.1" width="80" height="80" viewBox="0, 0, 400,400" style="
+                            margin-left: -50%;
+                            margin-top: -50%;
+                        ">
+                                <g id="svgg">
+                                    <path id="path0"
+                                        d="M229.809 140.032 C 228.312 142.614,219.827 157.206,210.953 172.458 C 202.079 187.710,194.656 200.547,194.457 200.984 C 194.127 201.707,230.479 266.171,232.157 267.840 C 232.930 268.608,308.409 268.726,309.116 267.961 C 309.409 267.643,316.740 255.166,325.406 240.234 C 334.072 225.303,342.603 210.607,344.362 207.578 L 347.562 202.070 342.214 192.734 C 339.272 187.600,330.830 172.852,323.454 159.961 C 316.077 147.070,309.798 136.260,309.499 135.938 C 309.024 135.424,304.202 135.351,270.744 135.344 L 232.531 135.336 229.809 140.032 M309.106 173.145 C 315.047 183.511,319.956 192.138,320.013 192.316 C 320.231 192.994,276.882 193.447,276.214 192.773 C 275.698 192.253,254.688 155.000,254.688 154.605 C 254.688 154.435,264.501 154.297,276.495 154.297 L 298.303 154.297 309.106 173.145 M242.541 171.975 C 244.992 176.324,249.715 184.690,253.037 190.565 C 256.359 196.441,259.155 201.544,259.250 201.907 C 259.347 202.280,257.154 206.451,254.187 211.536 C 242.603 231.391,238.691 238.166,238.450 238.794 C 237.968 240.052,237.520 239.357,227.115 221.191 C 221.362 211.147,216.485 202.647,216.276 202.302 C 215.936 201.739,237.205 164.129,237.891 164.082 C 237.998 164.074,240.091 167.626,242.541 171.975 M318.804 213.770 C 318.158 214.897,313.232 223.379,307.857 232.617 L 298.085 249.414 276.289 249.278 C 264.301 249.203,254.448 249.100,254.395 249.050 C 254.342 249.000,255.172 247.480,256.240 245.671 C 257.308 243.863,262.115 235.615,266.923 227.344 L 275.664 212.305 282.851 212.096 C 286.805 211.981,296.776 211.849,305.009 211.803 L 319.979 211.719 318.804 213.770 "
+                                        stroke="none" fill="#3edb7c" fill-rule="evenodd"></path>
+                                    <path id="path1"
+                                        d="M129.149 77.832 C 128.842 78.315,117.564 97.783,104.087 121.094 C 90.609 144.404,76.323 169.102,72.339 175.977 C 68.355 182.852,63.365 191.479,61.250 195.149 L 57.405 201.822 76.871 235.579 C 87.577 254.145,103.797 282.298,112.915 298.141 L 129.492 326.945 201.747 326.851 L 274.001 326.758 290.929 297.907 C 300.240 282.038,307.801 268.999,307.732 268.930 C 307.663 268.861,302.986 268.748,297.339 268.679 L 287.071 268.555 275.268 288.672 L 263.465 308.789 226.752 308.911 C 206.560 308.979,178.755 308.914,164.963 308.767 L 139.888 308.500 109.171 255.198 C 92.277 225.881,78.542 201.688,78.650 201.436 C 78.758 201.183,92.640 177.158,109.500 148.047 L 140.154 95.117 201.815 95.117 L 263.477 95.117 264.585 96.875 C 265.195 97.842,270.469 106.807,276.304 116.797 L 286.914 134.961 297.363 135.065 C 303.110 135.122,307.813 135.066,307.812 134.941 C 307.812 134.815,300.221 121.717,290.942 105.833 L 274.072 76.953 201.889 76.953 L 129.706 76.953 129.149 77.832 "
+                                        stroke="none" fill="#3c3c3c" fill-rule="evenodd"></path>
+                                </g>
+                            </svg>
+                        </div>
+                        <div>
+                            <a href="/home"
+                                class="text-2xl no-underline text-grey-darkest hover:text-blue-dark font-sans font-bold">Cashstory</a><br>
+                            <span class="text-xs text-grey-dark">Automation manager</span>
+                        </div>
+                    </div>
+                    <div class="md:hidden">
+                        <button type="button"
+                            class="block text-gray-800 hover:text-gray-700 focus:text-gray-700 focus:outline-none">
+                            <svg class="h-6 w-6 fill-current" viewBox="0 0 24 24">
+                                <path class="hidden"
+                                    d="M16.24 14.83a1 1 0 0 1-1.41 1.41L12 13.41l-2.83 2.83a1 1 0 0 1-1.41-1.41L10.59 12 7.76 9.17a1 1 0 0 1 1.41-1.41L12 10.59l2.83-2.83a1 1 0 0 1 1.41 1.41L13.41 12l2.83 2.83z" />
+                                <path
+                                    d="M4 5h16a1 1 0 0 1 0 2H4a1 1 0 1 1 0-2zm0 6h16a1 1 0 0 1 0 2H4a1 1 0 0 1 0-2zm0 6h16a1 1 0 0 1 0 2H4a1 1 0 0 1 0-2z" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="flex flex-col md:flex-row hidden md:block -mx-2">
+                    <a href="#" v-on:click="reload_data()"
+                        class="text-gray-800 rounded hover:bg-gray-900 hover:text-gray-100 hover:font-medium py-2 px-2 md:mx-2">Reload</a>
+                </div>
+            </div>
+        </nav>
+        <div class="md:px-32 py-8 w-full">
+            <div class="flex items-center justify-center w-100">
+                <div class="relative text-gray-600 w-1/4">
+                    <input type="text" name="search" v-model="filter" placeholder="Search"
+                        class="bg-gray-700 w-full text-white h-10 px-5 pr-10 rounded-full text-sm focus:outline-none">
+                    <button type="submit" class="absolute right-0 top-0 mt-3 mr-4">
+                        <svg v-if="filter == ''" class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg"
+                            xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px" y="0px"
+                            viewBox="0 0 56.966 56.966" style="enable-background:new 0 0 56.966 56.966;"
+                            xml:space="preserve" width="512px" height="512px">
+                            <path
+                                d="M55.146,51.887L41.588,37.786c3.486-4.144,5.396-9.358,5.396-14.786c0-12.682-10.318-23-23-23s-23,10.318-23,23  s10.318,23,23,23c4.761,0,9.298-1.436,13.177-4.162l13.661,14.208c0.571,0.593,1.339,0.92,2.162,0.92  c0.779,0,1.518-0.297,2.079-0.837C56.255,54.982,56.293,53.08,55.146,51.887z M23.984,6c9.374,0,17,7.626,17,17s-7.626,17-17,17  s-17-7.626-17-17S14.61,6,23.984,6z" />
+                        </svg>
+                        <svg v-if="filter != ''" @click="filter= ''" class="h-4 w-4 fill-current" viewBox="0 0 20 20">
+                            <path
+                                d="M10.185,1.417c-4.741,0-8.583,3.842-8.583,8.583c0,4.74,3.842,8.582,8.583,8.582S18.768,14.74,18.768,10C18.768,5.259,14.926,1.417,10.185,1.417 M10.185,17.68c-4.235,0-7.679-3.445-7.679-7.68c0-4.235,3.444-7.679,7.679-7.679S17.864,5.765,17.864,10C17.864,14.234,14.42,17.68,10.185,17.68 M10.824,10l2.842-2.844c0.178-0.176,0.178-0.46,0-0.637c-0.177-0.178-0.461-0.178-0.637,0l-2.844,2.841L7.341,6.52c-0.176-0.178-0.46-0.178-0.637,0c-0.178,0.176-0.178,0.461,0,0.637L9.546,10l-2.841,2.844c-0.178,0.176-0.178,0.461,0,0.637c0.178,0.178,0.459,0.178,0.637,0l2.844-2.841l2.844,2.841c0.178,0.178,0.459,0.178,0.637,0c0.178-0.176,0.178-0.461,0-0.637L10.824,10z">
+                            </path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="shadow overflow-hidden rounded border-b border-gray-200 mb-5">
+                <h2 class="text-3xl font-semibold text-gray-800 md:text-4xl">Your current <span class="text-indigo-600">Jobs</span></h2>
+                <vue-good-table :columns="columns_tasks" :rows="tasks" theme="black-rhino" :search-options="{
+                    enabled: true,
+                    externalQuery: filter
+                }" :pagination-options="{
+                    enabled: filter === '',
+                    mode: 'records',
+                    perPage: 10,
+                    position: 'top',
+                    perPageDropdown: [5, 15, 20],
+                    dropdownAllowAll: true,
+                    nextLabel: 'next',
+                    prevLabel: 'prev',
+                    rowsPerPageLabel: 'Rows per page',
+                    ofLabel: 'of',
+                    pageLabel: 'page', // for 'pages' mode
+                    allLabel: 'All',
+                }">
+                    <template slot="table-row" slot-scope="props">
+                        <span v-if="props.column.field == 'status'">
+                            <span v-if="props.row.status === 'healthy'"
+                                style="font-weight: bold; color: green;">{{props.row.status}}</span>
+                            <span v-else-if="props.row.status === 'error' || props.row.status === 'exception' || props.row.status === 'not_found'"
+                                style="font-weight: bold; color: red;">{{props.row.status}}</span>
+                            <span v-else
+                                style="font-weight: bold; color: orange;">{{props.row.status}}</span>
+                        </span>
+                        <span v-else-if="props.column.field == 'value'">
+                            <a style="font-weight: bold; color: blue;"
+                                v-if="props.row.type == 'static' || props.row.type == 'api'"
+                                :href="getUrl(props.row.value,props.row.type)">{{props.formattedRow[props.column.field]}}</a>
+                            <span v-else>{{props.formattedRow[props.column.field]}}</span>
+                        </span>
+                        <span v-else-if="props.column.field == 'id'">
+                            <a href="#" style="font-weight: bold; color: blue;" v-on:click="setFilter(props.formattedRow[props.column.field])">{{props.formattedRow[props.column.field]}}</a>
+                        </span>
+                        <span v-else>
+                            {{props.formattedRow[props.column.field]}}
+                        </span>
+                    </template>
+                </vue-good-table>
+            </div>
+            <h2 class="text-3xl font-semibold text-gray-800 md:text-4xl">Discover what <span
+                    class="text-indigo-600">happened</span></h2>
+            <vue-good-table :columns="columns_logs" :rows="logs" theme="black-rhino" :search-options="{
+                enabled: true,
+                externalQuery: filter
+            }" :sort-options="{
+                enabled: true,
+                initialSortBy: {field: 'asctime', type: 'desc'}
+            }" :pagination-options="{
+                enabled: true,
+                mode: 'records',
+                perPage: 15,
+                position: 'top',
+                perPageDropdown: [5, 10, 20],
+                dropdownAllowAll: true,
+                nextLabel: 'next',
+                prevLabel: 'prev',
+                rowsPerPageLabel: 'Rows per page',
+                ofLabel: 'of',
+                pageLabel: 'page', // for 'pages' mode
+                allLabel: 'All',
+            }" >
+            <template slot="table-row" slot-scope="props">
+                <span v-if="props.column.field == 'id'">
+                    <a href="#" style="font-weight: bold; color: blue;" v-on:click="setFilter(props.formattedRow[props.column.field])">{{props.formattedRow[props.column.field]}}</a>
+                </span>
+                <span v-else>
+                    {{props.formattedRow[props.column.field]}}
+                </span>
+            </template>
+            </vue-good-table>
+        </div>
+        <div class="grid grid-cols-4 gap-4">
+            <div class="col-start-2 px-6 py-4">
+                <h4 class="text-3xl font-semibold text-gray-800 md:text-4xl">Bob current <span
+                        class="text-indigo-600">Version</span></h4>
+                <span
+                    class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2">{{info_bob.version}}</span>
+                <span
+                    class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2">{{info_bob.versionName}}</span>
+            </div>
+        </div>
+    </div>
+    </div>
+</body>
+
+</html>
