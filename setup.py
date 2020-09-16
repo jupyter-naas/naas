@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 setuptools.setup(
     name='naas',
     version='0.0.1',
-    scripts=['naas'] ,
+    scripts=['scripts/naas'] ,
     author="Martin Donadieu",
     author_email="martindonadieu@gmail.com",
     description="scheduler system for notebooks",

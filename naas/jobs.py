@@ -1,5 +1,5 @@
 from gevent.lock import BoundedSemaphore
-from .types import t_delete, t_add, t_skip, t_edited, t_error
+from .types import t_delete, t_add, t_skip, t_update, t_error
 import pandas as pd
 import datetime
 import errno
@@ -7,85 +7,99 @@ import json
 import os
 
 class Jobs():
-    _storage_sem = None
-    __path_user_files = os.environ.get('JUPYTER_SERVER_ROOT', '/home/ftp')
-    __naas_file = '.nass'
-    __json_name = 'tasks.json'
-            
+    __storage_sem = None
+    __path_user_files = None
+    __logger = None
+    __naas_folder = '.nass'
+    __json_name = 'jobs.json'
+
     def __init__(self, uid, logger, clean = False, init_data = []):
-        self.__path_naas_files = os.path.join(self.__path_user_files, self.__naas_file)
+        self.__path_user_files = os.environ.get('JUPYTER_SERVER_ROOT', '/home/ftp')
+        self.__path_naas_files = os.path.join(self.__path_user_files, self.__naas_folder)
         self.__json_secrets_path = os.path.join(self.__path_naas_files, self.__json_name)
+        self.__storage_sem = BoundedSemaphore(1)
+        self.__logger = logger
         if not os.path.exists(self.__path_naas_files):
             try:
+                print('Init Nass folder')
                 os.makedirs(self.__path_naas_files)
             except OSError as exc: # Guard against race condition
+                print('__path_naas_files', self.__path_naas_files)
                 if exc.errno != errno.EEXIST:
-                    raise
-        self._storage_sem = BoundedSemaphore(1)
-        self._logger = logger
-        if not os.path.exists(self.__path_naas_files):
-            try:
-                os.makedirs(self.__path_naas_files)
-            except OSError as exc: # Guard against race condition
-                if exc.errno != errno.EEXIST:
-                    raise        
+                    raise 
+            except Exception as e:
+                print('Exception', e)
         if not os.path.exists(self.__json_secrets_path) or clean:
             try:
-                print('Init Job Storage')
-                self.save(uid, init_data)
+                print('Init Job Storage', self.__json_secrets_path)
+                self.__save(uid, init_data)
+                with open(self.__json_secrets_path, 'r') as f:
+                    print('json', json.load(f))
+                    f.close()
             except Exception as e:
-                self._logger.error(json.dumps(
+                print('Exception', e)
+                self.__logger.write.error(json.dumps(
                     {'id': uid, 'type': 'init_job_storage', "status": 'error', 'error': str(e)}))            
 
-    def find_by_value(self, uid, value, target_type):
-        job_list = pd.DataFrame(self.get(uid))
-        cur_job = job_list[(job_list.type == target_type)
-                        & (job_list.value == value)]
-        return cur_job
+    def __save(self, uid, data):
+        try:
+            with open(self.__json_secrets_path, 'w+') as f:
+                f.write(json.dumps(data, sort_keys=True, indent=4).replace('NaN' , 'null'))
+                f.close()
+        except Exception as err:
+            print('__save Exception', err)
+            self.__logger.write.error(json.dumps({'id': str(uid), 'type': 'set_job_storage',
+                                    "status": 'exception', 'filepath': self.__json_secrets_path, 'error': str(err)}))
 
+    def find_by_value(self, uid, value, target_type):
+        job_list = pd.DataFrame(self.list(uid))
+        cur_jobs = job_list[(job_list.type == target_type)
+                        & (job_list.value == value)]
+        cur_job = cur_jobs.to_dict('records')
+        return cur_job[0]
 
     def find_by_path(self, uid, filepath, target_type):
-        job_list = pd.DataFrame(self.get(uid))
-        cur_job = job_list[(job_list.type == target_type)
+        job_list = pd.DataFrame(self.list(uid))
+        cur_jobs = job_list[(job_list.type == target_type)
                         & (job_list.path == filepath)]
-        return cur_job
-              
-    def get(self, uid):
+        cur_job = cur_jobs.to_dict('records')
+        return cur_job[0]
+
+    def list(self, uid):
         data = []
         try:
             with open(self.__json_secrets_path, 'r') as f:
                 data = json.load(f)
                 f.close()
         except Exception as err:
-            self._logger.error(json.dumps({'id': uid, 'type': 'get_job_storage',
+            print('cannot open')
+            self.__logger.write.error(json.dumps({'id': uid, 'type': 'get_job_storage',
                                     "status": 'exception', 'filepath': self.__json_secrets_path, 'error': str(err)}))
             data = []
         return data
     
-    def save(self, uid, data):
+    def update(self, uid, path, target_type, value, params, status, runTime = 0):
+        self.__storage_sem.acquire(timeout=10)
+        data = None
+        res = t_error
         try:
-            with open(self.__json_secrets_path, 'w') as f:
-                f.write(json.dumps(data, sort_keys=True, indent=4).replace('NaN' , 'null'))
-                f.close()
-        except Exception as err:
-            self._logger.error(json.dumps({'id': str(uid), 'type': 'set_job_storage',
-                                    "status": 'exception', 'filepath': self.__json_secrets_path, 'error': str(err)}))
-
-    def update(self, path, target_type, value, params, status, uid, runTime = 0):
-        self._storage_sem.acquire(timeout=10)
-        try:
-            df = pd.DataFrame(self.get(uid))
+            if (len(self.list(uid)) != 0):
+                df = pd.DataFrame(self.list(uid))
+            else:
+                df = pd.DataFrame(pd.np.empty((0, 9)))
+                df.columns = ['id', 'type', 'value', 'path', 'status', 'params', 'lastUpdate', 'lastRun', 'totalRun']
+                
             res = status
             cur_elem = df[(df.type == target_type) & (df.path == path)]
             now = datetime.datetime.now()
             dt_string = now.strftime("%Y-%m-%d %H:%M:%S")
             if (len(cur_elem) == 1):
                 if (status == t_delete):
-                    self._logger.info(json.dumps({'id': uid, 'type': target_type, 'value': value, 'status': t_delete,
+                    self.__logger.write.info(json.dumps({'id': uid, 'type': target_type, 'value': value, 'status': t_delete,
                                 'path': path, 'params': params}))
                     df = df.drop(cur_elem.index)
                 else:
-                    self._logger.info(json.dumps({'id': uid, 'type': target_type, 'value': value, 'status': t_edited,
+                    self.__logger.write.info(json.dumps({'id': uid, 'type': target_type, 'value': value, 'status': t_update,
                             'path': path, 'params': params}))
                     index = cur_elem.index[0]
                     df.at[index,'id'] = uid
@@ -99,9 +113,9 @@ class Jobs():
                     elif status == t_add:
                         df.at[index,'lastRun'] = 0
                         df.at[index,'totalRun'] = 0                    
-                    res = t_edited
+                    res = t_update
             elif (status == t_add and len(cur_elem) == 0):
-                self._logger.info(json.dumps({'id': uid, 'type': target_type, 'value': value, 'status': t_edited,
+                self.__logger.write.info(json.dumps({'id': uid, 'type': target_type, 'value': value, 'status': t_update,
                         'path': path, 'params': params}))
                 new_row = [{'id': uid,'type': target_type, 'value': value, 'status': t_add,
                             'path': path, 'params': params, 'lastRun': runTime, 'totalRun': runTime,' lastUpdate':  dt_string}]
@@ -111,11 +125,12 @@ class Jobs():
                 res = t_skip
             data = df.to_dict('records')
             if (res != t_skip):
-                self.save(uid, data)
+                self.__save(uid, data)
         except Exception as e:
-            self._logger.error(json.dumps({'id': uid, 'type': target_type, 'value': value, 'status': t_error,
+            print('cannot update', e)
+            self.__logger.write.error(json.dumps({'id': uid, 'type': target_type, 'value': value, 'status': t_error,
                         'path': path, 'params': params, 'error': str(e)}))
-        self._storage_sem.release()
+        self.__storage_sem.release()
         return {"status": res, "data": data}
 
 

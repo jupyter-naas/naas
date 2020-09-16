@@ -1,9 +1,11 @@
-from .file_manager import Refresh, Api, Static, Dependency
+from .refresh import Refresh
+from .api import Api
+from .static import Static
+from .dependency import Dependency
 from IPython.core.display import display, HTML
 from .secret import Secret
-from .runner import Secret
-from .proxy import get_proxy_url
-import system
+from .runner import Runner
+from .proxy import encode_proxy_url
 import requests
 import json
 import os
@@ -13,6 +15,7 @@ import os
 __location__ = os.getcwd()
 refresh = Refresh
 secret = Secret
+runner = Runner
 api = Api
 static = Static
 dependency = Dependency
@@ -26,12 +29,12 @@ def version():
         return {'error': 'version error'}
 
 def manager():
-    public_url = f'{get_proxy_url()}/manager'
+    public_url = f'{encode_proxy_url()}/manager'
     print('You can check your current tasks list here :')
     display(HTML(f'<a href="{public_url}"">Manager</a>'))
 
 def brain_restart():
-    system(f"python {os.path.join(__location__, 'runner.py')}")
+    os.system(f"python {os.path.join(__location__, 'runner.py')}")
     print('Brain restarted')
 
 def refresh_status():

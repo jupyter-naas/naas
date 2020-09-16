@@ -6,7 +6,7 @@ t_scheduler = 'scheduler'
 
 t_add = 'installed'
 t_delete = 'delete'
-t_edited = 'edited'
+t_update = 'edited'
 t_start = 'started'
 t_skip = 'skiped'
 t_error = 'error'

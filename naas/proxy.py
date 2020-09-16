@@ -1,5 +1,6 @@
 from escapism import escape
-import base64 import b64encode
+from base64 import b64encode
+import string
 
 _docker_safe_chars = set(string.ascii_letters + string.digits)
 _docker_escape_char_kubernet = "-"
@@ -21,7 +22,7 @@ def escape_docker(s):
         escape_char=_docker_escape_char_docker,
     )
 
-def get_proxy_url(token=''):
+def encode_proxy_url(token=''):
     client = os.environ.get('JUPYTERHUB_USER', '')
     base_public_url = os.environ.get('PUBLIC_PROXY_API', '')
     clientEncoded = escape_kubernet(client)

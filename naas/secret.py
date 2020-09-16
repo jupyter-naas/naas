@@ -4,12 +4,13 @@ import json
 import os
 
 class Secret():
-    __path_user_files = os.environ.get('JUPYTER_SERVER_ROOT', '/home/ftp')
-    __naas_file = '.nass'
+    __path_user_files = None  
+    __naas_folder = '.nass'
     __json_name = 'secrets.json'
     
-    def __init__(self):
-        self.__path_naas_files = os.path.join(self.__path_user_files, self.__naas_file)
+    def __init__(self, clean = False):
+        self.__path_user_files = os.environ.get('JUPYTER_SERVER_ROOT', '/home/ftp')
+        self.__path_naas_files = os.path.join(self.__path_user_files, self.__naas_folder)
         self.__json_secrets_path = os.path.join(self.__path_naas_files, self.__json_name)
         if not os.path.exists(self.__path_naas_files):
             try:
@@ -17,6 +18,9 @@ class Secret():
             except OSError as exc: # Guard against race condition
                 if exc.errno != errno.EEXIST:
                     raise
+        if clean:
+            print('Init Secret Storage')
+            self.__set_secret([])
 
     def __set_secret(self, newSecret):
         secret_data = json.dumps(newSecret, sort_keys=True, indent=4)
