@@ -3,7 +3,6 @@ from .types import t_notebook
 import pytest
 import os
 import uuid
-import shutil
 
 proxy_url = 'proxy.naas.com'
 test_file = 'demo_file.py'
@@ -17,7 +16,6 @@ os.environ["PUBLIC_PROXY_API"] = proxy_url
 def test_init(tmp_path):
     path_srv_root = os.path.join(str(tmp_path), 'test')
     os.environ["JUPYTER_SERVER_ROOT"] = path_srv_root
-    shutil.rmtree(path_srv_root)
     manager = Manager()
     assert os.path.exists(os.path.join(path_srv_root, '.naas'))
     assert len(manager.get_naas()) == 0

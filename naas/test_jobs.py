@@ -1,7 +1,6 @@
 from .types import t_notebook, t_add, t_delete, t_update
 from .jobs import Jobs
 from .logger import Logger
-import shutil
 import pytest
 import uuid
 import os
