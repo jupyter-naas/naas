@@ -1,5 +1,5 @@
-from escapism import escape
 from base64 import b64encode
+import escapism
 import string
 
 _docker_safe_chars = set(string.ascii_letters + string.digits)
@@ -8,7 +8,7 @@ _docker_escape_char_docker = "_"
 
 def escape_kubernet(s):
     """Escape a string to kubernet-safe characters"""
-    return escape(
+    return escapism.escape(
         s,
         safe=_docker_safe_chars,
         escape_char=_docker_escape_char_kubernet,
@@ -16,7 +16,7 @@ def escape_kubernet(s):
     
 def escape_docker(s):
     """Escape a string to docker-safe characters"""
-    return escape(
+    return escapism.escape(
         s,
         safe=_docker_safe_chars,
         escape_char=_docker_escape_char_docker,

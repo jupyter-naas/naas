@@ -12,7 +12,7 @@ def test_init(tmp_path):
     path_srv_root = os.path.join(str(tmp_path), 'test')
     os.environ["JUPYTER_SERVER_ROOT"] = str(path_srv_root)
     logger = Logger()
-    path_nass = os.path.join(path_srv_root, '.naas', 'jobs.json')
+    path_naas = os.path.join(path_srv_root, '.naas', 'jobs.json')
     uid = str(uuid.uuid4())
     jobs = Jobs(uid, logger, clean, init_data)
     assert len(jobs.list(uid)) == 0

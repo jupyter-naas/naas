@@ -58,13 +58,22 @@ class Runner(FlaskView):
     __daemon = None
     __user = None
     __sentry = None
+    __logger = None
     excluded_methods = ['kill', 'start']
     route_base = '/v1'
 
-    def __init__(self, skip, port):
+    def __init__(self, path=None, port=None, user=None, public=None, proxy=None):
         self.__path_user_files = os.environ.get('JUPYTER_SERVER_ROOT', '/home/ftp')
+        self.__path_user_files = path if path else self.__path_user_files
         self.__port = int(os.environ.get('NAAS_RUNNER_PORT', 5000))
-        self.__user = os.environ.get('JUPYTERHUB_USER')
+        self.__port = int(port) if port else self.__port
+        self.__user = os.environ.get('JUPYTERHUB_USER', 'joyvan@naas.com')
+        self.__user = user if user else self.__user
+        self.__public_url = os.environ.get('PUBLIC_DATASCIENCE', f'http://localhost:{self.__port}')
+        self.__public_url = public if public else self.__public_url
+        self.__proxy_url = os.environ.get('PUBLIC_PROXY_API', 'http://localhost:5002')
+        self.__proxy_url = proxy if proxy else self.__proxy_url
+        self.__tz = os.environ.get('TZ', 'Europe/Paris')
         self.__single_user_api_path = os.environ.get('SINGLEUSER_PATH', '.jupyter-single-user.dev.svc.cluster.local')
         self.__path_naas_files = os.path.join(self.__path_user_files, self.__naas_folder)
         self.__path_logs_file = os.path.join(self.__path_naas_files, self.__log_filename)
@@ -73,17 +82,30 @@ class Runner(FlaskView):
         self.__path_html_error = os.path.join(self.__path_lib_files, self.__manager_error)
         self.__path_manager_index = os.path.join(self.__path_html_files, self.__manager_index)
         self.__path_pidfile = os.path.join(self.__path_naas_files, f'{self.__name}.pid')
-        self.__port = int(port) if port else self.__port
         self.__api_internal = f"http://jupyter-{escape_kubernet(self.__user)}{self.__single_user_api_path}:{self.__port}/{self.route_base}/"
-        if skip is True:
-            self.__init_naas_folder()
+        self.__init_naas_folder()
+        # Init loggin system
+        uid = str(uuid.uuid4())
+        self.__logger = Logger()
+        self.__notif = Notifications(self.__logger)
+        self.__jobs = Jobs(uid, self.__logger)
+        # Init scheduling system
+        self.__scheduler = BackgroundScheduler()
+        # Init http server
+        self.__app = Flask(self.__name)
+        self.__app.register_error_handler(404, self.__not_found)
+        self.__app.register_error_handler(405, self.__not_allowed)
+        self.__app.register_error_handler(500, self.__not_working)
+        self.__app.register_error_handler(Exception, self.__exceptions)
+        # Disable api cache
+        self.__app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 
     def __main(self):
         uid = str(uuid.uuid4())
         self.__logger.write.info(json.dumps(
             {'id': uid, 'type': t_main, "status": 'start API'}))
         self.__sentry = sentry_sdk.init(
-            dns="https://28c6dea445f741a7a0c5e4db4df88df4@o448748.ingest.sentry.io/5430604",
+            dsn="https://28c6dea445f741a7a0c5e4db4df88df4@o448748.ingest.sentry.io/5430604",
             traces_sample_rate=1.0,
             environment=escape_kubernet(self.__user),
             integrations=[FlaskIntegration()]
@@ -102,29 +124,17 @@ class Runner(FlaskView):
         except Exception:
             print('No Deamon running')
 
-    def start(self):
-        uid = str(uuid.uuid4())
+    def start(self, deamon=True):
         user = getpass.getuser()
-        if (user == 'root'):
-            raise Exception(f"root not autorized, use {os.environ.get('JUPYTERHUB_USER')} instead")
-        # Init loggin system
-        self.__logger = Logger()
-        self.__notif = Notifications(self.__logger)
-        self.__jobs = Jobs(uid, self.__logger)
-        # Init scheduling system
-        self.__scheduler = BackgroundScheduler()
-        # Init http server
-        self.__app = Flask(self.__name)
-        self.__appapp.register_error_handler(404, self.__not_found)
-        self.__appapp.register_error_handler(405, self.__not_allowed)
-        self.__appapp.register_error_handler(500, self.__not_working)
-        self.__appapp.register_error_handler(Exception, self.__exceptions)
+        if (user != self.__user):
+            raise Exception(f"{user} not autorized, use {self.__user} instead")
         self.register(self.__app)
-        # Disable api cache
-        self.__app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
-        self.__daemon = Daemonize(app=self.__name, pid=self.__path_pidfile, action=self.__main)
-        print('Start new Deamon')
-        self.__daemon.start()
+        if deamon:  
+            self.__daemon = Daemonize(app=self.__name, pid=self.__path_pidfile, action=self.__main)
+            print('Start new Deamon')
+            self.__daemon.start()
+        else:
+            self.__main()
                             
     def version(self):
         try:
@@ -228,12 +238,13 @@ class Runner(FlaskView):
             return ''
 
     def __init_naas_folder(self):
-        try:
-            os.makedirs(self.__path_naas_files)
-            print('Create brain')
-        except Exception:
-            print('No need to create brain')
-        os.system(f'chown -R ftp {self.__path_naas_files}')
+        if not os.path.exists(self.__path_naas_files):
+            try:
+                os.makedirs(self.__path_naas_files)
+                os.system(f'chown -R ftp {self.__path_naas_files}')
+                print('Created brain')
+            except Exception:
+                print('No need to create brain', Exception)
 
     def __send_response(self, uid, res, t_notebook, duration, params):
         next_url = params.get('next_url', None)
@@ -342,7 +353,7 @@ class Runner(FlaskView):
         tb = traceback.format_exc()
         self.__logger.write.error(json.dumps({'id': uid, 'type': 'Exception', 'method': request.method, 'status': t_error, 'addr': request.remote_addr,
                                 'scheme': request.scheme, 'full_path': request.full_path, 'error': str(e), 'trace': tb}))
-        return e.status_code
+        return jsonify({'error':  str(e)}), 500
     
     def after_request(self, name, response):
         uid = str(uuid.uuid4())
@@ -365,10 +376,10 @@ class Runner(FlaskView):
     
     def env(self):
         env = {
-            'JUPYTERHUB_USER': os.environ.get('JUPYTERHUB_USER', ''),
-            'PUBLIC_DATASCIENCE': os.environ.get('PUBLIC_DATASCIENCE', ''),
-            'PUBLIC_PROXY_API': os.environ.get('PUBLIC_PROXY_API', ''),
-            'TZ': os.environ.get('TZ', '')
+            'JUPYTERHUB_USER': self.__user,
+            'PUBLIC_DATASCIENCE': self.__public_url,
+            'PUBLIC_PROXY_API': self.__proxy_url,
+            'TZ': self.__tz
         }
         return jsonify(env), 200
 
@@ -390,7 +401,7 @@ class Runner(FlaskView):
         as_file = request.args.get('as_file', False)
         if as_file:
             res = send_file(self.__logger.get_file_path(), attachment_filename='logs.csv')
-            return res           
+            return res
         else:
             uid = str(uuid.uuid4())
             limit = int(request.args.get('limit', 0))

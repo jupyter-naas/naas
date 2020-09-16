@@ -3,11 +3,13 @@ from .types import t_notebook
 import pytest
 import os
 import uuid
+from shutil import copy2
 
 proxy_url = 'proxy.naas.com'
 test_file = 'demo_file.py'
 token = 'test_token'
-test_file_path = os.path.join(os.getcwd(), test_file)
+test_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__))
+, test_file)
 os.environ["PUBLIC_DATASCIENCE"] = 'test.naas.com'
 os.environ["JUPYTERHUB_USER"] = 'TEST_USER'
 os.environ["JUPYTERHUB_API_TOKEN"] = 'TESTAPIKEY'
@@ -35,23 +37,31 @@ def test_get_path(tmp_path):
     assert manager.get_path(test_file_path) == test_file_path
 
 
-def test_copy_file(tmp_path):
+def test_copy_file(runner, tmp_path):
     path_srv_root = os.path.join(str(tmp_path), 'test')
     os.environ["JUPYTER_SERVER_ROOT"] = path_srv_root
+    os.environ["JUPYTERHUB_USER"] = 'joyvan'
+    os.environ["PUBLIC_DATASCIENCE"] = 'localhost:5000'
+    os.environ["PUBLIC_PROXY_API"] = 'proxy:5000'
+
     # need better test
+    new_path = os.path.join(path_srv_root, test_file)
+    os.makedirs(os.path.dirname(new_path))
+    copy2(test_file_path, new_path)
     manager = Manager()
     # prod_path = manager.get_prod_path(test_file_path)
-    obj = {"type": t_notebook, "path": test_file_path, "params": {}, "value": token}
+    obj = {"type": t_notebook, "path": new_path, "params": {}, "value": token}
     manager.add_prod(obj, True)
     # manager.__copy_file_in_prod(test_file_path)
     assert os.path.exists(prod_path)
-    manager.get_prod(test_file_path)
-    dev_dir = os.path.dirname(test_file_path)
-    dev_finename = os.path.basename(test_file_path)
+    manager.get_prod(new_path)
+    dev_dir = os.path.dirname(new_path)
+    dev_finename = os.path.basename(new_path)
     secure_path = os.path.join(dev_dir, f'prod_{dev_finename}')
     assert os.path.exists(secure_path)
     manager.del_prod(obj, True)
     assert os.path.exists(prod_path)
+    
     
 
     # def __del_copy_file_in_prod(self, path):

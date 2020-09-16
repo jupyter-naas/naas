@@ -34,7 +34,7 @@ class Logger():
     __log = None
     __name = 'naas_logger'
     __logs_filename = 'logs.csv'
-    __naas_folder = '.nass'
+    __naas_folder = '.naas'
     __path_user_files = None
     
     def __init__(self, reset=False):
@@ -43,7 +43,7 @@ class Logger():
         self.__path_logs_file = os.path.join(self.__path_naas_files, self.__logs_filename) 
         if not os.path.exists(self.__path_naas_files):
             try:
-                print('Init Nass folder')
+                print('Init Naas folder')
                 os.makedirs(self.__path_naas_files)
             except OSError as exc: # Guard against race condition
                 if exc.errno != errno.EEXIST:

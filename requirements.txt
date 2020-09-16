@@ -14,3 +14,4 @@ ipykernel==5.3.4
 requests==2.24.0
 Flask-Classful==0.14.2
 sentry-sdk[flask]==0.17.6
+pytest-xdist==2.1.0

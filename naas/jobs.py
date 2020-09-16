@@ -10,7 +10,7 @@ class Jobs():
     __storage_sem = None
     __path_user_files = None
     __logger = None
-    __naas_folder = '.nass'
+    __naas_folder = '.naas'
     __json_name = 'jobs.json'
 
     def __init__(self, uid, logger, clean = False, init_data = []):
@@ -21,7 +21,7 @@ class Jobs():
         self.__logger = logger
         if not os.path.exists(self.__path_naas_files):
             try:
-                print('Init Nass folder')
+                print('Init Naas folder')
                 os.makedirs(self.__path_naas_files)
             except OSError as exc: # Guard against race condition
                 print('__path_naas_files', self.__path_naas_files)
@@ -33,9 +33,6 @@ class Jobs():
             try:
                 print('Init Job Storage', self.__json_secrets_path)
                 self.__save(uid, init_data)
-                with open(self.__json_secrets_path, 'r') as f:
-                    print('json', json.load(f))
-                    f.close()
             except Exception as e:
                 print('Exception', e)
                 self.__logger.write.error(json.dumps(
@@ -86,9 +83,7 @@ class Jobs():
             if (len(self.list(uid)) != 0):
                 df = pd.DataFrame(self.list(uid))
             else:
-                df = pd.DataFrame(pd.np.empty((0, 9)))
-                df.columns = ['id', 'type', 'value', 'path', 'status', 'params', 'lastUpdate', 'lastRun', 'totalRun']
-                
+                df = pd.DataFrame(columns=['id', 'type', 'value', 'path', 'status', 'params', 'lastUpdate', 'lastRun', 'totalRun']) 
             res = status
             cur_elem = df[(df.type == target_type) & (df.path == path)]
             now = datetime.datetime.now()

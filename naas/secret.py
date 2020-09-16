@@ -5,7 +5,7 @@ import os
 
 class Secret():
     __path_user_files = None  
-    __naas_folder = '.nass'
+    __naas_folder = '.naas'
     __json_name = 'secrets.json'
     
     def __init__(self, clean = False):
