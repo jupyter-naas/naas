@@ -13,7 +13,6 @@ Whenever you need it (even when you sleep).
 
 `pip3 install -r requirements.txt`
 
-
 # Run test 
 
 `pytest -x --forked`  
@@ -23,3 +22,7 @@ Whenever you need it (even when you sleep).
 `pytest -x tests/test_runner.py `
 or
 `.test_runner.sh`
+
+open manager :
+
+`localhost:5000/`
