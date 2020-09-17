@@ -20,4 +20,6 @@ Whenever you need it (even when you sleep).
 
 # test runner
 
+`pytest -x tests/test_runner.py `
+or
 `.test_runner.sh`
