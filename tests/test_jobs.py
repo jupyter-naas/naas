@@ -1,6 +1,6 @@
-from .types import t_notebook, t_add, t_delete, t_update
-from .jobs import Jobs
-from .logger import Logger
+from naas.types import t_notebook, t_add, t_delete, t_update
+from naas.jobs import Jobs
+from naas.logger import Logger
 import pytest
 import uuid
 import os
@@ -8,8 +8,10 @@ import os
 clean = True
 init_data = []
 
+user_folder_name = 'test_user_folder'
+
 def test_init(tmp_path):
-    path_srv_root = os.path.join(str(tmp_path), 'test')
+    path_srv_root = os.path.join(str(tmp_path), user_folder_name)
     os.environ["JUPYTER_SERVER_ROOT"] = str(path_srv_root)
     logger = Logger()
     path_naas = os.path.join(path_srv_root, '.naas', 'jobs.json')
@@ -18,14 +20,14 @@ def test_init(tmp_path):
     assert len(jobs.list(uid)) == 0
 
 def test_add(tmp_path):
-    path_srv_root = os.path.join(str(tmp_path), 'test')
+    path_srv_root = os.path.join(str(tmp_path), user_folder_name)
     os.environ["JUPYTER_SERVER_ROOT"] = path_srv_root
     logger = Logger()
     uid = str(uuid.uuid4())
     jobs = Jobs(uid, logger, clean, init_data)
     path =  os.path.join(os.getcwd(), 'test_add.py')
     target_type = t_notebook
-    value = 'test'
+    value = user_folder_name
     params = {}
     runTime = 0
     jobs.update(uid, path, target_type, value, params, t_add, runTime)
@@ -37,14 +39,14 @@ def test_add(tmp_path):
     jobs.update(uid, path, target_type, value, params, t_delete, runTime)
 
 def test_clean_data(tmp_path):
-    path_srv_root = os.path.join(str(tmp_path), 'test')
+    path_srv_root = os.path.join(str(tmp_path), user_folder_name)
     os.environ["JUPYTER_SERVER_ROOT"] = path_srv_root
     logger = Logger()
     uid = str(uuid.uuid4())
     jobs = Jobs(uid, logger, clean, init_data)
     path =  os.path.join(os.getcwd(), 'test_add.py')
     target_type = t_notebook
-    value = 'test'
+    value = user_folder_name
     params = {}
     runTime = 0
     jobs.update(uid, path, target_type, value, params, t_add, runTime)
@@ -53,14 +55,14 @@ def test_clean_data(tmp_path):
     assert len(jobs.list(uid)) == 0
 
 def test_delete(tmp_path):
-    path_srv_root = os.path.join(str(tmp_path), 'test')
+    path_srv_root = os.path.join(str(tmp_path), user_folder_name)
     os.environ["JUPYTER_SERVER_ROOT"] = path_srv_root
     logger = Logger()
     uid = str(uuid.uuid4())
     jobs = Jobs(uid, logger, clean, init_data)
     path =  os.path.join(os.getcwd(), 'test_delete.py')
     target_type = t_notebook
-    value = 'test'
+    value = user_folder_name
     params = {}
     runTime = 0
     jobs.update(uid, path, target_type, value, params, t_add, runTime)
@@ -69,14 +71,14 @@ def test_delete(tmp_path):
     assert len(jobs.list(uid)) == 0
 
 def test_update(tmp_path):
-    path_srv_root = os.path.join(str(tmp_path), 'test')
+    path_srv_root = os.path.join(str(tmp_path), user_folder_name)
     os.environ["JUPYTER_SERVER_ROOT"] = path_srv_root
     logger = Logger()
     uid = str(uuid.uuid4())
     jobs = Jobs(uid, logger, clean, init_data)
     path =  os.path.join(os.getcwd(), 'test_update.py')
     target_type = t_notebook
-    value = 'test'
+    value = user_folder_name
     new_value = 'value_changed'
     params = {}
     runTime = 0

@@ -1,18 +1,20 @@
-from .secret import Secret
+from naas.secret import Secret
 import pytest
 import uuid
 import shutil
 import os
 
+user_folder_name = 'test_user_folder'
+
 def test_init(tmp_path):
-    path_srv_root = os.path.join(str(tmp_path), 'test')
+    path_srv_root = os.path.join(str(tmp_path), user_folder_name)
     os.environ["JUPYTER_SERVER_ROOT"] = path_srv_root
     secret = Secret(clean=True)
     assert os.path.exists(os.path.join(path_srv_root, '.naas'))
     assert len(secret.list()) == 0
     
 def test_add(tmp_path):
-    path_srv_root = os.path.join(str(tmp_path), 'test')
+    path_srv_root = os.path.join(str(tmp_path), user_folder_name)
     os.environ["JUPYTER_SERVER_ROOT"] = path_srv_root
     secret = Secret(clean=True)
     secret.add('test_1', 'bar')
@@ -20,7 +22,7 @@ def test_add(tmp_path):
     secret.delete('test_1')
 
 def test_keep(tmp_path):
-    path_srv_root = os.path.join(str(tmp_path), 'test')
+    path_srv_root = os.path.join(str(tmp_path), user_folder_name)
     os.environ["JUPYTER_SERVER_ROOT"] = path_srv_root
     secret = Secret(clean=True)
     secret.add('test_1', 'bar')
@@ -29,7 +31,7 @@ def test_keep(tmp_path):
     secret.delete('test_1')
 
 def test_clean(tmp_path):
-    path_srv_root = os.path.join(str(tmp_path), 'test')
+    path_srv_root = os.path.join(str(tmp_path), user_folder_name)
     os.environ["JUPYTER_SERVER_ROOT"] = path_srv_root
     secret = Secret(clean=True)
     secret.add('test_1', 'bar')
@@ -37,7 +39,7 @@ def test_clean(tmp_path):
     assert len(secret_two.list()) == 0
 
 def test_list(tmp_path):
-    path_srv_root = os.path.join(str(tmp_path), 'test')
+    path_srv_root = os.path.join(str(tmp_path), user_folder_name)
     os.environ["JUPYTER_SERVER_ROOT"] = path_srv_root
     secret = Secret(clean=True)
     secret.add('test_1', 'bar')
@@ -45,7 +47,7 @@ def test_list(tmp_path):
     secret.delete('test_1')
 
 def test_get(tmp_path):
-    path_srv_root = os.path.join(str(tmp_path), 'test')
+    path_srv_root = os.path.join(str(tmp_path), user_folder_name)
     os.environ["JUPYTER_SERVER_ROOT"] = path_srv_root
     secret = Secret(clean=True)
     secret.add('test_1', 'bar')
@@ -53,7 +55,7 @@ def test_get(tmp_path):
     secret.delete('test_1')
     
 def test_delete(tmp_path):
-    path_srv_root = os.path.join(str(tmp_path), 'test')
+    path_srv_root = os.path.join(str(tmp_path), user_folder_name)
     os.environ["JUPYTER_SERVER_ROOT"] = path_srv_root
     secret = Secret(clean=True)
     secret.add('test_1', 'bar')

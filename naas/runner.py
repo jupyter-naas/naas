@@ -39,13 +39,13 @@ class Runner(FlaskView):
     __naas_folder = '.naas'
     __tasks_sem = None
     # Declare path variable
-    __path_lib_files = os.getcwd()
+    __path_lib_files = os.path.dirname(os.path.abspath(__file__))
     __path_user_files = None
     __port = 5000
     __single_user_api_path = None
     __html_files = 'html'
     __assets_files = 'assets'
-    __manager_index = 'index.html'
+    __manager_index = 'manager.html'
     __manager_error = 'index.html'
     __log_filename = 'logs.csv'
     __tasks_files = 'tasks.json'
@@ -59,10 +59,10 @@ class Runner(FlaskView):
     __user = None
     __sentry = None
     __logger = None
-    excluded_methods = ['kill', 'start']
+    excluded_methods = ['kill', 'start', 'test_client', 'get_app']
     route_base = '/v1'
 
-    def __init__(self, path=None, port=None, user=None, public=None, proxy=None):
+    def __init__(self, path=None, port=None, user=None, public=None, proxy=None, testing=False):
         self.__path_user_files = os.environ.get('JUPYTER_SERVER_ROOT', '/home/ftp')
         self.__path_user_files = path if path else self.__path_user_files
         self.__port = int(os.environ.get('NAAS_RUNNER_PORT', 5000))
@@ -93,13 +93,14 @@ class Runner(FlaskView):
         self.__scheduler = BackgroundScheduler()
         # Init http server
         self.__app = Flask(self.__name)
+        self.__app.testing = testing
         self.__app.register_error_handler(404, self.__not_found)
         self.__app.register_error_handler(405, self.__not_allowed)
         self.__app.register_error_handler(500, self.__not_working)
         self.__app.register_error_handler(Exception, self.__exceptions)
         # Disable api cache
         self.__app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
-
+    
     def __main(self):
         uid = str(uuid.uuid4())
         self.__logger.write.info(json.dumps(
@@ -113,6 +114,9 @@ class Runner(FlaskView):
         self.__http_server = WSGIServer(('', 5000), self.__app)
         self.__http_server.serve_forever()
 
+    def get_app(self):
+        return self.__app
+    
     def kill(self):
         try:
             with open(self.__path_pidfile, 'r') as f:
@@ -136,15 +140,6 @@ class Runner(FlaskView):
         else:
             self.__main()
                             
-    def version(self):
-        try:
-            with open(os.path.join(self.__path_lib_files, self.__info_file), 'r') as json_file:
-                version = json.load(json_file)
-                return version
-        except:
-            return {'error': 'cannot get info.json'}
-
-
     def __get_res_nb(self, res):
         cells = res.get('cells')
         result = None
@@ -371,19 +366,34 @@ class Runner(FlaskView):
         self.__scheduler.start()
         atexit.register(lambda: self.__scheduler.shutdown())
 
+    @route('/')
     def index(self):
-        return {'status': t_health}
-    
+        uid = str(uuid.uuid4())
+        self.__logger.write.info(json.dumps(
+            {'id': uid, 'type': t_static, 'status': 'send', 'filepath': self.__path_manager_index}))
+        return send_file(self.__path_manager_index), 200
+
+    @route('/env')
     def env(self):
+        version = None
+        try:
+            with open(os.path.join(self.__path_lib_files, self.__info_file), 'r') as json_file:
+                version = json.load(json_file)
+        except:
+            version = {'error': 'cannot get info.json'}
         env = {
+            'status': t_health,
+            'version': version,
             'JUPYTERHUB_USER': self.__user,
             'PUBLIC_DATASCIENCE': self.__public_url,
             'PUBLIC_PROXY_API': self.__proxy_url,
             'TZ': self.__tz
+            
         }
         return jsonify(env), 200
 
-    def scheduler(self, mode):
+    @route('/scheduler/<mode>')
+    def scheduler(self, mode: str):
         if (mode == 'pause'):
             self.__scheduler.pause()
         elif (mode != 'status'):
@@ -397,6 +407,7 @@ class Runner(FlaskView):
             status = 'paused'
         return jsonify({"status": status}), 200
     
+    @route('/logs')
     def logs(self):
         as_file = request.args.get('as_file', False)
         if as_file:
@@ -439,12 +450,6 @@ class Runner(FlaskView):
             {'id': uid, 'type': t_task, 'status': updated['status']}))
         return jsonify(updated), 200
 
-    def manager(self):
-        uid = str(uuid.uuid4())
-        self.__logger.write.info(json.dumps(
-            {'id': uid, 'type': t_static, 'status': 'send', 'filepath': self.__path_manager_index}))
-        return send_file(self.__path_manager_index), 200
-
     @route(f'/{t_static}/up')
     def resUp(self):
         file_filename = 'up.png'
@@ -456,7 +461,7 @@ class Runner(FlaskView):
             return self.__html_error(json.dumps({"error": e})), 404
         
     @route(f'/{t_static}/down')
-    def resDown(self, token):
+    def resDown(self):
         file_filename = 'down.png'
         file_filepath = os.path.join(self.__path_lib_files, self.__assets_files, file_filename)
         try:
@@ -465,8 +470,8 @@ class Runner(FlaskView):
         except Exception as e:
             return self.__html_error(json.dumps({"error": e})), 404
         
-    @route(f'/{t_static}/<string:token>')
-    def resStatic(self, token):
+    @route(f'/{t_static}/<token>')
+    def resStatic(self, token: str):
         uid = str(uuid.uuid4())
         task = self.__jobs.find_by_value(uid, token, t_static)
         if task:
@@ -493,8 +498,8 @@ class Runner(FlaskView):
         return self.__html_error(json.dumps({'id': uid, "error": "Cannot find your token", 'token': token})), 401
 
 
-    @route(f'/{t_notebook}/<string:token>')
-    def startNotebook(self, token):
+    @route(f'/{t_notebook}/<token>')
+    def startNotebook(self, token: str):
         uid = str(uuid.uuid4())
         task = self.__jobs.find_by_value(uid, token, t_notebook)
         if task:

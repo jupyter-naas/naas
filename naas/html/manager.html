@@ -150,7 +150,6 @@
 
                 ],
                 env: {},
-                info_bob: {},
                 logs: [],
                 totalRecords: 0,
                 tasks: []
@@ -177,7 +176,7 @@
                             }
                         }
                     }));
-                    all_loads.push(load('status').then((response) => {
+                    all_loads.push(load('jobs').then((response) => {
                         if (response && !response.error) {
                             try {
                                 this.tasks = response;
@@ -186,16 +185,7 @@
                             }
                         }
                     }));
-                    all_loads.push(load('info_bob').then((response) => {
-                        if (response && !response.error) {
-                            try {
-                                this.info_bob = response;
-                            } catch (err) {
-                                console.error(err);
-                            }
-                        }
-                    }));
-                    all_loads.push(load('logs/start').then((response) => {
+                    all_loads.push(load('logs').then((response) => {
                         if (response && !response.error) {
                             try {
                                 console.log('response', response);
@@ -208,7 +198,7 @@
                     }));
                     return Promise.all(all_loads);
                 },
-                setFilter: function(filter){
+                setFilter: function (filter) {
                     this.filter = filter;
                 },
                 reload_data: function () {
@@ -336,9 +326,9 @@
                     </button>
                 </div>
             </div>
-            <div class="shadow overflow-hidden rounded border-b border-gray-200 mb-5">
-                <h2 class="text-3xl font-semibold text-gray-800 md:text-4xl">Your current <span class="text-indigo-600">Jobs</span></h2>
-                <vue-good-table :columns="columns_tasks" :rows="tasks" theme="black-rhino" :search-options="{
+            <h2 class="text-3xl font-semibold text-gray-800 md:text-4xl">Your current <span
+                    class="text-indigo-600">Jobs</span></h2>
+            <vue-good-table :columns="columns_tasks" :rows="tasks" theme="black-rhino" :search-options="{
                     enabled: true,
                     externalQuery: filter
                 }" :pagination-options="{
@@ -355,30 +345,30 @@
                     pageLabel: 'page', // for 'pages' mode
                     allLabel: 'All',
                 }">
-                    <template slot="table-row" slot-scope="props">
-                        <span v-if="props.column.field == 'status'">
-                            <span v-if="props.row.status === 'healthy'"
-                                style="font-weight: bold; color: green;">{{props.row.status}}</span>
-                            <span v-else-if="props.row.status === 'error' || props.row.status === 'exception' || props.row.status === 'not_found'"
-                                style="font-weight: bold; color: red;">{{props.row.status}}</span>
-                            <span v-else
-                                style="font-weight: bold; color: orange;">{{props.row.status}}</span>
-                        </span>
-                        <span v-else-if="props.column.field == 'value'">
-                            <a style="font-weight: bold; color: blue;"
-                                v-if="props.row.type == 'static' || props.row.type == 'api'"
-                                :href="getUrl(props.row.value,props.row.type)">{{props.formattedRow[props.column.field]}}</a>
-                            <span v-else>{{props.formattedRow[props.column.field]}}</span>
-                        </span>
-                        <span v-else-if="props.column.field == 'id'">
-                            <a href="#" style="font-weight: bold; color: blue;" v-on:click="setFilter(props.formattedRow[props.column.field])">{{props.formattedRow[props.column.field]}}</a>
-                        </span>
-                        <span v-else>
-                            {{props.formattedRow[props.column.field]}}
-                        </span>
-                    </template>
-                </vue-good-table>
-            </div>
+                <template slot="table-row" slot-scope="props">
+                    <span v-if="props.column.field == 'status'">
+                        <span v-if="props.row.status === 'healthy'"
+                            style="font-weight: bold; color: green;">{{props.row.status}}</span>
+                        <span
+                            v-else-if="props.row.status === 'error' || props.row.status === 'exception' || props.row.status === 'not_found'"
+                            style="font-weight: bold; color: red;">{{props.row.status}}</span>
+                        <span v-else style="font-weight: bold; color: orange;">{{props.row.status}}</span>
+                    </span>
+                    <span v-else-if="props.column.field == 'value'">
+                        <a style="font-weight: bold; color: blue;"
+                            v-if="props.row.type == 'static' || props.row.type == 'api'"
+                            :href="getUrl(props.row.value,props.row.type)">{{props.formattedRow[props.column.field]}}</a>
+                        <span v-else>{{props.formattedRow[props.column.field]}}</span>
+                    </span>
+                    <span v-else-if="props.column.field == 'id'">
+                        <a href="#" style="font-weight: bold; color: blue;"
+                            v-on:click="setFilter(props.formattedRow[props.column.field])">{{props.formattedRow[props.column.field]}}</a>
+                    </span>
+                    <span v-else>
+                        {{props.formattedRow[props.column.field]}}
+                    </span>
+                </template>
+            </vue-good-table>
             <h2 class="text-3xl font-semibold text-gray-800 md:text-4xl">Discover what <span
                     class="text-indigo-600">happened</span></h2>
             <vue-good-table :columns="columns_logs" :rows="logs" theme="black-rhino" :search-options="{
@@ -400,25 +390,26 @@
                 ofLabel: 'of',
                 pageLabel: 'page', // for 'pages' mode
                 allLabel: 'All',
-            }" >
-            <template slot="table-row" slot-scope="props">
-                <span v-if="props.column.field == 'id'">
-                    <a href="#" style="font-weight: bold; color: blue;" v-on:click="setFilter(props.formattedRow[props.column.field])">{{props.formattedRow[props.column.field]}}</a>
-                </span>
-                <span v-else>
-                    {{props.formattedRow[props.column.field]}}
-                </span>
-            </template>
+            }">
+                <template slot="table-row" slot-scope="props">
+                    <span v-if="props.column.field == 'id'">
+                        <a href="#" style="font-weight: bold; color: blue;"
+                            v-on:click="setFilter(props.formattedRow[props.column.field])">{{props.formattedRow[props.column.field]}}</a>
+                    </span>
+                    <span v-else>
+                        {{props.formattedRow[props.column.field]}}
+                    </span>
+                </template>
             </vue-good-table>
         </div>
         <div class="grid grid-cols-4 gap-4">
-            <div class="col-start-2 px-6 py-4">
+            <div class="col-start-2 px-6 py-4" v-if="env && env.version">
                 <h4 class="text-3xl font-semibold text-gray-800 md:text-4xl">Bob current <span
                         class="text-indigo-600">Version</span></h4>
                 <span
-                    class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2">{{info_bob.version}}</span>
+                    class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2">{{env.version.version}}</span>
                 <span
-                    class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2">{{info_bob.versionName}}</span>
+                    class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2">{{env.version.versionName}}</span>
             </div>
         </div>
     </div>

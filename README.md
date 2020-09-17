@@ -1,7 +1,13 @@
-# Naas
+# Naas (Notebooks As Automated Services)
 
-notebooks as automated services
+Schedule notebooks, to automate all your tasks.
 
+Use the power of scripting in the cloud.
+Whenever you need it (even when you sleep).
+
+* Schedule your scripts
+* Use Notebooks as API
+* Share assets securely
 
 # Install
 

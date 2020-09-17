@@ -1,13 +1,14 @@
-from .types import t_add, t_delete, t_update
-from .logger import Logger
+from naas.types import t_add, t_delete, t_update
+from naas.logger import Logger
 import pytest
 import uuid
 import json
 import os
 
+user_folder_name = 'test_user_folder'
 
 def test_init(tmp_path):
-    path_srv_root = os.path.join(str(tmp_path), 'test')
+    path_srv_root = os.path.join(str(tmp_path), user_folder_name)
     os.environ["JUPYTER_SERVER_ROOT"] = path_srv_root
     logger = Logger()
     uid = str(uuid.uuid4())
@@ -19,7 +20,7 @@ def test_init(tmp_path):
     logger.clear()
 
 def test_no_clean(tmp_path):
-    path_srv_root = os.path.join(str(tmp_path), 'test')
+    path_srv_root = os.path.join(str(tmp_path), user_folder_name)
     os.environ["JUPYTER_SERVER_ROOT"] = path_srv_root
     logger = Logger()
     uid = str(uuid.uuid4())
@@ -31,7 +32,7 @@ def test_no_clean(tmp_path):
     
 
 def test_add(tmp_path, caplog):
-    path_srv_root = os.path.join(str(tmp_path), 'test')
+    path_srv_root = os.path.join(str(tmp_path), user_folder_name)
     os.environ["JUPYTER_SERVER_ROOT"] = path_srv_root
     logger = Logger()
     uid = str(uuid.uuid4())
@@ -49,7 +50,7 @@ def test_add(tmp_path, caplog):
     assert log['status'] == 'test_2'
 
 def test_list(tmp_path):
-    path_srv_root = os.path.join(str(tmp_path), 'test')
+    path_srv_root = os.path.join(str(tmp_path), user_folder_name)
     os.environ["JUPYTER_SERVER_ROOT"] = path_srv_root
     logger = Logger()
     uid = str(uuid.uuid4())
