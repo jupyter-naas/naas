@@ -65,14 +65,14 @@ class Logger():
     def get_file_path(self):
         return self.__path_logs_file
     
-    def list(self, uid: str, skip: int = 0, limit: int = 0, search: str = '', filters: list = None):
+    def list(self, uid: str, skip: int = 0, limit: int = 0, search: str = '', filters: list = []):
         df = None
         try:
             df = pd.read_csv(self.__path_logs_file, sep=';', index_col=0)
             df1 = pd.DataFrame(df.pop('message').apply(
                 pd.io.json.loads).values.tolist(), index=df.index)
             df = pd.concat([df1, df], axis=1, sort=False)
-            if filters:
+            if len(filters) > 0:
                 df = df[df.type.isin(filters)]
             totalRecords = len(df.index)
             if search and search != '':
@@ -86,6 +86,8 @@ class Logger():
             df = df.reset_index()
             return {'data': json.loads(df.to_json(orient='records')), 'totalRecords': totalRecords}
         except Exception as e:
+            tb = traceback.format_exc()
+            print('list logs', e, tb)
             return {'data': [], 'totalRecords': 0}
             
     

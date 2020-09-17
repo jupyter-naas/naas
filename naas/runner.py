@@ -118,26 +118,29 @@ class Runner(FlaskView):
         return self.__app
     
     def kill(self):
-        try:
-            with open(self.__path_pidfile, 'r') as f:
-                pid = f.read()
-                print('kill')
-                os.system(f'kill {pid}')
-                print(f'Deamon killed pid {pid}')
-                f.close()
-        except Exception:
-            print('No Deamon running')
+        if os.path.exists(self.__path_pidfile):
+            try:
+                with open(self.__path_pidfile, 'r') as f:
+                    pid = f.read()
+                    print('kill')
+                    os.system(f'kill {pid}')
+                    print(f'Deamon killed pid {pid}')
+                    f.close()
+            except Exception:
+                print('No Deamon running')
 
     def start(self, deamon=True):
         user = getpass.getuser()
         if (user != self.__user):
             raise Exception(f"{user} not autorized, use {self.__user} instead")
+        self.kill()
         self.register(self.__app)
         if deamon:  
             self.__daemon = Daemonize(app=self.__name, pid=self.__path_pidfile, action=self.__main)
-            print('Start new Deamon')
+            print('Start Runner Deamon Mode')
             self.__daemon.start()
         else:
+            print('Start Runner front Mode')
             self.__main()
                             
     def __get_res_nb(self, res):
@@ -418,10 +421,13 @@ class Runner(FlaskView):
             limit = int(request.args.get('limit', 0))
             skip = int(request.args.get('skip', 0))
             search = str(request.args.get('search', ''))
-            clean_logs = bool(request.args.get('clean_logs', False))
-            logs = self.__logger.list(uid, skip, limit, search, clean_logs)
+            filters = bool(request.args.get('filters', []))
+            print('log path', self.__logger.get_file_path())
+            logs = self.__logger.list(uid, skip, limit, search, filters)
+            print('log logs', logs)
+            
             self.__logger.write.info(json.dumps(
-                {'id': uid, 'type': t_static, 'status': 'send', 'filepath': 'logs', 'skip': skip, 'limit': limit, 'search': search, 'clean_logs': clean_logs}))
+                {'id': uid, 'type': t_static, 'status': 'send', 'filepath': 'logs', 'skip': skip, 'limit': limit, 'search': search, 'filters': filters}))
             return jsonify(logs), 200
 
     @route('/jobs')

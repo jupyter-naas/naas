@@ -4,7 +4,6 @@ import os
 
 def check_options():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-K', '--kill', action='store_false')
     parser.add_argument('-P', '--port', action='store_false')
     args = parser.parse_args()
     return args
