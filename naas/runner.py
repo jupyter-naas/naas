@@ -146,13 +146,18 @@ class Runner(FlaskView):
             raise Exception(f"{user} not autorized, use {self.__user} instead")
         self.kill()
         self.register(self.__app)
-        if deamon:  
-            self.__daemon = Daemonize(app=self.__name, pid=self.__path_pidfile, action=self.__main)
-            print('Start Runner Deamon Mode')
-            self.__daemon.start()
-        else:
-            print('Start Runner front Mode')
-            self.__main()
+        try:
+            if deamon:  
+                self.__daemon = Daemonize(app=self.__name, pid=self.__path_pidfile, action=self.__main)
+                print('Start Runner Deamon Mode')
+                self.__daemon.start()
+            else:
+                print('Start Runner front Mode')
+                self.__main()
+        except KeyboardInterrupt:
+            print('Shutdown server')
+            sys.exit()
+
                             
     def __get_res_nb(self, res):
         cells = res.get('cells')
