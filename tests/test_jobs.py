@@ -1,6 +1,6 @@
 from naas.types import t_notebook, t_add, t_delete, t_update
-from naas.jobs import Jobs
-from naas.logger import Logger
+from naas.runner.jobs import Jobs
+from naas.runner.logger import Logger
 import pytest
 import uuid
 import os
@@ -16,77 +16,76 @@ def test_init(tmp_path):
     logger = Logger()
     path_naas = os.path.join(path_srv_root, '.naas', 'jobs.json')
     uid = str(uuid.uuid4())
-    jobs = Jobs(uid, logger, clean, init_data)
+    jobs = Jobs(logger, clean, init_data)
     assert len(jobs.list(uid)) == 0
 
-def test_add(tmp_path):
+async def test_add(tmp_path):
     path_srv_root = os.path.join(str(tmp_path), user_folder_name)
     os.environ["JUPYTER_SERVER_ROOT"] = path_srv_root
     logger = Logger()
     uid = str(uuid.uuid4())
-    jobs = Jobs(uid, logger, clean, init_data)
+    jobs = Jobs(logger, clean, init_data)
     path =  os.path.join(os.getcwd(), 'test_add.py')
     target_type = t_notebook
     value = user_folder_name
     params = {}
     runTime = 0
-    jobs.update(uid, path, target_type, value, params, t_add, runTime)
+    await jobs.update(uid, path, target_type, value, params, t_add, runTime)
     assert len(jobs.list(uid)) == 1
     data = jobs.find_by_path(uid, path, target_type)
     assert data.get('value') == value
     assert data['params'] == params
     assert data['lastRun'] == runTime
-    jobs.update(uid, path, target_type, value, params, t_delete, runTime)
 
-def test_clean_data(tmp_path):
+async def test_clean_data(tmp_path):
     path_srv_root = os.path.join(str(tmp_path), user_folder_name)
     os.environ["JUPYTER_SERVER_ROOT"] = path_srv_root
     logger = Logger()
     uid = str(uuid.uuid4())
-    jobs = Jobs(uid, logger, clean, init_data)
+    jobs = Jobs(logger, clean, init_data)
     path =  os.path.join(os.getcwd(), 'test_add.py')
     target_type = t_notebook
     value = user_folder_name
     params = {}
     runTime = 0
-    jobs.update(uid, path, target_type, value, params, t_add, runTime)
+    await jobs.update(uid, path, target_type, value, params, t_add, runTime)
     assert len(jobs.list(uid)) == 1
-    jobs = Jobs(uid, logger, clean, init_data)
+    jobs = Jobs(logger, clean, init_data)
     assert len(jobs.list(uid)) == 0
 
-def test_delete(tmp_path):
+async def test_delete(tmp_path):
     path_srv_root = os.path.join(str(tmp_path), user_folder_name)
     os.environ["JUPYTER_SERVER_ROOT"] = path_srv_root
     logger = Logger()
     uid = str(uuid.uuid4())
-    jobs = Jobs(uid, logger, clean, init_data)
+    jobs = Jobs(logger, clean, init_data)
     path =  os.path.join(os.getcwd(), 'test_delete.py')
     target_type = t_notebook
     value = user_folder_name
     params = {}
     runTime = 0
-    jobs.update(uid, path, target_type, value, params, t_add, runTime)
+    await jobs.update(uid, path, target_type, value, params, t_add, runTime)
     assert len(jobs.list(uid)) == 1
-    jobs.update(uid, path, target_type, value, params, t_delete, runTime)
+    await jobs.update(uid, path, target_type, value, params, t_delete, runTime)
     assert len(jobs.list(uid)) == 0
 
-def test_update(tmp_path):
+async def test_update(tmp_path):
     path_srv_root = os.path.join(str(tmp_path), user_folder_name)
     os.environ["JUPYTER_SERVER_ROOT"] = path_srv_root
     logger = Logger()
     uid = str(uuid.uuid4())
-    jobs = Jobs(uid, logger, clean, init_data)
+    jobs = Jobs(logger, clean, init_data)
     path =  os.path.join(os.getcwd(), 'test_update.py')
     target_type = t_notebook
     value = user_folder_name
     new_value = 'value_changed'
     params = {}
     runTime = 0
-    jobs.update(uid, path, target_type, value, params, t_add, runTime)
+    await jobs.update(uid, path, target_type, value, params, t_add, runTime)
     assert len(jobs.list(uid)) == 1
-    jobs.update(uid, path, target_type, new_value, params, t_update, runTime)
+    await jobs.update(uid, path, target_type, new_value, params, t_update, runTime)
     assert len(jobs.list(uid)) == 1
     data = jobs.find_by_path(uid, path, target_type)
     assert data['value'] == new_value
-    jobs.update(uid, path, target_type, value, params, t_delete, runTime)
+    await jobs.update(uid, path, target_type, value, params, t_delete, runTime)
     assert len(jobs.list(uid)) == 0

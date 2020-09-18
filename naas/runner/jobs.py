@@ -1,10 +1,12 @@
-from gevent.lock import BoundedSemaphore
-from .types import t_delete, t_add, t_skip, t_update, t_error
+# from gevent.lock import BoundedSemaphore
+from asyncio import Semaphore
+from naas.types import t_delete, t_add, t_skip, t_update, t_error
 import pandas as pd
 import datetime
 import errno
 import json
 import os
+import uuid
 
 class Jobs():
     __storage_sem = None
@@ -13,15 +15,16 @@ class Jobs():
     __naas_folder = '.naas'
     __json_name = 'jobs.json'
 
-    def __init__(self, uid, logger, clean = False, init_data = []):
+    def __init__(self, logger, clean = False, init_data = []):
         self.__path_user_files = os.environ.get('JUPYTER_SERVER_ROOT', '/home/ftp')
         self.__path_naas_files = os.path.join(self.__path_user_files, self.__naas_folder)
         self.__json_secrets_path = os.path.join(self.__path_naas_files, self.__json_name)
-        self.__storage_sem = BoundedSemaphore(1)
+        # self.__storage_sem = BoundedSemaphore(1)
+        self.__storage_sem = Semaphore(1)
         self.__logger = logger
         if not os.path.exists(self.__path_naas_files):
             try:
-                print('Init Naas folder')
+                print('Init Naas folder Jobs')
                 os.makedirs(self.__path_naas_files)
             except OSError as exc: # Guard against race condition
                 print('__path_naas_files', self.__path_naas_files)
@@ -30,6 +33,7 @@ class Jobs():
             except Exception as e:
                 print('Exception', e)
         if not os.path.exists(self.__json_secrets_path) or clean:
+            uid = str(uuid.uuid4())
             try:
                 print('Init Job Storage', self.__json_secrets_path)
                 self.__save(uid, init_data)
@@ -49,18 +53,34 @@ class Jobs():
                                     "status": 'exception', 'filepath': self.__json_secrets_path, 'error': str(err)})
 
     def find_by_value(self, uid, value, target_type):
-        job_list = pd.DataFrame(self.list(uid))
-        cur_jobs = job_list[(job_list.type == target_type)
-                        & (job_list.value == value)]
-        cur_job = cur_jobs.to_dict('records')
-        return cur_job[0]
+        data = self.list(uid)
+        if (len(data) > 0):
+            job_list = pd.DataFrame(data)
+            cur_jobs = job_list[(job_list.type == target_type)
+                            & (job_list.value == value)]
+            cur_job = cur_jobs.to_dict('records')
+            return cur_job[0]
+        else:
+            return None
 
     def find_by_path(self, uid, filepath, target_type):
-        job_list = pd.DataFrame(self.list(uid))
-        cur_jobs = job_list[(job_list.type == target_type)
-                        & (job_list.path == filepath)]
-        cur_job = cur_jobs.to_dict('records')
-        return cur_job[0]
+        data = self.list(uid)
+        if (len(data) > 0):
+            job_list = pd.DataFrame(data)
+            cur_jobs = job_list[(job_list.type == target_type)
+                            & (job_list.path == filepath)]
+            cur_job = cur_jobs.to_dict('records')
+            return cur_job[0]
+        else:
+            return None
+
+    def is_running(self, uid, notebook_filepath, target_type):
+        cur_job = self.find_by_path(uid, notebook_filepath, target_type)
+        if cur_job:
+            status = cur_job.get('status', None)
+            if (status and status == t_start):
+                return True
+        return False
 
     def list(self, uid):
         data = []
@@ -75,8 +95,8 @@ class Jobs():
             data = []
         return data
     
-    def update(self, uid, path, target_type, value, params, status, runTime = 0):
-        self.__storage_sem.acquire(timeout=10)
+    async def update(self, uid, path, target_type, value, params, status, runTime = 0):
+        await self.__storage_sem.acquire()
         data = None
         res = t_error
         try:

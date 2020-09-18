@@ -1,5 +1,5 @@
 from naas.types import t_add, t_delete, t_update
-from naas.logger import Logger
+from naas.runner.logger import Logger
 import pytest
 import uuid
 import os
@@ -7,7 +7,8 @@ import os
 user_folder_name = 'test_user_folder'
 
 def test_init(tmp_path):
-    path_srv_root = os.path.join(str(tmp_path), user_folder_name)
+    path_srv_root = os.path.join(os.getcwd(), user_folder_name)
+    # path_srv_root = os.path.join(str(tmp_path), user_folder_name)
     os.environ["JUPYTER_SERVER_ROOT"] = path_srv_root
     logger = Logger()
     uid = str(uuid.uuid4())

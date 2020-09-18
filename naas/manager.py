@@ -1,6 +1,6 @@
 from .types import t_delete, t_add, t_skip, t_update, t_error, t_static, t_notebook, t_scheduler, t_dependency
 from notebook import notebookapp
-from .proxy import encode_proxy_url
+from .runner.proxy import encode_proxy_url
 from shutil import copy2
 import ipykernel
 import requests

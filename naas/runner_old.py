@@ -33,6 +33,28 @@ import sys
 import io
 import os
 
+from inspect import getframeinfo, stack
+import inspect
+
+def debuginfo(message):
+    caller = getframeinfo(stack()[1].function)
+    print ("%s:%d - %s" % (caller.filename, caller.lineno, message))
+
+def debug():
+    s = inspect.stack()
+    print ("===Current function===:")
+    print ("line number:", s[0][2])
+    print ("function name:", s[0][3])
+    
+    print ("\n===Caller function===")
+    print ("line number:", s[1][2])
+    print ("function name:", s[1][3])
+    
+    print ("\n===Outermost call===")
+    print ("line number:", s[2][2])
+    print ("function name:", s[2][3])
+    
+    
 class Runner(FlaskView):
     # Declare semaphore variable
     __name = 'naas_runner'
@@ -59,6 +81,7 @@ class Runner(FlaskView):
     __user = None
     __sentry = None
     __logger = None
+    __testing = False
     excluded_methods = ['kill', 'start', 'test_client', 'get_app', 'get_test']
     route_base = '/v1'
 
@@ -83,27 +106,14 @@ class Runner(FlaskView):
         self.__path_manager_index = os.path.join(self.__path_html_files, self.__manager_index)
         self.__path_pidfile = os.path.join(self.__path_naas_files, f'{self.__name}.pid')
         self.__api_internal = f"http://jupyter-{escape_kubernet(self.__user)}{self.__single_user_api_path}:{self.__port}/{self.route_base}/"
-        self.__init_naas_folder()
+        self.__testing = bool(testing)
         # Init loggin system
-        uid = str(uuid.uuid4())
-        self.__logger = Logger()
-        self.__notif = Notifications(self.__logger)
-        self.__jobs = Jobs(uid, self.__logger)
-        # Init scheduling system
-        self.__scheduler = BackgroundScheduler()
-        # Init http server
-        self.__app = Flask(self.__name)
-        self.__app.testing = testing
-        self.__app.register_error_handler(404, self.__not_found)
-        self.__app.register_error_handler(405, self.__not_allowed)
-        self.__app.register_error_handler(500, self.__not_working)
-        self.__app.register_error_handler(Exception, self.__exceptions)
-        # Disable api cache
-        self.__app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
+        # debuginfo('init runner')
+        debug()
+        # print('init runner', debuginfo('init runner'))
 
 
     def __main(self):
-        self.__init_scheduler()
         uid = str(uuid.uuid4())
         self.__logger.info(
             {'id': uid, 'type': t_main, "status": 'start API'})
@@ -131,8 +141,30 @@ class Runner(FlaskView):
             except Exception:
                 print('No Deamon running')
 
+    def __init_other(self):
+        uid = str(uuid.uuid4())
+        self.__logger = Logger()
+        self.__notif = Notifications(self.__logger)
+        self.__jobs = Jobs(uid, self.__logger)
+        # Init scheduling system
+        self.__scheduler = BackgroundScheduler()
+
+    def __init_app(self):
+        # Init http server
+        self.__app = Flask(self.__name)
+        self.__app.testing = self.__testing
+        self.__app.register_error_handler(404, self.__not_found)
+        self.__app.register_error_handler(405, self.__not_allowed)
+        self.__app.register_error_handler(500, self.__not_working)
+        self.__app.register_error_handler(Exception, self.__exceptions)
+        # Disable api cache
+        self.__app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
+        
     def get_test(self):
+        self.__init_naas_folder()
+        self.__init_other()
         self.__init_scheduler()
+        self.__init_app()
         self.register(self.__app)
         uid = str(uuid.uuid4())
         self.__logger.info({'id': uid, 'type': t_main, "status": 'start API'})
@@ -145,6 +177,10 @@ class Runner(FlaskView):
         if (user != self.__user):
             raise Exception(f"{user} not autorized, use {self.__user} instead")
         self.kill()
+        self.__init_naas_folder()
+        self.__init_other()
+        self.__init_scheduler()
+        self.__init_app()
         self.register(self.__app)
         try:
             if deamon:  
@@ -318,6 +354,7 @@ class Runner(FlaskView):
             atexit.register(lambda: self.__scheduler.shutdown())
             uid = str(uuid.uuid4())
             self.__logger.info({'id': uid, 'type': t_main, "status": 'start SCHEDULER'})
+            print('self.__scheduler.state', self.__scheduler.state)
 
     def __scheduler_function(self):
         # Create unique for scheduling step (one step every minute)

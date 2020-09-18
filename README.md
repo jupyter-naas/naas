@@ -15,7 +15,7 @@ Whenever you need it (even when you sleep).
 
 # Run test 
 
-`pytest -x --forked`  
+`pytest -x`  
 
 # test runner
 

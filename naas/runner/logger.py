@@ -1,6 +1,6 @@
 import pandas as pd
 import traceback
-from .types import t_add
+from naas.types import t_add
 import logging
 import errno
 import uuid
@@ -17,14 +17,13 @@ class CsvFormatter(logging.Formatter):
     """
     converter=dt.datetime.fromtimestamp
     
-    def __init__(self, reseted=False):
+    def __init__(self, set_headers=False):
         super().__init__(datefmt='%Y-%m-%d %H:%M:%S.%f')
         self.output = io.StringIO()
-        self.writer = csv.writer(
-            self.output, delimiter=';', quoting=csv.QUOTE_ALL)
-        if reseted:
-            self.writer.writerow(
-                ['asctime', 'levelname', 'name', 'message'])          
+        self.writer = csv.writer(self.output, delimiter=';', quoting=csv.QUOTE_ALL)
+        # if set_headers:
+        #     print('write headers')
+        #     self.writer.writerow(['asctime', 'levelname', 'name', 'message'])
 
     def formatTime(self, record, datefmt=None):
         ct = self.converter(record.created)
@@ -55,21 +54,21 @@ class Logger():
         self.__path_user_files = os.environ.get('JUPYTER_SERVER_ROOT', '/home/ftp')   
         self.__path_naas_files = os.path.join(self.__path_user_files, self.__naas_folder)
         self.__path_logs_file = os.path.join(self.__path_naas_files, self.__logs_filename) 
-        reseted = False
         if not os.path.exists(self.__path_naas_files):
             try:
-                print('Init Naas folder')
+                print('Init Naas folder Logger')
                 os.makedirs(self.__path_naas_files)
             except OSError as exc: # Guard against race condition
                 if exc.errno != errno.EEXIST:
                     raise
         if reset or not os.path.exists(self.__path_logs_file):
-            reseted = True
-            with open(self.__path_logs_file, 'w') as fp: 
+            with open(self.__path_logs_file, 'w') as fp:
+                separator = ';'
+                fp.write(f"{separator.join(['asctime', 'levelname', 'name', 'message'])}\n")
                 pass
         self.__log = logging.getLogger(self.__name)
         handler = logging.FileHandler(self.__path_logs_file, "a")
-        handler.setFormatter(CsvFormatter(reseted))
+        handler.setFormatter(CsvFormatter())
         self.__log.addHandler(handler)
         logging.basicConfig(level=logging.INFO)
         
@@ -89,6 +88,9 @@ class Logger():
         df = None
         try:
             df = pd.read_csv(self.__path_logs_file, sep=';', index_col=0)
+            with open(self.__path_logs_file, 'r') as fp:
+                print('fp', fp.read())
+            print(df)
             df1 = pd.DataFrame(df.pop('message').apply(
                 pd.io.json.loads).values.tolist(), index=df.index)
             df = pd.concat([df1, df], axis=1, sort=False)
