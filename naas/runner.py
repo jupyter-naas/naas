@@ -48,7 +48,7 @@ class Runner(FlaskView):
     __manager_index = 'manager.html'
     __manager_error = 'index.html'
     __log_filename = 'logs.csv'
-    __tasks_files = 'tasks.json'
+    __tasks_files = 'jobs.json'
     __info_file = 'info.json'
     __app = None
     __http_server = None
@@ -59,7 +59,7 @@ class Runner(FlaskView):
     __user = None
     __sentry = None
     __logger = None
-    excluded_methods = ['kill', 'start', 'test_client', 'get_app']
+    excluded_methods = ['kill', 'start', 'test_client', 'get_app', 'get_test']
     route_base = '/v1'
 
     def __init__(self, path=None, port=None, user=None, public=None, proxy=None, testing=False):
@@ -100,11 +100,13 @@ class Runner(FlaskView):
         self.__app.register_error_handler(Exception, self.__exceptions)
         # Disable api cache
         self.__app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
-    
+
+
     def __main(self):
+        self.__init_scheduler()
         uid = str(uuid.uuid4())
-        self.__logger.write.info(json.dumps(
-            {'id': uid, 'type': t_main, "status": 'start API'}))
+        self.__logger.info(
+            {'id': uid, 'type': t_main, "status": 'start API'})
         self.__sentry = sentry_sdk.init(
             dsn="https://28c6dea445f741a7a0c5e4db4df88df4@o448748.ingest.sentry.io/5430604",
             traces_sample_rate=1.0,
@@ -128,6 +130,15 @@ class Runner(FlaskView):
                     f.close()
             except Exception:
                 print('No Deamon running')
+
+    def get_test(self):
+        self.__init_scheduler()
+        self.register(self.__app)
+        uid = str(uuid.uuid4())
+        self.__logger.info({'id': uid, 'type': t_main, "status": 'start API'})
+        app = self.get_app()
+        app.app_context()
+        return app.test_client()        
 
     def start(self, deamon=True):
         user = getpass.getuser()
@@ -197,21 +208,21 @@ class Runner(FlaskView):
                 parameters=params
             )
         except pm.PapermillExecutionError as err:
-            self.__logger.write.error(json.dumps({'id': uid, 'type': 'PapermillExecutionError', "status": t_error,
-                                    'filepath': file_filepath, 'output_filepath': file_filepath_out, 'error': str(err)}))
+            self.__logger.error({'id': uid, 'type': 'PapermillExecutionError', "status": t_error,
+                                    'filepath': file_filepath, 'output_filepath': file_filepath_out, 'error': str(err)})
             res = {"error": str(err)}
         except:
             tb = traceback.format_exc()
             res = {'error': str(tb)}
-            self.__logger.write.error(json.dumps({'id': uid, 'type': 'Exception', "status": t_error,
-                                    'filepath': file_filepath, 'output_filepath': file_filepath_out, 'error': str(tb)}))
+            self.__logger.error({'id': uid, 'type': 'Exception', "status": t_error,
+                                    'filepath': file_filepath, 'output_filepath': file_filepath_out, 'error': str(tb)})
         if (not res):
             res = {'error': 'Unknow error'}
-            self.__logger.write.error(json.dumps({'id': uid, 'type': 'Exception', "status": t_error,
-                                    'filepath': file_filepath, 'output_filepath': file_filepath_out, 'error': res['error']}))
+            self.__logger.error({'id': uid, 'type': 'Exception', "status": t_error,
+                                    'filepath': file_filepath, 'output_filepath': file_filepath_out, 'error': res['error']})
         else:
-            self.__logger.write.error(json.dumps({'id': uid, 'type': 'Exception', "status": t_health,
-                                    'filepath': file_filepath, 'output_filepath': file_filepath_out}))
+            self.__logger.error({'id': uid, 'type': 'Exception', "status": t_health,
+                                    'filepath': file_filepath, 'output_filepath': file_filepath_out})
         res['duration'] = (time.time() - start_time)
         if(res.get('error')):
             self.__notif.send_error(uid, str(res.get('error')), file_filepath)
@@ -249,8 +260,8 @@ class Runner(FlaskView):
         if next_url is not None:
             if "http" not in next_url:
                 next_url = f'{self.__api_internal}{next_url}'
-            self.__logger.write.info(json.dumps(
-                {'id': uid, 'type': t_notebook, 'status': 'next_url', 'url': next_url}))
+            self.__logger.info(
+                {'id': uid, 'type': t_notebook, 'status': 'next_url', 'url': next_url})
             return redirect(next_url, code=302)
         else:
             res_data = self.__get_res_nb(res)
@@ -279,21 +290,29 @@ class Runner(FlaskView):
         uid = str(uuid.uuid4())
         running = self.__is_running(uid, file_filepath, current_type)
         if current_type == t_scheduler and value is not None and pycron.is_now(value, current_time) and not running:
-            self.__logger.write.info(json.dumps(
-                {'main_id': str(main_uid), 'id': uid, 'type': t_scheduler, 'status': t_start, 'filepath': file_filepath}))
+            self.__logger.info(
+                {'main_id': str(main_uid), 'id': uid, 'type': t_scheduler, 'status': t_start, 'filepath': file_filepath})
             self.__jobs.update(uid, file_filepath, t_scheduler, value, params, t_start)
             res = self.__exec_job(uid, task)
             if (res.get('error')):
-                self.__logger.write.error(json.dumps({'main_id': str(main_uid), 'id': uid, 'type': t_scheduler, 'status': t_error,
-                                        'filepath': file_filepath, 'duration': res.get('duration'), 'error': str(res.get('error'))}))
+                self.__logger.error({'main_id': str(main_uid), 'id': uid, 'type': t_scheduler, 'status': t_error,
+                                        'filepath': file_filepath, 'duration': res.get('duration'), 'error': str(res.get('error'))})
                 self.__jobs.update(uid, file_filepath, t_scheduler, value,
                             params, t_error, res.get('duration'))
                 return
-            self.__logger.write.info(json.dumps(
-                {'main_id': str(main_uid), 'id': uid, 'type': t_scheduler, 'status': t_health, 'filepath': file_filepath, 'duration': res.get('duration')}))
+            self.__logger.info(
+                {'main_id': str(main_uid), 'id': uid, 'type': t_scheduler, 'status': t_health, 'filepath': file_filepath, 'duration': res.get('duration')})
             self.__jobs.update(uid, file_filepath, t_scheduler, value, params,
                         t_health, res.get('duration'))
 
+    def __init_scheduler(self):
+        if (self.__scheduler.state != apscheduler.schedulers.base.STATE_RUNNING):
+            self.__scheduler.add_job(func=self.__scheduler_function,
+                            trigger="interval", seconds=60, max_instances=10)
+            self.__scheduler.start()
+            atexit.register(lambda: self.__scheduler.shutdown())
+            uid = str(uuid.uuid4())
+            self.__logger.info({'id': uid, 'type': t_main, "status": 'start SCHEDULER'})
 
     def __scheduler_function(self):
         # Create unique for scheduling step (one step every minute)
@@ -303,90 +322,86 @@ class Runner(FlaskView):
             all_start_time = time.time()
             greelets = []
             # Write self.__scheduler init info in self.__logger.write
-            self.__logger.write.info(json.dumps({'id': main_uid, 'type': t_scheduler,
-                                    'status': t_start}))
+            self.__logger.info({'id': main_uid, 'type': t_scheduler,
+                                    'status': t_start})
             if os.path.exists(self.__tasks_files_path):
-                for task in  self.__jobs.get(main_uid):
+                for job in  self.__jobs.list(main_uid):
                     g = gevent.spawn(self.__scheduler_greenlet,
-                                    main_uid, current_time, task)
+                                    main_uid, current_time, job)
                     greelets.append(g)
                 gevent.joinall(greelets)
             else:
-                self.__logger.write.error(json.dumps({'id': main_uid, 'type': t_scheduler, 'status': t_error,
-                                        "error": '__tasks_files_path', 'path': self.__tasks_files_path}))
+                self.__logger.error({'id': main_uid, 'type': t_scheduler, 'status': t_error,
+                                        "error": '__tasks_files_path', 'path': self.__tasks_files_path})
             durationTotal = (time.time() - all_start_time)
-            self.__logger.write.info(json.dumps({'id': main_uid, 'type': t_scheduler, 'status': t_health,
-                                    'version': self.version(), 'duration': durationTotal}))
+            self.__logger.info({'id': main_uid, 'type': t_scheduler, 'status': t_health, 'duration': durationTotal})
         except Exception as e:
             tb = traceback.format_exc()
             durationTotal = (time.time() - all_start_time)
-            self.__logger.write.error(json.dumps({'id': main_uid, 'type': t_scheduler, 'status': t_error,
-                                    'duration': durationTotal, 'error': str(e), 'trace': tb}))
+            self.__logger.error({'id': main_uid, 'type': t_scheduler, 'status': t_error,
+                                    'duration': durationTotal, 'error': str(e), 'trace': tb})
         except:
             tb = traceback.format_exc()
             durationTotal = (time.time() - all_start_time)
-            self.__logger.write.error(json.dumps({'id': main_uid, 'type': t_scheduler, 'status': t_error,
-                                    'duration': durationTotal, 'error': str(sys.exc_info()[0]), 'trace': tb}))
+            self.__logger.error({'id': main_uid, 'type': t_scheduler, 'status': t_error,
+                                    'duration': durationTotal, 'error': str(sys.exc_info()[0]), 'trace': tb})
 
-    def __not_found(self, error):
-        uid = str(uuid.uuid4())
-        self.__logger.write.error(json.dumps({'id': uid, 'type': 'request error',
-                                "status": '404', 'error': str(error)}))
-        return jsonify({'id': uid, 'error': 'Not found'}), 404
-
-    def __not_allowed(self, error):
-        uid = str(uuid.uuid4())
-        self.__logger.write.error(json.dumps({'id': uid, 'type': 'request error',
-                                "status": '405', 'error': str(error)}))
-        return jsonify({'id': uid, 'error': 'Method not allowed. The method is not allowed for the requested URL.'}), 405
-
-    def __not_working(self, error):
-        uid = str(uuid.uuid4())
-        self.__logger.write.error(json.dumps({'id': uid, 'type': 'request error',
-                                "status": '500', 'error': str(error)}))
-        return jsonify({'error': 'Something wrong happen'}), 500
-
-    def __exceptions(self, e):
-        uid = str(uuid.uuid4())
-        tb = traceback.format_exc()
-        self.__logger.write.error(json.dumps({'id': uid, 'type': 'Exception', 'method': request.method, 'status': t_error, 'addr': request.remote_addr,
-                                'scheme': request.scheme, 'full_path': request.full_path, 'error': str(e), 'trace': tb}))
-        return jsonify({'error':  str(e)}), 500
-    
-    def after_request(self, name, response):
-        uid = str(uuid.uuid4())
-        self.__logger.write.info(json.dumps({'id': uid, 'type': 'request', 'method': request.method, 'status': response.status,
-                                'addr': request.remote_addr, 'scheme': request.scheme, 'full_path': request.full_path}))
-        response.headers["Pragma"] = "no-cache"
-        response.headers['Last-Modified'] = datetime.datetime.now()
-        response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0, max-age=0'
-        response.headers['Expires'] = '-1'
-        return response
-
-    def before_first_request(self):
-        self.__scheduler.add_job(func=self.__scheduler_function,
-                        trigger="interval", seconds=60, max_instances=10)
-        self.__scheduler.start()
-        atexit.register(lambda: self.__scheduler.shutdown())
-
-    @route('/')
-    def index(self):
-        uid = str(uuid.uuid4())
-        self.__logger.write.info(json.dumps(
-            {'id': uid, 'type': t_static, 'status': 'send', 'filepath': self.__path_manager_index}))
-        return send_file(self.__path_manager_index), 200
-
-    @route('/env')
-    def env(self):
+    def __version(self):
         version = None
         try:
             with open(os.path.join(self.__path_lib_files, self.__info_file), 'r') as json_file:
                 version = json.load(json_file)
         except:
             version = {'error': 'cannot get info.json'}
+        return version
+    
+    def __not_found(self, error):
+        uid = str(uuid.uuid4())
+        self.__logger.error({'id': uid, 'type': 'request error',
+                                "status": '404', 'error': str(error)})
+        return jsonify({'id': uid, 'error': 'Not found'}), 404
+
+    def __not_allowed(self, error):
+        uid = str(uuid.uuid4())
+        self.__logger.error({'id': uid, 'type': 'request error',
+                                "status": '405', 'error': str(error)})
+        return jsonify({'id': uid, 'error': 'Method not allowed. The method is not allowed for the requested URL.'}), 405
+
+    def __not_working(self, error):
+        uid = str(uuid.uuid4())
+        self.__logger.error({'id': uid, 'type': 'request error',
+                                "status": '500', 'error': str(error)})
+        return jsonify({'error': 'Something wrong happen'}), 500
+
+    def __exceptions(self, e):
+        uid = str(uuid.uuid4())
+        tb = traceback.format_exc()
+        self.__logger.error({'id': uid, 'type': 'Exception', 'method': request.method, 'status': t_error, 'addr': request.remote_addr,
+                                'scheme': request.scheme, 'full_path': request.full_path, 'error': str(e), 'trace': tb})
+        return jsonify({'error':  str(e)}), 500
+    
+    def after_request(self, name, response):
+        uid = str(uuid.uuid4())
+        self.__logger.info({'id': uid, 'type': 'request', 'method': request.method, 'status': response.status,
+                                'addr': request.remote_addr, 'scheme': request.scheme, 'full_path': request.full_path})
+        response.headers["Pragma"] = "no-cache"
+        response.headers['Last-Modified'] = datetime.datetime.now()
+        response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0, max-age=0'
+        response.headers['Expires'] = '-1'
+        return response
+
+    @route('/')
+    def index(self):
+        uid = str(uuid.uuid4())
+        self.__logger.info(
+            {'id': uid, 'type': t_static, 'status': 'send', 'filepath': self.__path_manager_index})
+        return send_file(self.__path_manager_index), 200
+
+    @route('/env')
+    def env(self):
         env = {
             'status': t_health,
-            'version': version,
+            'version': self.__version(),
             'JUPYTERHUB_USER': self.__user,
             'PUBLIC_DATASCIENCE': self.__public_url,
             'PUBLIC_PROXY_API': self.__proxy_url,
@@ -394,22 +409,30 @@ class Runner(FlaskView):
             
         }
         return jsonify(env), 200
-
-    @route('/scheduler/<mode>')
-    def scheduler(self, mode: str):
-        if (mode == 'pause'):
-            self.__scheduler.pause()
-        elif (mode != 'status'):
-            self.__scheduler.resume()
-        status = 'ok'
-        if (self.__scheduler.state == apscheduler.schedulers.base.STATE_STOPPED):
-            status = 'stopped'
-        elif (self.__scheduler.state == apscheduler.schedulers.base.STATE_RUNNING):
+    
+    @route('/scheduler')
+    def scheduler(self):
+        status = 'stopped'
+        print('self.__scheduler.state', self.__scheduler.state)
+        if (self.__scheduler.state == apscheduler.schedulers.base.STATE_RUNNING):
             status = 'running'
         elif (self.__scheduler.state == apscheduler.schedulers.base.STATE_PAUSED):
             status = 'paused'
         return jsonify({"status": status}), 200
     
+    @route('/scheduler/<mode>')
+    def set_scheduler(self, mode: str):
+        if (mode == 'pause'):
+            self.__scheduler.pause()
+        elif (mode == 'resume'):
+            self.__scheduler.resume()
+        status = 'stopped'
+        if (self.__scheduler.state == apscheduler.schedulers.base.STATE_RUNNING):
+            status = 'running'
+        elif (self.__scheduler.state == apscheduler.schedulers.base.STATE_PAUSED):
+            status = 'paused'
+        return jsonify({"status": status}), 200
+
     @route('/logs')
     def logs(self):
         as_file = request.args.get('as_file', False)
@@ -421,21 +444,18 @@ class Runner(FlaskView):
             limit = int(request.args.get('limit', 0))
             skip = int(request.args.get('skip', 0))
             search = str(request.args.get('search', ''))
-            filters = bool(request.args.get('filters', []))
-            print('log path', self.__logger.get_file_path())
+            filters = list(request.args.get('filters', []))
             logs = self.__logger.list(uid, skip, limit, search, filters)
-            print('log logs', logs)
-            
-            self.__logger.write.info(json.dumps(
-                {'id': uid, 'type': t_static, 'status': 'send', 'filepath': 'logs', 'skip': skip, 'limit': limit, 'search': search, 'filters': filters}))
+            # self.__logger.info(
+                # {'id': uid, 'type': t_static, 'status': 'send', 'filepath': 'logs', 'skip': skip, 'limit': limit, 'search': search, 'filters': filters}))
             return jsonify(logs), 200
 
     @route('/jobs')
     def get(self):
         uid = str(uuid.uuid4())
         status = self.__jobs.list(uid)
-        self.__logger.write.info(json.dumps(
-            {'id': uid, 'type': t_static, 'status': 'send', 'filepath': 'status'}))
+        self.__logger.info(
+            {'id': uid, 'type': t_static, 'status': 'send', 'filepath': 'status'})
         return jsonify(status), 200
     
     @route('/jobs')
@@ -443,17 +463,17 @@ class Runner(FlaskView):
         uid = str(uuid.uuid4())
         data = request.get_json()
         if not request.is_json:
-            self.__logger.write.info(json.dumps(
-                {'id': uid, 'type': t_task, 'status': t_error, 'error': 'not json'}))
+            self.__logger.info(
+                {'id': uid, 'type': t_task, 'status': t_error, 'error': 'not json'})
             return jsonify({'result': 'not json'}), 400
         if not data or ["path", "type", "params", "value", "status"].sort() != list(data.keys()).sort():
-            self.__logger.write.info(json.dumps(
-                {'id': uid, 'type': t_task, 'status': t_error, 'error': 'missing keys', 'tb': data}))
+            self.__logger.info(
+                {'id': uid, 'type': t_task, 'status': t_error, 'error': 'missing keys', 'tb': data})
             return jsonify({'result': 'missing keys', }), 400
         updated = self.__jobs.update(uid, 
             data['path'], data['type'], data['value'], data['params'], data['status'])
-        self.__logger.write.info(json.dumps(
-            {'id': uid, 'type': t_task, 'status': updated['status']}))
+        self.__logger.info(
+            {'id': uid, 'type': t_task, 'status': updated['status']})
         return jsonify(updated), 200
 
     @route(f'/{t_static}/up')
@@ -484,23 +504,23 @@ class Runner(FlaskView):
             file_filepath = task.get('path')
             file_filename = os.path.basename(file_filepath)
             params = task.get('params', dict())
-            self.__logger.write.info(json.dumps(
-                {'id': uid, 'type': t_static, 'status': t_start, 'filepath': file_filepath, 'token': token}))
+            self.__logger.info(
+                {'id': uid, 'type': t_static, 'status': t_start, 'filepath': file_filepath, 'token': token})
             try:
                 self.__jobs.update(uid, file_filepath, t_static, token,
                             params, t_health, 1)
                 res = send_file(file_filepath, attachment_filename=file_filename)
-                self.__logger.write.info(json.dumps(
-                    {'id': uid, 'type': t_static, 'status': t_start, 'filepath': file_filepath, 'token': token}))
+                self.__logger.info(
+                    {'id': uid, 'type': t_static, 'status': t_start, 'filepath': file_filepath, 'token': token})
                 return res
             except Exception as e:
-                self.__logger.write.error(json.dumps(
-                    {'id': uid, 'type': t_static, 'status': t_error, 'filepath': file_filepath, 'token': token, "error": e}))
+                self.__logger.error(
+                    {'id': uid, 'type': t_static, 'status': t_error, 'filepath': file_filepath, 'token': token, "error": e})
                 self.__jobs.update(uid, file_filepath, t_static,
                             token, params, t_error, 1)
                 return self.__html_error(json.dumps({'id': uid, "error": e})), 404
-        self.__logger.write.error(json.dumps({'id': uid, 'type': t_static, 'status': t_error,
-                                "error": 'Cannot find your token', 'token': token}))
+        self.__logger.error({'id': uid, 'type': t_static, 'status': t_error,
+                                "error": 'Cannot find your token', 'token': token})
         return self.__html_error(json.dumps({'id': uid, "error": "Cannot find your token", 'token': token})), 401
 
 
@@ -512,20 +532,20 @@ class Runner(FlaskView):
             value = task.get('value', None)
             file_filepath = task.get('path')
             task['params'] = {**(task.get('params', dict())), **(request.args)}
-            self.__logger.write.info(json.dumps(
-                {'id': uid, 'type': t_notebook, 'status': t_start, 'filepath': file_filepath, 'token': token}))
+            self.__logger.info(
+                {'id': uid, 'type': t_notebook, 'status': t_start, 'filepath': file_filepath, 'token': token})
             res = self.__exec_job(uid, task)
             if (res.get('error')):
-                self.__logger.write.error(json.dumps({'main_id': uid, 'id': uid, 'type': t_notebook, 'status': t_error,
-                                        'filepath': file_filepath, 'duration': res.get('duration'), 'error': res.get('error')}))
+                self.__logger.error({'main_id': uid, 'id': uid, 'type': t_notebook, 'status': t_error,
+                                        'filepath': file_filepath, 'duration': res.get('duration'), 'error': res.get('error')})
                 self.__jobs.update(uid, file_filepath, t_notebook, value, task.get(
                     'params'), t_error, res.get('duration'))
                 return jsonify({'id': uid, "error": res.get('error')}), 200
-            self.__logger.write.info(json.dumps(
-                {'main_id': uid, 'id': uid, 'type': t_notebook, 'status': t_health, 'filepath': file_filepath, 'duration': res.get('duration')}))
+            self.__logger.info(
+                {'main_id': uid, 'id': uid, 'type': t_notebook, 'status': t_health, 'filepath': file_filepath, 'duration': res.get('duration')})
             self.__jobs.update(uid, file_filepath, t_notebook, value, task.get(
                 'params'), t_health, res.get('duration'))
             return self.__send_response(uid, res, t_notebook, res.get('duration'), task.get('params'))
-        self.__logger.write.error(json.dumps({'id': uid, 'type': t_notebook, 'status': t_error,
-                                'token': token, 'error': 'Cannot find your token'}))
+        self.__logger.error({'id': uid, 'type': t_notebook, 'status': t_error,
+                                'token': token, 'error': 'Cannot find your token'})
         return jsonify({'id': uid, "error": "Cannot find your token"}), 401

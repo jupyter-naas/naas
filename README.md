@@ -21,7 +21,7 @@ Whenever you need it (even when you sleep).
 
 `pytest -x tests/test_runner.py `
 or
-`.test_runner.sh`
+`./test_runner.sh`
 
 open manager :
 

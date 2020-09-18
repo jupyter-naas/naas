@@ -35,8 +35,8 @@ class Jobs():
                 self.__save(uid, init_data)
             except Exception as e:
                 print('Exception', e)
-                self.__logger.write.error(json.dumps(
-                    {'id': uid, 'type': 'init_job_storage', "status": 'error', 'error': str(e)}))            
+                self.__logger.error(
+                    {'id': uid, 'type': 'init_job_storage', "status": 'error', 'error': str(e)})          
 
     def __save(self, uid, data):
         try:
@@ -45,8 +45,8 @@ class Jobs():
                 f.close()
         except Exception as err:
             print('__save Exception', err)
-            self.__logger.write.error(json.dumps({'id': str(uid), 'type': 'set_job_storage',
-                                    "status": 'exception', 'filepath': self.__json_secrets_path, 'error': str(err)}))
+            self.__logger.error({'id': str(uid), 'type': 'set_job_storage',
+                                    "status": 'exception', 'filepath': self.__json_secrets_path, 'error': str(err)})
 
     def find_by_value(self, uid, value, target_type):
         job_list = pd.DataFrame(self.list(uid))
@@ -70,8 +70,8 @@ class Jobs():
                 f.close()
         except Exception as err:
             print('cannot open')
-            self.__logger.write.error(json.dumps({'id': uid, 'type': 'get_job_storage',
-                                    "status": 'exception', 'filepath': self.__json_secrets_path, 'error': str(err)}))
+            self.__logger.error({'id': uid, 'type': 'get_job_storage',
+                                    "status": 'exception', 'filepath': self.__json_secrets_path, 'error': str(err)})
             data = []
         return data
     
@@ -90,12 +90,12 @@ class Jobs():
             dt_string = now.strftime("%Y-%m-%d %H:%M:%S")
             if (len(cur_elem) == 1):
                 if (status == t_delete):
-                    self.__logger.write.info(json.dumps({'id': uid, 'type': target_type, 'value': value, 'status': t_delete,
-                                'path': path, 'params': params}))
+                    self.__logger.info({'id': uid, 'type': target_type, 'value': value, 'status': t_delete,
+                                'path': path, 'params': params})
                     df = df.drop(cur_elem.index)
                 else:
-                    self.__logger.write.info(json.dumps({'id': uid, 'type': target_type, 'value': value, 'status': t_update,
-                            'path': path, 'params': params}))
+                    self.__logger.info({'id': uid, 'type': target_type, 'value': value, 'status': t_update,
+                            'path': path, 'params': params})
                     index = cur_elem.index[0]
                     df.at[index,'id'] = uid
                     df.at[index,'status'] = status
@@ -110,8 +110,8 @@ class Jobs():
                         df.at[index,'totalRun'] = 0                    
                     res = t_update
             elif (status == t_add and len(cur_elem) == 0):
-                self.__logger.write.info(json.dumps({'id': uid, 'type': target_type, 'value': value, 'status': t_update,
-                        'path': path, 'params': params}))
+                self.__logger.info({'id': uid, 'type': target_type, 'value': value, 'status': t_update,
+                        'path': path, 'params': params})
                 new_row = [{'id': uid,'type': target_type, 'value': value, 'status': t_add,
                             'path': path, 'params': params, 'lastRun': runTime, 'totalRun': runTime,' lastUpdate':  dt_string}]
                 df_new = pd.DataFrame(new_row)
@@ -123,8 +123,8 @@ class Jobs():
                 self.__save(uid, data)
         except Exception as e:
             print('cannot update', e)
-            self.__logger.write.error(json.dumps({'id': uid, 'type': target_type, 'value': value, 'status': t_error,
-                        'path': path, 'params': params, 'error': str(e)}))
+            self.__logger.error({'id': uid, 'type': target_type, 'value': value, 'status': t_error,
+                        'path': path, 'params': params, 'error': str(e)})
         self.__storage_sem.release()
         return {"status": res, "data": data}
 

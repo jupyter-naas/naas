@@ -20,7 +20,7 @@ class Manager():
     __jup_token = None
     __production_path = None
     __folder_name = '.naas'
-    __json_files = 'tasks.json'
+    __json_files = 'jobs.json'
     __readme_name = 'README.md'
     __json_files_path = None
     __readme_path = None

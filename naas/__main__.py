@@ -10,7 +10,5 @@ def check_options():
 
 if __name__ == '__main__':
     args = check_options()
-    path = os.environ.get('JUPYTER_SERVER_ROOT', os.getcwd())
-    user = os.environ.get('JUPYTERHUB_USER', 'joyvan@gmail.com')
-    runner = Runner(path=path, port=args.port, user=user)
+    runner = Runner(port=args.port)
     runner.start(deamon=False)

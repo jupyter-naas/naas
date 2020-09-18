@@ -3,28 +3,42 @@ import traceback
 from .types import t_add
 import logging
 import errno
+import uuid
 import json
 import csv
 import io
 import os
+import datetime as dt
+
 
 class CsvFormatter(logging.Formatter):
     """
     Custom logger for the csv logs
     """
-
-    def __init__(self):
-        super().__init__(datefmt='%Y-%m-%d %H:%M:%S')
+    converter=dt.datetime.fromtimestamp
+    
+    def __init__(self, reseted=False):
+        super().__init__(datefmt='%Y-%m-%d %H:%M:%S.%f')
         self.output = io.StringIO()
         self.writer = csv.writer(
             self.output, delimiter=';', quoting=csv.QUOTE_ALL)
-        self.writer.writerow(
-            ['asctime', 'levelname', 'name', 'funcName', 'lineno', 'message'])
+        if reseted:
+            self.writer.writerow(
+                ['asctime', 'levelname', 'name', 'message'])          
 
+    def formatTime(self, record, datefmt=None):
+        ct = self.converter(record.created)
+        if datefmt:
+            s = ct.strftime(datefmt)
+        else:
+            t = ct.strftime("%Y-%m-%d %H:%M:%S")
+            s = "%s,%03d" % (t, record.msecs)
+        return s
+    
     def format(self, record):
         record.asctime = self.formatTime(record, self.datefmt)
         self.writer.writerow(
-            [record.asctime, record.levelname, record.name, record.funcName, record.lineno, record.msg])
+            [record.asctime, record.levelname, record.name, record.msg])
         data = self.output.getvalue()
         self.output.truncate(0)
         self.output.seek(0)
@@ -41,6 +55,7 @@ class Logger():
         self.__path_user_files = os.environ.get('JUPYTER_SERVER_ROOT', '/home/ftp')   
         self.__path_naas_files = os.path.join(self.__path_user_files, self.__naas_folder)
         self.__path_logs_file = os.path.join(self.__path_naas_files, self.__logs_filename) 
+        reseted = False
         if not os.path.exists(self.__path_naas_files):
             try:
                 print('Init Naas folder')
@@ -48,17 +63,22 @@ class Logger():
             except OSError as exc: # Guard against race condition
                 if exc.errno != errno.EEXIST:
                     raise
-        if reset:
+        if reset or not os.path.exists(self.__path_logs_file):
+            reseted = True
             with open(self.__path_logs_file, 'w') as fp: 
                 pass
         self.__log = logging.getLogger(self.__name)
-        handler = logging.FileHandler(self.__path_logs_file, "w")
-        handler.setFormatter(CsvFormatter())
+        handler = logging.FileHandler(self.__path_logs_file, "a")
+        handler.setFormatter(CsvFormatter(reseted))
         self.__log.addHandler(handler)
         logging.basicConfig(level=logging.INFO)
-        self.write = self.__log
-        self.write.info(json.dumps({'id': '0', 'status': 'inited', 'type': t_add}))
         
+    def info(self, data):
+        self.__log.info(json.dumps(data))
+
+    def error(self, data):
+        self.__log.error(json.dumps(data))
+
     def clear(self):
         os.remove(self.__path_logs_file)
 
