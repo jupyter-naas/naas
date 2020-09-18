@@ -26,7 +26,7 @@ class Notifications():
             jsn = req.json()
             return jsn
         except Exception as err:
-            self.logger.write.error(json.dumps(
+            self.logger.error(json.dumps(
                 {'id': uid, 'type': 'notification error', 'error': str(err)}))
 
     def get_status_server(self):
@@ -50,7 +50,7 @@ class Notifications():
             jsn = req.json()
             return jsn
         except Exception as err:
-            self.logger.write.error(json.dumps(
+            self.logger.error(json.dumps(
                 {'id': uid, 'type': 'notification error', 'error': str(err)}))
 
 
@@ -70,5 +70,5 @@ class Notifications():
                 jsn = req.json()
                 return jsn
             except Exception as err:
-                self.logger.write.error(json.dumps(
+                self.logger.error(json.dumps(
                     {'id': uid, 'type': 'notification error', 'error': str(err)}))

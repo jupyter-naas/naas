@@ -1,6 +1,6 @@
 # from gevent.lock import BoundedSemaphore
 from asyncio import Semaphore
-from naas.types import t_delete, t_add, t_skip, t_update, t_error
+from naas.types import t_delete, t_add, t_skip, t_update, t_error, t_start
 import pandas as pd
 import datetime
 import errno
@@ -59,9 +59,9 @@ class Jobs():
             cur_jobs = job_list[(job_list.type == target_type)
                             & (job_list.value == value)]
             cur_job = cur_jobs.to_dict('records')
-            return cur_job[0]
-        else:
-            return None
+            if (len(cur_job) == 1):
+                return cur_job[0]
+        return None
 
     def find_by_path(self, uid, filepath, target_type):
         data = self.list(uid)
@@ -70,9 +70,9 @@ class Jobs():
             cur_jobs = job_list[(job_list.type == target_type)
                             & (job_list.path == filepath)]
             cur_job = cur_jobs.to_dict('records')
-            return cur_job[0]
-        else:
-            return None
+            if (len(cur_job) == 1):
+                return cur_job[0]
+        return None
 
     def is_running(self, uid, notebook_filepath, target_type):
         cur_job = self.find_by_path(uid, notebook_filepath, target_type)
@@ -133,7 +133,7 @@ class Jobs():
                 self.__logger.info({'id': uid, 'type': target_type, 'value': value, 'status': t_update,
                         'path': path, 'params': params})
                 new_row = [{'id': uid,'type': target_type, 'value': value, 'status': t_add,
-                            'path': path, 'params': params, 'lastRun': runTime, 'totalRun': runTime,' lastUpdate':  dt_string}]
+                            'path': path, 'params': params, 'lastRun': runTime, 'totalRun': runTime, 'lastUpdate':  dt_string}]
                 df_new = pd.DataFrame(new_row)
                 df = pd.concat([df, df_new], axis=0)
             else:

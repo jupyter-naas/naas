@@ -1,17 +1,18 @@
 from sentry_sdk.integrations.sanic import SanicIntegration
+from .controllers.scheduler import SchedulerController
+from .controllers.static import StaticController
+from .controllers.notebooks import NbController
 from .controllers.jobs import JobsController
 from .controllers.logs import LogsController
 from sanic_openapi import swagger_blueprint
 from .controllers.env import EnvController
-from .controllers.notebooks import NbController
-from .controllers.static import StaticController
-from .controllers.scheduler import SchedulerController
 from .notifications import Notifications
+from .proxy import escape_kubernet
 from .scheduler import Scheduler
 from .notebooks import Notebooks
 from daemonize import Daemonize
-from datetime import datetime
 from naas.types import t_main
+from datetime import datetime
 from .logger import Logger
 from sanic import Sanic
 from .jobs import Jobs
@@ -78,6 +79,8 @@ class Runner():
         return version
 
     async def initialize_before_start(self, app, loop):
+        self.__nb = Notebooks(self.__logger, loop, self.__notif)
+        self.__app.add_route(NbController.as_view(self.__logger, self.__jobs, self.__nb), '/notebooks/<token>')
         self.__scheduler = Scheduler(self.__logger, self.__jobs, loop)
         self.__app.add_route(SchedulerController.as_view(self.__logger, self.__scheduler), '/scheduler/<mode>')
         self.__scheduler.start()
@@ -94,21 +97,21 @@ class Runner():
             except Exception:
                 print('No Deamon running')
 
-    def start(self, deamon=True):
+    def start(self, deamon=True, port=None):
         user = getpass.getuser()
         if (user != self.__user):
             raise Exception(f"{user} not autorized, use {self.__user} instead")
         self.kill()
+        if port:
+            self.__port = port
         self.__logger = Logger()
         self.__notif = Notifications(self.__logger)
         self.__jobs = Jobs(self.__logger)
-        self.__nb = Notebooks(self.__logger, self.__jobs)
         self.__app = Sanic()
         self.__app.register_listener(self.initialize_before_start, 'before_server_start')
         self.__app.add_route(EnvController.as_view(self.__logger, self.__version, self.__user, self.__public_url, self.__proxy_url, self.__tz), '/env')
         self.__app.add_route(LogsController.as_view(self.__logger), '/logs')
         self.__app.add_route(JobsController.as_view(self.__logger, self.__jobs), '/jobs')
-        self.__app.add_route(NbController.as_view(self.__logger, self.__jobs, self.__nb), '/notebooks/<token>')
         self.__app.add_route(StaticController.as_view(self.__logger,  self.__jobs, self.__path_lib_files), '/static/<token>')
         
         self.__app.static('/', self.__path_manager_index, name='manager.html')

@@ -1,6 +1,7 @@
 from base64 import b64encode
 import escapism
 import string
+import os
 
 _docker_safe_chars = set(string.ascii_letters + string.digits)
 _docker_escape_char_kubernet = "-"

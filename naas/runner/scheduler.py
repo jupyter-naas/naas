@@ -1,11 +1,10 @@
 # from apscheduler.schedulers.background import BackgroundScheduler
-from naas.types import t_scheduler, t_start, t_main, t_start, t_health, t_error
+from naas.types import t_scheduler, t_start, t_main, t_health, t_error
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 import apscheduler.schedulers.base
 import asyncio
 import traceback
 import datetime
-import atexit
 import time
 import uuid
 import sys
@@ -33,7 +32,6 @@ class Scheduler():
             self.__scheduler.add_job(func=self.__scheduler_function,
                             trigger="interval", seconds=60, max_instances=10)
             self.__scheduler.start()
-            atexit.register(lambda: self.__scheduler.shutdown())
             uid = str(uuid.uuid4())
             self.__logger.info({'id': uid, 'type': t_main, "status": 'start SCHEDULER'})
 
