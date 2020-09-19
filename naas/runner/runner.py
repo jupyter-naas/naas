@@ -111,7 +111,7 @@ class Runner():
         self.__app.blueprint(swagger_blueprint)
         return self.__app
                 
-    def start(self, deamon=True, port=None):
+    def start(self, deamon=True, port=None, debug=True):
         user = getpass.getuser()
         if (user != self.__user):
             raise Exception(f"{user} not autorized, use {self.__user} instead")
@@ -132,7 +132,7 @@ class Runner():
         else:
             print('Start Runner front Mode')
             try:
-                self.__main(True)
+                self.__main(debug)
             except KeyboardInterrupt:
                 print('Shutdown server')
                 sys.exit()
