@@ -63,7 +63,10 @@ class Api():
         
     def respond_markdown(self, data):
         display(Markdown(data, metadata={'naas_api': True}))
-                                
+
+    def respond_csv(self, data):
+        display(HTML(empDfObj.to_html(), metadata={'naas_api': True, 'naas_type': 'csv'}))
+
     def get(self, path=None):
         current_file = self.manager.get_path(path)
         self.manager.get_prod(current_file)

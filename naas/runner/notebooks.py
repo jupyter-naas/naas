@@ -1,4 +1,4 @@
-from sanic.response import json, file, redirect
+from sanic.response import json, redirect, stream
 from .proxy import escape_kubernet
 from naas.types import t_notebook, t_scheduler, t_error, t_health
 import papermill as pm
@@ -6,6 +6,9 @@ import traceback
 import asyncio
 import time
 import os
+import csv
+import io
+import bs4
 
 class Notebooks():
     __logger = None
@@ -35,9 +38,30 @@ class Notebooks():
             res_data = self.__get_res(res)
             if res_data and res_data.get('type') == 'application/json':
                 return json(res_data.get('data'))
+            elif res_data and res_data.get('type') == 'text/csv':
+                csv_data = self.__convert_csv(res_data.get('data'))
+                print('csv_data', csv_data)
+                async def streaming_fn(res):
+                    await res.write(csv_data)
+                return stream(streaming_fn, content_type=res_data.get('type'))
             elif res_data:
-                return file(res_data.get('data'), mimetype=res_data.get('type'))
+                async def streaming_fn(res):
+                    await res.write(res_data.get('data'))
+                return stream(streaming_fn, content_type=res_data.get('type'))
         return json({'id': uid, "status": "Done", "time": duration})
+
+    def __convert_csv(self, data):
+        soup = bs4.BeautifulSoup(data)
+        output = []
+        for table_num, table in enumerate(soup.find_all('table')):
+            csv_string = io.StringIO()
+            csv_writer = csv.writer(csv_string, delimiter=';', quoting=csv.QUOTE_ALL)
+            for tr in table.find_all('tr'):
+                row = [''.join(cell.stripped_strings) for cell in tr.find_all(['td', 'th'])]
+                csv_writer.writerow(row)
+            table_attrs = dict(num=table_num)
+            output.append((csv_string.getvalue(), table_attrs))
+        return output[0][0]
 
     def __get_res(self, res):
         cells = res.get('cells')
@@ -52,7 +76,10 @@ class Notebooks():
                     if metadata[meta].get('naas_api'):
                         if (data.get('application/json')):
                             result_type = 'application/json'
-                            result = data.get('application/json')
+                        elif (data.get('text/html') and metadata[meta].get('naas_type') == 'csv'):
+                            result_type = 'text/csv'
+                            result = data.get('text/html')
+                            break
                         elif (data.get('text/html')):
                             result_type = 'text/html'
                             result = data.get('text/html')

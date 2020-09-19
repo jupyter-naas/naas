@@ -19,6 +19,9 @@ Whenever you need it (even when you sleep).
 
 # test runner
 
+remove uvloop to allow papermill to work
+`pip3 uninstall uvloop`
+
 `pytest -x tests/test_runner.py `
 or
 `./test_runner.sh`
