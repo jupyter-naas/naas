@@ -1,17 +1,21 @@
 from naas.types import t_add, t_delete, t_update
 from naas.runner.logger import Logger
 import pytest
+import logging
 import uuid
 import os
 
 user_folder_name = 'test_user_folder'
 
-def test_init(tmp_path):
+def test_init(tmp_path, caplog):
+    caplog.set_level(logging.INFO)
     path_srv_root = os.path.join(os.getcwd(), user_folder_name)
     # path_srv_root = os.path.join(str(tmp_path), user_folder_name)
     os.environ["JUPYTER_SERVER_ROOT"] = path_srv_root
-    logger = Logger()
+    logger = Logger(clear=True)
     uid = str(uuid.uuid4())
+    data = logger.list(uid).get('data')
+    assert len(data) == 0
     logger.info({'id': uid, 'status': 'inited', 'type': t_add})
     data = logger.list(uid).get('data')
     assert len(data) == 1
@@ -19,16 +23,18 @@ def test_init(tmp_path):
     assert log['levelname'] == 'INFO'
     assert log['status'] == 'inited'
     assert log['id'] == uid
-    logger.clear()
 
-def test_no_clean(tmp_path):
+def test_clean(tmp_path, caplog):
+    caplog.set_level(logging.INFO)
     path_srv_root = os.path.join(str(tmp_path), user_folder_name)
     os.environ["JUPYTER_SERVER_ROOT"] = path_srv_root
-    logger = Logger()
+    logger = Logger(clear=True)
     uid = str(uuid.uuid4())
-    assert len(logger.list(uid).get('data')) == 0
+    data = logger.list(uid).get('data')
+    assert len(data) == 0
     logger.info({'id': uid, 'type': t_add, "status": 'test_1'})
-    assert len(logger.list(uid).get('data')) == 1
+    data = logger.list(uid).get('data')
+    assert len(data) == 1
     logger_new = Logger()
     assert len(logger_new.list(uid).get('data')) == 1
     logger_new.clear()
@@ -36,6 +42,7 @@ def test_no_clean(tmp_path):
     
 
 def test_add(tmp_path, caplog):
+    caplog.set_level(logging.INFO)
     path_srv_root = os.path.join(str(tmp_path), user_folder_name)
     os.environ["JUPYTER_SERVER_ROOT"] = path_srv_root
     logger = Logger()
@@ -52,7 +59,8 @@ def test_add(tmp_path, caplog):
     assert log['type'] == t_add
     assert log['status'] == 'test_2'
 
-def test_list(tmp_path):
+def test_list(tmp_path, caplog):
+    caplog.set_level(logging.INFO)
     path_srv_root = os.path.join(str(tmp_path), user_folder_name)
     os.environ["JUPYTER_SERVER_ROOT"] = path_srv_root
     logger = Logger()

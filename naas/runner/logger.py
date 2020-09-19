@@ -17,13 +17,10 @@ class CsvFormatter(logging.Formatter):
     """
     converter=dt.datetime.fromtimestamp
     
-    def __init__(self, set_headers=False):
+    def __init__(self):
         super().__init__(datefmt='%Y-%m-%d %H:%M:%S.%f')
         self.output = io.StringIO()
         self.writer = csv.writer(self.output, delimiter=';', quoting=csv.QUOTE_ALL)
-        # if set_headers:
-        #     print('write headers')
-        #     self.writer.writerow(['asctime', 'levelname', 'name', 'message'])
 
     def formatTime(self, record, datefmt=None):
         ct = self.converter(record.created)
@@ -35,6 +32,7 @@ class CsvFormatter(logging.Formatter):
         return s
     
     def format(self, record):
+        print('record', record)
         record.asctime = self.formatTime(record, self.datefmt)
         self.writer.writerow(
             [record.asctime, record.levelname, record.name, record.msg])
@@ -49,8 +47,9 @@ class Logger():
     __logs_filename = 'logs.csv'
     __naas_folder = '.naas'
     __path_user_files = None
+    __columns = ['asctime', 'levelname', 'name', 'message']
     
-    def __init__(self, reset=False):
+    def __init__(self, clear=False):
         self.__path_user_files = os.environ.get('JUPYTER_SERVER_ROOT', '/home/ftp')   
         self.__path_naas_files = os.path.join(self.__path_user_files, self.__naas_folder)
         self.__path_logs_file = os.path.join(self.__path_naas_files, self.__logs_filename) 
@@ -61,11 +60,8 @@ class Logger():
             except OSError as exc: # Guard against race condition
                 if exc.errno != errno.EEXIST:
                     raise
-        if reset or not os.path.exists(self.__path_logs_file):
-            with open(self.__path_logs_file, 'w') as fp:
-                separator = ';'
-                fp.write(f"{separator.join(['asctime', 'levelname', 'name', 'message'])}\n")
-                pass
+        if clear or not os.path.exists(self.__path_logs_file):
+            self.clear()
         self.__log = logging.getLogger(self.__name)
         handler = logging.FileHandler(self.__path_logs_file, "a")
         handler.setFormatter(CsvFormatter())
@@ -73,13 +69,17 @@ class Logger():
         logging.basicConfig(level=logging.INFO)
         
     def info(self, data):
+        print('info', data, self.__path_logs_file)
         self.__log.info(json.dumps(data))
 
     def error(self, data):
         self.__log.error(json.dumps(data))
 
     def clear(self):
-        os.remove(self.__path_logs_file)
+        with open(self.__path_logs_file, 'w') as fp:
+            separator = ';'
+            fp.write(f"{separator.join(self.__columns)}\n")
+            pass
 
     def get_file_path(self):
         return self.__path_logs_file
@@ -87,10 +87,7 @@ class Logger():
     def list(self, uid: str, skip: int = 0, limit: int = 0, search: str = '', filters: list = []):
         df = None
         try:
-            df = pd.read_csv(self.__path_logs_file, sep=';', index_col=0)
-            with open(self.__path_logs_file, 'r') as fp:
-                print('fp', fp.read())
-            print(df)
+            df = pd.read_csv(self.__path_logs_file, sep=';', usecols=self.__columns, index_col=0)
             df1 = pd.DataFrame(df.pop('message').apply(
                 pd.io.json.loads).values.tolist(), index=df.index)
             df = pd.concat([df1, df], axis=1, sort=False)

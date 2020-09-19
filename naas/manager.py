@@ -208,7 +208,7 @@ class Manager():
             dev_path = obj.get('path')
             obj['path'] = self.get_prod_path(obj.get('path'))
             self.__copy_file_in_prod(dev_path)
-            r = requests.post(f"{self.__local_api}/v1/jobs", json={**obj, **{'status': t_add}})
+            r = requests.post(f"{self.__local_api}/jobs", json={**obj, **{'status': t_add}})
             if not silent:
                 print(f'{r.json()["status"]} ==> {obj}')
             return obj
@@ -219,7 +219,7 @@ class Manager():
         if "type" in obj and "path" in obj:
             obj['path'] = self.get_prod_path(obj.get('path'))
             self.__del_file_in_prod(obj['path'])
-            r = requests.post(f"{self.__local_api}/v1/jobs", json={**obj, **{'status': t_delete}})
+            r = requests.post(f"{self.__local_api}/jobs", json={**obj, **{'status': t_delete}})
             if not silent:
                 print(f'{r.json()["status"]} ==> {obj}')
             return obj

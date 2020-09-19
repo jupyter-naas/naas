@@ -3,12 +3,14 @@ from naas.runner import Runner
 import os
 import getpass
 import shutil
+import logging
 
 user_folder_name = 'test_user_folder'
 
 @pytest.yield_fixture
 # @pytest.fixture
-def runner():
+def runner(caplog):
+    caplog.set_level(logging.INFO)
     path_srv_root = os.path.join(os.getcwd(), user_folder_name)
     user = getpass.getuser()
 
@@ -20,6 +22,7 @@ def runner():
     os.environ["PUBLIC_DATASCIENCE"] = 'localhost:5000'
     
     app = Runner().init_app()
+    
     yield app  
     # yield app  
     # yield app.asgi_client  

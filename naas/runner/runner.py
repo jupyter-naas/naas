@@ -111,6 +111,9 @@ class Runner():
         self.__app.add_route(StaticController.as_view(self.__logger,  self.__jobs, self.__path_lib_files), '/static/<token>')
         self.__app.static('/', self.__path_manager_index, name='manager.html')
         self.__app.blueprint(swagger_blueprint)
+        uid = str(uuid.uuid4())
+        self.__logger.info(
+            {'id': uid, 'type': t_main, "status": 'init API'})
         return self.__app
                 
     def start(self, deamon=True, port=None, debug=True):

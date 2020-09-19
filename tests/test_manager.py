@@ -26,35 +26,34 @@ def test_init(tmp_path):
 def test_nb_path(tmp_path):
     path_srv_root = os.path.join(str(tmp_path), user_folder_name)
     os.environ["JUPYTER_SERVER_ROOT"] = path_srv_root
-    # need better test
+    # TODO need better test
     manager = Manager()
     assert manager.notebook_path() == None
 
 def test_get_path(tmp_path):
     path_srv_root = os.path.join(str(tmp_path), user_folder_name)
     os.environ["JUPYTER_SERVER_ROOT"] = path_srv_root
-    # need better test
+    # TODO need better test
     manager = Manager()
     assert manager.get_path(test_file_path) == test_file_path
 
 
-def test_copy_file(runner, tmp_path):
+def test_copy_file(runner, tmp_path,requests_mock):
     path_srv_root = os.path.join(str(tmp_path), user_folder_name)
     os.environ["JUPYTER_SERVER_ROOT"] = path_srv_root
     os.environ["JUPYTERHUB_USER"] = 'joyvan'
     os.environ["PUBLIC_DATASCIENCE"] = 'localhost:5000'
     os.environ["PUBLIC_PROXY_API"] = 'proxy:5000'
 
-    # need better test
-    # runner.start(deamon=False)
     new_path = os.path.join(path_srv_root, test_file)
     os.makedirs(os.path.dirname(new_path))
     copy2(test_file_path, new_path)
     manager = Manager()
-    # prod_path = manager.get_prod_path(test_file_path)
+    prod_path = manager.get_prod_path(test_file_path)
     obj = {"type": t_notebook, "path": new_path, "params": {}, "value": token}
+    requests_mock.post(f'http://{os.environ["PUBLIC_DATASCIENCE"]}/jobs', json=[obj])
+
     manager.add_prod(obj, True)
-    # manager.__copy_file_in_prod(test_file_path)
     assert os.path.exists(prod_path)
     manager.get_prod(new_path)
     dev_dir = os.path.dirname(new_path)
