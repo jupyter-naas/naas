@@ -4,6 +4,7 @@ import os
 import json
 import re
 import getpass
+from naas.runner import Runner
 
 user_folder_name = 'test_user_folder'
 user = getpass.getuser()
@@ -13,27 +14,26 @@ env_data = {'status': 'healthy', 'version': {'error': 'cannot get info.json'}, '
 status_data = {'status': 'running'}
 input_headers = [('Content-Type', 'application/json'), ('Accept', 'application/json')]
 
+# @pytest.mark.asyncio
 def test_init(runner):
-    app = runner.get_test()
-    # with app.app_context() and app.test_client() as c:
-    req = app.get('/v1/env', headers=input_headers)
-    assert req.status_code == 200
-    env = json.loads(req.data)
-    assert env == env_data
-
+    request, response = runner.test_client.get('/env')
+    assert response.status == 200
+    assert env_data == response.json
+    
 def test_sheduler(runner):
-    app = runner.get_test()
-    # with app.app_context() and app.test_client() as c:
-    req = app.get('/v1/scheduler/status', headers=input_headers)
-    assert req.status_code == 200
-    scheduler_status = json.loads(req.data)
-    assert status_data == scheduler_status     
+    request, response = runner.test_client.get('/scheduler/status')
+    assert response.status == 200
+    assert status_data == response.json
+
+def test_static(runner):
+    request, response = runner.test_client.get('/static/up')
+    assert response.status == 200
+    # TODO add more test
 
 def test_logs(runner):
-    app = runner.get_test()
-    req = app.get('/v1/logs', headers=input_headers)
-    assert req.status_code == 200
-    logs = json.loads(req.data)
+    request, response = runner.test_client.get('/logs')
+    assert response.status == 200
+    logs = response.json
     assert logs.get('totalRecords') == 1
     status = logs.get('data')[0].get('status')
     assert status == 'start API'

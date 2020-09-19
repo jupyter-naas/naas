@@ -97,6 +97,20 @@ class Runner():
             except Exception:
                 print('No Deamon running')
 
+    def init_app(self):
+        self.__logger = Logger()
+        self.__notif = Notifications(self.__logger)
+        self.__jobs = Jobs(self.__logger)
+        self.__app = Sanic(__name__)
+        self.__app.register_listener(self.initialize_before_start, 'before_server_start')
+        self.__app.add_route(EnvController.as_view(self.__logger, self.__version, self.__user, self.__public_url, self.__proxy_url, self.__tz), '/env')
+        self.__app.add_route(LogsController.as_view(self.__logger), '/logs')
+        self.__app.add_route(JobsController.as_view(self.__logger, self.__jobs), '/jobs')
+        self.__app.add_route(StaticController.as_view(self.__logger,  self.__jobs, self.__path_lib_files), '/static/<token>')
+        self.__app.static('/', self.__path_manager_index, name='manager.html')
+        self.__app.blueprint(swagger_blueprint)
+        return self.__app
+                
     def start(self, deamon=True, port=None):
         user = getpass.getuser()
         if (user != self.__user):
@@ -104,18 +118,7 @@ class Runner():
         self.kill()
         if port:
             self.__port = port
-        self.__logger = Logger()
-        self.__notif = Notifications(self.__logger)
-        self.__jobs = Jobs(self.__logger)
-        self.__app = Sanic()
-        self.__app.register_listener(self.initialize_before_start, 'before_server_start')
-        self.__app.add_route(EnvController.as_view(self.__logger, self.__version, self.__user, self.__public_url, self.__proxy_url, self.__tz), '/env')
-        self.__app.add_route(LogsController.as_view(self.__logger), '/logs')
-        self.__app.add_route(JobsController.as_view(self.__logger, self.__jobs), '/jobs')
-        self.__app.add_route(StaticController.as_view(self.__logger,  self.__jobs, self.__path_lib_files), '/static/<token>')
-        
-        self.__app.static('/', self.__path_manager_index, name='manager.html')
-        self.__app.blueprint(swagger_blueprint)
+        self.init_app()
         if deamon:
             self.__sentry = sentry_sdk.init(
                 dsn="https://28c6dea445f741a7a0c5e4db4df88df4@o448748.ingest.sentry.io/5430604",
