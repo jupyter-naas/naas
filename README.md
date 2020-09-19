@@ -29,3 +29,11 @@ or
 open manager :
 
 `localhost:5000/`
+
+# deploy
+
+`python3 setup.py sdist`
+
+# publish
+
+`python3 -m twine upload dist/* -u`
