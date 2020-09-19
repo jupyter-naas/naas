@@ -38,6 +38,7 @@ class Runner():
     __tasks_files = 'jobs.json'
     __info_file = 'info.json'
     __app = None
+    __nb = None
     __http_server = None
     __notif = None
     __jobs = None
@@ -79,11 +80,12 @@ class Runner():
         return version
 
     async def initialize_before_start(self, app, loop):
-        self.__nb = Notebooks(self.__logger, loop, self.__notif)
-        self.__app.add_route(NbController.as_view(self.__logger, self.__jobs, self.__nb), '/notebooks/<token>')
-        self.__scheduler = Scheduler(self.__logger, self.__jobs, loop)
-        self.__app.add_route(SchedulerController.as_view(self.__logger, self.__scheduler), '/scheduler/<mode>')
-        self.__scheduler.start()
+        if self.__nb is None:
+            self.__nb = Notebooks(self.__logger, loop, self.__notif)
+            self.__app.add_route(NbController.as_view(self.__logger, self.__jobs, self.__nb), '/notebooks/<token>')
+            self.__scheduler = Scheduler(self.__logger, self.__jobs, loop)
+            self.__app.add_route(SchedulerController.as_view(self.__logger, self.__scheduler), '/scheduler/<mode>')
+            self.__scheduler.start()
 
     def kill(self):
         if os.path.exists(self.__path_pidfile):
