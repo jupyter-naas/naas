@@ -13,7 +13,7 @@ reqs = install_reqs
 
 setup(
     name='naas',
-    version='0.0.2',
+    version='0.0.3',
     scripts=['scripts/naas'] ,
     author="Martin Donadieu",
     author_email="martindonadieu@gmail.com",
