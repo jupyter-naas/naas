@@ -125,12 +125,13 @@ class Runner():
             self.__port = port
         self.init_app()
         if deamon:
-            self.__sentry = sentry_sdk.init(
-                dsn="https://28c6dea445f741a7a0c5e4db4df88df4@o448748.ingest.sentry.io/5430604",
-                traces_sample_rate=1.0,
-                environment=escape_kubernet(self.__user),
-                integrations=[SanicIntegration()]
-            )
+            if (os.environ.get('NAAS_SENTRY_DSN')):
+                self.__sentry = sentry_sdk.init(
+                    dsn=os.environ.get('NAAS_SENTRY_DSN'),
+                    traces_sample_rate=1.0,
+                    environment=escape_kubernet(self.__user),
+                    integrations=[SanicIntegration()]
+                )
             self.__daemon = Daemonize(app=self.__name, pid=self.__path_pidfile, action=self.__main)
             print('Start Runner Deamon Mode')
             self.__daemon.start()
