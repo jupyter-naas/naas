@@ -10,7 +10,7 @@ ipython>=7,<8
 ipykernel>=5,<6
 requests>=2,<3
 sentry-sdk>=0,<1
-sanic>=20,<21 --no-binary=sanic
+sanic>=20,<21
 sanic-openapi>=0,<1
 argparse>=1,<2
 nbconvert>=6,<7
