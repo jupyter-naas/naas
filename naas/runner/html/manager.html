@@ -158,9 +158,11 @@
                 getUrl: function (value, type) {
                     let urlList = window.location.href.split('/');
                     urlList.pop()
-                    let newUrl = `${urlList.join('/')}/${value}`
+                    let newUrl = `${urlList.join('/')}`
                     if (type === 'api') {
-                        newUrl = `${newUrl}/start`
+                        newUrl = `${newUrl}/notebooks/${value}`
+                    } else {
+                        newUrl = `${newUrl}/static/${value}`
                     }
                     return newUrl
                 },
