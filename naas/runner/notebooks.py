@@ -10,6 +10,13 @@ import csv
 import io
 import bs4
 
+kern_manager = None
+try :
+    from enterprise_gateway.services.kernels.remotemanager import RemoteKernelManager
+    kern_manager = RemoteKernelManager
+except:
+    print('No entrrpise gateway, using local one')
+
 class Notebooks():
     __logger = None
     __port = None
@@ -99,6 +106,26 @@ class Notebooks():
         return {'type': result_type, 'data': result}
 
 
+    def __pm_exec(self, file_dirpath, file_filepath, file_filepath_out, params):
+        if kern_manager:
+            return pm.execute_notebook(
+                input_path=file_filepath,
+                output_path=file_filepath_out,
+                progress_bar=False,
+                cwd=file_dirpath,
+                parameters=params,
+                kernel_manager_class=kern_manager
+            )
+        else:
+            return pm.execute_notebook(
+                input_path=file_filepath,
+                output_path=file_filepath_out,
+                progress_bar=False,
+                cwd=file_dirpath,
+                parameters=params
+            )
+
+
     async def exec(self, uid, job):
         value = job.get('value', None)
         current_type = job.get('type', None)
@@ -118,13 +145,7 @@ class Notebooks():
         start_time = time.time()
         res = None
         try:
-            res = pm.execute_notebook(
-                input_path=file_filepath,
-                output_path=file_filepath_out,
-                progress_bar=False,
-                cwd=file_dirpath,
-                parameters=params
-            )
+            res = self.__pm_exec(file_dirpath, file_filepath, file_filepath_out, params)
         except pm.PapermillExecutionError as err:
             self.__logger.error({'id': uid, 'type': 'PapermillExecutionError', "status": t_error,
                                     'filepath': file_filepath, 'output_filepath': file_filepath_out, 'error': str(err)})
