@@ -15,6 +15,7 @@ sanic-openapi>=0,<1
 argparse>=1,<2
 nbconvert>=6,<7
 nbclient>=0,<1
+beautifulsoup4>=4,<5
 pytest==5.2
 pytest-sanic==1.6.1
 requests-mock==1.8.0

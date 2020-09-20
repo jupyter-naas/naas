@@ -5,10 +5,10 @@ import papermill as pm
 import traceback
 import asyncio
 import time
-import os
-import csv
-import io
 import bs4
+import csv
+import os
+import io
 
 kern_manager = None
 try :

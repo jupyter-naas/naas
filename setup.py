@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='naas',
-    version='0.0.6',
+    version='0.0.7',
     scripts=['scripts/naas'],
     author="Martin Donadieu",
     author_email="martindonadieu@gmail.com",
@@ -32,6 +32,7 @@ setup(
         "argparse>=1,<2",
         "nbconvert>=6,<7",
         "nbclient>=0,<1",
+        "beautifulsoup4>=4,<5",
     ],
     classifiers=[
         "Programming Language :: Python :: 3.6",
