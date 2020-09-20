@@ -14,8 +14,8 @@ kern_manager = None
 try :
     from enterprise_gateway.services.kernels.remotemanager import RemoteKernelManager
     kern_manager = RemoteKernelManager
-except:
-    print('No entrrpise gateway, using local one')
+except ImportError:
+    pass
 
 class Notebooks():
     __logger = None

@@ -1,5 +1,8 @@
 from .runner import Runner
 import argparse
+from .fix_uvloop import FixUvloop
+
+FixUvloop()
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
