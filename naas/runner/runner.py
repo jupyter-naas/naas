@@ -1,21 +1,21 @@
 from sentry_sdk.integrations.sanic import SanicIntegration
-from .controllers.scheduler import SchedulerController
-from .controllers.static import StaticController
-from .controllers.notebooks import NbController
-from .controllers.jobs import JobsController
-from .controllers.logs import LogsController
+from naas.runner.controllers.scheduler import SchedulerController
+from naas.runner.controllers.static import StaticController
+from naas.runner.controllers.notebooks import NbController
+from naas.runner.controllers.jobs import JobsController
+from naas.runner.controllers.logs import LogsController
+from naas.runner.controllers.env import EnvController
+from naas.runner.notifications import Notifications
+from naas.runner.scheduler import Scheduler
+from naas.runner.notebooks import Notebooks
 from sanic_openapi import swagger_blueprint
-from .controllers.env import EnvController
-from .notifications import Notifications
+from naas.runner.logger import Logger
 from .proxy import escape_kubernet
-from .scheduler import Scheduler
-from .notebooks import Notebooks
+from naas.runner.jobs import Jobs
 from daemonize import Daemonize
 from naas.types import t_main
 from datetime import datetime
-from .logger import Logger
 from sanic import Sanic
-from .jobs import Jobs
 import sentry_sdk
 import getpass
 import uuid

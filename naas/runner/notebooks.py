@@ -1,5 +1,5 @@
 from sanic.response import json, redirect, stream
-from .proxy import escape_kubernet
+from naas.runner.proxy import escape_kubernet
 from naas.types import t_notebook, t_scheduler, t_error, t_health
 import papermill as pm
 import traceback
