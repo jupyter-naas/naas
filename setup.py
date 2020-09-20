@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='naas',
-    version='0.0.8',
+    version='0.0.9',
     scripts=['scripts/naas'],
     author="Martin Donadieu",
     author_email="martindonadieu@gmail.com",
@@ -13,7 +13,7 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/cashstory/naas",
-    packages=find_packages(),
+    packages=find_packages(exclude=["tests"]),
     install_requires=[
         "papermill>=2,<3",
         "pretty-cron>=1,<2",
