@@ -49,6 +49,7 @@ class Runner():
     __testing = False
     tz = None
     user = None
+    __shell_user = None
     public_url = None
     proxy_url = None
             
@@ -56,6 +57,7 @@ class Runner():
         self.__path_user_files = os.environ.get('JUPYTER_SERVER_ROOT', '/home/ftp')
         self.__port = int(os.environ.get('NAAS_RUNNER_PORT', 5000))
         self.__user = os.environ.get('JUPYTERHUB_USER', 'joyvan@naas.com')
+        self.__shell_user = os.environ.get('USER', None)
         self.__public_url = os.environ.get('PUBLIC_DATASCIENCE', f'http://localhost:{self.__port}')
         self.__proxy_url = os.environ.get('PUBLIC_PROXY_API', 'http://localhost:5002')
         self.__tz = os.environ.get('TZ', 'Europe/Paris')
@@ -118,8 +120,8 @@ class Runner():
                 
     def start(self, deamon=True, port=None, debug=True):
         user = getpass.getuser()
-        if (user != self.__user):
-            raise Exception(f"{user} not autorized, use {self.__user} instead")
+        if (user != self.__shell_user):
+            raise Exception(f"{user} not autorized, use {self.__shell_user} instead")
         self.kill()
         if port:
             self.__port = port
