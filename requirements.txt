@@ -18,3 +18,4 @@ nbclient>=0,<1
 pytest==5.2
 pytest-sanic==1.6.1
 requests-mock==1.8.0
+twine==3.2.0
