@@ -9,28 +9,33 @@ Whenever you need it (even when you sleep).
 * Use Notebooks as API
 * Share assets securely
 
-# Install
+## Install
+
+`pip3 install naas`
+
+
+# DEVELOPMENT
+
+## Install
 
 `pip3 install -r requirements.txt`
 
-# Run test 
+## Run test 
 
 `pytest -x`  
 
-# test runner
+## test local server
 
-`pytest -x tests/test_runner.py `
-or
 `./test_runner.sh`
 
 open manager :
 
 `localhost:5000/`
 
-# deploy
+## deploy
 
 `python3 setup.py sdist`
 
-# publish
+## publish
 
-`python3 -m twine upload dist/* -u`
+`python3 -m twine upload dist/* -u YOUR_USERNAME`
