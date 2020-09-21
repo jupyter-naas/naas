@@ -21,7 +21,7 @@ class Api():
         for item in json_data:
             kind = None
             if item['type'] == self.role:
-                kind = f"callable with this url {self.manager.proxy_url(item['value'], 'start')} from anywhere"
+                kind = f"callable with this url {self.manager.proxy_url('notebooks', item['value'])} from anywhere"
                 print(f"File ==> {item['path']} is {kind}")
 
     def add(self, path=None, params={}, silent=False):
@@ -33,7 +33,7 @@ class Api():
         token = self.manager.get_value(prod_path, self.role)
         if token is None:
             token = os.urandom(30).hex()
-        url = self.manager.proxy_url(token, 'start')
+        url = self.manager.proxy_url('notebooks',token)
         if not self.manager.notebook_path():
             print(
                 f'No add done you are in already in naas folder\n')

@@ -21,7 +21,7 @@ class Static():
         for item in json_data:
             kind = None
             if item['type'] == self.role:
-                kind = f"publicly gettable with this url {self.manager.proxy_url(item['value'])}"
+                kind = f"publicly gettable with this url {self.manager.proxy_url('static', item['value'])}"
                 print(f"File ==> {item['path']} is {kind}")
 
     def get(self, path=None):
@@ -61,7 +61,7 @@ class Static():
         token = self.manager.get_value(prod_path, self.role)
         if token is None or Force is True:
             token = os.urandom(30).hex()
-        url = self.manager.proxy_url(token)
+        url = self.manager.proxy_url('static', token)
         if not self.manager.notebook_path() and Force is False:
             print(
                 f'No add done you are in already in naas folder\n')

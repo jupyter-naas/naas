@@ -75,9 +75,9 @@ class Manager():
         else:
             return self.notebook_path()
 
-    def proxy_url(self, token, endpoint=None):
-        public_url = encode_proxy_url(token)
-        if endpoint:
+    def proxy_url(self, endpoint, token=None):
+        public_url = encode_proxy_url(endpoint)
+        if token:
             public_url = f"{public_url}/{endpoint}"
         return public_url
 
