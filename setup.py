@@ -1,5 +1,6 @@
 from setuptools import setup, find_packages
 from setuptools.command.install import install
+from setuptools.command.develop import develop
 import os
 
 class FixUvloop():
@@ -29,7 +30,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='naas',
-    version='0.0.9',
+    version='0.0.10',
     scripts=['scripts/naas'],
     author="Martin Donadieu",
     author_email="martindonadieu@gmail.com",
