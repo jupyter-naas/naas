@@ -32,7 +32,7 @@ def version():
         return {'error': 'version error'}
 
 def manager():
-    public_url = f'{encode_proxy_url()}/manager'
+    public_url = f'{encode_proxy_url()}'
     print('You can check your current tasks list here :')
     display(HTML(f'<a href="{public_url}"">Manager</a>'))
 
