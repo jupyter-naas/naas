@@ -19,7 +19,7 @@ def runner(caplog):
     os.environ["JUPYTER_SERVER_ROOT"] = path_srv_root
     os.environ["JUPYTERHUB_USER"] = user
     os.environ["PUBLIC_PROXY_API"] = 'proxy:5000'
-    os.environ["PUBLIC_DATASCIENCE"] = 'localhost:5000'
+    os.environ["JUPYTERHUB_URL"] = 'localhost:5000'
     
     app = Runner().init_app()
     

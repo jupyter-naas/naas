@@ -211,13 +211,13 @@
                 },
                 linkTojup: function (link) {
                     const partial = link.replace('/home/brain', 'ftp');
-                    return `${this.env.PUBLIC_DATASCIENCE}/user/${this.env.JUPYTERHUB_USER}/lab/workspaces/auto-C/tree/${partial}`;
+                    return `${this.env.JUPYTERHUB_URL}/user/${this.env.JUPYTERHUB_USER}/lab/workspaces/auto-C/tree/${partial}`;
                 },
                 go_bob: function () {
                     window.open(this.env.PUBLIC_BOB, '_blank');
                 },
                 go_jup: function () {
-                    window.open(this.env.PUBLIC_DATASCIENCE, '_blank');
+                    window.open(this.env.JUPYTERHUB_URL, '_blank');
                 }
             },
             created: function () {

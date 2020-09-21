@@ -1,3 +1,6 @@
+# Copyright (c) Naas Team.
+# Distributed under the terms of the Modified BSD License.
+
 from .refresh import Refresh
 from .api import Api
 from .static import Static

@@ -11,7 +11,7 @@ test_file = 'demo_file.py'
 token = 'test_token'
 test_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__))
 , test_file)
-os.environ["PUBLIC_DATASCIENCE"] = 'test.naas.com'
+os.environ["JUPYTERHUB_URL"] = 'test.naas.com'
 os.environ["JUPYTERHUB_USER"] = 'TEST_USER'
 os.environ["JUPYTERHUB_API_TOKEN"] = 'TESTAPIKEY'
 os.environ["PUBLIC_PROXY_API"] = proxy_url
@@ -42,7 +42,7 @@ def test_copy_file(runner, tmp_path,requests_mock):
     path_srv_root = os.path.join(str(tmp_path), user_folder_name)
     os.environ["JUPYTER_SERVER_ROOT"] = path_srv_root
     os.environ["JUPYTERHUB_USER"] = 'joyvan'
-    os.environ["PUBLIC_DATASCIENCE"] = 'localhost:5000'
+    os.environ["JUPYTERHUB_URL"] = 'localhost:5000'
     os.environ["PUBLIC_PROXY_API"] = 'proxy:5000'
 
     new_path = os.path.join(path_srv_root, test_file)
@@ -51,7 +51,7 @@ def test_copy_file(runner, tmp_path,requests_mock):
     manager = Manager()
     prod_path = manager.get_prod_path(test_file_path)
     obj = {"type": t_notebook, "path": new_path, "params": {}, "value": token}
-    requests_mock.post(f'http://{os.environ["PUBLIC_DATASCIENCE"]}/jobs', json=[obj])
+    requests_mock.post(f'http://{os.environ["JUPYTERHUB_URL"]}/jobs', json=[obj])
 
     manager.add_prod(obj, True)
     assert os.path.exists(prod_path)

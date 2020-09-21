@@ -23,7 +23,7 @@ class EnvController(HTTPMethodView):
             'status': t_health,
             'version': self.__version(),
             'JUPYTERHUB_USER': self.__user,
-            'PUBLIC_DATASCIENCE': self.__public_url,
+            'JUPYTERHUB_URL': self.__public_url,
             'PUBLIC_PROXY_API': self.__proxy_url,
             'TZ': self.__tz
             
