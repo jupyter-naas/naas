@@ -23,6 +23,12 @@ def escape_docker(s):
         escape_char=_docker_escape_char_docker,
     )
 
+def get_status_server():
+    req = requests.get(url=os.environ.get('PUBLIC_PROXY_API', ''))
+    req.raise_for_status()
+    jsn = req.json()
+    return jsn
+    
 def encode_proxy_url(token=''):
     client = os.environ.get('JUPYTERHUB_USER', '')
     base_public_url = os.environ.get('PUBLIC_PROXY_API', '')

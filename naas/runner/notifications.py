@@ -7,12 +7,16 @@ import os
 
 class Notifications():
     logger = None
-    base_notif_url = os.environ.get('NOTIFICATIONS_API', '')
+    base_notif_url = os.environ.get('NOTIFICATIONS_API', None)
     
     def __init__(self, logger):
         self.logger = logger
     
     def send(self, uid, status, email, file_path, current_type):
+        if base_notif_url is None:
+            jsn = {'id': uid, 'type': 'notification error', 'error': 'not configured'}
+            self.logger.error(json.dumps(jsn))
+            return jsn
         content = f"Your {file_path} accesible as {current_type} is {status}, check the Logs on your manager below :"
         status_url = f"{encode_proxy_url('assets')}/{status}.png"
         message_bytes = file_path.encode('ascii')
@@ -30,7 +34,7 @@ class Notifications():
                 {'id': uid, 'type': 'notification error', 'error': str(err)}))
 
     def get_status_server(self):
-        req = requests.get(url=f"{self.base_notif_url}/status")
+        req = requests.get(url=f"{self.base_notif_url}/")
         req.raise_for_status()
         jsn = req.json()
         return jsn
