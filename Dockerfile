@@ -1,4 +1,4 @@
-FROM jupyternaas/nass-driver:latest
+FROM jupyternaas/nass-drivers:latest
 
 # Build-time metadata as defined at http://label-schema.org
 ARG BUILD_DATE
@@ -16,3 +16,4 @@ LABEL org.label-schema.build-date=$BUILD_DATE \
 
 RUN python3 -m pip install --no-cache --upgrade --no-deps --force-reinstall naas
 
+# mitmproxy --allow_hosts localhost:5000 --listen_port 8080
