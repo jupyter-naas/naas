@@ -1,4 +1,4 @@
-FROM jupyternaas/nass-drivers:latest
+FROM jupyternaas/naas-drivers:latest
 
 # Build-time metadata as defined at http://label-schema.org
 ARG BUILD_DATE
