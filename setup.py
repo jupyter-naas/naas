@@ -18,6 +18,12 @@ setup(
     package_data={
         "naas": ["runner/html/*.html", "runner/assets/*.png"],
     },
+    tests_require = [
+    "pytest==5.2",
+    "pytest-sanic==1.6.1",
+    "requests-mock==1.8.0",
+    "twine==3.2.0",
+    ],
     install_requires=[
         "papermill>=2,<3",
         "pretty-cron>=1,<2",

@@ -1,14 +1,14 @@
-t_notebook = 'api'
-t_static = 'static'
-t_task = 'tasks'
-t_dependency = 'dependency'
-t_scheduler = 'scheduler'
+t_notebook = "api"
+t_static = "static"
+t_task = "tasks"
+t_dependency = "dependency"
+t_scheduler = "scheduler"
 
-t_add = 'installed'
-t_delete = 'delete'
-t_update = 'edited'
-t_start = 'started'
-t_skip = 'skiped'
-t_error = 'error'
-t_health = 'healthy'
-t_main = 'main'
+t_add = "installed"
+t_delete = "delete"
+t_update = "edited"
+t_start = "started"
+t_skip = "skiped"
+t_error = "error"
+t_health = "healthy"
+t_main = "main"

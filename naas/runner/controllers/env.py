@@ -3,12 +3,15 @@ from sanic.response import json
 from naas.types import t_health, t_static
 import uuid
 
+
 class EnvController(HTTPMethodView):
     __notif_url = None
     __user = None
     __logger = None
-    
-    def __init__(self, logger, user, public_url, proxy_url, notif_url, tz, *args, **kwargs):
+
+    def __init__(
+        self, logger, user, public_url, proxy_url, notif_url, tz, *args, **kwargs
+    ):
         super(EnvController, self).__init__(*args, **kwargs)
         self.__logger = logger
         self.__notif_url = notif_url
@@ -20,14 +23,14 @@ class EnvController(HTTPMethodView):
     async def get(self, request):
         uid = str(uuid.uuid4())
         env = {
-            'status': t_health,
-            'notif_url': self.__notif_url,
-            'JUPYTERHUB_USER': self.__user,
-            'JUPYTERHUB_URL': self.__public_url,
-            'PUBLIC_PROXY_API': self.__proxy_url,
-            'TZ': self.__tz
-            
+            "status": t_health,
+            "notif_url": self.__notif_url,
+            "JUPYTERHUB_USER": self.__user,
+            "JUPYTERHUB_URL": self.__public_url,
+            "PUBLIC_PROXY_API": self.__proxy_url,
+            "TZ": self.__tz,
         }
         self.__logger.info(
-            {'id': uid, 'type': t_static, 'status': 'send', 'filepath': 'env'})
+            {"id": uid, "type": t_static, "status": "send", "filepath": "env"}
+        )
         return json(env)
