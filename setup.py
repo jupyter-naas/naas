@@ -1,6 +1,4 @@
 from setuptools import setup, find_packages
-from setuptools.command.install import install
-from setuptools.command.develop import develop
 import os
 
 with open("README.md", "r") as fh:
@@ -8,7 +6,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='naas',
-    version='0.0.16',
+    version='0.0.17',
     scripts=['scripts/naas'],
     author="Martin Donadieu",
     author_email="martindonadieu@gmail.com",
@@ -19,10 +17,6 @@ setup(
     packages=find_packages(exclude=["tests"]),
     package_data={
         "naas": ["runner/html/*.html", "runner/assets/*.png"],
-    },
-    cmdclass={
-        'develop': PostDevelopCommand,
-        'install': PostInstallCommand,
     },
     install_requires=[
         "papermill>=2,<3",
