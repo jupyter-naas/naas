@@ -27,9 +27,9 @@ class Manager():
 
     def __init__(self):
         self.__base_ftp_path = os.environ.get('JUPYTER_SERVER_ROOT', '/home/ftp')
-        self.__public_url = os.environ.get('JUPYTERHUB_URL', '')
-        self.__jup_user = os.environ.get('JUPYTERHUB_USER', '')
+        self.__public_url = os.environ.get('JUPYTERHUB_API_URL', '')
         self.__jup_token = os.environ.get('JUPYTERHUB_API_TOKEN', '')
+        self.__jup_user = os.environ.get('JUPYTERHUB_USER', '')
         self.__production_path = os.path.join(self.__base_ftp_path, self.__folder_name)
         self.__json_files_path = os.path.join(self.__production_path, self.__json_files)
         self.__readme_path = os.path.join(self.__production_path, self.__readme_name)
