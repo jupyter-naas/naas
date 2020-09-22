@@ -1,4 +1,4 @@
-FROM jupyternaas/singleuser:latest
+FROM jupyternaas/nass-driver:latest
 
 # Build-time metadata as defined at http://label-schema.org
 ARG BUILD_DATE
@@ -14,5 +14,5 @@ LABEL org.label-schema.build-date=$BUILD_DATE \
     org.label-schema.version=$VERSION \
     org.label-schema.schema-version="1.0"
 
-RUN python3 -m pip install --no-cache --upgrade --no-deps --force-reinstall naas naas-drivers
+RUN python3 -m pip install --no-cache --upgrade --no-deps --force-reinstall naas
 
