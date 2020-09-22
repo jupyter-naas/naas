@@ -2,3 +2,8 @@
 name = "cz_conventional_commits"
 version = "0.0.19"
 tag_format = "$version"
+version_files = [
+    "naas/__version__.py",
+    "setup.py:version",
+    "pyproject.toml:version"
+]

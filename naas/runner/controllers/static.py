@@ -36,9 +36,14 @@ class StaticController(HTTPMethodView):
             return ""
 
     def get(self, request, token):
-        if token == "up" or token == "down":
+        if token == "up" or token == "down" or token == "naas_logo":
+            ext = ".png"
+            if token == "naas_logo":
+                ext = ".svg"
             return response.file(
-                os.path.join(self.__path_lib_files, self.__assets_files, f"{token}.png")
+                os.path.join(
+                    self.__path_lib_files, self.__assets_files, f"{token}{ext}"
+                )
             )
         else:
             uid = str(uuid.uuid4())
