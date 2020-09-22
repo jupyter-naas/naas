@@ -27,14 +27,14 @@ class Static:
 
     def get(self, path=None):
         if not self.manager.notebook_path():
-            print(f"No get done you are in already in naas folder\n")
+            print("No get done you are in already in naas folder\n")
             return
         current_file = self.manager.get_path(path)
         self.manager.get_prod(current_file)
 
     def get_history(self, histo, path=None):
         if not self.manager.notebook_path():
-            print(f"No get history done you are in already in naas folder\n")
+            print("No get history done you are in already in naas folder\n")
             return
         current_file = self.manager.get_path(path)
         self.manager.get_history(current_file, histo)
@@ -45,7 +45,7 @@ class Static:
 
     def clear_history(self, path=None, histo=None):
         if not self.manager.notebook_path():
-            print(f"No clear history done you are in already in naas folder\n")
+            print("No clear history done you are in already in naas folder\n")
             return
         current_file = self.manager.get_path(path)
         self.manager.clear_history(current_file, histo)
@@ -61,7 +61,7 @@ class Static:
             token = os.urandom(30).hex()
         url = self.manager.proxy_url("static", token)
         if not self.manager.notebook_path() and Force is False:
-            print(f"No add done you are in already in naas folder\n")
+            print("No add done you are in already in naas folder\n")
             return url
         if silent is False:
             print(
@@ -80,7 +80,7 @@ class Static:
 
     def delete(self, path=None, all=False, silent=False):
         if not self.manager.notebook_path():
-            print(f"No delete done you are in already in naas folder\n")
+            print("No delete done you are in already in naas folder\n")
             return
         current_file = self.manager.get_path(path)
         self.manager.del_prod({"type": self.role, "path": current_file}, silent)
@@ -97,7 +97,8 @@ class Static:
             f".delete(path) => delete path to the prod {type(self).__name__} server\n"
         )
         print(
-            ".clear_history(path, histonumber) => clear history, history number and path are optionel, if you don't provide them it will erase full history of current file \n"
+            ".clear_history(path, histonumber) => clear history, history number and path are optionel, \
+                if you don't provide them it will erase full history of current file \n"
         )
         print(
             ".list_history(path) => list history, of a path or if not provided the current file \n"

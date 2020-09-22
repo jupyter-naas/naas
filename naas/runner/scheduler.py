@@ -7,7 +7,6 @@ import asyncio
 import pycron
 import time
 import uuid
-import sys
 
 
 class Scheduler:
@@ -144,19 +143,6 @@ class Scheduler:
                     "status": t_error,
                     "duration": durationTotal,
                     "error": str(e),
-                    "trace": tb,
-                }
-            )
-        except:
-            tb = traceback.format_exc()
-            durationTotal = time.time() - all_start_time
-            self.__logger.error(
-                {
-                    "id": main_uid,
-                    "type": t_scheduler,
-                    "status": t_error,
-                    "duration": durationTotal,
-                    "error": str(sys.exc_info()[0]),
                     "trace": tb,
                 }
             )

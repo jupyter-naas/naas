@@ -29,7 +29,7 @@ def version():
         with open(os.path.join(__location__, "info.json"), "r") as json_file:
             version = json.load(json_file)
             return version
-    except:
+    except IOError:
         return {"error": "version error"}
 
 

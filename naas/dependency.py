@@ -86,7 +86,8 @@ class Dependency:
             f".delete(path) => delete path to the prod {type(self).__name__} server\n"
         )
         print(
-            ".clear_history(path, histonumber) => clear history, history number and path are optionel, if you don't provide them it will erase full history of current file \n"
+            ".clear_history(path, histonumber) => clear history, history number and path are optionel, \
+                if you don't provide them it will erase full history of current file \n"
         )
         print(
             ".list_history(path) => list history, of a path or if not provided the current file \n"

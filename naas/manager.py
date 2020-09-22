@@ -56,26 +56,22 @@ class Manager:
         """Returns the absolute path of the Notebook or None if it cannot be determined
         NOTE: works only when the security is token-based or there is also no password
         """
-        try:
-            connection_file = os.path.basename(ipykernel.get_connection_file())
-            kernel_id = connection_file.split("-", 1)[1].split(".")[0]
-
-            for srv in notebookapp.list_running_servers():
-                try:
-                    base_url = (
-                        f"{self.__public_url}/user/{self.__jup_user}/api/sessions"
-                    )
-                    req = urllib.request.urlopen(f"{base_url}?token={self.__jup_token}")
-                    sessions = json.load(req)
-                    for sess in sessions:
-                        if sess["kernel"]["id"] == kernel_id:
-                            return os.path.join(
-                                srv["notebook_dir"], sess["notebook"]["path"]
-                            )
-                except:
-                    pass  # There may be stale entries in the runtime directory
-        except:
-            pass
+        connection_file = os.path.basename(ipykernel.get_connection_file())
+        kernel_id = connection_file.split("-", 1)[1].split(".")[0]
+        for srv in notebookapp.list_running_servers():
+            try:
+                base_url = (
+                    f"{self.__public_url}/user/{self.__jup_user}/api/sessions"
+                )
+                req = urllib.request.urlopen(f"{base_url}?token={self.__jup_token}")
+                sessions = json.load(req)
+                for sess in sessions:
+                    if sess["kernel"]["id"] == kernel_id:
+                        return os.path.join(
+                            srv["notebook_dir"], sess["notebook"]["path"]
+                        )
+            except urllib.error.HTTPError:
+                pass
         return None
 
     def get_path(self, path):
@@ -152,7 +148,7 @@ class Manager:
             with open(self.__json_files_path, "r") as f:
                 naas_data = json.load(f)
                 f.close()
-        except:
+        except IOError:
             naas_data = []
         return naas_data
 

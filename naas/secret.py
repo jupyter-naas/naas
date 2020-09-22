@@ -39,7 +39,7 @@ class Secret:
             with open(self.__json_secrets_path, "r") as f:
                 secret_data = json.load(f)
                 f.close()
-        except:
+        except IOError:
             secret_data = []
         return secret_data
 

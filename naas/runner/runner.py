@@ -88,7 +88,7 @@ class Runner:
                 os.path.join(self.__path_lib_files, self.__info_file), "r"
             ) as json_file:
                 version = json.load(json_file)
-        except:
+        except IOError:
             version = {"error": "cannot get info.json"}
         return version
 

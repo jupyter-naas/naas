@@ -176,9 +176,9 @@ class Notebooks:
                 }
             )
             res = {"error": str(err)}
-        except:
+        except pm.PapermillException as err:
             tb = traceback.format_exc()
-            res = {"error": str(tb)}
+            res = {"error": err, "traceback": str(tb)}
             self.__logger.error(
                 {
                     "id": uid,
@@ -186,7 +186,8 @@ class Notebooks:
                     "status": t_error,
                     "filepath": file_filepath,
                     "output_filepath": file_filepath_out,
-                    "error": str(tb),
+                    "error": err,
+                    "traceback": str(tb)
                 }
             )
         if not res:

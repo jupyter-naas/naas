@@ -32,6 +32,9 @@ open manager :
 
 `localhost:5000/`
 
+`python3 -m black naas` format better
+`python3 -m flake8 naas` check if any left error
+
 ## deploy
 
 `python3 setup.py sdist`
