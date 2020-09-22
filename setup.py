@@ -3,28 +3,6 @@ from setuptools.command.install import install
 from setuptools.command.develop import develop
 import os
 
-class FixUvloop():
-    def __init__(self):
-        try :
-            import uvloop
-            with open(uvloop.__file__, 'w') as fp:
-                fp.write("raise ImportError\n")
-                pass
-        except ImportError:
-            pass
-        
-class PostDevelopCommand(develop):
-    """Post-installation for development mode."""
-    def run(self):
-        develop.run(self)
-        FixUvloop()
-        
-class PostInstallCommand(install):
-    """Post-installation for installation mode."""
-    def run(self):
-        install.run(self)
-        FixUvloop()
-
 with open("README.md", "r") as fh:
     long_description = fh.read()
 

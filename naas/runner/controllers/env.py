@@ -8,7 +8,7 @@ class EnvController(HTTPMethodView):
     __user = None
     __logger = None
     
-    def __init__(self, logger, user, public_url, proxy_url,, notif_url tz, *args, **kwargs):
+    def __init__(self, logger, user, public_url, proxy_url, notif_url, tz, *args, **kwargs):
         super(EnvController, self).__init__(*args, **kwargs)
         self.__logger = logger
         self.__notif_url = notif_url

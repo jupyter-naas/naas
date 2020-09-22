@@ -17,6 +17,7 @@ from naas.types import t_main
 from datetime import datetime
 from sanic import Sanic
 import sentry_sdk
+import asyncio
 import getpass
 import uuid
 import os
@@ -107,6 +108,8 @@ class Runner():
         self.__notif = Notifications(self.__logger)
         self.__jobs = Jobs(self.__logger)
         self.__app = Sanic(__name__)
+        # TODO remove this fix when papermill support uvloop of Sanic support option to don't use uvloop 
+        asyncio.set_event_loop_policy(None)
         self.__app.register_listener(self.initialize_before_start, 'before_server_start')
         self.__app.add_route(EnvController.as_view(self.__logger, self.__user, self.__public_url, self.__proxy_url, self.__notifications_url, self.__tz), '/env')
         self.__app.add_route(LogsController.as_view(self.__logger), '/logs')
