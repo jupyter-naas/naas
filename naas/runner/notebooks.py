@@ -187,7 +187,7 @@ class Notebooks:
                     "filepath": file_filepath,
                     "output_filepath": file_filepath_out,
                     "error": err,
-                    "traceback": str(tb)
+                    "traceback": str(tb),
                 }
             )
         if not res:

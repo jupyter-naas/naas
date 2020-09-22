@@ -60,9 +60,7 @@ class Manager:
         kernel_id = connection_file.split("-", 1)[1].split(".")[0]
         for srv in notebookapp.list_running_servers():
             try:
-                base_url = (
-                    f"{self.__public_url}/user/{self.__jup_user}/api/sessions"
-                )
+                base_url = f"{self.__public_url}/user/{self.__jup_user}/api/sessions"
                 req = urllib.request.urlopen(f"{base_url}?token={self.__jup_token}")
                 sessions = json.load(req)
                 for sess in sessions:

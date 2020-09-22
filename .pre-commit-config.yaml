@@ -1,10 +1,16 @@
 repos:
--   repo: https://github.com/ambv/black
-    rev: stable
-    hooks:
-    - id: black
-      language_version: python3
--   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v1.2.3
-    hooks:
-    - id: flake8
+- hooks:
+  - id: black
+    language_version: python3
+  repo: https://github.com/ambv/black
+  rev: stable
+- hooks:
+  - id: flake8
+  repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v1.2.3
+- hooks:
+  - id: commitizen
+    stages:
+    - commit-msg
+  repo: https://github.com/commitizen-tools/commitizen
+  rev: master

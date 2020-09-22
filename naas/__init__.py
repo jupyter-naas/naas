@@ -1,6 +1,5 @@
 # Copyright (c) Naas Team.
 # Distributed under the terms of the Modified BSD License.
-
 from .refresh import Refresh
 from .api import Api
 from .static import Static
@@ -10,10 +9,9 @@ from .secret import Secret
 from .runner import Runner
 from .runner.proxy import encode_proxy_url
 import requests
-import json
 import os
 
-""" Naas code """
+__version__ = "0.0.17"
 
 __location__ = os.getcwd()
 refresh = Refresh
@@ -22,15 +20,6 @@ runner = Runner
 api = Api
 static = Static
 dependency = Dependency
-
-
-def version():
-    try:
-        with open(os.path.join(__location__, "info.json"), "r") as json_file:
-            version = json.load(json_file)
-            return version
-    except IOError:
-        return {"error": "version error"}
 
 
 def manager():
@@ -61,9 +50,6 @@ def refresh_resume():
     jsn = req.json()
     print(jsn)
     return jsn
-
-
-__version__ = f"Nass {version()}"
 
 
 def welcome():
