@@ -78,7 +78,7 @@ class Manager():
     def proxy_url(self, endpoint, token=None):
         public_url = encode_proxy_url(endpoint)
         if token:
-            public_url = f"{public_url}/{endpoint}"
+            public_url = f"{public_url}/{token}"
         return public_url
 
     def get_prod_path(self, path):
