@@ -30,7 +30,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='naas',
-    version='0.0.11',
+    version='0.0.12',
     scripts=['scripts/naas'],
     author="Martin Donadieu",
     author_email="martindonadieu@gmail.com",
@@ -39,6 +39,9 @@ setup(
     long_description_content_type="text/markdown",
     url="https://github.com/cashstory/naas",
     packages=find_packages(exclude=["tests"]),
+    package_data={
+        "naas.runner": ["*.html", "*.png"],
+    },
     cmdclass={
         'develop': PostDevelopCommand,
         'install': PostInstallCommand,
