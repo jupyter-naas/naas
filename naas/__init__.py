@@ -11,7 +11,6 @@ from .runner.proxy import encode_proxy_url
 import requests
 import os
 
-__version__ = "0.0.17"
 
 __location__ = os.getcwd()
 refresh = Refresh
