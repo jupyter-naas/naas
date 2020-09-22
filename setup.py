@@ -1,13 +1,12 @@
 from setuptools import setup, find_packages
-import os
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(
-    name='naas',
-    version='0.0.17',
-    scripts=['scripts/naas'],
+    name="naas",
+    version="0.0.17",
+    scripts=["scripts/naas"],
     author="Martin Donadieu",
     author_email="martindonadieu@gmail.com",
     description="scheduler system for notebooks",
@@ -18,11 +17,13 @@ setup(
     package_data={
         "naas": ["runner/html/*.html", "runner/assets/*.png"],
     },
-    tests_require = [
-    "pytest==5.2",
-    "pytest-sanic==1.6.1",
-    "requests-mock==1.8.0",
-    "twine==3.2.0",
+    tests_require=[
+        "pytest==5.2",
+        "pytest-sanic==1.6.1",
+        "requests-mock==1.8.0",
+        "twine==3.2.0",
+        "flake8==3.1.1",
+        "black==20.8b1",
     ],
     install_requires=[
         "papermill>=2,<3",
