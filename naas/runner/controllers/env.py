@@ -4,14 +4,14 @@ from naas.types import t_health, t_static
 import uuid
 
 class EnvController(HTTPMethodView):
-    __version = None
+    __notif_url = None
     __user = None
     __logger = None
     
-    def __init__(self, logger, version, user, public_url, proxy_url, tz, *args, **kwargs):
+    def __init__(self, logger, user, public_url, proxy_url,, notif_url tz, *args, **kwargs):
         super(EnvController, self).__init__(*args, **kwargs)
         self.__logger = logger
-        self.__version = version
+        self.__notif_url = notif_url
         self.__user = user
         self.__public_url = public_url
         self.__proxy_url = proxy_url
@@ -21,7 +21,7 @@ class EnvController(HTTPMethodView):
         uid = str(uuid.uuid4())
         env = {
             'status': t_health,
-            'version': self.__version(),
+            'notif_url': self.__notif_url,
             'JUPYTERHUB_USER': self.__user,
             'JUPYTERHUB_URL': self.__public_url,
             'PUBLIC_PROXY_API': self.__proxy_url,
