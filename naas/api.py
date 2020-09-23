@@ -1,6 +1,7 @@
 from IPython.core.display import display, HTML, JSON, Image, SVG, Markdown
 from .types import t_notebook
 from .manager import Manager
+import pandas as pd
 import os
 
 
@@ -71,6 +72,8 @@ class Api:
         display(Markdown(data, metadata={"naas_api": True}))
 
     def respond_csv(self, data):
+        if not isinstance(data, pd.DataFrame):
+            raise Exception("data shoud be a dataframe")
         display(HTML(data.to_html(), metadata={"naas_api": True, "naas_type": "csv"}))
 
     def get(self, path=None):
