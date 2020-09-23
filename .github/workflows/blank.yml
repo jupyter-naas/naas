@@ -29,19 +29,17 @@ jobs:
             python3 -m flake8 naas
       - name: Run Test
         run: |
-            pytest -x   
+            pytest -x
       - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        run: |
+            cz bump --changelog
+            python3 setup.py sdist
+      - name: Deploy Pypi
+        # You may pin to the exact commit or the version.
+        # uses: remorses/pypi@c5a97a333f4d4d59cea6ec2e6a17c15e3241be29
+        uses: remorses/pypi@v3
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          body: |
-            Changes in this Release
-            - First Change
-            - Second Change
-          draft: false
-          prerelease: false
-      
+          username: ${{ secrets.PYPIP_USERNAME }} 
+          password: ${{ secrets.PYPIP_PASSWORD }}
+
+
