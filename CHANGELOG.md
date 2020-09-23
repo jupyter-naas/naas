@@ -1,3 +1,9 @@
+## 0.1.0 (2020-09-23)
+
+### Feat
+
+- :sparkles: allow lab redirect from manager
+
 ## 0.0.24 (2020-09-23)
 
 ## 0.0.22 (2020-09-23)
