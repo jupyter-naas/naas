@@ -218,8 +218,9 @@
                     let tmp = '';
                     vars.forEach(function (v) {
                         tmp = v.split('=');
-                        if (tmp.length == 2)
-                            getVars[tmp[0]] = atob(tmp[1]);
+                        if (tmp.length == 2){
+                            getVars[tmp[0]] = decodeURIComponent(tmp[1]);
+                        }
                     });
                     // console.log('getVars', getVars);
                     if (getVars["redirect"] == 'lab') {
