@@ -222,6 +222,9 @@
                             getVars[tmp[0]] = atob(tmp[1]);
                     });
                     // console.log('getVars', getVars);
+                    if (getVars["redirect"] == 'lab') {
+                        window.location.href = '../lab'
+                    }
                     if (getVars["filter"]) {
                         this.filter = getVars["filter"]
                     }
