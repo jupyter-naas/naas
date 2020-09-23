@@ -27,7 +27,6 @@ setup(
         "commitizen==2.4.0",
     ],
     install_requires=[
-        "versioneer",
         "papermill>=2,<3",
         "pretty-cron>=1,<2",
         "APScheduler>=3,<4",
