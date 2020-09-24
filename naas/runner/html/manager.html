@@ -6,7 +6,7 @@
         integrity="sha256-xltCgYXRolPa/qWvt82I4qxUBcQ96d1boWhO6C6KChg=" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/1.4.6/tailwind.min.css"
         integrity="sha256-CAI/7ThhltsmP2L2zKBYa7FknB3ZwFbD0nqL8FCdxdc=" crossorigin="anonymous" />
-    <link rel="icon" href="static/naas_logo" />
+    <link rel="icon" href="static/naas_fav" />
     <title>Naas | Automation Manager</title>
     <style>
         #cs_loader_wrap {
@@ -239,7 +239,7 @@
     <div id="app" class="w-full">
         <div id="cs_loader_wrap" v-if="loading">
             <div id="cs_logo_wrap">
-                <img id="cs_logo_loading" src="static/naas_logo"/>
+                <object type="image/svg+xml" data="static/naas_logo" alt="Naas"></object>
                 <div id="cs_spinner_loading"></div>
             </div>
         </div>
@@ -249,7 +249,7 @@
                     <div class="mb-2 sm:mb-0 flex flex-row
                     ">
                         <div class="h-50 w-50 self-center mr-2">
-                            <img  src="static/naas_logo" width="50" height="50"/>
+                            <object type="image/svg+xml" data="static/naas_logo" alt="Naas" width="50" height="50"></object>
                         </div>
                         <div>
                             <a href="/home"
