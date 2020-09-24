@@ -1,8 +1,8 @@
 from sanic.views import HTTPMethodView
 from sanic import response
+from sanic.exceptions import ServerError
 from naas.types import t_static, t_health, t_error, t_start
 import uuid
-import json
 import os
 
 
@@ -89,9 +89,7 @@ class StaticController(HTTPMethodView):
                     self.__jobs.update(
                         uid, file_filepath, t_static, token, params, t_error, 1
                     )
-                    return response.html(
-                        self.__html_error(json.dumps({"id": uid, "error": e}))
-                    )
+                    raise ServerError({"id": uid, "error": e}, status_code=404)
             self.__logger.error(
                 {
                     "id": uid,
@@ -101,10 +99,7 @@ class StaticController(HTTPMethodView):
                     "token": token,
                 }
             )
-            return response.html(
-                self.__html_error(
-                    json.dumps(
-                        {"id": uid, "error": "Cannot find your token", "token": token}
-                    )
-                )
+            raise ServerError(
+                {"id": uid, "error": "Cannot find your token", "token": token},
+                status_code=404,
             )

@@ -1,6 +1,6 @@
 from naas.types import t_notebook, t_health, t_error, t_start
 from sanic.views import HTTPMethodView
-from sanic.response import json
+from sanic.exceptions import ServerError
 import uuid
 
 
@@ -51,7 +51,9 @@ class NbController(HTTPMethodView):
                     t_error,
                     res.get("duration"),
                 )
-                return json({"id": uid, "error": res.get("error")})
+                raise ServerError(
+                    {"id": uid, "error": res.get("error")}, status_code=500
+                )
             self.__logger.info(
                 {
                     "main_id": uid,
@@ -81,4 +83,6 @@ class NbController(HTTPMethodView):
                 "error": "Cannot find your token",
             }
         )
-        return json({"id": uid, "error": "Cannot find your token"}, status=404)
+        raise ServerError(
+            {"id": uid, "error": "Cannot find your token"}, status_code=404
+        )

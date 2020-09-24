@@ -15,9 +15,7 @@ class LogsController(HTTPMethodView):
         # return json({'data': [], 'totalRecords': 0})
         as_file = request.args.get("as_file", False)
         if as_file:
-            return await file(
-                self.__logger.get_file_path(), attachment_filename="logs.csv"
-            )
+            return await file(self.__logger.get_file_path(), filename="logs.csv")
         else:
             uid = str(uuid.uuid4())
             limit = int(request.args.get("limit", 0))
