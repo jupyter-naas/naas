@@ -15,5 +15,3 @@ LABEL org.label-schema.build-date=$BUILD_DATE \
     org.label-schema.schema-version="1.0"
 
 RUN python3 -m pip install --no-cache --upgrade --no-deps --force-reinstall naas
-
-# mitmproxy --allow_hosts localhost:5000 --listen_port 8080

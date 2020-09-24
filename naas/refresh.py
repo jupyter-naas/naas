@@ -25,14 +25,14 @@ class Refresh:
                 kind = f"refresh {cron_string}"
                 print(f"File ==> {item['path']} is {kind}")
 
-    def add(self, path=None, reccurence=None, params=None, silent=False):
+    def add(self, path=None, recurrence=None, params=None, silent=False):
         if not self.manager.notebook_path():
             print("No add done you are in already in naas folder\n")
             return
-        if not reccurence:
-            print("No reccurence provided\n")
+        if not recurrence:
+            print("No recurrence provided\n")
             return
-        cron_string = pretty_cron.prettify_cron(reccurence)
+        cron_string = pretty_cron.prettify_cron(recurrence)
         current_file = self.manager.get_path(path)
         prod_path = self.manager.get_prod_path(current_file)
         if silent is False:
@@ -48,7 +48,7 @@ class Refresh:
                 "type": self.role,
                 "path": current_file,
                 "params": {},
-                "value": reccurence,
+                "value": recurrence,
             },
             silent,
         )
