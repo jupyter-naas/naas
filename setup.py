@@ -29,6 +29,7 @@ setup(
         ]
     },
     install_requires=[
+        "sentry_sdk>=0,<1",
         "papermill>=2,<3",
         "pretty-cron>=1,<2",
         "APScheduler>=3,<4",
