@@ -36,9 +36,9 @@ class StaticController(HTTPMethodView):
             return ""
 
     def get(self, request, token):
-        if token == "up" or token == "down" or token == "naas_logo":
+        if token == "up" or token == "down" or token.startswith("naas_"):
             ext = ".png"
-            if token == "naas_logo":
+            if token.startswith("naas_"):
                 ext = ".svg"
             return response.file(
                 os.path.join(
