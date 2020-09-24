@@ -13,12 +13,12 @@ import os
 
 
 __location__ = os.getcwd()
-refresh = Refresh
-secret = Secret
-runner = Runner
-api = Api
-static = Static
-dependency = Dependency
+refresh = Refresh()
+secret = Secret()
+runner = Runner()
+api = Api()
+static = Static()
+dependency = Dependency()
 
 
 def manager():
