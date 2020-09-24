@@ -44,7 +44,7 @@ class Notebooks:
             self.__logger.info(
                 {"id": uid, "type": t_notebook, "status": "next_url", "url": next_url}
             )
-            return redirect(next_url, code=302)
+            return redirect(next_url)
         else:
             res_data = self.__get_res(res)
             if res_data and res_data.get("type") == "application/json":

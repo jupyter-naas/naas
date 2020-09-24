@@ -40,7 +40,7 @@ class Scheduler:
             uid = str(uuid.uuid4())
             self.__logger.info({"id": uid, "type": t_main, "status": "start SCHEDULER"})
 
-    def __scheduler_greenlet(self, main_uid, current_time, task):
+    async def __scheduler_greenlet(self, main_uid, current_time, task):
         value = task.get("value", None)
         current_type = task.get("type", None)
         file_filepath = task.get("path")
@@ -62,8 +62,10 @@ class Scheduler:
                     "filepath": file_filepath,
                 }
             )
-            self.__jobs.update(uid, file_filepath, t_scheduler, value, params, t_start)
-            res = self.__exec_job(uid, task)
+            await self.__jobs.update(
+                uid, file_filepath, t_scheduler, value, params, t_start
+            )
+            res = self.__notebooks.exec(uid, task)
             if res.get("error"):
                 self.__logger.error(
                     {
@@ -76,7 +78,7 @@ class Scheduler:
                         "error": str(res.get("error")),
                     }
                 )
-                self.__jobs.update(
+                await self.__jobs.update(
                     uid,
                     file_filepath,
                     t_scheduler,
@@ -96,7 +98,7 @@ class Scheduler:
                     "duration": res.get("duration"),
                 }
             )
-            self.__jobs.update(
+            await self.__jobs.update(
                 uid,
                 file_filepath,
                 t_scheduler,
@@ -116,14 +118,11 @@ class Scheduler:
             # Write self.__scheduler init info in self.__logger.write
             self.__logger.info({"id": main_uid, "type": t_scheduler, "status": t_start})
             for job in self.__jobs.list(main_uid):
-                g = asyncio.ensure_future(
+                g = asyncio.create_task(
                     self.__scheduler_greenlet(main_uid, current_time, job)
                 )
-                # g = gevent.spawn(self.__scheduler_greenlet,
-                #                 main_uid, current_time, job)
                 greelets.append(g)
             await asyncio.gather(*greelets)
-            # gevent.joinall(greelets)
             durationTotal = time.time() - all_start_time
             self.__logger.info(
                 {
