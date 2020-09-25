@@ -130,5 +130,6 @@ dmypy.json
 .pyre/
 tests/.DS_Store
 .DS_Store
-.DS_Store
-.DS_Store
+
+#vim files
+.vim/*

@@ -64,16 +64,12 @@ class Manager:
             kernel_id = connection_file.split("-", 1)[1].split(".")[0]
             for srv in notebookapp.list_running_servers():
                 try:
-                    base_url = (
-                        f"{self.__public_url}/user/{self.__jup_user}/api/sessions"
-                    )
+                    base_url = f"{self.__public_url}/user/{self.__jup_user}/api/sessions"
                     req = urllib.request.urlopen(f"{base_url}?token={self.__jup_token}")
                     sessions = json.load(req)
                     for sess in sessions:
                         if sess["kernel"]["id"] == kernel_id:
-                            return os.path.join(
-                                srv["notebook_dir"], sess["notebook"]["path"]
-                            )
+                            return os.path.join(srv["notebook_dir"], sess["notebook"]["path"])
                 except urllib.error.HTTPError:
                     pass
         except IndexError:
@@ -152,9 +148,7 @@ class Manager:
         new_path = self.get_prod_path(path)
         prod_dir = os.path.dirname(new_path)
         prod_finename = os.path.basename(new_path)
-        history_filename = (
-            f'{datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")}_{prod_finename}'
-        )
+        history_filename = f'{datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")}_{prod_finename}'
         history_path = os.path.join(prod_dir, history_filename)
         if not os.path.exists(path):
             raise Exception(f"file doesn't exist {path}")
@@ -232,11 +226,7 @@ class Manager:
         dirname = os.path.dirname(prod_path)
         print("Avaliable :\n")
         for ffile in os.listdir(dirname):
-            if (
-                ffile.endswith(filename)
-                and ffile != filename
-                and not ffile.startswith("out")
-            ):
+            if ffile.endswith(filename) and ffile != filename and not ffile.startswith("out"):
                 histo = ffile.replace(filename, "")
                 histo = histo.replace("_", "")
                 print(histo + "\n")
@@ -249,9 +239,7 @@ class Manager:
 
     def clear_history(self, path, histo=None):
         prod_path = self.get_prod_path(path)
-        filename = (
-            os.path.basename(path) if not histo else f"{histo}_{os.path.basename(path)}"
-        )
+        filename = os.path.basename(path) if not histo else f"{histo}_{os.path.basename(path)}"
         dirname = os.path.dirname(prod_path)
         for ffile in os.listdir(dirname):
             if not ffile.startswith("out_") and (
@@ -267,24 +255,18 @@ class Manager:
             dev_path = obj.get("path")
             obj["path"] = self.get_prod_path(obj.get("path"))
             self.__copy_file_in_prod(dev_path)
-            r = requests.post(
-                f"{self.__local_api}/jobs", json={**obj, **{"status": t_add}}
-            )
+            r = requests.post(f"{self.__local_api}/jobs", json={**obj, **{"status": t_add}})
             if not silent:
                 print(f'{r.json()["status"]} ==> {obj}')
             return obj
         else:
-            raise Exception(
-                'obj should have all keys ("type","path","params","value" )'
-            )
+            raise Exception('obj should have all keys ("type","path","params","value" )')
 
     def del_prod(self, obj, silent):
         if "type" in obj and "path" in obj:
             obj["path"] = self.get_prod_path(obj.get("path"))
             self.__del_file_in_prod(obj["path"])
-            r = requests.post(
-                f"{self.__local_api}/jobs", json={**obj, **{"status": t_delete}}
-            )
+            r = requests.post(f"{self.__local_api}/jobs", json={**obj, **{"status": t_delete}})
             if not silent:
                 print(f'{r.json()["status"]} ==> {obj}')
             return obj

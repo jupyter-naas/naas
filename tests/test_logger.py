@@ -82,10 +82,6 @@ def test_list(tmp_path, caplog):
     assert len(logger.list(uid, skip=0, limit=0, search="test_2").get("data")) == 2
     assert len(logger.list(uid, skip=0, limit=0, search="test_2").get("data")) == 2
     assert (
-        len(
-            logger.list(
-                uid, skip=0, limit=0, search=None, filters=[t_delete, t_add]
-            ).get("data")
-        )
+        len(logger.list(uid, skip=0, limit=0, search=None, filters=[t_delete, t_add]).get("data"))
         == 2
     )

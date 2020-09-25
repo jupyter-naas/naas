@@ -1,0 +1,10 @@
+[{
+"kernel": {"id": "ANOTHERID"},
+"notebook": {"path":"TEST_DIR1/ANOTHER_DIR1"}
+},
+{
+"kernel": {"id": 1},
+"notebook": {"path":"TEST_DIR2/ANOTHER_DIR2"}
+}
+
+]
