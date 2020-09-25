@@ -17,8 +17,7 @@ import os
 
 
 class Manager:
-    __port = os.environ.get("NAAS_RUNNER_PORT", 5000)
-    __local_api = f"http://localhost:{__port}"
+    __local_api = f'http://localhost:{os.environ.get("NAAS_RUNNER_PORT", 5000)}'
     __base_ftp_path = None
     __public_url = None
     __jup_user = None
@@ -31,7 +30,9 @@ class Manager:
     __readme_path = None
 
     def __init__(self):
-        self.__base_ftp_path = os.environ.get("JUPYTER_SERVER_ROOT", "/home/ftp")
+        self.__base_ftp_path = os.environ.get(
+            "JUPYTER_SERVER_ROOT", f'/home/{os.environ.get("NB_USER", "ftp")}'
+        )
         self.__public_url = os.environ.get("JUPYTERHUB_URL", "")
         self.__jup_token = os.environ.get("JUPYTERHUB_API_TOKEN", "")
         self.__jup_user = os.environ.get("JUPYTERHUB_USER", "")
@@ -56,8 +57,8 @@ class Manager:
         """Returns the absolute path of the Notebook or None if it cannot be determined
         NOTE: works only when the security is token-based or there is also no password
         """
-        connection_file = os.path.basename(ipykernel.get_connection_file())
         try:
+            connection_file = os.path.basename(ipykernel.get_connection_file())
             kernel_id = connection_file.split("-", 1)[1].split(".")[0]
             for srv in notebookapp.list_running_servers():
                 try:
@@ -74,6 +75,8 @@ class Manager:
                 except urllib.error.HTTPError:
                     pass
         except IndexError:
+            pass
+        except RuntimeError:
             pass
         return None
 

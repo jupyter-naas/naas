@@ -10,7 +10,9 @@ class Secret:
     __json_name = "secrets.json"
 
     def __init__(self, clean=False):
-        self.__path_user_files = os.environ.get("JUPYTER_SERVER_ROOT", "/home/ftp")
+        self.__path_user_files = os.environ.get(
+            "JUPYTER_SERVER_ROOT", f'/home/{os.environ.get("NB_USER", "ftp")}'
+        )
         self.__path_naas_files = os.path.join(
             self.__path_user_files, self.__naas_folder
         )

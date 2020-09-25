@@ -11,7 +11,7 @@ from .runner.proxy import encode_proxy_url
 import requests
 import os
 
-
+__version__ = "0.1.5"
 __location__ = os.getcwd()
 refresh = Refresh()
 secret = Secret()
@@ -25,6 +25,14 @@ def manager():
     public_url = f"{encode_proxy_url()}"
     print("You can check your current tasks list here :")
     display(HTML(f'<a href="{public_url}"">Manager</a>'))
+
+
+def clean_logs():
+    req = requests.get(url="localhost:5000/logs")
+    req.raise_for_status()
+    jsn = req.json()
+    print(jsn)
+    return jsn
 
 
 def refresh_status():

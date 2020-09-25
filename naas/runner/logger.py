@@ -51,7 +51,9 @@ class Logger:
     __columns = ["asctime", "levelname", "name", "message"]
 
     def __init__(self, clear=False):
-        self.__path_user_files = os.environ.get("JUPYTER_SERVER_ROOT", "/home/ftp")
+        self.__path_user_files = os.environ.get(
+            "JUPYTER_SERVER_ROOT", f'/home/{os.environ.get("NB_USER", "ftp")}'
+        )
         self.__path_naas_files = os.path.join(
             self.__path_user_files, self.__naas_folder
         )
@@ -81,6 +83,7 @@ class Logger:
         self.__log.error(json.dumps(data))
 
     def clear(self):
+        print("clear", self.__path_logs_file)
         with open(self.__path_logs_file, "w") as fp:
             separator = ";"
             fp.write(f"{separator.join(self.__columns)}\n")

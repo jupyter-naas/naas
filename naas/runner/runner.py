@@ -57,7 +57,9 @@ class Runner:
     proxy_url = None
 
     def __init__(self):
-        self.__path_user_files = os.environ.get("JUPYTER_SERVER_ROOT", "/home/ftp")
+        self.__path_user_files = os.environ.get(
+            "JUPYTER_SERVER_ROOT", f'/home/{os.environ.get("NB_USER", "ftp")}'
+        )
         self.__port = int(os.environ.get("NAAS_RUNNER_PORT", 5000))
         self.__user = os.environ.get("JUPYTERHUB_USER", "joyvan@naas.com")
         self.__shell_user = os.environ.get("USER", None)

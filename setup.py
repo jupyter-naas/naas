@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="naas",
-    version="0.1.4",
+    version="0.1.5",
     scripts=["scripts/naas"],
     author="Martin Donadieu",
     author_email="martindonadieu@gmail.com",
@@ -19,13 +19,13 @@ setup(
     },
     extras_require={
         "dev": [
-            "pytest==5.2",
-            "pytest-sanic==1.6.1",
-            "requests-mock==1.8.0",
-            "twine==3.2.0",
-            "flake8==3.1.1",
-            "black==20.8b1",
-            "commitizen==2.4.0",
+            "pytest>=5,<6",
+            "pytest-sanic>=1,<2",
+            "requests-mock>=1,<2",
+            "twine>=3,<4",
+            "flake8>=3,<4",
+            "black>=20,<21",
+            "commitizen>=2,<3",
         ]
     },
     install_requires=[
