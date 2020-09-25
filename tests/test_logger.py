@@ -1,6 +1,6 @@
 from naas.types import t_add, t_delete, t_update
 from naas.runner.logger import Logger
-import pytest
+import pytest  # noqa: F401
 import logging
 import uuid
 import os
@@ -85,5 +85,3 @@ def test_list(tmp_path, caplog):
         len(logger.list(uid, skip=0, limit=0, search=None, filters=[t_delete, t_add]).get("data"))
         == 2
     )
-
-

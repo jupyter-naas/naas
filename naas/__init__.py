@@ -1,8 +1,8 @@
 # Copyright (c) Naas Team.
 # Distributed under the terms of the Modified BSD License.
-from .refresh import Refresh
+from .scheduler import Scheduler
 from .api import Api
-from .static import Static
+from .assets import Assets
 from .dependency import Dependency
 from IPython.core.display import display, HTML
 from .secret import Secret
@@ -11,13 +11,13 @@ from .runner.proxy import encode_proxy_url
 import requests
 import os
 
-__version__ = "0.1.7"
+__version__ = "0.1.12"
 __location__ = os.getcwd()
-refresh = Refresh()
+scheduler = Scheduler()
 secret = Secret()
 runner = Runner()
 api = Api()
-static = Static()
+static = Assets()
 dependency = Dependency()
 
 
@@ -35,7 +35,7 @@ def clean_logs():
     return jsn
 
 
-def refresh_status():
+def scheduler_status():
     req = requests.get(url="localhost:5000/scheduler")
     req.raise_for_status()
     jsn = req.json()
@@ -43,7 +43,7 @@ def refresh_status():
     return jsn
 
 
-def refresh_pause():
+def scheduler_pause():
     req = requests.get(url="localhost:5000/scheduler/pause")
     req.raise_for_status()
     jsn = req.json()
@@ -51,7 +51,7 @@ def refresh_pause():
     return jsn
 
 
-def refresh_resume():
+def scheduler_resume():
     req = requests.get(url="localhost:5000/scheduler/resume")
     req.raise_for_status()
     jsn = req.json()
@@ -67,7 +67,7 @@ def welcome():
 def help():
     print("naas.version() => Get the current version\n")
     print("naas.manager() => Get the url of the manager\n")
-    print("naas.refresh => Get the notebook refresh driver\n")
+    print("naas.scheduler => Get the notebook scheduler driver\n")
     print("naas.api => Get the notebook api driver\n")
     print("naas.static => Get the file sharing driver\n")
     print("naas.dependency => Get the file dependency driver\n")

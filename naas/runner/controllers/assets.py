@@ -6,7 +6,7 @@ import uuid
 import os
 
 
-class StaticController(HTTPMethodView):
+class AssetsController(HTTPMethodView):
     __logger = None
     __jobs = None
     __path_lib_files = None
@@ -16,7 +16,7 @@ class StaticController(HTTPMethodView):
     __manager_error = "error.html"
 
     def __init__(self, logger, jobs, path_assets, *args, **kwargs):
-        super(StaticController, self).__init__(*args, **kwargs)
+        super(AssetsController, self).__init__(*args, **kwargs)
         self.__logger = logger
         self.__jobs = jobs
         self.__path_lib_files = path_assets

@@ -46,35 +46,31 @@ class Dependency:
         current_file = self.manager.get_path(path)
         self.manager.clear_history(current_file, histo)
 
-    def add(self, path=None, silent=False):
+    def add(self, path=None, debug=False):
         if not self.manager.notebook_path():
             print("No add done you are in already in naas folder\n")
             return
         current_file = self.manager.get_path(path)
-        prod_path = self.manager.get_prod_path(current_file)
-        if silent is False:
-            print(
-                f"[Naas from Jupyter] => i have copied this {current_file} here: {prod_path} \n"
-            )
-            print(
-                f"If you want to remove the {type(self).__name__} capability, just call Naas.input.delete() in this file"
-            )
-        return self.manager.add_prod(
+        print("👌 Well done! Your dependency has been sent to production folder. \n")
+        print(
+            'PS: to remove the "Notebook as API" feature, just replace .add by .delete'
+        )
+        self.manager.add_prod(
             {
                 "type": self.role,
                 "path": current_file,
                 "params": {},
                 "value": "Only internal",
             },
-            silent,
+            not debug,
         )
 
-    def delete(self, path=None, all=False, silent=False):
+    def delete(self, path=None, all=False, debug=False):
         if not self.manager.notebook_path():
             print("No delete done you are in already in naas folder\n")
             return
         current_file = self.manager.get_path(path)
-        self.manager.del_prod({"type": self.role, "path": current_file}, silent)
+        self.manager.del_prod({"type": self.role, "path": current_file}, not debug)
         if all is True:
             self.manager.clear_history(current_file)
             self.manager.clear_output(current_file)

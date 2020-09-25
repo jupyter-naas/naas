@@ -26,7 +26,7 @@ class Api:
                 kind = f"callable with this url {self.manager.proxy_url('notebooks', item['value'])} from anywhere"
                 print(f"File ==> {item['path']} is {kind}")
 
-    def add(self, path=None, params={}, silent=False):
+    def add(self, path=None, params={}, debug=False):
         current_file = self.manager.get_path(path)
         if current_file is None:
             print("Missing file path in prod mode")
@@ -39,18 +39,15 @@ class Api:
         if not self.manager.notebook_path():
             print("No add done you are in already in naas folder\n")
             return url
-        if silent is False:
-            print(
-                f"[Naas from Jupyter] => i have copied this {current_file} here: {prod_path} \n"
-            )
-            print(f"You can now use it in Naas workspace with this url : {url} \n")
-            display(HTML(f'<a href="{url}"">{url}</a>'))
-            print(
-                f'If you want to remove the api capability, just call .delete({path if path is not None else "" })) in this file'
-            )
+        print("👌 Well done! Your Notebook has been sent to production folder.\n")
+        print(f"🔑 You can run this notebook remotely with: {url} \n")
+        self.manager.copy_url(url)
+        print(
+            'PS: to remove the "Notebook as API" feature, just replace .add by .delete'
+        )
         self.manager.add_prod(
             {"type": self.role, "path": current_file, "params": params, "value": token},
-            silent,
+            not debug,
         )
         return url
 
@@ -103,12 +100,12 @@ class Api:
         current_file = self.manager.get_path(path)
         self.manager.clear_history(current_file, histo)
 
-    def delete(self, path=None, all=False, silent=False):
+    def delete(self, path=None, all=False, debug=False):
         if not self.manager.notebook_path():
             print("No delete done you are in already in naas folder\n")
             return
         current_file = self.manager.get_path(path)
-        self.manager.del_prod({"type": self.role, "path": current_file}, silent)
+        self.manager.del_prod({"type": self.role, "path": current_file}, not debug)
         if all is True:
             self.manager.clear_history(current_file)
             self.manager.clear_output(current_file)

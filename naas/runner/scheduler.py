@@ -41,43 +41,64 @@ class Scheduler:
             self.__logger.info({"id": uid, "type": t_main, "status": "start SCHEDULER"})
 
     async def __scheduler_greenlet(self, main_uid, current_time, task):
-        print("__scheduler_greenlet", task)
-        value = task.get("value", None)
-        current_type = task.get("type", None)
-        file_filepath = task.get("path")
-        params = task.get("params", dict())
-        uid = str(uuid.uuid4())
-        running = self.__jobs.is_running(uid, file_filepath, current_type)
-        if (
-            current_type == t_scheduler
-            and value is not None
-            and pycron.is_now(value, current_time)
-            and not running
-        ):
-            print("__scheduler_greenlet => need to run now")
-            self.__logger.info(
-                {
-                    "main_id": str(main_uid),
-                    "id": uid,
-                    "type": t_scheduler,
-                    "status": t_start,
-                    "filepath": file_filepath,
-                }
-            )
-            await self.__jobs.update(
-                uid, file_filepath, t_scheduler, value, params, t_start
-            )
-            res = await self.__nb.exec(uid, task)
-            if res.get("error"):
-                self.__logger.error(
+        try:
+            print("__scheduler_greenlet", task)
+            value = task.get("value", None)
+            current_type = task.get("type", None)
+            file_filepath = task.get("path")
+            params = task.get("params", dict())
+            uid = str(uuid.uuid4())
+            running = self.__jobs.is_running(uid, file_filepath, current_type)
+            if (
+                current_type == t_scheduler
+                and value is not None
+                and pycron.is_now(value, current_time)
+                and not running
+            ):
+                print("__scheduler_greenlet => need to run now")
+                self.__logger.info(
                     {
                         "main_id": str(main_uid),
                         "id": uid,
                         "type": t_scheduler,
-                        "status": t_error,
+                        "status": t_start,
+                        "filepath": file_filepath,
+                    }
+                )
+                await self.__jobs.update(
+                    uid, file_filepath, t_scheduler, value, params, t_start
+                )
+                res = await self.__nb.exec(uid, task)
+                if res.get("error"):
+                    self.__logger.error(
+                        {
+                            "main_id": str(main_uid),
+                            "id": uid,
+                            "type": t_scheduler,
+                            "status": t_error,
+                            "filepath": file_filepath,
+                            "duration": res.get("duration"),
+                            "error": str(res.get("error")),
+                        }
+                    )
+                    await self.__jobs.update(
+                        uid,
+                        file_filepath,
+                        t_scheduler,
+                        value,
+                        params,
+                        t_error,
+                        res.get("duration"),
+                    )
+                    return
+                self.__logger.info(
+                    {
+                        "main_id": str(main_uid),
+                        "id": uid,
+                        "type": t_scheduler,
+                        "status": t_health,
                         "filepath": file_filepath,
                         "duration": res.get("duration"),
-                        "error": str(res.get("error")),
                     }
                 )
                 await self.__jobs.update(
@@ -86,30 +107,21 @@ class Scheduler:
                     t_scheduler,
                     value,
                     params,
-                    t_error,
+                    t_health,
                     res.get("duration"),
                 )
-                return
-            self.__logger.info(
+                print("__scheduler_greenlet => runned")
+        except:  # noqa: E722
+            tb = traceback.format_exc()
+            self.__logger.error(
                 {
-                    "main_id": str(main_uid),
-                    "id": uid,
+                    "id": main_uid,
                     "type": t_scheduler,
-                    "status": t_health,
-                    "filepath": file_filepath,
-                    "duration": res.get("duration"),
+                    "status": t_error,
+                    "error": "Unknow error",
+                    "trace": str(tb),
                 }
             )
-            await self.__jobs.update(
-                uid,
-                file_filepath,
-                t_scheduler,
-                value,
-                params,
-                t_health,
-                res.get("duration"),
-            )
-            print("__scheduler_greenlet => runned")
 
     async def __scheduler_function(self):
         # Create unique for scheduling step (one step every minute)
@@ -144,6 +156,19 @@ class Scheduler:
                     "status": t_error,
                     "duration": durationTotal,
                     "error": str(e),
+                    "trace": tb,
+                }
+            )
+        except:  # noqa: E722
+            tb = traceback.format_exc()
+            durationTotal = time.time() - all_start_time
+            self.__logger.error(
+                {
+                    "id": main_uid,
+                    "type": t_scheduler,
+                    "status": t_error,
+                    "duration": durationTotal,
+                    "error": "Unknow error",
                     "trace": tb,
                 }
             )

@@ -1,11 +1,11 @@
-from .types import t_scheduler
+from .types import t_static
 from .manager import Manager
-import pretty_cron
+import os
 
 
-class Refresh:
+class Assets:
     naas = None
-    role = t_scheduler
+    role = t_static
 
     def __init__(self):
         self.manager = Manager()
@@ -21,53 +21,19 @@ class Refresh:
         for item in json_data:
             kind = None
             if item["type"] == self.role:
-                cron_string = pretty_cron.prettify_cron(item["value"])
-                kind = f"refresh {cron_string}"
+                kind = f"publicly gettable with this url {self.manager.proxy_url('static', item['value'])}"
                 print(f"File ==> {item['path']} is {kind}")
 
-    def add(self, path=None, recurrence=None, params=None, silent=False):
-        if not self.manager.notebook_path():
-            print("No add done you are in already in naas folder\n")
-            return
-        if not recurrence:
-            print("No recurrence provided\n")
-            return
-        cron_string = pretty_cron.prettify_cron(recurrence)
-        current_file = self.manager.get_path(path)
-        prod_path = self.manager.get_prod_path(current_file)
-        if silent is False:
-            print(
-                f"[Naas from Jupyter] => i have copied this {current_file} here: {prod_path} \n"
-            )
-            print(f"it will refresh it {cron_string}\n")
-            print(
-                f'If you want to remove the refresh capability, just call .delete({path if path is not None else "" })) in this file'
-            )
-        return self.manager.add_prod(
-            {
-                "type": self.role,
-                "path": current_file,
-                "params": {},
-                "value": recurrence,
-            },
-            silent,
-        )
-
     def get(self, path=None):
+        if not self.manager.notebook_path():
+            print("No get done you are in already in naas folder\n")
+            return
         current_file = self.manager.get_path(path)
         self.manager.get_prod(current_file)
 
-    def clear_output(self, path=None):
-        current_file = self.manager.get_path(path)
-        self.manager.clear_output(current_file)
-
-    def get_output(self, path=None):
-        current_file = self.manager.get_path(path)
-        self.manager.get_output(current_file)
-
-    def get_history(self, path=None, histo=None):
-        if not histo:
-            print("No histo provided\n")
+    def get_history(self, histo, path=None):
+        if not self.manager.notebook_path():
+            print("No get history done you are in already in naas folder\n")
             return
         current_file = self.manager.get_path(path)
         self.manager.get_history(current_file, histo)
@@ -77,15 +43,43 @@ class Refresh:
         self.manager.list_history(current_file)
 
     def clear_history(self, path=None, histo=None):
+        if not self.manager.notebook_path():
+            print("No clear history done you are in already in naas folder\n")
+            return
         current_file = self.manager.get_path(path)
         self.manager.clear_history(current_file, histo)
 
-    def delete(self, path=None, all=False, silent=False):
+    def add(self, path=None, params={}, debug=False, Force=False):
+        current_file = self.manager.get_path(path)
+        if current_file is None:
+            print("Missing file path in prod mode")
+            return
+        prod_path = self.manager.get_prod_path(current_file)
+        token = self.manager.get_value(prod_path, self.role)
+        if token is None or Force is True:
+            token = os.urandom(30).hex()
+        url = self.manager.proxy_url("static", token)
+        if not self.manager.notebook_path() and Force is False:
+            print("No add done you are in already in naas folder\n")
+            return url
+        print("👌 Well done! Your Assets has been sent to production folder.\n")
+        print(f"🔗 You can access this assets remotely with: {url} \n")
+        self.manager.copy_url(url)
+        print(
+            'PS: to remove the "Notebook as API" feature, just replace .add by .delete'
+        )
+        self.manager.add_prod(
+            {"type": self.role, "path": current_file, "params": params, "value": token},
+            not debug,
+        )
+        return url
+
+    def delete(self, path=None, all=False, debug=False):
         if not self.manager.notebook_path():
             print("No delete done you are in already in naas folder\n")
             return
         current_file = self.manager.get_path(path)
-        self.manager.del_prod({"type": self.role, "path": current_file}, silent)
+        self.manager.del_prod({"type": self.role, "path": current_file}, not debug)
         if all is True:
             self.manager.clear_history(current_file)
             self.manager.clear_output(current_file)
@@ -99,14 +93,14 @@ class Refresh:
             f".delete(path) => delete path to the prod {type(self).__name__} server\n"
         )
         print(
-            ".clear_history(histonumber, path) => clear history, history number and path are optionel, \
+            ".clear_history(path, histonumber) => clear history, history number and path are optionel, \
                 if you don't provide them it will erase full history of current file \n"
         )
         print(
             ".list_history(path) => list history, of a path or if not provided the current file \n"
         )
         print(
-            ".get_history(histonumber, path) => get history file, of a path or if not provided the current file \n"
+            ".get_history(path, histonumber) => get history file, of a path or if not provided the current file \n"
         )
         print(
             ".get(path) => get current prod file of a path, or if not provided the current file \n"
