@@ -14,6 +14,8 @@ import urllib
 import errno
 import json
 import os
+from IPython.core.display import display, HTML
+import ipywidgets as widgets
 
 
 class Manager:
@@ -85,6 +87,34 @@ class Manager:
             return os.path.abspath(os.path.join(os.getcwd(), path))
         else:
             return self.notebook_path()
+
+    def copy_clipboard(self, text):
+        js = """<script>
+        function copyToClipboard(text) {
+        var dummy = document.createElement("textarea");
+        document.body.appendChild(dummy);
+        dummy.value = text;
+        dummy.select();
+        document.execCommand("copy");
+        document.body.removeChild(dummy);
+        }
+        </script>"""
+        display(HTML(js))
+        js2 = "<script>copyToClipboard(`" + text + "`);</script>"
+        display(HTML(js2))
+
+    def copy_url(self, text):
+        button = widgets.Button(description="Copy URL")
+        output = widgets.Output()
+
+        def on_button_clicked(b):
+            with output:
+                self.copy_clipboard(text)
+                html_div = '<div id="pasting_to_clipboard">✅ Copied !</div>'
+                display(HTML(html_div))
+
+        button.on_click(on_button_clicked)
+        display(button, output)
 
     def proxy_url(self, endpoint, token=None):
         public_url = encode_proxy_url(endpoint)

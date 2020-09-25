@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="naas",
-    version="0.1.7",
+    version="0.1.12",
     scripts=["scripts/naas"],
     author="Martin Donadieu",
     author_email="martindonadieu@gmail.com",
@@ -29,6 +29,7 @@ setup(
         ]
     },
     install_requires=[
+        "ipywidgets>=7,<=8",
         "sentry_sdk>=0,<1",
         "papermill>=2,<3",
         "pretty-cron>=1,<2",

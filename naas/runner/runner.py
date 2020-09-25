@@ -1,6 +1,6 @@
 from sentry_sdk.integrations.sanic import SanicIntegration
 from naas.runner.controllers.scheduler import SchedulerController
-from naas.runner.controllers.static import StaticController
+from naas.runner.controllers.assets import AssetsController
 from naas.runner.controllers.notebooks import NbController
 from naas.runner.controllers.jobs import JobsController
 from naas.runner.controllers.logs import LogsController
@@ -146,8 +146,8 @@ class Runner:
             JobsController.as_view(self.__logger, self.__jobs), "/jobs"
         )
         self.__app.add_route(
-            StaticController.as_view(self.__logger, self.__jobs, self.__path_lib_files),
-            "/static/<token>",
+            AssetsController.as_view(self.__logger, self.__jobs, self.__path_lib_files),
+            "/assets/<token>",
         )
         self.__app.static("/", self.__path_manager_index, name="manager.html")
         self.__app.blueprint(swagger_blueprint)

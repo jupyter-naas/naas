@@ -136,6 +136,7 @@ class Notebooks:
                 progress_bar=False,
                 cwd=file_dirpath,
                 parameters=params,
+                nest_asyncio=True,
             )
 
     async def exec(self, uid, job):
