@@ -33,7 +33,7 @@ async def test_add(tmp_path):
     runTime = 0
     await jobs.update(uid, path, target_type, value, params, t_add, runTime)
     assert len(jobs.list(uid)) == 1
-    data = jobs.find_by_path(uid, path, target_type)
+    data = await jobs.find_by_path(uid, path, target_type)
     assert data.get("value") == value
     assert data["params"] == params
     assert data["lastRun"] == runTime
@@ -89,7 +89,7 @@ async def test_update(tmp_path):
     assert len(jobs.list(uid)) == 1
     await jobs.update(uid, path, target_type, new_value, params, t_update, runTime)
     assert len(jobs.list(uid)) == 1
-    data = jobs.find_by_path(uid, path, target_type)
+    data = await jobs.find_by_path(uid, path, target_type)
     assert data["value"] == new_value
     await jobs.update(uid, path, target_type, value, params, t_delete, runTime)
     assert len(jobs.list(uid)) == 0

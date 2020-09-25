@@ -35,7 +35,7 @@ class AssetsController(HTTPMethodView):
             print("Cannot get html error")
             return ""
 
-    def get(self, request, token):
+    async def get(self, request, token):
         if token == "up" or token == "down" or token.startswith("naas_"):
             ext = ".png"
             if token.startswith("naas_"):
@@ -47,7 +47,7 @@ class AssetsController(HTTPMethodView):
             )
         else:
             uid = str(uuid.uuid4())
-            task = self.__jobs.find_by_value(uid, token, t_static)
+            task = await self.__jobs.find_by_value(uid, token, t_static)
             if task:
                 file_filepath = task.get("path")
                 params = task.get("params", dict())

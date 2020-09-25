@@ -2,12 +2,20 @@ from sanic.response import json, redirect, stream
 from naas.runner.proxy import escape_kubernet
 from naas.types import t_notebook, t_scheduler, t_error, t_health
 import papermill as pm
+
+# import nest_asyncio
 import traceback
+
+# import asyncio
 import time
 import bs4
 import csv
 import os
 import io
+
+# # TODO remove this fix when papermill support uvloop of Sanic support option to don't use uvloop
+# asyncio.set_event_loop_policy(None)
+# nest_asyncio.apply()
 
 kern_manager = None
 try:

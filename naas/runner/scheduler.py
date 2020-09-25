@@ -3,10 +3,16 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 import apscheduler.schedulers.base
 import traceback
 import datetime
+
+# import nest_asyncio
 import asyncio
 import pycron
 import time
 import uuid
+
+# TODO remove this fix when papermill support uvloop of Sanic support option to don't use uvloop
+# asyncio.set_event_loop_policy(None)
+# nest_asyncio.apply()
 
 
 class Scheduler:
@@ -41,21 +47,21 @@ class Scheduler:
             self.__logger.info({"id": uid, "type": t_main, "status": "start SCHEDULER"})
 
     async def __scheduler_greenlet(self, main_uid, current_time, task):
+        print("__scheduler_greenlet => start")
         try:
-            print("__scheduler_greenlet", task)
             value = task.get("value", None)
             current_type = task.get("type", None)
             file_filepath = task.get("path")
             params = task.get("params", dict())
             uid = str(uuid.uuid4())
-            running = self.__jobs.is_running(uid, file_filepath, current_type)
+            running = await self.__jobs.is_running(uid, file_filepath, current_type)
             if (
                 current_type == t_scheduler
                 and value is not None
                 and pycron.is_now(value, current_time)
                 and not running
             ):
-                print("__scheduler_greenlet => need to run now")
+                print("__scheduler_greenlet => right time")
                 self.__logger.info(
                     {
                         "main_id": str(main_uid),
@@ -111,6 +117,8 @@ class Scheduler:
                     res.get("duration"),
                 )
                 print("__scheduler_greenlet => runned")
+            else:
+                print("__scheduler_greenlet => NOT runned")
         except:  # noqa: E722
             tb = traceback.format_exc()
             self.__logger.error(
@@ -131,10 +139,11 @@ class Scheduler:
             all_start_time = time.time()
             # Write self.__scheduler init info in self.__logger.write
             self.__logger.info({"id": main_uid, "type": t_scheduler, "status": t_start})
-            asyncio.gather(
+            jobs = await self.__jobs.list(main_uid)
+            await asyncio.gather(
                 *[
                     self.__scheduler_greenlet(main_uid, current_time, job)
-                    for job in self.__jobs.list(main_uid)
+                    for job in jobs
                 ]
             )
             durationTotal = time.time() - all_start_time

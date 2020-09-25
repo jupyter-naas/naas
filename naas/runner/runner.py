@@ -22,6 +22,11 @@ import uuid
 import os
 import json
 import sys
+import nest_asyncio
+
+# TODO remove this fix when papermill support uvloop of Sanic support option to don't use uvloop
+asyncio.set_event_loop_policy(None)
+nest_asyncio.apply()
 
 
 class Runner:
@@ -95,18 +100,25 @@ class Runner:
         return version
 
     async def initialize_before_start(self, app, loop):
-        if self.__nb is None:
-            self.__nb = Notebooks(self.__logger, loop, self.__notif)
-            self.__app.add_route(
-                NbController.as_view(self.__logger, self.__jobs, self.__nb),
-                "/notebooks/<token>",
-            )
-            self.__scheduler = Scheduler(self.__logger, self.__jobs, self.__nb, loop)
-            self.__app.add_route(
-                SchedulerController.as_view(self.__logger, self.__scheduler),
-                "/scheduler/<mode>",
-            )
-            self.__scheduler.start()
+        self.__jobs = Jobs(self.__logger, loop=loop)
+        self.__nb = Notebooks(self.__logger, loop, self.__notif)
+        self.__app.add_route(
+            NbController.as_view(self.__logger, self.__jobs, self.__nb),
+            "/notebooks/<token>",
+        )
+        self.__scheduler = Scheduler(self.__logger, self.__jobs, self.__nb, loop)
+        self.__app.add_route(
+            SchedulerController.as_view(self.__logger, self.__scheduler),
+            "/scheduler/<mode>",
+        )
+        self.__app.add_route(
+            JobsController.as_view(self.__logger, self.__jobs), "/jobs"
+        )
+        self.__app.add_route(
+            AssetsController.as_view(self.__logger, self.__jobs, self.__path_lib_files),
+            "/assets/<token>",
+        )
+        self.__scheduler.start()
 
     def kill(self):
         if os.path.exists(self.__path_pidfile):
@@ -121,12 +133,9 @@ class Runner:
                 print("No Deamon running")
 
     def init_app(self):
+        self.__app = Sanic(__name__)
         self.__logger = Logger()
         self.__notif = Notifications(self.__logger)
-        self.__jobs = Jobs(self.__logger)
-        self.__app = Sanic(__name__)
-        # TODO remove this fix when papermill support uvloop of Sanic support option to don't use uvloop
-        asyncio.set_event_loop_policy(None)
         self.__app.register_listener(
             self.initialize_before_start, "before_server_start"
         )
@@ -142,13 +151,6 @@ class Runner:
             "/env",
         )
         self.__app.add_route(LogsController.as_view(self.__logger), "/logs")
-        self.__app.add_route(
-            JobsController.as_view(self.__logger, self.__jobs), "/jobs"
-        )
-        self.__app.add_route(
-            AssetsController.as_view(self.__logger, self.__jobs, self.__path_lib_files),
-            "/assets/<token>",
-        )
         self.__app.static("/", self.__path_manager_index, name="manager.html")
         self.__app.blueprint(swagger_blueprint)
         uid = str(uuid.uuid4())

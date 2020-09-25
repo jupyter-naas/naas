@@ -15,7 +15,7 @@ class JobsController(HTTPMethodView):
 
     async def get(self, request):
         uid = str(uuid.uuid4())
-        status = self.__jobs.list(uid)
+        status = await self.__jobs.list(uid)
         self.__logger.info(
             {"id": uid, "type": t_static, "status": "send", "filepath": "status"}
         )
