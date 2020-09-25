@@ -29,6 +29,9 @@ class NbController(HTTPMethodView):
                     "token": token,
                 }
             )
+            await self.__jobs.update(
+                uid, file_filepath, t_notebook, value, task.get("params"), t_start
+            )
             res = await self.__nb.exec(uid, task)
             if res.get("error"):
                 self.__logger.error(

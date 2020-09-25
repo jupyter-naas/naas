@@ -1,6 +1,6 @@
 [tool.commitizen]
 name = "cz_conventional_commits"
-version = "0.1.5"
+version = "0.1.6"
 tag_format = "$version"
 version_files = [
     "naas/__version__.py",

@@ -11,13 +11,13 @@ import uuid
 
 class Scheduler:
     __scheduler = None
-    __notebooks = None
+    __nb = None
     __logger = None
     __jobs = None
 
     def __init__(self, logger, jobs, notebooks, loop):
         self.__logger = logger
-        self.__notebooks = notebooks
+        self.__nb = notebooks
         self.__jobs = jobs
         self.__scheduler = AsyncIOScheduler({"event_loop": loop})
         self.state = self.__scheduler.state
@@ -41,6 +41,7 @@ class Scheduler:
             self.__logger.info({"id": uid, "type": t_main, "status": "start SCHEDULER"})
 
     async def __scheduler_greenlet(self, main_uid, current_time, task):
+        print("__scheduler_greenlet", task)
         value = task.get("value", None)
         current_type = task.get("type", None)
         file_filepath = task.get("path")
@@ -53,6 +54,7 @@ class Scheduler:
             and pycron.is_now(value, current_time)
             and not running
         ):
+            print("__scheduler_greenlet => need to run now")
             self.__logger.info(
                 {
                     "main_id": str(main_uid),
@@ -65,7 +67,7 @@ class Scheduler:
             await self.__jobs.update(
                 uid, file_filepath, t_scheduler, value, params, t_start
             )
-            res = self.__notebooks.exec(uid, task)
+            res = await self.__nb.exec(uid, task)
             if res.get("error"):
                 self.__logger.error(
                     {
@@ -107,6 +109,7 @@ class Scheduler:
                 t_health,
                 res.get("duration"),
             )
+            print("__scheduler_greenlet => runned")
 
     async def __scheduler_function(self):
         # Create unique for scheduling step (one step every minute)
@@ -114,15 +117,14 @@ class Scheduler:
         try:
             current_time = datetime.datetime.now()
             all_start_time = time.time()
-            greelets = []
             # Write self.__scheduler init info in self.__logger.write
             self.__logger.info({"id": main_uid, "type": t_scheduler, "status": t_start})
-            for job in self.__jobs.list(main_uid):
-                g = asyncio.create_task(
+            asyncio.gather(
+                *[
                     self.__scheduler_greenlet(main_uid, current_time, job)
-                )
-                greelets.append(g)
-            await asyncio.gather(*greelets)
+                    for job in self.__jobs.list(main_uid)
+                ]
+            )
             durationTotal = time.time() - all_start_time
             self.__logger.info(
                 {
