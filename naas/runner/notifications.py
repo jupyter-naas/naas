@@ -48,6 +48,10 @@ class Notifications:
         return jsn
 
     def send_scheduler(self, uid, status, email, file_path, cron_str):
+        if self.base_notif_url is None:
+            jsn = {"id": uid, "type": "notification error", "error": "not configured"}
+            self.logger.error(json.dumps(jsn))
+            return jsn
         cron_string = pretty_cron.prettify_cron(cron_str)
         content = f"Your {file_path} who run {cron_string} is {status}, check the Logs on your manager below :"
         status_url = f"{encode_proxy_url('assets')}/{status}.png"
@@ -73,6 +77,10 @@ class Notifications:
             )
 
     def send_error(self, uid, error, file_path):
+        if self.base_notif_url is None:
+            jsn = {"id": uid, "type": "notification error", "error": "not configured"}
+            self.logger.error(json.dumps(jsn))
+            return jsn
         email = os.environ.get("JUPYTERHUB_USER", None)
         if email is not None:
             content = f"Your {file_path} got Errors : {error},  during run N: {uid} \n Check the Logs on your manager below :"

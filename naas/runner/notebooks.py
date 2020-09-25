@@ -127,6 +127,7 @@ class Notebooks:
                 cwd=file_dirpath,
                 parameters=params,
                 kernel_manager_class=kern_manager,
+                nest_asyncio=True,
             )
         else:
             return pm.execute_notebook(
@@ -165,6 +166,8 @@ class Notebooks:
         try:
             res = self.__pm_exec(file_dirpath, file_filepath, file_filepath_out, params)
         except pm.PapermillExecutionError as err:
+            tb = traceback.format_exc()
+            res = {"error": err, "traceback": str(tb)}
             self.__logger.error(
                 {
                     "id": uid,
@@ -175,7 +178,6 @@ class Notebooks:
                     "error": str(err),
                 }
             )
-            res = {"error": str(err)}
         except pm.PapermillException as err:
             tb = traceback.format_exc()
             res = {"error": err, "traceback": str(tb)}
@@ -187,6 +189,20 @@ class Notebooks:
                     "filepath": file_filepath,
                     "output_filepath": file_filepath_out,
                     "error": err,
+                    "traceback": str(tb),
+                }
+            )
+        except:  # noqa: E722
+            tb = traceback.format_exc()
+            res = {"error": "Unknow error", "traceback": str(tb)}
+            self.__logger.error(
+                {
+                    "id": uid,
+                    "type": "Exception",
+                    "status": t_error,
+                    "filepath": file_filepath,
+                    "output_filepath": file_filepath_out,
+                    "error": res.get("error"),
                     "traceback": str(tb),
                 }
             )
@@ -203,10 +219,10 @@ class Notebooks:
                 }
             )
         else:
-            self.__logger.error(
+            self.__logger.info(
                 {
                     "id": uid,
-                    "type": "Exception",
+                    "type": "Done",
                     "status": t_health,
                     "filepath": file_filepath,
                     "output_filepath": file_filepath_out,
