@@ -23,12 +23,21 @@ def test_init(tmp_path):
     assert len(manager.get_naas()) == 0
 
 
-def test_nb_path(tmp_path):
+def test_nb_path(mocker, tmp_path):
     path_srv_root = os.path.join(str(tmp_path), user_folder_name)
     os.environ["JUPYTER_SERVER_ROOT"] = path_srv_root
-    # TODO need better test
+    mocker.patch(
+        "ipykernel.get_connection_file", return_value="A/B/TESTID-ANOTHERID.ID1.ID2",
+    )
+
+    mock_json = open("tests/session_ids.json")
+
+    mocker.patch("urllib.request.urlopen", return_value=mock_json)
+    mocker.patch(
+        "notebook.notebookapp.list_running_servers", return_value=[{"notebook_dir": "MAIN_DIR"}]
+    )
     manager = Manager()
-    assert manager.notebook_path() is None
+    assert manager.notebook_path() == "MAIN_DIR/TEST_DIR1/ANOTHER_DIR1"
 
 
 def test_get_path(tmp_path):
