@@ -58,7 +58,7 @@ class Assets:
         token = self.manager.get_value(prod_path, self.role)
         if token is None or Force is True:
             token = os.urandom(30).hex()
-        url = self.manager.proxy_url("static", token)
+        url = self.manager.proxy_url("assets", token)
         if not self.manager.notebook_path() and Force is False:
             print("No add done you are in already in naas folder\n")
             return url
