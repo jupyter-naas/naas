@@ -56,7 +56,7 @@ class Jobs:
         else:
             uid = str(uuid.uuid4())
             self.__df = self.__get_save_from_file(uid)
-        if not self.__df or len(self.__df) == 0:
+        if self.__df is None or len(self.__df) == 0:
             self.__df = pd.DataFrame(
                 columns=[
                     "id",
