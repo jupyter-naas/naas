@@ -11,7 +11,7 @@ from .runner.proxy import encode_proxy_url
 import requests
 import os
 
-__version__ = "0.1.18"
+__version__ = "0.1.20"
 __location__ = os.getcwd()
 scheduler = Scheduler()
 secret = Secret()
@@ -69,5 +69,5 @@ def help():
     print("naas.manager() => Get the url of the manager\n")
     print("naas.scheduler => Get the notebook scheduler driver\n")
     print("naas.api => Get the notebook api driver\n")
-    print("naas.static => Get the file sharing driver\n")
+    print("naas.assets => Get the file sharing driver\n")
     print("naas.dependency => Get the file dependency driver\n")

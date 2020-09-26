@@ -1,6 +1,6 @@
 from sanic.views import HTTPMethodView
 from sanic import response
-from naas.types import t_static, t_task, t_error
+from naas.types import t_asset, t_job, t_error
 import uuid
 
 
@@ -17,7 +17,7 @@ class JobsController(HTTPMethodView):
         uid = str(uuid.uuid4())
         status = await self.__jobs.list(uid)
         self.__logger.info(
-            {"id": uid, "type": t_static, "status": "send", "filepath": "status"}
+            {"id": uid, "type": t_asset, "status": "send", "filepath": "status"}
         )
         return response.json(status)
 
@@ -32,7 +32,7 @@ class JobsController(HTTPMethodView):
             self.__logger.info(
                 {
                     "id": uid,
-                    "type": t_task,
+                    "type": t_job,
                     "status": t_error,
                     "error": "missing keys",
                     "tb": data,
@@ -47,5 +47,5 @@ class JobsController(HTTPMethodView):
             data["params"],
             data["status"],
         )
-        self.__logger.info({"id": uid, "type": t_task, "status": updated["status"]})
+        self.__logger.info({"id": uid, "type": t_job, "status": updated["status"]})
         return response.json(updated)

@@ -1,11 +1,11 @@
-from .types import t_static
+from .types import t_asset
 from .manager import Manager
 import os
 
 
 class Assets:
     naas = None
-    role = t_static
+    role = t_asset
 
     def __init__(self):
         self.manager = Manager()
@@ -21,7 +21,7 @@ class Assets:
         for item in json_data:
             kind = None
             if item["type"] == self.role:
-                kind = f"publicly gettable with this url {self.manager.proxy_url('static', item['value'])}"
+                kind = f"publicly gettable with this url {self.manager.proxy_url('assets', item['value'])}"
                 print(f"File ==> {item['path']} is {kind}")
 
     def get(self, path=None):
@@ -58,7 +58,7 @@ class Assets:
         token = self.manager.get_value(prod_path, self.role)
         if token is None or Force is True:
             token = os.urandom(30).hex()
-        url = self.manager.proxy_url("assets", token)
+        url = self.manager.proxy_url(self.role, token)
         if not self.manager.notebook_path() and Force is False:
             print("No add done you are in already in naas folder\n")
             return url

@@ -1,6 +1,7 @@
-from sentry_sdk.integrations.sanic import SanicIntegration
+from naas.types import t_main, t_notebook, t_scheduler, t_asset
 from naas.runner.controllers.scheduler import SchedulerController
 from naas.runner.controllers.assets import AssetsController
+from sentry_sdk.integrations.sanic import SanicIntegration
 from naas.runner.controllers.notebooks import NbController
 from naas.runner.controllers.jobs import JobsController
 from naas.runner.controllers.logs import LogsController
@@ -12,7 +13,6 @@ from sanic_openapi import swagger_blueprint
 from naas.runner.logger import Logger
 from .proxy import escape_kubernet
 from naas.runner.jobs import Jobs
-from naas.types import t_main
 from sanic import Sanic
 import sentry_sdk
 import asyncio
@@ -104,19 +104,19 @@ class Runner:
         self.__nb = Notebooks(self.__logger, loop, self.__notif)
         self.__app.add_route(
             NbController.as_view(self.__logger, self.__jobs, self.__nb),
-            "/notebooks/<token>",
+            f"/{t_notebook}/<token>",
         )
         self.__scheduler = Scheduler(self.__logger, self.__jobs, self.__nb, loop)
         self.__app.add_route(
             SchedulerController.as_view(self.__logger, self.__scheduler),
-            "/scheduler/<mode>",
-        )
-        self.__app.add_route(
-            JobsController.as_view(self.__logger, self.__jobs), "/jobs"
+            f"/{t_scheduler}/<mode>",
         )
         self.__app.add_route(
             AssetsController.as_view(self.__logger, self.__jobs, self.__path_lib_files),
-            "/assets/<token>",
+            f"/{t_asset}/<token>",
+        )
+        self.__app.add_route(
+            JobsController.as_view(self.__logger, self.__jobs), f"/{t_asset}"
         )
         self.__scheduler.start()
 

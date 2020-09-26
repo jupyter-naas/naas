@@ -1,7 +1,7 @@
 from sanic.views import HTTPMethodView
 from sanic import response
 from sanic.exceptions import ServerError
-from naas.types import t_static, t_health, t_error, t_start
+from naas.types import t_asset, t_health, t_error, t_start
 import uuid
 import os
 
@@ -47,14 +47,14 @@ class AssetsController(HTTPMethodView):
             )
         else:
             uid = str(uuid.uuid4())
-            task = await self.__jobs.find_by_value(uid, token, t_static)
+            task = await self.__jobs.find_by_value(uid, token, t_asset)
             if task:
                 file_filepath = task.get("path")
                 params = task.get("params", dict())
                 self.__logger.info(
                     {
                         "id": uid,
-                        "type": t_static,
+                        "type": t_asset,
                         "status": t_start,
                         "filepath": file_filepath,
                         "token": token,
@@ -62,13 +62,13 @@ class AssetsController(HTTPMethodView):
                 )
                 try:
                     self.__jobs.update(
-                        uid, file_filepath, t_static, token, params, t_health, 1
+                        uid, file_filepath, t_asset, token, params, t_health, 1
                     )
                     res = await response.file(file_filepath)
                     self.__logger.info(
                         {
                             "id": uid,
-                            "type": t_static,
+                            "type": t_asset,
                             "status": t_start,
                             "filepath": file_filepath,
                             "token": token,
@@ -79,7 +79,7 @@ class AssetsController(HTTPMethodView):
                     self.__logger.error(
                         {
                             "id": uid,
-                            "type": t_static,
+                            "type": t_asset,
                             "status": t_error,
                             "filepath": file_filepath,
                             "token": token,
@@ -87,13 +87,13 @@ class AssetsController(HTTPMethodView):
                         }
                     )
                     self.__jobs.update(
-                        uid, file_filepath, t_static, token, params, t_error, 1
+                        uid, file_filepath, t_asset, token, params, t_error, 1
                     )
                     raise ServerError({"id": uid, "error": e}, status_code=404)
             self.__logger.error(
                 {
                     "id": uid,
-                    "type": t_static,
+                    "type": t_asset,
                     "status": t_error,
                     "error": "Cannot find your token",
                     "token": token,

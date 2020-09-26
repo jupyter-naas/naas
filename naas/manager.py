@@ -1,9 +1,4 @@
-from .types import (
-    t_delete,
-    t_add,
-    t_static,
-    t_notebook,
-)
+from .types import t_delete, t_job, t_add
 from notebook import notebookapp
 from .runner.proxy import encode_proxy_url
 from shutil import copy2
@@ -26,7 +21,6 @@ class Manager:
     __jup_token = None
     __production_path = None
     __folder_name = ".naas"
-    __json_files = "jobs.json"
     __readme_name = "README.md"
     __json_files_path = None
     __readme_path = None
@@ -39,7 +33,6 @@ class Manager:
         self.__jup_token = os.environ.get("JUPYTERHUB_API_TOKEN", "")
         self.__jup_user = os.environ.get("JUPYTERHUB_USER", "")
         self.__production_path = os.path.join(self.__base_ftp_path, self.__folder_name)
-        self.__json_files_path = os.path.join(self.__production_path, self.__json_files)
         self.__readme_path = os.path.join(self.__production_path, self.__readme_name)
         if not os.path.exists(self.__production_path):
             try:
@@ -64,12 +57,16 @@ class Manager:
             kernel_id = connection_file.split("-", 1)[1].split(".")[0]
             for srv in notebookapp.list_running_servers():
                 try:
-                    base_url = f"{self.__public_url}/user/{self.__jup_user}/api/sessions"
+                    base_url = (
+                        f"{self.__public_url}/user/{self.__jup_user}/api/sessions"
+                    )
                     req = urllib.request.urlopen(f"{base_url}?token={self.__jup_token}")
                     sessions = json.load(req)
                     for sess in sessions:
                         if sess["kernel"]["id"] == kernel_id:
-                            return os.path.join(srv["notebook_dir"], sess["notebook"]["path"])
+                            return os.path.join(
+                                srv["notebook_dir"], sess["notebook"]["path"]
+                            )
                 except urllib.error.HTTPError:
                     pass
         except IndexError:
@@ -148,7 +145,9 @@ class Manager:
         new_path = self.get_prod_path(path)
         prod_dir = os.path.dirname(new_path)
         prod_finename = os.path.basename(new_path)
-        history_filename = f'{datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")}_{prod_finename}'
+        history_filename = (
+            f'{datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")}_{prod_finename}'
+        )
         history_path = os.path.join(prod_dir, history_filename)
         if not os.path.exists(path):
             raise Exception(f"file doesn't exist {path}")
@@ -172,38 +171,6 @@ class Manager:
         if os.path.exists(path):
             os.remove(path)
 
-    def get_naas(self):
-        naas_data = []
-        try:
-            with open(self.__json_files_path, "r") as f:
-                naas_data = json.load(f)
-                f.close()
-        except IOError:
-            naas_data = []
-        return naas_data
-
-    def get_value(self, path, obj_type):
-        json_data = self.get_naas()
-        value = None
-        for item in json_data:
-            if item["type"] == obj_type and item["path"] == path:
-                value = item["value"]
-        return value
-
-    def is_already_use(self, obj):
-        json_data = self.get_naas()
-        already_use = False
-        for item in json_data:
-            if (
-                "type" in obj
-                and "value" in obj
-                and (obj["type"] == t_static or obj["type"] == t_notebook)
-                and item["type"] == obj["type"]
-                and item["value"] == obj["value"]
-            ):
-                already_use = True
-        return already_use
-
     def get_prod(self, path):
         self.__copy_file_in_dev(path)
 
@@ -226,7 +193,11 @@ class Manager:
         dirname = os.path.dirname(prod_path)
         print("Avaliable :\n")
         for ffile in os.listdir(dirname):
-            if ffile.endswith(filename) and ffile != filename and not ffile.startswith("out"):
+            if (
+                ffile.endswith(filename)
+                and ffile != filename
+                and not ffile.startswith("out")
+            ):
                 histo = ffile.replace(filename, "")
                 histo = histo.replace("_", "")
                 print(histo + "\n")
@@ -239,7 +210,9 @@ class Manager:
 
     def clear_history(self, path, histo=None):
         prod_path = self.get_prod_path(path)
-        filename = os.path.basename(path) if not histo else f"{histo}_{os.path.basename(path)}"
+        filename = (
+            os.path.basename(path) if not histo else f"{histo}_{os.path.basename(path)}"
+        )
         dirname = os.path.dirname(prod_path)
         for ffile in os.listdir(dirname):
             if not ffile.startswith("out_") and (
@@ -255,20 +228,36 @@ class Manager:
             dev_path = obj.get("path")
             obj["path"] = self.get_prod_path(obj.get("path"))
             self.__copy_file_in_prod(dev_path)
-            r = requests.post(f"{self.__local_api}/jobs", json={**obj, **{"status": t_add}})
-            if not silent:
-                print(f'{r.json()["status"]} ==> {obj}')
+            try:
+                r = requests.post(
+                    f"{self.__local_api}/{t_job}", json={**obj, **{"status": t_add}}
+                )
+                if not silent:
+                    print(f'{r.json()["status"]} ==> {obj}')
+            except ConnectionError:
+                print("Manager look busy, try to reload your machine")
+            except requests.HTTPError as e:
+                print("Manager refused your request, reason :", e)
             return obj
         else:
-            raise Exception('obj should have all keys ("type","path","params","value" )')
+            raise Exception(
+                'obj should have all keys ("type","path","params","value" )'
+            )
 
     def del_prod(self, obj, silent):
         if "type" in obj and "path" in obj:
             obj["path"] = self.get_prod_path(obj.get("path"))
             self.__del_file_in_prod(obj["path"])
-            r = requests.post(f"{self.__local_api}/jobs", json={**obj, **{"status": t_delete}})
-            if not silent:
-                print(f'{r.json()["status"]} ==> {obj}')
+            try:
+                r = requests.post(
+                    f"{self.__local_api}/{t_job}", json={**obj, **{"status": t_delete}}
+                )
+                if not silent:
+                    print(f'{r.json()["status"]} ==> {obj}')
+            except ConnectionError:
+                print("Manager look busy, try to reload your machine")
+            except requests.HTTPError as e:
+                print("Manager refused your request, reason :", e)
             return obj
         else:
             raise Exception('obj should have keys ("type","path")')

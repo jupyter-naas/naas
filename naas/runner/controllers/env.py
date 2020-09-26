@@ -1,6 +1,6 @@
 from sanic.views import HTTPMethodView
 from sanic.response import json
-from naas.types import t_health, t_static
+from naas.types import t_health, t_asset
 import uuid
 
 
@@ -31,6 +31,6 @@ class EnvController(HTTPMethodView):
             "TZ": self.__tz,
         }
         self.__logger.info(
-            {"id": uid, "type": t_static, "status": "send", "filepath": "env"}
+            {"id": uid, "type": t_asset, "status": "send", "filepath": "env"}
         )
         return json(env)

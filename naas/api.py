@@ -35,7 +35,7 @@ class Api:
         token = self.manager.get_value(prod_path, self.role)
         if token is None:
             token = os.urandom(30).hex()
-        url = self.manager.proxy_url("notebooks", token)
+        url = self.manager.proxy_url(self.role, token)
         if not self.manager.notebook_path():
             print("No add done you are in already in naas folder\n")
             return url

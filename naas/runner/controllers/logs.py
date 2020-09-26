@@ -1,6 +1,6 @@
 from sanic.views import HTTPMethodView
 from sanic.response import json, file
-from naas.types import t_static
+from naas.types import t_asset
 import uuid
 
 
@@ -26,7 +26,7 @@ class LogsController(HTTPMethodView):
             self.__logger.info(
                 {
                     "id": uid,
-                    "type": t_static,
+                    "type": t_asset,
                     "status": "send",
                     "filepath": "logs",
                     "skip": skip,

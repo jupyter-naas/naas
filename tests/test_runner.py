@@ -1,4 +1,4 @@
-from naas.types import t_add
+from naas.types import t_add, t_notebook
 import getpass
 import pytest  # noqa: F401
 import json
@@ -34,7 +34,7 @@ def test_sheduler(runner):
     assert response.json == status_data
 
 
-def test_static(runner):
+def test_asset(runner):
     request, response = runner.test_client.get("/assets/up")
     assert response.status == 200
     # TODO add more test
@@ -44,7 +44,7 @@ def test_notebooks(runner):
     path = os.path.join(os.getcwd(), "tests/demo_json_res.ipynb")
     token = str(uuid.uuid4())
     job = {
-        "type": "api",
+        "type": t_notebook,
         "path": path,
         "params": {},
         "value": token,
