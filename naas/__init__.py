@@ -17,7 +17,7 @@ scheduler = Scheduler()
 secret = Secret()
 runner = Runner()
 api = Api()
-static = Assets()
+assets = Assets()
 dependency = Dependency()
 
 
