@@ -12,7 +12,6 @@ from sanic_openapi import swagger_blueprint
 from naas.runner.logger import Logger
 from .proxy import escape_kubernet
 from naas.runner.jobs import Jobs
-from daemonize import Daemonize
 from naas.types import t_main
 from sanic import Sanic
 import sentry_sdk
@@ -83,7 +82,8 @@ class Runner:
         )
         self.__path_pidfile = os.path.join(self.__path_naas_files, f"{self.__name}.pid")
 
-    def __main(self, debug=False):
+    def __main(self, debug=True):
+        self.init_app()
         uid = str(uuid.uuid4())
         self.__logger.info({"id": uid, "type": t_main, "status": "start API"})
         self.__app.run(host="0.0.0.0", port=self.__port, debug=debug, access_log=debug)
@@ -120,18 +120,6 @@ class Runner:
         )
         self.__scheduler.start()
 
-    def kill(self):
-        if os.path.exists(self.__path_pidfile):
-            try:
-                with open(self.__path_pidfile, "r") as f:
-                    pid = f.read()
-                    print("kill")
-                    os.system(f"kill {pid}")
-                    print(f"Deamon killed pid {pid}")
-                    f.close()
-            except Exception:
-                print("No Deamon running")
-
     def init_app(self):
         self.__app = Sanic(__name__)
         self.__logger = Logger()
@@ -157,15 +145,14 @@ class Runner:
         self.__logger.info({"id": uid, "type": t_main, "status": "init API"})
         return self.__app
 
-    def start(self, deamon=True, port=None, debug=True):
+    def start(self, deamon=True, port=None, debug=False):
         user = getpass.getuser()
         if user != self.__shell_user:
             raise Exception(f"{user} not autorized, use {self.__shell_user} instead")
-        self.kill()
         if port:
             self.__port = port
-        self.init_app()
-        if deamon:
+        print("Start Runner")
+        try:
             if os.environ.get("NAAS_SENTRY_DSN"):
                 self.__sentry = sentry_sdk.init(
                     dsn=os.environ.get("NAAS_SENTRY_DSN"),
@@ -173,15 +160,7 @@ class Runner:
                     environment=escape_kubernet(self.__user),
                     integrations=[SanicIntegration()],
                 )
-            self.__daemon = Daemonize(
-                app=self.__name, pid=self.__path_pidfile, action=self.__main
-            )
-            print("Start Runner Deamon Mode")
-            self.__daemon.start()
-        else:
-            print("Start Runner front Mode")
-            try:
-                self.__main(debug)
-            except KeyboardInterrupt:
-                print("Shutdown server")
-                sys.exit()
+            self.__main(debug)
+        except KeyboardInterrupt:
+            print("Shutdown server")
+            sys.exit()

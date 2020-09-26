@@ -40,7 +40,7 @@ class AssetsController(HTTPMethodView):
             ext = ".png"
             if token.startswith("naas_"):
                 ext = ".svg"
-            return response.file(
+            return await response.file(
                 os.path.join(
                     self.__path_lib_files, self.__assets_files, f"{token}{ext}"
                 )
@@ -64,7 +64,7 @@ class AssetsController(HTTPMethodView):
                     self.__jobs.update(
                         uid, file_filepath, t_static, token, params, t_health, 1
                     )
-                    res = response.file(file_filepath)
+                    res = await response.file(file_filepath)
                     self.__logger.info(
                         {
                             "id": uid,
