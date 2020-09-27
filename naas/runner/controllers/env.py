@@ -24,7 +24,7 @@ class EnvController(HTTPMethodView):
         uid = str(uuid.uuid4())
         env = {
             "status": t_health,
-            "notif_url": self.__notif_url,
+            "NOTIFICATIONS_API": self.__notif_url,
             "JUPYTERHUB_USER": self.__user,
             "JUPYTERHUB_URL": self.__public_url,
             "PUBLIC_PROXY_API": self.__proxy_url,

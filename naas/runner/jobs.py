@@ -16,7 +16,7 @@ class Jobs:
     __naas_folder = ".naas"
     __json_name = "jobs.json"
 
-    def __init__(self, logger, loop, clean=False, init_data=[]):
+    def __init__(self, logger, clean=False, init_data=[]):
         self.__path_user_files = os.environ.get(
             "JUPYTER_SERVER_ROOT", f'/home/{os.environ.get("NB_USER", "ftp")}'
         )
@@ -26,7 +26,7 @@ class Jobs:
         self.__json_secrets_path = os.path.join(
             self.__path_naas_files, self.__json_name
         )
-        self.__storage_sem = Semaphore(1, loop=loop)
+        self.__storage_sem = Semaphore(1)
         self.__logger = logger
         if not os.path.exists(self.__path_naas_files):
             try:
@@ -43,6 +43,7 @@ class Jobs:
             try:
                 print("Init Job Storage", self.__json_secrets_path)
                 self.__save_to_file(uid, init_data)
+                self.__df = None
             except Exception as e:
                 print("Exception", e)
                 self.__logger.error(

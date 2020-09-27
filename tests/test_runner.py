@@ -11,10 +11,10 @@ user = getpass.getuser()
 os.environ["JUPYTER_SERVER_ROOT"] = os.path.join(os.getcwd(), user_folder_name)
 env_data = {
     "status": "healthy",
-    "version": {"error": "cannot get info.json"},
     "JUPYTERHUB_USER": user,
     "JUPYTERHUB_URL": "localhost:5000",
-    "PUBLIC_PROXY_API": "proxy:5000",
+    "PUBLIC_PROXY_API": "localhost:5001",
+    "NOTIFICATIONS_API": "localhost:5002",
     "TZ": "Europe/Paris",
 }
 status_data = {"status": "running"}
@@ -35,7 +35,7 @@ def test_sheduler(runner):
 
 
 def test_asset(runner):
-    request, response = runner.test_client.get("/assets/up")
+    request, response = runner.test_client.get("/asset/up")
     assert response.status == 200
     # TODO add more test
 
@@ -50,9 +50,9 @@ def test_notebooks(runner):
         "value": token,
         "status": "installed",
     }
-    request, response = runner.test_client.post("/jobs", data=json.dumps(job))
+    request, response = runner.test_client.post("/job", data=json.dumps(job))
     assert response.status == 200
-    request, response = runner.test_client.get("/jobs")
+    request, response = runner.test_client.get("/job")
     assert response.status == 200
     assert len(response.json) == 1
     res_job = response.json[0]
@@ -73,7 +73,7 @@ def test_notebooks(runner):
 
 
 def test_logs(runner):
-    request, response = runner.test_client.get("/logs")
+    request, response = runner.test_client.get("/log")
     assert response.status == 200
     logs = response.json
     assert logs.get("totalRecords") == 2

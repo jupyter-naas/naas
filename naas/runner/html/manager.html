@@ -168,7 +168,7 @@
                             }
                         }
                     }));
-                    all_loads.push(load('jobs').then((response) => {
+                    all_loads.push(load('job').then((response) => {
                         if (response && !response.error) {
                             try {
                                 this.tasks = response;
@@ -177,7 +177,7 @@
                             }
                         }
                     }));
-                    all_loads.push(load('logs').then((response) => {
+                    all_loads.push(load('log').then((response) => {
                         if (response && !response.error) {
                             try {
                                 console.log('response', response);

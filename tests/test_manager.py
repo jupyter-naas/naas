@@ -6,9 +6,12 @@ import os
 
 user_folder_name = "test_user_folder"
 proxy_url = "proxy.naas.com"
+test_demo_folder = "demo"
 test_file = "demo_file.py"
 token = "test_token"
-test_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), test_file)
+test_file_path = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), test_demo_folder, test_file
+)
 os.environ["JUPYTERHUB_URL"] = "test.naas.com"
 os.environ["JUPYTERHUB_USER"] = "TEST_USER"
 os.environ["JUPYTERHUB_API_TOKEN"] = "TESTAPIKEY"
@@ -18,23 +21,24 @@ os.environ["PUBLIC_PROXY_API"] = proxy_url
 def test_init(tmp_path):
     path_srv_root = os.path.join(str(tmp_path), user_folder_name)
     os.environ["JUPYTER_SERVER_ROOT"] = path_srv_root
-    manager = Manager()
+    Manager()
     assert os.path.exists(os.path.join(path_srv_root, ".naas"))
-    assert len(manager.get_naas()) == 0
 
 
 def test_nb_path(mocker, tmp_path):
     path_srv_root = os.path.join(str(tmp_path), user_folder_name)
     os.environ["JUPYTER_SERVER_ROOT"] = path_srv_root
     mocker.patch(
-        "ipykernel.get_connection_file", return_value="A/B/TESTID-ANOTHERID.ID1.ID2",
+        "ipykernel.get_connection_file",
+        return_value="A/B/TESTID-ANOTHERID.ID1.ID2",
     )
 
     mock_json = open("tests/session_ids.json")
 
     mocker.patch("urllib.request.urlopen", return_value=mock_json)
     mocker.patch(
-        "notebook.notebookapp.list_running_servers", return_value=[{"notebook_dir": "MAIN_DIR"}]
+        "notebook.notebookapp.list_running_servers",
+        return_value=[{"notebook_dir": "MAIN_DIR"}],
     )
     manager = Manager()
     assert manager.notebook_path() == "MAIN_DIR/TEST_DIR1/ANOTHER_DIR1"
@@ -61,7 +65,7 @@ def test_copy_file(runner, tmp_path, requests_mock):
     manager = Manager()
     prod_path = manager.get_prod_path(test_file_path)
     obj = {"type": t_notebook, "path": new_path, "params": {}, "value": token}
-    requests_mock.post(f'http://{os.environ["JUPYTERHUB_URL"]}/jobs', json=[obj])
+    requests_mock.post(f'http://{os.environ["JUPYTERHUB_URL"]}/job', json=[obj])
 
     manager.add_prod(obj, True)
     assert os.path.exists(prod_path)

@@ -1,4 +1,4 @@
-from naas.types import t_main, t_notebook, t_scheduler, t_asset
+from naas.types import t_main, t_notebook, t_scheduler, t_asset, t_job
 from naas.runner.controllers.scheduler import SchedulerController
 from naas.runner.controllers.assets import AssetsController
 from sentry_sdk.integrations.sanic import SanicIntegration
@@ -21,6 +21,7 @@ import uuid
 import os
 import json
 import sys
+import errno
 import nest_asyncio
 
 # TODO remove this fix when papermill support uvloop of Sanic support option to don't use uvloop
@@ -100,27 +101,40 @@ class Runner:
         return version
 
     async def initialize_before_start(self, app, loop):
-        self.__jobs = Jobs(self.__logger, loop=loop)
-        self.__nb = Notebooks(self.__logger, loop, self.__notif)
-        self.__app.add_route(
-            NbController.as_view(self.__logger, self.__jobs, self.__nb),
-            f"/{t_notebook}/<token>",
-        )
-        self.__scheduler = Scheduler(self.__logger, self.__jobs, self.__nb, loop)
-        self.__app.add_route(
-            SchedulerController.as_view(self.__logger, self.__scheduler),
-            f"/{t_scheduler}/<mode>",
-        )
-        self.__app.add_route(
-            AssetsController.as_view(self.__logger, self.__jobs, self.__path_lib_files),
-            f"/{t_asset}/<token>",
-        )
-        self.__app.add_route(
-            JobsController.as_view(self.__logger, self.__jobs), f"/{t_asset}"
-        )
-        self.__scheduler.start()
+        if self.__jobs is None:
+            self.__jobs = Jobs(self.__logger)
+            self.__nb = Notebooks(self.__logger, loop, self.__notif)
+            self.__app.add_route(
+                NbController.as_view(self.__logger, self.__jobs, self.__nb),
+                f"/{t_notebook}/<token>",
+            )
+            self.__scheduler = Scheduler(self.__logger, self.__jobs, self.__nb, loop)
+            self.__app.add_route(
+                SchedulerController.as_view(self.__logger, self.__scheduler),
+                f"/{t_scheduler}/<mode>",
+            )
+            self.__app.add_route(
+                AssetsController.as_view(
+                    self.__logger, self.__jobs, self.__path_lib_files
+                ),
+                f"/{t_asset}/<token>",
+            )
+            self.__app.add_route(
+                JobsController.as_view(self.__logger, self.__jobs), f"/{t_job}"
+            )
+            self.__scheduler.start()
 
     def init_app(self):
+        if not os.path.exists(self.__path_naas_files):
+            try:
+                print("Init Naas folder Jobs")
+                os.makedirs(self.__path_naas_files)
+            except OSError as exc:  # Guard against race condition
+                print("__path_naas_files", self.__path_naas_files)
+                if exc.errno != errno.EEXIST:
+                    raise
+            except Exception as e:
+                print("Exception", e)
         self.__app = Sanic(__name__)
         self.__logger = Logger()
         self.__notif = Notifications(self.__logger)
@@ -138,7 +152,7 @@ class Runner:
             ),
             "/env",
         )
-        self.__app.add_route(LogsController.as_view(self.__logger), "/logs")
+        self.__app.add_route(LogsController.as_view(self.__logger), "/log")
         self.__app.static("/", self.__path_manager_index, name="manager.html")
         self.__app.blueprint(swagger_blueprint)
         uid = str(uuid.uuid4())

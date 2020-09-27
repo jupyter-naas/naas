@@ -20,6 +20,7 @@ setup(
     extras_require={
         "dev": [
             "pytest>=5,<6",
+            "pytest-mock>=3,>=4",
             "pytest-sanic>=1,<2",
             "requests-mock>=1,<2",
             "twine>=3,<4",
