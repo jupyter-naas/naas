@@ -1,11 +1,25 @@
 from asyncio import Semaphore
-from naas.types import t_delete, t_add, t_skip, t_update, t_error, t_start
+from naas.types import (
+    t_delete,
+    t_add,
+    t_skip,
+    t_update,
+    t_error,
+    t_start,
+    t_notebook,
+    t_asset,
+    t_dependency,
+    t_scheduler,
+)
 import pandas as pd
 import datetime
 import errno
 import json
 import os
 import uuid
+
+
+filters = [t_notebook, t_asset, t_dependency, t_scheduler]
 
 
 class Jobs:
@@ -57,6 +71,7 @@ class Jobs:
         else:
             uid = str(uuid.uuid4())
             self.__df = self.__get_save_from_file(uid)
+            self.__cleanup_jobs()
         if self.__df is None or len(self.__df) == 0:
             self.__df = pd.DataFrame(
                 columns=[
@@ -71,6 +86,10 @@ class Jobs:
                     "totalRun",
                 ]
             )
+
+    def __cleanup_jobs(self):
+        if len(self.__df) > 0:
+            self.__df = self.__df[self.__df.type.isin(filters)]
 
     def __get_save_from_file(self, uid):
         data = []
