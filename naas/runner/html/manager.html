@@ -149,7 +149,7 @@
                     let urlList = window.location.href.split('/');
                     urlList.pop()
                     let newUrl = `${urlList.join('/')}`
-                    if (type === 'api') {
+                    if (type === 'notebook') {
                         newUrl = `${newUrl}/notebook/${value}`
                     } else {
                         newUrl = `${newUrl}/asset/${value}`

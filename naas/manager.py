@@ -22,7 +22,6 @@ class Manager:
     __production_path = None
     __folder_name = ".naas"
     __readme_name = "README.md"
-    __json_files_path = None
     __readme_path = None
 
     def __init__(self):
@@ -47,6 +46,25 @@ class Manager:
         except OSError as exc:  # Guard against race condition
             if exc.errno != errno.EEXIST:
                 raise
+
+    def get_naas(self):
+        naas_data = []
+        try:
+            r = requests.get(f"{self.__local_api}/{t_job}")
+            naas_data = r.json()
+        except ConnectionError:
+            print("Manager look busy, try to reload your machine")
+        except requests.HTTPError as e:
+            print("Manager refused your request, reason :", e)
+        return naas_data
+
+    def get_value(self, path, obj_type):
+        json_data = self.get_naas()
+        value = None
+        for item in json_data:
+            if item["type"] == obj_type and item["path"] == path:
+                value = item["value"]
+        return value
 
     def notebook_path(self):
         """Returns the absolute path of the Notebook or None if it cannot be determined
