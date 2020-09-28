@@ -26,7 +26,7 @@ setup(
             "requests-mock>=1,<2",
             "twine>=3,<4",
             "flake8>=3,<4",
-            "black>=20,<21",
+            "black",
             "commitizen>=2,<3",
             "pytest-cov>=2,<3"
         ]
