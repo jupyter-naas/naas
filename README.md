@@ -22,7 +22,7 @@ Whenever you need it (even when you sleep).
 
 ## Install
 
-`pip3 install -r requirements.txt`
+`pip3 install -e '.[dev]' 
 
 ## Run test 
 
