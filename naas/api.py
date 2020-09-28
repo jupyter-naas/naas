@@ -53,8 +53,8 @@ class Api:
         return url
 
     def respond_file(self, path):
-        naas_type = mimetypes.guess_type(path)
-        data = {"path": path}
+        naas_type = mimetypes.guess_type(os.path.abspath(path))[0]
+        data = {"path": os.path.abspath(path)}
         display(Markdown("Response Set as File, preview below: "))
         display(JSON(data, metadata={"naas_api": True, "naas_type": naas_type}))
 

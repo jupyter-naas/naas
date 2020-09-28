@@ -47,5 +47,7 @@ class JobsController(HTTPMethodView):
             data["params"],
             data["status"],
         )
+        if updated.get("error"):
+            return response.json(updated, status=409)
         self.__logger.info({"id": uid, "type": t_job, "status": updated["status"]})
         return response.json(updated)

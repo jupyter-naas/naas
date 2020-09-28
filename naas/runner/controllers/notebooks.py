@@ -16,6 +16,7 @@ class NbController(HTTPMethodView):
     async def get(self, request, token):
         uid = str(uuid.uuid4())
         task = await self.__jobs.find_by_value(uid, token, t_notebook)
+        print("task", task)
         if task:
             value = task.get("value", None)
             file_filepath = task.get("path")

@@ -50,10 +50,11 @@ class Notebooks:
             if res_data and res_data.get("type"):
 
                 async def streaming_fn(res):
-                    await res.write(res_data.get("data"))
+                    await res.write(str(res_data.get("data")).encode("utf-8"))
 
                 return stream(streaming_fn, content_type=res_data.get("type"))
-        return json({"id": uid, "status": "Done", "time": duration})
+            else:
+                return json({"id": uid, "status": "Done", "time": duration})
 
     def __convert_csv(self, data):
         soup = bs4.BeautifulSoup(data)
@@ -95,6 +96,7 @@ class Notebooks:
                                 result = {"error": "file not found"}
                         elif data.get("application/json"):
                             result_type = "application/json"
+                            result = data.get(result_type)
                         elif (
                             data.get("text/html")
                             and metadata[meta].get("naas_type") == "csv"
@@ -113,11 +115,9 @@ class Notebooks:
                         elif data.get("image/svg+xml"):
                             result_type = "image/svg+xml"
                             result = data.get("image/svg+xml")
-                        if result_type is not None:
-                            result = data.get(result_type)
-        if result is None or result_type is None:
-            return None
-        return {"type": result_type, "data": result}
+                        if result is not None or result_type is not None:
+                            return {"type": result_type, "data": result}
+        return None
 
     def __pm_exec(self, file_dirpath, file_filepath, file_filepath_out, params):
         if kern_manager:

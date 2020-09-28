@@ -17,9 +17,11 @@ import errno
 import json
 import os
 import uuid
+from sanic.exceptions import ServerError
 
 
 filters = [t_notebook, t_asset, t_dependency, t_scheduler]
+filters_api = [t_notebook, t_asset]
 
 
 class Jobs:
@@ -90,6 +92,19 @@ class Jobs:
     def __cleanup_jobs(self):
         if len(self.__df) > 0:
             self.__df = self.__df[self.__df.type.isin(filters)]
+            self.__dedup_jobs()
+            print("putin", self.__df.to_dict("records"))
+
+    def __dedup_jobs(self):
+        new_df = self.__df[(self.__df.type != t_notebook) & (self.__df.type != t_asset)]
+        cur_notebook = self.__df[self.__df.type == t_notebook]
+        cur_asset = self.__df[self.__df.type == t_asset]
+        cur_asset = cur_asset.drop_duplicates(subset=["value"])
+        cur_notebook = cur_notebook.drop_duplicates(subset=["value"])
+        self.__df = pd.concat(
+            [new_df, cur_asset, cur_notebook], ignore_index=True, sort=False
+        )
+        # self.__df = self.__df.reset_index()
 
     def __get_save_from_file(self, uid):
         data = []
@@ -137,7 +152,7 @@ class Jobs:
                         (self.__df.type == target_type) & (self.__df.value == value)
                     ]
                     cur_job = cur_jobs.to_dict("records")
-                    if len(cur_job) == 1:
+                    if len(cur_job) > 0:
                         res = cur_job[0]
             except Exception as e:
                 print("find_by_value", e)
@@ -152,7 +167,7 @@ class Jobs:
                         (self.__df.type == target_type) & (self.__df.path == filepath)
                     ]
                     cur_job = cur_jobs.to_dict("records")
-                    if len(cur_job) == 1:
+                    if len(cur_job) > 0:
                         res = cur_job[0]
             except Exception as e:
                 print("find_by_path", e)
@@ -189,8 +204,29 @@ class Jobs:
                 cur_elem = self.__df[
                     (self.__df.type == target_type) & (self.__df.path == path)
                 ]
+                dup_elem = self.__df[
+                    (self.__df.path != path)
+                    & (self.__df.type == target_type)
+                    & (self.__df.value == value)
+                ]
                 now = datetime.datetime.now()
                 dt_string = now.strftime("%Y-%m-%d %H:%M:%S")
+                if len(dup_elem) > 0 and target_type in filters_api:
+                    self.__logger.error(
+                        {
+                            "id": uid,
+                            "type": target_type,
+                            "value": value,
+                            "status": t_error,
+                            "path": path,
+                            "params": params,
+                            "error": "Already exist",
+                        }
+                    )
+                    return {
+                        "id": uid,
+                        "error": f"type {target_type} with key {value} already exist",
+                    }
                 if len(cur_elem) == 1:
                     if status == t_delete:
                         self.__logger.info(
@@ -273,7 +309,7 @@ class Jobs:
                         "error": str(e),
                     }
                 )
+                raise ServerError({"id": uid, "error": str(e)}, status_code=500)
             data = self.__df.to_dict("records")
             self.__save_to_file(uid, data)
-            print("release =>\n\n")
         return {"status": res, "data": data}
