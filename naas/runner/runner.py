@@ -13,6 +13,8 @@ from sanic_openapi import swagger_blueprint
 from naas.runner.logger import Logger
 from .proxy import escape_kubernet
 from naas.runner.jobs import Jobs
+
+# from naas.__version__ import __version__
 from sanic import Sanic
 import sentry_sdk
 import asyncio
@@ -27,6 +29,8 @@ import nest_asyncio
 # TODO remove this fix when papermill support uvloop of Sanic support option to don't use uvloop
 asyncio.set_event_loop_policy(None)
 nest_asyncio.apply()
+
+__version__ = "0.3.0"
 
 
 class Runner:
@@ -165,7 +169,7 @@ class Runner:
             raise Exception(f"{user} not autorized, use {self.__shell_user} instead")
         if port:
             self.__port = port
-        print("Start Runner")
+        print("Start Runner", __version__)
         try:
             if os.environ.get("NAAS_SENTRY_DSN"):
                 self.__sentry = sentry_sdk.init(
@@ -174,6 +178,8 @@ class Runner:
                     environment=escape_kubernet(self.__user),
                     integrations=[SanicIntegration()],
                 )
+                with sentry_sdk.configure_scope() as scope:
+                    scope.set_context("Naas", {"version": __version__})
             self.__main(debug)
         except KeyboardInterrupt:
             print("Shutdown server")

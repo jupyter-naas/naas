@@ -1,9 +1,10 @@
 [tool.commitizen]
 name = "cz_conventional_commits"
-version = "0.2.0"
+version = "0.3.0"
 tag_format = "$version"
 version_files = [
     "naas/__init__.py",
+    "naas/runner/runner.py",
     "setup.py:version",
     "Dockerfile"
 ]
