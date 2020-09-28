@@ -5,5 +5,5 @@ tag_format = "$version"
 version_files = [
     "naas/__init__.py",
     "setup.py:version",
-    "pyproject.toml:version"
+    "Dockerfile"
 ]

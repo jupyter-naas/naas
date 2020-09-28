@@ -24,7 +24,7 @@ Whenever you need it (even when you sleep).
 
 `pytest -x`  
 
-## test local server
+## Test local server
 
 `./test_runner.sh`
 
@@ -32,12 +32,12 @@ open manager :
 
 `localhost:5000/`
 
-## check lint
+## Check lint
 
 `python3 -m black naas` format better
 `python3 -m flake8 naas` check if any left error
 
-## publish
+## Publish
 
 Allow easy deploy by setting password in keyring
 `python3 -m keyring set https://upload.pypi.org/legacy/ bobapp`
