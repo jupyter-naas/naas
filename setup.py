@@ -5,11 +5,12 @@ with open("README.md", "r") as fh:
 
 setup(
     name="naas",
-    version="0.1.21",
+    version="0.1.22",
     scripts=["scripts/naas"],
     author="Martin Donadieu",
     author_email="martindonadieu@gmail.com",
-    description="scheduler system for notebooks",
+    license="BSD",
+    description="Scheduler system for notebooks",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/cashstory/naas",
@@ -52,8 +53,9 @@ setup(
         "beautifulsoup4>=4,<5",
     ],
     classifiers=[
-        "Programming Language :: Python :: 3.6",
-        "License :: OSI Approved :: MIT License",
+        "Programming Language :: Python :: 3.8",
+        "License :: OSI Approved :: BSD License",
+        "Framework :: Jupyter",
         "Operating System :: OS Independent",
     ],
 )
