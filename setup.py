@@ -21,17 +21,18 @@ setup(
     extras_require={
         "dev": [
             "pytest>=5,<6",
-            "pytest-mock>=3,>=4",
+            "pytest-mock>=3,<4",
             "pytest-sanic>=1,<2",
             "requests-mock>=1,<2",
             "twine>=3,<4",
             "flake8>=3,<4",
             "black>=20,<21",
             "commitizen>=2,<3",
+            "pytest-cov>=2,<3"
         ]
     },
     install_requires=[
-        "ipywidgets>=7,<=8",
+        "ipywidgets>=7,<8",
         "sentry_sdk>=0,<1",
         "papermill>=2,<3",
         "pretty-cron>=1,<2",
