@@ -1,3 +1,9 @@
+## 0.4.1 (2020-09-28)
+
+### Fix
+
+- :bug: remove duplicate job at boot and disable them
+
 ## 0.4.0 (2020-09-28)
 
 ### Fix
