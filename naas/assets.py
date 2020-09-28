@@ -48,6 +48,7 @@ class Assets:
             return
         current_file = self.manager.get_path(path)
         self.manager.clear_history(current_file, histo)
+        print("🕣 Your Assets history has been remove from production folder.\n")
 
     def add(self, path=None, params={}, debug=False, Force=False):
         current_file = self.manager.get_path(path)
@@ -65,9 +66,7 @@ class Assets:
         print("👌 Well done! Your Assets has been sent to production folder.\n")
         print(f"🔗 You can access this assets remotely with: {url} \n")
         self.manager.copy_url(url)
-        print(
-            'PS: to remove the "Notebook as API" feature, just replace .add by .delete'
-        )
+        print('PS: to remove the "Assets" feature, just replace .add by .delete')
         self.manager.add_prod(
             {"type": self.role, "path": current_file, "params": params, "value": token},
             not debug,
@@ -80,9 +79,9 @@ class Assets:
             return
         current_file = self.manager.get_path(path)
         self.manager.del_prod({"type": self.role, "path": current_file}, not debug)
+        print("🗑 Done! Your Assets has been remove from production folder.\n")
         if all is True:
             self.manager.clear_history(current_file)
-            self.manager.clear_output(current_file)
 
     def help(self):
         print(f"=== {type(self).__name__} === \n")

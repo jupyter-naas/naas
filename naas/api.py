@@ -2,6 +2,7 @@ from IPython.core.display import display, HTML, JSON, Image, SVG, Markdown
 from .types import t_notebook
 from .manager import Manager
 import pandas as pd
+import mimetypes
 import os
 
 
@@ -51,21 +52,32 @@ class Api:
         )
         return url
 
+    def respond_file(self, path):
+        naas_type = mimetypes.guess_type(path)
+        data = {"path": path}
+        display(Markdown("Response Set as File, preview below: "))
+        display(JSON(data, metadata={"naas_api": True, "naas_type": naas_type}))
+
     def respond_html(self, data):
+        display(Markdown("Response Set as HTML, preview below: "))
         display(HTML(data, metadata={"naas_api": True}))
 
     def respond_json(self, data):
+        display(Markdown("Response Set as JSON, preview below: "))
         display(JSON(data, metadata={"naas_api": True}))
 
     def respond_image(self, data, filename, mimetype):
+        display(Markdown("Response Set as IMAGE, preview below: "))
         display(
             Image(data, filename=filename, format=mimetype, metadata={"naas_api": True})
         )
 
     def respond_svg(self, data):
+        display(Markdown("Response Set as SVG, preview below: "))
         display(SVG(data, metadata={"naas_api": True}))
 
     def respond_markdown(self, data):
+        display(Markdown("Response Set as Markdown, preview below: "))
         display(Markdown(data, metadata={"naas_api": True}))
 
     def respond_csv(self, data):
@@ -84,6 +96,7 @@ class Api:
     def clear_output(self, path=None):
         current_file = self.manager.get_path(path)
         self.manager.clear_output(current_file)
+        print("🕣 Your Notebook output has been remove from production folder.\n")
 
     def get_history(self, path=None, histo=None):
         if not histo:
@@ -99,6 +112,7 @@ class Api:
     def clear_history(self, path=None, histo=None):
         current_file = self.manager.get_path(path)
         self.manager.clear_history(current_file, histo)
+        print("🕣 Your Notebook history has been remove from production folder.\n")
 
     def delete(self, path=None, all=False, debug=False):
         if not self.manager.notebook_path():
@@ -106,6 +120,7 @@ class Api:
             return
         current_file = self.manager.get_path(path)
         self.manager.del_prod({"type": self.role, "path": current_file}, not debug)
+        print("🗑 Done! Your Notebook has been remove from production folder.\n")
         if all is True:
             self.manager.clear_history(current_file)
             self.manager.clear_output(current_file)

@@ -1,3 +1,34 @@
+## 0.2.0 (2020-09-28)
+
+### Fix
+
+- :bug: add missing function for neg naas jobs
+- :zap: auto cleanup jobs at each restart
+- :bug: test
+- :bug: fix route name
+- :bug: fix error when empty dff
+- :bug: swtich to no deamon
+- :bug: switch back to python3
+- :bug: fix docker build
+- :bug: fix scheduler race function
+- :bug: rename static in assets
+- :bug: fix concurent call scheduler
+- :bug: fix scheduler functions
+- :bug: fix error in scheduler when check if notebook already run
+- :bug: use b64 font
+- :bug: add missing dep sentry
+- :bug: fix font in svg logo
+- :art: alow more naas_ statics
+- :bug: fix error handler
+- :art: change how to call naas features
+- :bug: make scheduler work in async
+- :pencil2: change reccurence to recurrence
+- :bug: fix api call for csv
+
+### Refactor
+
+- :fire: remove redirect options since it's not necessary anymore
+
 ## 0.1.0 (2020-09-23)
 
 ### Feat

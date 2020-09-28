@@ -45,13 +45,14 @@ class Dependency:
             return
         current_file = self.manager.get_path(path)
         self.manager.clear_history(current_file, histo)
+        print("🕣 Your Dependency history has been remove from production folder.\n")
 
     def add(self, path=None, debug=False):
         if not self.manager.notebook_path():
             print("No add done you are in already in naas folder\n")
             return
         current_file = self.manager.get_path(path)
-        print("👌 Well done! Your dependency has been sent to production folder. \n")
+        print("👌 Well done! Your Dependency has been sent to production folder. \n")
         print(
             'PS: to remove the "Notebook as API" feature, just replace .add by .delete'
         )
@@ -71,9 +72,9 @@ class Dependency:
             return
         current_file = self.manager.get_path(path)
         self.manager.del_prod({"type": self.role, "path": current_file}, not debug)
+        print("🗑 Done! Your Dependency has been remove from production folder.\n")
         if all is True:
             self.manager.clear_history(current_file)
-            self.manager.clear_output(current_file)
 
     def help(self):
         print(f"=== {type(self).__name__} === \n")

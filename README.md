@@ -39,9 +39,8 @@ open manager :
 
 ## publish
 
-bump version
-`cz bump --changelog`
-create release
-`python3 setup.py sdist`
-upload release
-`python3 -m twine upload dist/* -u YOUR_USERNAME`
+Allow easy deploy by setting password in keyring
+`python3 -m keyring set https://upload.pypi.org/legacy/ bobapp`
+
+Then publish
+`publish.sh`

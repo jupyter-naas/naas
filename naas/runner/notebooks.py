@@ -2,20 +2,12 @@ from sanic.response import json, redirect, stream
 from naas.runner.proxy import escape_kubernet
 from naas.types import t_notebook, t_scheduler, t_error, t_health
 import papermill as pm
-
-# import nest_asyncio
 import traceback
-
-# import asyncio
 import time
 import bs4
 import csv
 import os
 import io
-
-# # TODO remove this fix when papermill support uvloop of Sanic support option to don't use uvloop
-# asyncio.set_event_loop_policy(None)
-# nest_asyncio.apply()
 
 kern_manager = None
 try:
@@ -55,17 +47,7 @@ class Notebooks:
             return redirect(next_url)
         else:
             res_data = self.__get_res(res)
-            if res_data and res_data.get("type") == "application/json":
-                return json(res_data.get("data"))
-            elif res_data and res_data.get("type") == "text/csv":
-                csv_data = self.__convert_csv(res_data.get("data"))
-                print("csv_data", csv_data)
-
-                async def streaming_fn(res):
-                    await res.write(csv_data)
-
-                return stream(streaming_fn, content_type=res_data.get("type"))
-            elif res_data:
+            if res_data and res_data.get("type"):
 
                 async def streaming_fn(res):
                     await res.write(res_data.get("data"))
@@ -99,15 +81,26 @@ class Notebooks:
                 data = output.get("data", dict())
                 for meta in metadata:
                     if metadata[meta].get("naas_api"):
-                        if data.get("application/json"):
+                        if data.get("application/json") and metadata[meta].get(
+                            "naas_type"
+                        ):
+                            result_type = metadata[meta].get("naas_type")
+                            try:
+                                path = data.get("application/json").get("path")
+                                with open(path, "r") as f:
+                                    result = f.read()
+                                    f.close()
+                            except:  # noqa: E722
+                                result_type = "application/json"
+                                result = {"error": "file not found"}
+                        elif data.get("application/json"):
                             result_type = "application/json"
                         elif (
                             data.get("text/html")
                             and metadata[meta].get("naas_type") == "csv"
                         ):
                             result_type = "text/csv"
-                            result = data.get("text/html")
-                            break
+                            result = self.__convert_csv(data.get("text/html"))
                         elif data.get("text/html"):
                             result_type = "text/html"
                             result = data.get("text/html")

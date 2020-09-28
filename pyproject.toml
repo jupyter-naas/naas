@@ -1,9 +1,9 @@
 [tool.commitizen]
 name = "cz_conventional_commits"
-version = "0.1.22"
+version = "0.2.0"
 tag_format = "$version"
 version_files = [
-    "naas/__version__.py",
+    "naas/__init__.py",
     "setup.py:version",
     "pyproject.toml:version"
 ]

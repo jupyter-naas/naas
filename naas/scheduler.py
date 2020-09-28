@@ -1,6 +1,7 @@
 from .types import t_scheduler
 from .manager import Manager
 import pretty_cron
+import pycron
 
 
 class Scheduler:
@@ -25,12 +26,24 @@ class Scheduler:
                 kind = f"scheduler {cron_string}"
                 print(f"File ==> {item['path']} is {kind}")
 
+    def __check_cron(self, text):
+        res = False
+        try:
+            pycron.is_now(text)
+            res = True
+        except:  # noqa: E722
+            pass
+        return res
+
     def add(self, path=None, recurrence=None, params=None, debug=False):
         if not self.manager.notebook_path():
             print("No add done you are in already in naas folder\n")
             return
         if not recurrence:
             print("No recurrence provided\n")
+            return
+        if not self.__check_cron(recurrence):
+            print(f"WARNING : Recurrence wrong format {recurrence}")
             return
         cron_string = pretty_cron.prettify_cron(recurrence)
         current_file = self.manager.get_path(path)
@@ -75,6 +88,7 @@ class Scheduler:
     def clear_history(self, path=None, histo=None):
         current_file = self.manager.get_path(path)
         self.manager.clear_history(current_file, histo)
+        print("🕣 Your Scheduler history has been remove from production folder.\n")
 
     def delete(self, path=None, all=False, debug=False):
         if not self.manager.notebook_path():
@@ -82,6 +96,7 @@ class Scheduler:
             return
         current_file = self.manager.get_path(path)
         self.manager.del_prod({"type": self.role, "path": current_file}, not debug)
+        print("🗑 Done! Your Scheduler has been remove from production folder.\n")
         if all is True:
             self.manager.clear_history(current_file)
             self.manager.clear_output(current_file)
