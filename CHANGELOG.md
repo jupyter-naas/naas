@@ -1,3 +1,9 @@
+## 0.4.3 (2020-09-29)
+
+### Fix
+
+- ci make ci release on pypip
+
 ## 0.4.2 (2020-09-29)
 
 ### Fix
