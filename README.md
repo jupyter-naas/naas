@@ -1,7 +1,7 @@
 ![Bump version](https://github.com/jupyter-naas/naas/workflows/Bump%20version/badge.svg)
 ![Upload Python Package](https://github.com/jupyter-naas/naas/workflows/Upload%20Python%20Package/badge.svg)
 ![Test Python package](https://github.com/jupyter-naas/naas/workflows/Test%20Python%20package/badge.svg)
-[![codecov](https://codecov.io/gh/jupyter-naas/naas/branch/master/graph/badge.svg?token=UC3SAL8S0U)](undefined)
+![codecov](https://codecov.io/gh/jupyter-naas/naas/branch/master/graph/badge.svg?token=UC3SAL8S0U)
 
 # Naas (Notebooks As Automated Services)
 
