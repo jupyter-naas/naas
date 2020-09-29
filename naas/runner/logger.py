@@ -60,7 +60,7 @@ class Logger:
         self.__path_logs_file = os.path.join(
             self.__path_naas_files, self.__logs_filename
         )
-        if not os.path.exists(self.__path_naas_files):
+        if not os.path.exists(self.__path_logs_file):
             try:
                 print("Init Naas folder Logger")
                 os.makedirs(self.__path_naas_files)
@@ -83,7 +83,6 @@ class Logger:
         self.__log.error(json.dumps(data))
 
     def clear(self):
-        print("clear", self.__path_logs_file)
         with open(self.__path_logs_file, "w") as fp:
             separator = ";"
             fp.write(f"{separator.join(self.__columns)}\n")

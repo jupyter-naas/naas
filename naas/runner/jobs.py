@@ -100,9 +100,11 @@ class Jobs:
         cur_asset = self.__df[self.__df.type == t_asset]
         cur_asset = cur_asset.drop_duplicates(subset=["value"])
         cur_notebook = cur_notebook.drop_duplicates(subset=["value"])
-        self.__df = pd.concat(
+        new_concat = pd.concat(
             [new_df, cur_asset, cur_notebook], ignore_index=True, sort=False
         )
+        records = new_concat.to_dict("records")
+        self.__df = pd.DataFrame(records)
 
     def __get_save_from_file(self, uid):
         data = []
@@ -265,7 +267,6 @@ class Jobs:
                         elif status == t_add:
                             self.__df.at[index, "lastRun"] = 0
                             self.__df.at[index, "totalRun"] = 0
-                        # print("index\n\n", index)
                         res = t_update
                 elif status == t_add and len(cur_elem) == 0:
                     self.__logger.info(

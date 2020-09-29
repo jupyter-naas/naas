@@ -8,7 +8,7 @@ import os
 user_folder_name = "test_user_folder"
 user = getpass.getuser()
 
-os.environ["JUPYTER_SERVER_ROOT"] = os.path.join(os.getcwd(), user_folder_name)
+# os.environ["JUPYTER_SERVER_ROOT"] = os.path.join(os.getcwd(), user_folder_name)
 env_data = {
     "status": "healthy",
     "JUPYTERHUB_USER": user,
@@ -21,7 +21,6 @@ status_data = {"status": "running"}
 input_headers = [("Content-Type", "application/json"), ("Accept", "application/json")]
 
 
-# @pytest.mark.asyncio
 def test_init(runner):
     request, response = runner.test_client.get("/env")
     assert response.status == 200

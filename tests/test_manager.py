@@ -21,14 +21,16 @@ os.environ["PUBLIC_PROXY_API"] = proxy_url
 def mock_for_nb_path(mocker):
 
     mocker.patch(
-        "ipykernel.get_connection_file", return_value="A/B/TESTID-ANOTHERID.ID1.ID2",
+        "ipykernel.get_connection_file",
+        return_value="A/B/TESTID-ANOTHERID.ID1.ID2",
     )
 
     mock_json = open("tests/session_ids.json")
 
     mocker.patch("urllib.request.urlopen", return_value=mock_json)
     mocker.patch(
-        "notebook.notebookapp.list_running_servers", return_value=[{"notebook_dir": "MAIN_DIR"}],
+        "notebook.notebookapp.list_running_servers",
+        return_value=[{"notebook_dir": "MAIN_DIR"}],
     )
 
 
@@ -56,7 +58,7 @@ def test_get_path(mocker, tmp_path):
     assert manager.get_path(test_file_path) == test_file_path
 
 
-def test_copy_file(runner, tmp_path, requests_mock):
+def test_copy_file(tmp_path, requests_mock):
     path_srv_root = os.path.join(str(tmp_path), user_folder_name)
     os.environ["JUPYTER_SERVER_ROOT"] = path_srv_root
     os.environ["JUPYTERHUB_USER"] = "joyvan"
