@@ -1,3 +1,9 @@
+## 0.4.9 (2020-09-29)
+
+### Fix
+
+- ci add auto update description
+
 ## 0.4.8 (2020-09-29)
 
 ### Fix
