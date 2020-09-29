@@ -1,3 +1,9 @@
+## 0.4.17 (2020-09-29)
+
+### Fix
+
+- :bug: run test only on latest python for now
+
 ## 0.4.16 (2020-09-29)
 
 ### Fix
