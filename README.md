@@ -22,7 +22,7 @@ Whenever you need it (even when you sleep).
 
 ## Install
 
-`pip3 install -e '.[dev]' 
+`pip3 install -e '.[dev]'`
 
 ## Run test 
 

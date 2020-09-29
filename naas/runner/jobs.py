@@ -93,7 +93,6 @@ class Jobs:
         if len(self.__df) > 0:
             self.__df = self.__df[self.__df.type.isin(filters)]
             self.__dedup_jobs()
-            print("putin", self.__df.to_dict("records"))
 
     def __dedup_jobs(self):
         new_df = self.__df[(self.__df.type != t_notebook) & (self.__df.type != t_asset)]
@@ -104,7 +103,6 @@ class Jobs:
         self.__df = pd.concat(
             [new_df, cur_asset, cur_notebook], ignore_index=True, sort=False
         )
-        # self.__df = self.__df.reset_index()
 
     def __get_save_from_file(self, uid):
         data = []
@@ -267,6 +265,7 @@ class Jobs:
                         elif status == t_add:
                             self.__df.at[index, "lastRun"] = 0
                             self.__df.at[index, "totalRun"] = 0
+                        # print("index\n\n", index)
                         res = t_update
                 elif status == t_add and len(cur_elem) == 0:
                     self.__logger.info(
