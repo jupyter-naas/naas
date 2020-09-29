@@ -85,6 +85,7 @@ class Jobs:
                     "params",
                     "lastUpdate",
                     "lastRun",
+                    "nbRun",
                     "totalRun",
                 ]
             )
@@ -189,7 +190,6 @@ class Jobs:
         data = []
         try:
             async with self.__storage_sem:
-                print("list acquire", uid)
                 data = self.__df.to_dict("records")
         except Exception as e:
             print("list", e)
@@ -258,6 +258,9 @@ class Jobs:
                         self.__df.at[index, "params"] = params
                         self.__df.at[index, "lastUpdate"] = dt_string
                         if runTime > 0 and status != t_add:
+                            self.__df.at[index, "nbRun"] = (
+                                self.__df.at[index, "nbRun"] + 1
+                            )
                             self.__df.at[index, "lastRun"] = runTime
                             self.__df.at[index, "totalRun"] = runTime + (
                                 self.__df.at[index, "totalRun"]
@@ -287,6 +290,7 @@ class Jobs:
                             "status": t_add,
                             "path": path,
                             "params": params,
+                            "nbRun": 1 if runTime > 0 else 0,
                             "lastRun": runTime,
                             "totalRun": runTime,
                             "lastUpdate": dt_string,

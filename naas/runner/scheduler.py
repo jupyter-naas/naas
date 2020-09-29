@@ -8,6 +8,11 @@ import pycron
 import time
 import uuid
 
+# import sys
+# TODO remove if not necessary for test
+# DEFAULT_SCHEDULER_TIME = 5 if "pytest" in sys.modules else 60
+DEFAULT_SCHEDULER_TIME = 60
+
 
 class Scheduler:
     __scheduler = None
@@ -28,17 +33,22 @@ class Scheduler:
         elif self.__scheduler.state == apscheduler.schedulers.base.STATE_PAUSED:
             return "paused"
 
-    def start(self):
-        if self.__scheduler.state != apscheduler.schedulers.base.STATE_RUNNING:
-            self.__scheduler.add_job(
-                func=self.__scheduler_function,
-                trigger="interval",
-                seconds=60,
-                max_instances=10,
-            )
-            self.__scheduler.start()
-            uid = str(uuid.uuid4())
-            self.__logger.info({"id": uid, "type": t_main, "status": "start SCHEDULER"})
+    async def start(self, test_mode=False):
+        if test_mode:
+            await self.__scheduler_function()
+        else:
+            if self.__scheduler.state != apscheduler.schedulers.base.STATE_RUNNING:
+                self.__scheduler.add_job(
+                    func=self.__scheduler_function,
+                    trigger="interval",
+                    seconds=DEFAULT_SCHEDULER_TIME,
+                    max_instances=10,
+                )
+                self.__scheduler.start()
+                uid = str(uuid.uuid4())
+                self.__logger.info(
+                    {"id": uid, "type": t_main, "status": "start SCHEDULER"}
+                )
 
     async def __scheduler_greenlet(self, main_uid, current_time, task):
         try:

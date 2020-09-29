@@ -1,8 +1,9 @@
-from sanic.response import json, redirect, stream
-from naas.runner.proxy import escape_kubernet
 from naas.types import t_notebook, t_scheduler, t_error, t_health
+from .proxy import escape_kubernet
+from sanic import response
 import papermill as pm
 import traceback
+import json
 import time
 import bs4
 import csv
@@ -22,17 +23,15 @@ class Notebooks:
     __logger = None
     __port = None
     __notif = None
-    __loop = None
     __api_internal = None
 
-    def __init__(self, logger, loop, notif):
+    def __init__(self, logger, notif=None):
         self.__port = int(os.environ.get("NAAS_RUNNER_PORT", 5000))
         self.__user = os.environ.get("JUPYTERHUB_USER", "joyvan@naas.com")
         self.__single_user_api_path = os.environ.get(
             "SINGLEUSER_PATH", ".jupyter-single-user.dev.svc.cluster.local"
         )
         self.__api_internal = f"http://jupyter-{escape_kubernet(self.__user)}{self.__single_user_api_path}:{self.__port}/"
-        self.__loop = loop
         self.__logger = logger
         self.__notif = notif
 
@@ -44,7 +43,7 @@ class Notebooks:
             self.__logger.info(
                 {"id": uid, "type": t_notebook, "status": "next_url", "url": next_url}
             )
-            return redirect(next_url)
+            return response.redirect(next_url)
         else:
             res_data = self.__get_res(res)
             if res_data and res_data.get("type"):
@@ -52,9 +51,9 @@ class Notebooks:
                 async def streaming_fn(res):
                     await res.write(str(res_data.get("data")).encode("utf-8"))
 
-                return stream(streaming_fn, content_type=res_data.get("type"))
+                return response.stream(streaming_fn, content_type=res_data.get("type"))
             else:
-                return json({"id": uid, "status": "Done", "time": duration})
+                return response.json({"id": uid, "status": "Done", "time": duration})
 
     def __convert_csv(self, data):
         soup = bs4.BeautifulSoup(data)
@@ -96,7 +95,7 @@ class Notebooks:
                                 result = {"error": "file not found"}
                         elif data.get("application/json"):
                             result_type = "application/json"
-                            result = data.get(result_type)
+                            result = json.dumps(data.get(result_type))
                         elif (
                             data.get("text/html")
                             and metadata[meta].get("naas_type") == "csv"
@@ -128,7 +127,6 @@ class Notebooks:
                 cwd=file_dirpath,
                 parameters=params,
                 kernel_manager_class=kern_manager,
-                nest_asyncio=True,
             )
         else:
             return pm.execute_notebook(
@@ -137,7 +135,6 @@ class Notebooks:
                 progress_bar=False,
                 cwd=file_dirpath,
                 parameters=params,
-                nest_asyncio=True,
             )
 
     async def exec(self, uid, job):
@@ -233,14 +230,14 @@ class Notebooks:
         res["duration"] = time.time() - start_time
         if res.get("error"):
             self.__notif.send_error(uid, str(res.get("error")), file_filepath)
-            if notif_down and current_type == t_scheduler:
+            if notif_down and current_type == t_scheduler and self.__notif:
                 self.__notif.send_scheduler(
                     uid, "down", notif_down, file_filepath, value
                 )
-            elif notif_down:
+            elif notif_down and self.__notif:
                 self.__notif.send(uid, "down", notif_down, file_filepath, current_type)
-        elif notif_up and current_type == t_scheduler:
+        elif notif_up and current_type == t_scheduler and self.__notif:
             self.__notif.send_scheduler(uid, "up", notif_down, file_filepath, value)
-        elif notif_up:
+        elif notif_up and self.__notif:
             self.__notif.send(uid, "up", notif_up, file_filepath, current_type)
         return res

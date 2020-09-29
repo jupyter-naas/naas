@@ -24,3 +24,8 @@ def runner(caplog, tmp_path):
     app = Runner().init_app()
 
     yield app
+
+
+@pytest.fixture
+def test_cli(loop, runner, sanic_client):
+    return loop.run_until_complete(sanic_client(runner))

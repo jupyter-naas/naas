@@ -1,18 +1,18 @@
 from naas.types import t_main, t_notebook, t_scheduler, t_asset, t_job
-from naas.runner.controllers.scheduler import SchedulerController
-from naas.runner.controllers.assets import AssetsController
 from sentry_sdk.integrations.sanic import SanicIntegration
-from naas.runner.controllers.notebooks import NbController
-from naas.runner.controllers.jobs import JobsController
-from naas.runner.controllers.logs import LogsController
-from naas.runner.controllers.env import EnvController
-from naas.runner.notifications import Notifications
-from naas.runner.scheduler import Scheduler
-from naas.runner.notebooks import Notebooks
+from .controllers.scheduler import SchedulerController
+from .controllers.assets import AssetsController
+from .controllers.notebooks import NbController
+from .controllers.jobs import JobsController
+from .controllers.logs import LogsController
+from .controllers.env import EnvController
+from .notifications import Notifications
+from .scheduler import Scheduler
+from .notebooks import Notebooks
 from sanic_openapi import swagger_blueprint
-from naas.runner.logger import Logger
+from .logger import Logger
 from .proxy import escape_kubernet
-from naas.runner.jobs import Jobs
+from .jobs import Jobs
 
 # from naas.__version__ import __version__
 from sanic import Sanic
@@ -107,7 +107,7 @@ class Runner:
     async def initialize_before_start(self, app, loop):
         if self.__jobs is None:
             self.__jobs = Jobs(self.__logger)
-            self.__nb = Notebooks(self.__logger, loop, self.__notif)
+            self.__nb = Notebooks(self.__logger, self.__notif)
             self.__app.add_route(
                 NbController.as_view(self.__logger, self.__jobs, self.__nb),
                 f"/{t_notebook}/<token>",
@@ -126,7 +126,7 @@ class Runner:
             self.__app.add_route(
                 JobsController.as_view(self.__logger, self.__jobs), f"/{t_job}"
             )
-            self.__scheduler.start()
+            await self.__scheduler.start()
 
     def init_app(self):
         if not os.path.exists(self.__path_naas_files):

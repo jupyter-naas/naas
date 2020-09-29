@@ -1,4 +1,4 @@
-from naas.runner.proxy import encode_proxy_url
+from .proxy import encode_proxy_url
 import pretty_cron
 import requests
 import base64

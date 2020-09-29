@@ -23,12 +23,12 @@ setup(
             "pytest>=5,<6",
             "pytest-mock>=3,<4",
             "pytest-sanic>=1,<2",
-            "requests-mock>=1,<2",
+            "pytest-asyncio>=0,<1" "requests-mock>=1,<2",
             "twine>=3,<4",
             "flake8>=3,<4",
             "black",
             "commitizen>=2,<3",
-            "pytest-cov>=2,<3"
+            "pytest-cov>=2,<3",
         ]
     },
     install_requires=[

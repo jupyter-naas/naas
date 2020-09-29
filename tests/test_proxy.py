@@ -8,3 +8,4 @@ os.environ["JUPYTER_SERVER_ROOT"] = os.path.join(os.getcwd(), user_folder_name)
 # def test_init():
 # secret = Secret()
 # assert len(secret.list()) == 0
+# TODO find a way to test it
