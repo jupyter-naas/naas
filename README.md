@@ -1,6 +1,6 @@
 ![Bump version](https://github.com/jupyter-naas/naas/workflows/Bump%20version/badge.svg)
-![Python package](https://github.com/jupyter-naas/naas/workflows/Python%20package/badge.svg)
 ![Upload Python Package](https://github.com/jupyter-naas/naas/workflows/Upload%20Python%20Package/badge.svg)
+![Test Python package](https://github.com/jupyter-naas/naas/workflows/Test%20Python%20package/badge.svg)
 
 # Naas (Notebooks As Automated Services)
 
