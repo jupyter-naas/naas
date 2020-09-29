@@ -1,3 +1,9 @@
+## 0.4.2 (2020-09-29)
+
+### Fix
+
+- :bug: when notebook notfound add missing key duration in error return
+
 ## 0.4.1 (2020-09-28)
 
 ### Fix
