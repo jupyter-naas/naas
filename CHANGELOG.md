@@ -1,3 +1,10 @@
+## 0.4.4 (2020-09-29)
+
+### Fix
+
+- ci merge job for pypip deploy
+- ci merge job for pypip deploy
+
 ## 0.4.3 (2020-09-29)
 
 ### Fix
