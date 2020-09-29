@@ -31,12 +31,12 @@ jobs:
         git config --global user.name "GitHub Action"
         python3 -m black naas
         python3 -m flake8 naas
-        pytest --cov=naas
+        pytest --cov=./ --cov-report=xml 
     - name: Upload coverage to Codecov
       if: runner.os == 'Linux'
       uses: codecov/codecov-action@v1.0.3
       with:
         token: ${{secrets.CODECOV_TOKEN}}
-        file: .coverage
+        file: ./coverage.xml
         flags: unittests
         name: codecov-umbrella
