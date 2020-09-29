@@ -1,3 +1,9 @@
+## 0.4.13 (2020-09-29)
+
+### Fix
+
+- :construction_worker: use new pip version install
+
 ## 0.4.12 (2020-09-29)
 
 ### Fix
