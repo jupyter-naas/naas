@@ -1,3 +1,10 @@
+## 0.4.6 (2020-09-29)
+
+### Fix
+
+- ci add deploy package step
+- ci change token
+
 ## 0.4.5 (2020-09-29)
 
 ### Fix
