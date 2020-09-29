@@ -1,3 +1,9 @@
+## 0.4.14 (2020-09-29)
+
+### Fix
+
+- :bug: use right var for update dockerdescription
+
 ## 0.4.13 (2020-09-29)
 
 ### Fix
