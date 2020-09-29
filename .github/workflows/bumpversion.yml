@@ -19,37 +19,4 @@ jobs:
       - name: Create bump and changelog
         uses: commitizen-tools/commitizen-action@master
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Set up Python
-        uses: actions/setup-python@v1
-        with:
-          python-version: '3.x'
-      - name: Install dependencies and build
-        run: |
-          
-          python -m pip install -U pip
-          pip3 install -e '.[dev]'
-          python3 setup.py sdist
-      - name: Deploy Pypi
-        uses: remorses/pypi@v3
-        with:
-          username: ${{ secrets.PYPIP_USERNAME }} 
-          password: ${{ secrets.PYPIP_PASSWORD }}
-          name: Set up Docker Buildx
-          uses: docker/setup-buildx-action@v1
-      - name: Login to DockerHub
-        uses: docker/login-action@v1 
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - id: get_version
-        uses: battila7/get-version-action@v2
-      - run: echo ${{ steps.get_version.outputs.version }}
-      - name: Build and push
-        id: docker_build
-        uses: docker/build-push-action@v2
-        with:
-          push: true
-          tags: jupyternaas/naas:${{ steps.vars.outputs.version }}
-      - name: Image digest
-        run: echo ${{ steps.docker_build.outputs.digest }}
+          github_token: '${{ secrets.PERSONAL_ACCESS_TOKEN }}'
