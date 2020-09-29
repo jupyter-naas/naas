@@ -1,3 +1,9 @@
+## 0.4.12 (2020-09-29)
+
+### Fix
+
+- ci change wrong vars in workflow
+
 ## 0.4.11 (2020-09-29)
 
 ### Fix
