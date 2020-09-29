@@ -96,16 +96,15 @@ class Jobs:
             self.__dedup_jobs()
 
     def __dedup_jobs(self):
-        new_df = self.__df[(self.__df.type != t_notebook) & (self.__df.type != t_asset)]
+        new_df = self.__df[
+            (self.__df.type != t_notebook) & (self.__df.type != t_asset)
+        ].to_dict("records")
         cur_notebook = self.__df[self.__df.type == t_notebook]
         cur_asset = self.__df[self.__df.type == t_asset]
-        cur_asset = cur_asset.drop_duplicates(subset=["value"])
-        cur_notebook = cur_notebook.drop_duplicates(subset=["value"])
-        new_concat = pd.concat(
-            [new_df, cur_asset, cur_notebook], ignore_index=True, sort=False
-        )
-        records = new_concat.to_dict("records")
-        self.__df = pd.DataFrame(records)
+        cur_asset = cur_asset.drop_duplicates(subset=["value"]).to_dict("records")
+        cur_notebook = cur_notebook.drop_duplicates(subset=["value"]).to_dict("records")
+        self.__df = pd.DataFrame([*new_df, *cur_asset, *cur_notebook])
+        self.__df = self.__df.reset_index(drop=True)
 
     def __get_save_from_file(self, uid):
         data = []
@@ -123,7 +122,7 @@ class Jobs:
                     "error": str(err),
                 }
             )
-        return pd.DataFrame(data)
+        return pd.DataFrame(data).reset_index(drop=True)
 
     def __save_to_file(self, uid, data):
         try:
@@ -262,15 +261,14 @@ class Jobs:
                                 self.__df.at[index, "nbRun"] + 1
                             )
                             self.__df.at[index, "lastRun"] = runTime
-                            self.__df.at[index, "totalRun"] = runTime + (
-                                self.__df.at[index, "totalRun"]
-                                if self.__df.at[index, "totalRun"]
-                                else 0
-                            )
+                            totalRun = float(self.__df.at[index, "totalRun"])
+                            self.__df.at[index, "totalRun"] = runTime + totalRun
+                            res = t_update
                         elif status == t_add:
+                            self.__df.at[index, "nbRun"] = 0
                             self.__df.at[index, "lastRun"] = 0
                             self.__df.at[index, "totalRun"] = 0
-                        res = t_update
+                            res = t_add
                 elif status == t_add and len(cur_elem) == 0:
                     self.__logger.info(
                         {
@@ -296,8 +294,11 @@ class Jobs:
                             "lastUpdate": dt_string,
                         }
                     ]
-                    df_new = pd.DataFrame(new_row)
-                    self.__df = pd.concat([self.__df, df_new], axis=0)
+                    cur_df = self.__df.to_dict("records")
+                    if len(self.__df) > 0:
+                        self.__df = pd.DataFrame([*cur_df, *new_row])
+                    else:
+                        self.__df = pd.DataFrame(new_row)
                 else:
                     res = t_skip
             except Exception as e:

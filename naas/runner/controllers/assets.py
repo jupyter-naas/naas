@@ -61,7 +61,7 @@ class AssetsController(HTTPMethodView):
                     }
                 )
                 try:
-                    self.__jobs.update(
+                    await self.__jobs.update(
                         uid, file_filepath, t_asset, token, params, t_health, 1
                     )
                     res = await response.file(file_filepath)
@@ -86,7 +86,7 @@ class AssetsController(HTTPMethodView):
                             "error": e,
                         }
                     )
-                    self.__jobs.update(
+                    await self.__jobs.update(
                         uid, file_filepath, t_asset, token, params, t_error, 1
                     )
                     raise ServerError({"id": uid, "error": e}, status_code=404)
