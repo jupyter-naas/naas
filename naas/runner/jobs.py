@@ -201,6 +201,8 @@ class Jobs:
         async with self.__storage_sem:
             try:
                 res = status
+                now = datetime.datetime.now()
+                dt_string = now.strftime("%Y-%m-%d %H:%M:%S")
                 cur_elem = self.__df[
                     (self.__df.type == target_type) & (self.__df.path == path)
                 ]
@@ -209,8 +211,6 @@ class Jobs:
                     & (self.__df.type == target_type)
                     & (self.__df.value == value)
                 ]
-                now = datetime.datetime.now()
-                dt_string = now.strftime("%Y-%m-%d %H:%M:%S")
                 if len(dup_elem) > 0 and target_type in filters_api:
                     self.__logger.error(
                         {

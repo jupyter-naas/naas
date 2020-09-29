@@ -155,7 +155,7 @@ class Notebooks:
                     "error": err,
                 }
             )
-            return {"error": err}
+            return {"error": err, "duration": 0}
         file_dirpath = os.path.dirname(file_filepath)
         file_filename = os.path.basename(file_filepath)
         file_filepath_out = os.path.join(file_dirpath, f"out_{file_filename}")
