@@ -1,3 +1,9 @@
+## 0.4.25 (2020-09-30)
+
+### Fix
+
+- :pencil: add our first doc and fix some typo in print
+
 ## 0.4.24 (2020-09-30)
 
 ### Refactor
