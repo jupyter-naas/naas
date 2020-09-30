@@ -1,3 +1,9 @@
+## 0.5.8 (2020-09-30)
+
+### Fix
+
+- :bug: fix notif status icon url
+
 ## 0.5.7 (2020-09-30)
 
 ### Fix
