@@ -235,9 +235,11 @@ class Notebooks:
                     uid, "down", notif_down, file_filepath, value
                 )
             elif notif_down and self.__notif:
-                self.__notif.send(uid, "down", notif_down, file_filepath, current_type)
+                self.__notif.send_notif(
+                    uid, "down", notif_down, file_filepath, current_type
+                )
         elif notif_up and current_type == t_scheduler and self.__notif:
             self.__notif.send_scheduler(uid, "up", notif_down, file_filepath, value)
         elif notif_up and self.__notif:
-            self.__notif.send(uid, "up", notif_up, file_filepath, current_type)
+            self.__notif.send_notif(uid, "up", notif_up, file_filepath, current_type)
         return res

@@ -4,6 +4,7 @@ import requests
 import base64
 import json
 import os
+import uuid
 
 
 class Notifications:
@@ -13,7 +14,29 @@ class Notifications:
     def __init__(self, logger):
         self.logger = logger
 
-    def send(self, uid, status, email, file_path, current_type):
+    def send(self, email, subject, content, html=None):
+        uid = str(uuid.uuid4())
+        if self.base_notif_url is None:
+            jsn = {"id": uid, "type": "email error", "error": "not configured"}
+            self.logger.error(json.dumps(jsn))
+            return jsn
+        try:
+            data = {
+                "subject": subject,
+                "email": email,
+                "content": content,
+                "html": html,
+            }
+            req = requests.post(url=f"{self.base_notif_url}/send", json=data)
+            req.raise_for_status()
+            jsn = req.json()
+            return jsn
+        except Exception as err:
+            self.logger.error(
+                json.dumps({"id": uid, "type": "email error", "error": str(err)})
+            )
+
+    def send_notif(self, uid, status, email, file_path, current_type):
         if self.base_notif_url is None:
             jsn = {"id": uid, "type": "notification error", "error": "not configured"}
             self.logger.error(json.dumps(jsn))
@@ -24,15 +47,23 @@ class Notifications:
         base64_bytes = base64.b64encode(message_bytes)
         file_path_base64 = base64_bytes.decode("ascii")
         link_url = f"{encode_proxy_url('manager')}/?filter={file_path_base64}"
+        logo_url = f"{encode_proxy_url('manager')}/asset/naas_logo"
         try:
             data = {
                 "subject": f"{current_type.capitalize()} {status}",
                 "email": email,
+                "title": "Naas manager notification",
                 "content": content,
                 "image": status_url,
-                "link": link_url,
+                "vars": {
+                    "URL_HOME": encode_proxy_url("manager"),
+                    "URL_LOGO": logo_url,
+                    "ALT_LOGO": "Naas Manager",
+                    "URL_IMAGE": status_url,
+                    "URL_LINK": link_url,
+                },
             }
-            req = requests.post(url=f"{self.base_notif_url}/send", json=data)
+            req = requests.post(url=f"{self.base_notif_url}/send_notif", json=data)
             req.raise_for_status()
             jsn = req.json()
             return jsn
