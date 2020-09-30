@@ -60,7 +60,7 @@ class Notifications:
             cron_string = pretty_cron.prettify_cron(current_value)
             content = f"Your {file_path} who run {cron_string} is {status}, check the Logs on your manager below :"
 
-        status_url = f"{encode_proxy_url(t_asset)}/{status}.png"
+        status_url = f"{encode_proxy_url(t_asset)}/{status}"
         message_bytes = file_path.encode("ascii")
         base64_bytes = base64.b64encode(message_bytes)
         file_path_base64 = base64_bytes.decode("ascii")
