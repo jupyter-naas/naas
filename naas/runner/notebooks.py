@@ -229,17 +229,19 @@ class Notebooks:
             )
         res["duration"] = time.time() - start_time
         if res.get("error"):
-            self.__notif.send_error(uid, str(res.get("error")), file_filepath)
-            if notif_down and current_type == t_scheduler and self.__notif:
-                self.__notif.send_scheduler(
-                    uid, "down", notif_down, file_filepath, value
+            email_admin = os.environ.get("JUPYTERHUB_USER", None)
+            if email_admin is not None:
+                self.__notif.send_status(
+                    uid, "down", email_admin, file_filepath, current_type, value
                 )
-            elif notif_down and self.__notif:
-                self.__notif.send_notif(
-                    uid, "down", notif_down, file_filepath, current_type
+            if notif_down and self.__notif:
+                self.__notif.send_status(
+                    uid, "down", notif_down, file_filepath, current_type, value
                 )
         elif notif_up and current_type == t_scheduler and self.__notif:
-            self.__notif.send_scheduler(uid, "up", notif_down, file_filepath, value)
+            self.__notif.send_status(
+                uid, "up", notif_down, file_filepath, current_type, value
+            )
         elif notif_up and self.__notif:
-            self.__notif.send_notif(uid, "up", notif_up, file_filepath, current_type)
+            self.__notif.send_status(uid, "up", notif_up, file_filepath, current_type)
         return res
