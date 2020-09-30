@@ -1,3 +1,9 @@
+## 0.4.24 (2020-09-30)
+
+### Refactor
+
+- :truck: rename send_notif to send_status
+
 ## 0.4.23 (2020-09-30)
 
 ### Fix
