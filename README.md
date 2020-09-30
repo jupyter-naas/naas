@@ -1,3 +1,5 @@
+<img width="25%" alt="Naas" src="./images/naas_logo.svg"/>
+
 ![Bump version](https://github.com/jupyter-naas/naas/workflows/Bump%20version/badge.svg)
 ![Upload Python Package](https://github.com/jupyter-naas/naas/workflows/Upload%20Python%20Package/badge.svg)
 ![Test Python package](https://github.com/jupyter-naas/naas/workflows/Test%20Python%20package/badge.svg)
