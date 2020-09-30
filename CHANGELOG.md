@@ -1,3 +1,9 @@
+## 0.5.6 (2020-09-30)
+
+### Fix
+
+- :bug: fix url in logo notification
+
 ## 0.5.5 (2020-09-30)
 
 ### Fix
