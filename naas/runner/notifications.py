@@ -77,6 +77,7 @@ class Notifications:
                     "URL_LOGO": logo_url,
                     "ALT_LOGO": "Naas Manager LOGO",
                     "URL_IMAGE": status_url,
+                    "ALT_IMAGE": status,
                     "URL_LINK": link_url,
                 },
             }
