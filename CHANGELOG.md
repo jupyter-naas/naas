@@ -1,3 +1,9 @@
+## 0.4.21 (2020-09-30)
+
+### Fix
+
+- :bug: use good vars for emails notifications
+
 ## 0.4.20 (2020-09-29)
 
 ### Fix
