@@ -28,9 +28,7 @@ class Notebooks:
     def __init__(self, logger, notif=None):
         self.__port = int(os.environ.get("NAAS_RUNNER_PORT", 5000))
         self.__user = os.environ.get("JUPYTERHUB_USER", "joyvan@naas.com")
-        self.__single_user_api_path = os.environ.get(
-            "SINGLEUSER_PATH", ".jupyter-single-user.dev.svc.cluster.local"
-        )
+        self.__single_user_api_path = os.environ.get("SINGLEUSER_PATH", "")
         self.__api_internal = f"http://jupyter-{escape_kubernet(self.__user)}{self.__single_user_api_path}:{self.__port}/"
         self.__logger = logger
         self.__notif = notif

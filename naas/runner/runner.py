@@ -71,7 +71,7 @@ class Runner:
         )
         self.__port = int(os.environ.get("NAAS_RUNNER_PORT", 5000))
         self.__user = os.environ.get("JUPYTERHUB_USER", "joyvan@naas.com")
-        self.__shell_user = os.environ.get("USER", None)
+        self.__shell_user = os.environ.get("NB_USER", None)
         self.__public_url = os.environ.get("JUPYTERHUB_URL", "")
         self.__proxy_url = os.environ.get("PUBLIC_PROXY_API", "http://localhost:3002")
         self.__notifications_url = os.environ.get(

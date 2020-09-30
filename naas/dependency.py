@@ -52,9 +52,7 @@ class Dependency:
             return
         current_file = self.manager.get_path(path)
         print("👌 Well done! Your Dependency has been sent to production folder. \n")
-        print(
-            'PS: to remove the "Notebook as API" feature, just replace .add by .delete'
-        )
+        print('PS: to remove the "Dependency" feature, just replace .add by .delete')
         self.manager.add_prod(
             {
                 "type": self.role,

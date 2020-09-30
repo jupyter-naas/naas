@@ -73,7 +73,7 @@ class Secret:
             new_obj.append(obj)
             print("Added =>>", obj)
         self.__set_secret(new_obj)
-        return obj
+        return None
 
     def get(self, name=None, default_value=None):
         all_secret = self.__get_all()
