@@ -1,3 +1,9 @@
+## 0.5.4 (2020-09-30)
+
+### Fix
+
+- :bug: fix in notebook render and notif
+
 ## 0.5.3 (2020-09-30)
 
 ### Fix
