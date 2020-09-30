@@ -1,3 +1,9 @@
+## 0.5.5 (2020-09-30)
+
+### Fix
+
+- :bug: fix url on manager in notification
+
 ## 0.5.4 (2020-09-30)
 
 ### Fix
