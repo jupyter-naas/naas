@@ -64,8 +64,8 @@ class Notifications:
         message_bytes = file_path.encode("ascii")
         base64_bytes = base64.b64encode(message_bytes)
         file_path_base64 = base64_bytes.decode("ascii")
-        link_url = f"{encode_proxy_url('manager')}/?filter={file_path_base64}"
-        logo_url = f"{encode_proxy_url('manager')}/asset/naas_logo"
+        link_url = f"{encode_proxy_url()}/?filter={file_path_base64}"
+        logo_url = f"{encode_proxy_url()}/asset/naas_logo"
         try:
             data = {
                 "title": "Naas manager notification",
@@ -73,7 +73,7 @@ class Notifications:
                 "email": email,
                 "content": content,
                 "custom_vars": {
-                    "URL_HOME": encode_proxy_url("manager"),
+                    "URL_HOME": encode_proxy_url(),
                     "URL_LOGO": logo_url,
                     "ALT_LOGO": "Naas Manager LOGO",
                     "URL_IMAGE": status_url,
