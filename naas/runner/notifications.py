@@ -11,14 +11,17 @@ class Notifications:
     logger = None
     base_notif_url = os.environ.get("NOTIFICATIONS_API", None)
 
-    def __init__(self, logger):
+    def __init__(self, logger=None):
         self.logger = logger
 
     def send(self, email, subject, content, html=None):
         uid = str(uuid.uuid4())
         if self.base_notif_url is None:
             jsn = {"id": uid, "type": "email error", "error": "not configured"}
-            self.logger.error(json.dumps(jsn))
+            if self.logger is not None:
+                self.logger.error(json.dumps(jsn))
+            else:
+                print(jsn)
             return jsn
         try:
             data = {
@@ -32,14 +35,20 @@ class Notifications:
             jsn = req.json()
             return jsn
         except Exception as err:
-            self.logger.error(
-                json.dumps({"id": uid, "type": "email error", "error": str(err)})
-            )
+            if self.logger is not None:
+                self.logger.error(
+                    json.dumps({"id": uid, "type": "email error", "error": str(err)})
+                )
+            else:
+                print(err)
 
     def send_notif(self, uid, status, email, file_path, current_type):
         if self.base_notif_url is None:
             jsn = {"id": uid, "type": "notification error", "error": "not configured"}
-            self.logger.error(json.dumps(jsn))
+            if self.logger is not None:
+                self.logger.error(json.dumps(jsn))
+            else:
+                print(jsn)
             return jsn
         content = f"Your {file_path} accesible as {current_type} is {status}, check the Logs on your manager below :"
         status_url = f"{encode_proxy_url('assets')}/{status}.png"

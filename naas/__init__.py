@@ -7,6 +7,7 @@ from .dependency import Dependency
 from IPython.core.display import display, HTML
 from .secret import Secret
 from .runner import Runner
+from .runner.notifications import Notifications
 from .runner.proxy import encode_proxy_url
 import requests
 import os
@@ -19,6 +20,7 @@ runner = Runner()
 api = Api()
 assets = Assets()
 dependency = Dependency()
+notifications = Notifications()
 
 
 def manager():
