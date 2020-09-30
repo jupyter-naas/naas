@@ -1,3 +1,9 @@
+## 0.5.1 (2020-09-30)
+
+### Fix
+
+- :bug: render notebook filepath
+
 ## 0.5.0 (2020-09-30)
 
 ### Feat
