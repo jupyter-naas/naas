@@ -53,8 +53,9 @@ class Notifications:
             return jsn
         content = ""
         if current_type == t_asset or current_type == t_notebook:
-            content = f"The file {file_path} accesible at this url:\n {encode_proxy_url(current_type)}/{current_value}\n is {status}.\n\n"
-            content = content + "Check the Logs on your manager below :\n"
+            content = f"The file {file_path} accesible at this url:<br/> {encode_proxy_url(current_type)}/{current_value}<br/>"
+            content = content + "is {status}.<br/><br/>"
+            content = content + "Check the Logs on your manager below :<br/>"
         elif current_type == t_scheduler:
             cron_string = pretty_cron.prettify_cron(current_value)
             content = f"Your {file_path} who run {cron_string} is {status}, check the Logs on your manager below :"

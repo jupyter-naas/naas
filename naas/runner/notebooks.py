@@ -103,7 +103,6 @@ class Notebooks:
                                     result = body
                                 except:  # noqa: E722
                                     tb = traceback.format_exc()
-                                    print("tb", tb)
                                     result_type = "application/json"
                                     result = {
                                         "error": "output file not found",
