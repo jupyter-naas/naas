@@ -74,6 +74,12 @@ class Notebooks:
             output.append((csv_string.getvalue(), table_attrs))
         return output[0][0]
 
+    def get_out_path(self, path):
+        filename = os.path.basename(path)
+        dirname = os.path.dirname(path)
+        out_path = os.path.join(dirname, f"out_{filename}")
+        return out_path
+
     def __get_res(self, res, filepath):
         cells = res.get("cells")
         result = None
@@ -85,39 +91,36 @@ class Notebooks:
                 data = output.get("data", dict())
                 for meta in metadata:
                     if metadata[meta].get("naas_api"):
-                        if data.get("application/json") and metadata[meta].get(
+                        if (
+                            data.get("text/markdown")
+                            and metadata[meta].get("naas_type") == t_notebook
+                        ):
+                            try:
+                                result_type = "text/html"
+                                file_filepath_out = self.get_out_path(filepath)
+                                (body, ressources) = self.__html_exporter.from_filename(
+                                    file_filepath_out
+                                )
+                                result = body
+                            except:  # noqa: E722
+                                tb = traceback.format_exc()
+                                result_type = "application/json"
+                                result = {
+                                    "error": "output file not found",
+                                    "trace": tb,
+                                }
+                        elif data.get("application/json") and metadata[meta].get(
                             "naas_type"
                         ):
-                            if metadata[meta].get("naas_type") == t_notebook:
-                                try:
-                                    result_type = "text/html"
-                                    file_filepath_out = data.get(
-                                        "application/json"
-                                    ).get("path")
-                                    (
-                                        body,
-                                        ressources,
-                                    ) = self.__html_exporter.from_filename(
-                                        file_filepath_out
-                                    )
-                                    result = body
-                                except:  # noqa: E722
-                                    tb = traceback.format_exc()
-                                    result_type = "application/json"
-                                    result = {
-                                        "error": "output file not found",
-                                        "trace": tb,
-                                    }
-                            else:
-                                try:
-                                    result_type = metadata[meta].get("naas_type")
-                                    path = data.get("application/json").get("path")
-                                    with open(path, "r") as f:
-                                        result = f.read()
-                                        f.close()
-                                except:  # noqa: E722
-                                    result_type = "application/json"
-                                    result = {"error": "file not found"}
+                            try:
+                                result_type = metadata[meta].get("naas_type")
+                                path = data.get("application/json").get("path")
+                                with open(path, "r") as f:
+                                    result = f.read()
+                                    f.close()
+                            except:  # noqa: E722
+                                result_type = "application/json"
+                                result = {"error": "file not found"}
                         elif data.get("application/json"):
                             result_type = "application/json"
                             result = json.dumps(data.get(result_type))

@@ -54,7 +54,7 @@ class Notifications:
         content = ""
         if current_type == t_asset or current_type == t_notebook:
             content = f"The file {file_path} accesible at this url:<br/> {encode_proxy_url(current_type)}/{current_value}<br/>"
-            content = content + "is {status}.<br/><br/>"
+            content = content + f"is {status}.<br/><br/>"
             content = content + "Check the Logs on your manager below :<br/>"
         elif current_type == t_scheduler:
             cron_string = pretty_cron.prettify_cron(current_value)
@@ -68,11 +68,10 @@ class Notifications:
         logo_url = f"{encode_proxy_url('manager')}/asset/naas_logo"
         try:
             data = {
+                "title": "Naas manager notification",
                 "subject": f"{current_type.capitalize()} {status}",
                 "email": email,
-                "title": "Naas manager notification",
                 "content": content,
-                "image": status_url,
                 "custom_vars": {
                     "URL_HOME": encode_proxy_url("manager"),
                     "URL_LOGO": logo_url,
