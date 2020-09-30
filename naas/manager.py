@@ -192,16 +192,18 @@ class Manager:
     def get_prod(self, path):
         self.__copy_file_in_dev(path)
 
-    def get_output(self, path):
+    def get_out_path(self, path):
         filename = os.path.basename(path)
         dirname = os.path.dirname(path)
         out_path = os.path.join(dirname, f"out_{filename}")
+        return out_path
+
+    def get_output(self, path):
+        out_path = self.get_out_path(path)
         self.__copy_file_in_dev(out_path)
 
     def clear_output(self, path):
-        filename = os.path.basename(path)
-        dirname = os.path.dirname(path)
-        out_path = os.path.join(dirname, f"out_{filename}")
+        out_path = self.get_out_path(path)
         print(f"Delete {out_path}")
         os.remove(out_path)
 

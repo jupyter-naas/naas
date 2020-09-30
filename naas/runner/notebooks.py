@@ -89,9 +89,11 @@ class Notebooks:
                             "naas_type"
                         ):
                             if metadata[meta].get("naas_type") == t_notebook:
-                                result_type = "text/html"
-                                file_filepath_out = self.__get_output_path(filepath)
                                 try:
+                                    result_type = "text/html"
+                                    file_filepath_out = data.get(
+                                        "application/json"
+                                    ).get("path")
                                     (
                                         body,
                                         ressources,
@@ -103,10 +105,13 @@ class Notebooks:
                                     tb = traceback.format_exc()
                                     print("tb", tb)
                                     result_type = "application/json"
-                                    result = {"error": "output file not found"}
+                                    result = {
+                                        "error": "output file not found",
+                                        "trace": tb,
+                                    }
                             else:
-                                result_type = metadata[meta].get("naas_type")
                                 try:
+                                    result_type = metadata[meta].get("naas_type")
                                     path = data.get("application/json").get("path")
                                     with open(path, "r") as f:
                                         result = f.read()

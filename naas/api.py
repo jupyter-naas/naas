@@ -51,9 +51,17 @@ class Api:
         )
         return url
 
-    def respond_notebook(self, path):
-        data = {"path": os.path.abspath(path)}
-        display(Markdown("Response Set as Notebook, preview below: "))
+    def respond_notebook(self):
+        current_file = self.manager.get_path(None)
+        prod_path = self.manager.get_prod_path(current_file)
+        out_path = self.manager.get_out_path(prod_path)
+        data = {"path": out_path}
+        display(
+            Markdown(
+                "Response Set as Notebook !",
+                metadata={"naas_api": True, "naas_type": t_notebook},
+            )
+        )
         display(JSON(data, metadata={"naas_api": True, "naas_type": t_notebook}))
 
     def respond_file(self, path):
