@@ -245,11 +245,10 @@ class Manager:
         if "type" in obj and "path" in obj and "params" in obj and "value" in obj:
             dev_path = obj.get("path")
             obj["path"] = self.get_prod_path(obj.get("path"))
+            obj["status"] = t_add
             self.__copy_file_in_prod(dev_path)
             try:
-                r = requests.post(
-                    f"{self.__local_api}/{t_job}", json={**obj, **{"status": t_add}}
-                )
+                r = requests.post(f"{self.__local_api}/{t_job}", json=obj)
                 if not silent:
                     print(f'{r.json()["status"]} ==> {obj}')
             except ConnectionError:
@@ -265,11 +264,10 @@ class Manager:
     def del_prod(self, obj, silent):
         if "type" in obj and "path" in obj:
             obj["path"] = self.get_prod_path(obj.get("path"))
+            obj["status"] = t_delete
             self.__del_file_in_prod(obj["path"])
             try:
-                r = requests.post(
-                    f"{self.__local_api}/{t_job}", json={**obj, **{"status": t_delete}}
-                )
+                r = requests.post(f"{self.__local_api}/{t_job}", json=obj)
                 if not silent:
                     print(f'{r.json()["status"]} ==> {obj}')
             except ConnectionError:

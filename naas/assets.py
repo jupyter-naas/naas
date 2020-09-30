@@ -16,13 +16,18 @@ class Assets:
             if item["type"] == self.role:
                 print(item)
 
-    def currents(self):
+    def currents(self, raw=False):
         json_data = self.manager.get_naas()
-        for item in json_data:
-            kind = None
-            if item["type"] == self.role:
-                kind = f"publicly gettable with this url {self.manager.proxy_url('assets', item['value'])}"
-                print(f"File ==> {item['path']} is {kind}")
+        if raw:
+            for item in json_data:
+                if item["type"] == self.role:
+                    print(item)
+        else:
+            for item in json_data:
+                kind = None
+                if item["type"] == self.role:
+                    kind = f"gettable with this url {self.manager.proxy_url('assets', item['value'])}"
+                    print(f"File ==> {item['path']} is {kind}")
 
     def get(self, path=None):
         if not self.manager.notebook_path():
@@ -106,5 +111,5 @@ class Assets:
         )
         print(f".currents() => get current list of {type(self).__name__} prod file\n")
         print(
-            f".current_raw() => get json current list of {type(self).__name__} prod file\n"
+            f".current(raw=True) => get json current list of {type(self).__name__} prod file\n"
         )

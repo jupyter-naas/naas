@@ -13,19 +13,18 @@ class Api:
     def __init__(self):
         self.manager = Manager()
 
-    def current_raw(self):
+    def currents(self, raw=False):
         json_data = self.manager.get_naas()
-        for item in json_data:
-            if item["type"] == self.role:
-                print(item)
-
-    def currents(self):
-        json_data = self.manager.get_naas()
-        for item in json_data:
-            kind = None
-            if item["type"] == self.role:
-                kind = f"callable with this url {self.manager.proxy_url('notebooks', item['value'])} from anywhere"
-                print(f"File ==> {item['path']} is {kind}")
+        if raw:
+            for item in json_data:
+                if item["type"] == self.role:
+                    print(item)
+        else:
+            for item in json_data:
+                kind = None
+                if item["type"] == self.role:
+                    kind = f"callable with this url {self.manager.proxy_url('notebooks', item['value'])}"
+                    print(f"File ==> {item['path']} is {kind}")
 
     def add(self, path=None, params={}, debug=False):
         current_file = self.manager.get_path(path)
@@ -148,5 +147,5 @@ class Api:
         )
         print(f".currents() => get current list of {type(self).__name__} prod file\n")
         print(
-            f".current_raw() => get json current list of {type(self).__name__} prod file\n"
+            f".current(raw=True) => get json current list of {type(self).__name__} prod file\n"
         )

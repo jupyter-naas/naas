@@ -11,20 +11,19 @@ class Scheduler:
     def __init__(self):
         self.manager = Manager()
 
-    def current_raw(self):
+    def currents(self, raw=False):
         json_data = self.manager.get_naas()
-        for item in json_data:
-            if item["type"] == self.role:
-                print(item)
-
-    def currents(self):
-        json_data = self.manager.get_naas()
-        for item in json_data:
-            kind = None
-            if item["type"] == self.role:
-                cron_string = pretty_cron.prettify_cron(item["value"])
-                kind = f"scheduler {cron_string}"
-                print(f"File ==> {item['path']} is {kind}")
+        if raw:
+            for item in json_data:
+                if item["type"] == self.role:
+                    print(item)
+        else:
+            for item in json_data:
+                kind = None
+                if item["type"] == self.role:
+                    cron_string = pretty_cron.prettify_cron(item["value"])
+                    kind = f"scheduler {cron_string}"
+                    print(f"File ==> {item['path']} is {kind}")
 
     def __check_cron(self, text):
         res = False
@@ -124,5 +123,5 @@ class Scheduler:
         )
         print(f".currents() => get current list of {type(self).__name__} prod file\n")
         print(
-            f".current_raw() => get json current list of {type(self).__name__} prod file\n"
+            f".current(raw=True) => get json current list of {type(self).__name__} prod file\n"
         )

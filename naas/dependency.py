@@ -9,17 +9,16 @@ class Dependency:
     def __init__(self):
         self.manager = Manager()
 
-    def current_raw(self):
+    def currents(self, raw=False):
         json_data = self.manager.get_naas()
-        for item in json_data:
-            if item["type"] == self.role:
-                print(item)
-
-    def currents(self):
-        json_data = self.manager.get_naas()
-        for item in json_data:
-            if item["type"] == self.role:
-                print(f"File ==> {item['path']}")
+        if raw:
+            for item in json_data:
+                if item["type"] == self.role:
+                    print(item)
+        else:
+            for item in json_data:
+                if item["type"] == self.role:
+                    print(f"File ==> {item['path']}")
 
     def get(self, path=None):
         if not self.manager.notebook_path():
@@ -97,5 +96,5 @@ class Dependency:
         )
         print(f".currents() => get current list of {type(self).__name__} prod file\n")
         print(
-            f".current_raw() => get json current list of {type(self).__name__} prod file\n"
+            f".current(raw=True) => get json current list of {type(self).__name__} prod file\n"
         )
