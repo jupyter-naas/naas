@@ -36,14 +36,9 @@ class AssetsController(HTTPMethodView):
             return ""
 
     async def get(self, request, token):
-        if token == "up" or token == "down" or token.startswith("naas_"):
-            ext = ".png"
-            if token.startswith("naas_"):
-                ext = ".svg"
+        if token.startswith("naas_"):
             return await response.file(
-                os.path.join(
-                    self.__path_lib_files, self.__assets_files, f"{token}{ext}"
-                )
+                os.path.join(self.__path_lib_files, self.__assets_files, token)
             )
         else:
             uid = str(uuid.uuid4())
