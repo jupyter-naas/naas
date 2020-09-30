@@ -73,7 +73,7 @@ class Notifications:
                 "title": "Naas manager notification",
                 "content": content,
                 "image": status_url,
-                "vars": {
+                "custom_vars": {
                     "URL_HOME": encode_proxy_url("manager"),
                     "URL_LOGO": logo_url,
                     "ALT_LOGO": "Naas Manager LOGO",
