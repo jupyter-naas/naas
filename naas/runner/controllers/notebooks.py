@@ -77,7 +77,9 @@ class NbController(HTTPMethodView):
                 t_health,
                 res.get("duration"),
             )
-            return self.__nb.response(uid, res, res.get("duration"), task.get("params"))
+            return self.__nb.response(
+                uid, file_filepath, res, res.get("duration"), task.get("params")
+            )
         self.__logger.error(
             {
                 "id": uid,

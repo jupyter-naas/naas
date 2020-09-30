@@ -1,5 +1,6 @@
 from naas.types import t_notebook, t_scheduler, t_error, t_health
 from .proxy import escape_kubernet
+from nbconvert import HTMLExporter
 from sanic import response
 import papermill as pm
 import traceback
@@ -11,6 +12,8 @@ import os
 import io
 
 kern_manager = None
+
+
 try:
     from enterprise_gateway.services.kernels.remotemanager import RemoteKernelManager
 
@@ -24,6 +27,7 @@ class Notebooks:
     __port = None
     __notif = None
     __api_internal = None
+    __html_exporter = None
 
     def __init__(self, logger, notif=None):
         self.__port = int(os.environ.get("NAAS_RUNNER_PORT", 5000))
@@ -32,8 +36,10 @@ class Notebooks:
         self.__api_internal = f"http://jupyter-{escape_kubernet(self.__user)}{self.__single_user_api_path}:{self.__port}/"
         self.__logger = logger
         self.__notif = notif
+        self.__html_exporter = HTMLExporter()
+        self.__html_exporter.template_name = "lab"
 
-    def response(self, uid, res, duration, params):
+    def response(self, uid, filepath, res, duration, params):
         next_url = params.get("next_url", None)
         if next_url is not None:
             if "http" not in next_url:
@@ -43,7 +49,7 @@ class Notebooks:
             )
             return response.redirect(next_url)
         else:
-            res_data = self.__get_res(res)
+            res_data = self.__get_res(res, filepath)
             if res_data and res_data.get("type"):
 
                 async def streaming_fn(res):
@@ -68,7 +74,7 @@ class Notebooks:
             output.append((csv_string.getvalue(), table_attrs))
         return output[0][0]
 
-    def __get_res(self, res):
+    def __get_res(self, res, filepath):
         cells = res.get("cells")
         result = None
         result_type = None
@@ -82,15 +88,32 @@ class Notebooks:
                         if data.get("application/json") and metadata[meta].get(
                             "naas_type"
                         ):
-                            result_type = metadata[meta].get("naas_type")
-                            try:
-                                path = data.get("application/json").get("path")
-                                with open(path, "r") as f:
-                                    result = f.read()
-                                    f.close()
-                            except:  # noqa: E722
-                                result_type = "application/json"
-                                result = {"error": "file not found"}
+                            if metadata[meta].get("naas_type") == t_notebook:
+                                result_type = "text/html"
+                                file_filepath_out = self.__get_output_path(filepath)
+                                try:
+                                    (
+                                        body,
+                                        ressources,
+                                    ) = self.__html_exporter.from_filename(
+                                        file_filepath_out
+                                    )
+                                    result = body
+                                except:  # noqa: E722
+                                    tb = traceback.format_exc()
+                                    print("tb", tb)
+                                    result_type = "application/json"
+                                    result = {"error": "output file not found"}
+                            else:
+                                result_type = metadata[meta].get("naas_type")
+                                try:
+                                    path = data.get("application/json").get("path")
+                                    with open(path, "r") as f:
+                                        result = f.read()
+                                        f.close()
+                                except:  # noqa: E722
+                                    result_type = "application/json"
+                                    result = {"error": "file not found"}
                         elif data.get("application/json"):
                             result_type = "application/json"
                             result = json.dumps(data.get(result_type))
@@ -135,6 +158,12 @@ class Notebooks:
                 parameters=params,
             )
 
+    def __get_output_path(self, file_filepath):
+        file_dirpath = os.path.dirname(file_filepath)
+        file_filename = os.path.basename(file_filepath)
+        file_filepath_out = os.path.join(file_dirpath, f"out_{file_filename}")
+        return file_filepath_out
+
     async def exec(self, uid, job):
         value = job.get("value", None)
         current_type = job.get("type", None)
@@ -152,8 +181,7 @@ class Notebooks:
             )
             return {"error": err, "duration": 0}
         file_dirpath = os.path.dirname(file_filepath)
-        file_filename = os.path.basename(file_filepath)
-        file_filepath_out = os.path.join(file_dirpath, f"out_{file_filename}")
+        file_filepath_out = self.__get_output_path(file_filepath)
         params = job.get("params", dict())
         notif_down = params.get("notif_down", None)
         notif_up = params.get("notif_up", None)

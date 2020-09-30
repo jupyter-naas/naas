@@ -33,6 +33,7 @@ setup(
         ]
     },
     install_requires=[
+        "nbconvert>=6,<7",
         "ipywidgets>=7,<8",
         "sentry_sdk>=0,<1",
         "papermill>=2,<3",
