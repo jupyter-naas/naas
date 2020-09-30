@@ -1,3 +1,9 @@
+## 0.5.0 (2020-09-30)
+
+### Feat
+
+- :sparkles: add feature to render result notebook !
+
 ## 0.4.25 (2020-09-30)
 
 ### Fix
