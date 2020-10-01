@@ -33,7 +33,7 @@ async def test_sheduler(test_cli):
 
 
 async def test_asset(test_cli):
-    response = await test_cli.get("/asset/up")
+    response = await test_cli.get("/asset/up.png")
     assert response.status == 200
     # TODO add more test
 
