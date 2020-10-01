@@ -1,3 +1,9 @@
+## 0.5.13 (2020-10-01)
+
+### Fix
+
+- :bug: add missing attribute in html
+
 ## 0.5.12 (2020-10-01)
 
 ### Fix
