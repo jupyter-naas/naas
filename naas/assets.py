@@ -9,6 +9,12 @@ class Assets:
 
     def __init__(self):
         self.manager = Manager()
+        self.get = self.manager.get_prod
+        self.get_output = self.manager.get_output
+        self.clear_output = self.manager.clear_output
+        self.get_history = self.manager.get_history
+        self.list_history = self.manager.list_history
+        self.clear_history = self.manager.clear_history
 
     def current_raw(self):
         json_data = self.manager.get_naas()
@@ -28,32 +34,6 @@ class Assets:
                 if item["type"] == self.role:
                     kind = f"gettable with this url {self.manager.proxy_url('assets', item['value'])}"
                     print(f"File ==> {item['path']} is {kind}")
-
-    def get(self, path=None):
-        if not self.manager.notebook_path():
-            print("No get done you are in already in naas folder\n")
-            return
-        current_file = self.manager.get_path(path)
-        self.manager.get_prod(current_file)
-
-    def get_history(self, histo, path=None):
-        if not self.manager.notebook_path():
-            print("No get history done you are in already in naas folder\n")
-            return
-        current_file = self.manager.get_path(path)
-        self.manager.get_history(current_file, histo)
-
-    def list_history(self, path=None):
-        current_file = self.manager.get_path(path)
-        self.manager.list_history(current_file)
-
-    def clear_history(self, path=None, histo=None):
-        if not self.manager.notebook_path():
-            print("No clear history done you are in already in naas folder\n")
-            return
-        current_file = self.manager.get_path(path)
-        self.manager.clear_history(current_file, histo)
-        print("🕣 Your Assets history has been remove from production folder.\n")
 
     def add(self, path=None, params={}, debug=False, force=False):
         current_file = self.manager.get_path(path)
@@ -86,7 +66,7 @@ class Assets:
         self.manager.del_prod({"type": self.role, "path": current_file}, not debug)
         print("🗑 Done! Your Assets has been remove from production folder.\n")
         if all is True:
-            self.manager.clear_history(current_file)
+            self.clear_history(path)
 
     def help(self):
         print(f"=== {type(self).__name__} === \n")

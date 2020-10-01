@@ -10,6 +10,12 @@ class Scheduler:
 
     def __init__(self):
         self.manager = Manager()
+        self.get = self.manager.get_prod
+        self.get_output = self.manager.get_output
+        self.clear_output = self.manager.clear_output
+        self.get_history = self.manager.get_history
+        self.list_history = self.manager.list_history
+        self.clear_history = self.manager.clear_history
 
     def currents(self, raw=False):
         json_data = self.manager.get_naas()
@@ -61,34 +67,6 @@ class Scheduler:
             not debug,
         )
 
-    def get(self, path=None):
-        current_file = self.manager.get_path(path)
-        self.manager.get_prod(current_file)
-
-    def clear_output(self, path=None):
-        current_file = self.manager.get_path(path)
-        self.manager.clear_output(current_file)
-
-    def get_output(self, path=None):
-        current_file = self.manager.get_path(path)
-        self.manager.get_output(current_file)
-
-    def get_history(self, path=None, histo=None):
-        if not histo:
-            print("No histo provided\n")
-            return
-        current_file = self.manager.get_path(path)
-        self.manager.get_history(current_file, histo)
-
-    def list_history(self, path=None):
-        current_file = self.manager.get_path(path)
-        self.manager.list_history(current_file)
-
-    def clear_history(self, path=None, histo=None):
-        current_file = self.manager.get_path(path)
-        self.manager.clear_history(current_file, histo)
-        print("🕣 Your Scheduler history has been remove from production folder.\n")
-
     def delete(self, path=None, all=False, debug=False):
         if not self.manager.notebook_path():
             print("No delete done you are in already in naas folder\n")
@@ -97,8 +75,8 @@ class Scheduler:
         self.manager.del_prod({"type": self.role, "path": current_file}, not debug)
         print("🗑 Done! Your Scheduler has been remove from production folder.\n")
         if all is True:
-            self.manager.clear_history(current_file)
-            self.manager.clear_output(current_file)
+            self.clear_history(path)
+            self.clear_output(path)
 
     def help(self):
         print(f"=== {type(self).__name__} === \n")

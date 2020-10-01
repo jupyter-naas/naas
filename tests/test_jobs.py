@@ -39,23 +39,6 @@ async def test_add(tmp_path):
     assert data.get("value") == value
     assert data["params"] == params
     assert data["lastRun"] == run_time
-
-
-async def test_clean_data(tmp_path):
-    path_srv_root = os.path.join(str(tmp_path), user_folder_name)
-    os.environ["JUPYTER_SERVER_ROOT"] = path_srv_root
-    logger = Logger()
-    uid = str(uuid.uuid4())
-    jobs = Jobs(logger, clean, init_data)
-    path = os.path.join(os.getcwd(), "test_add.py")
-    target_type = t_notebook
-    value = user_folder_name
-    params = {}
-    run_time = 0
-    await jobs.update(uid, path, target_type, value, params, t_add, run_time)
-    list_job = await jobs.list(uid)
-    assert len(list_job) == 1
-    jobs = None
     jobs = Jobs(logger, clean, init_data)
     list_job = await jobs.list(uid)
     assert len(list_job) == 0
