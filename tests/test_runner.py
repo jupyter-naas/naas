@@ -102,6 +102,7 @@ async def test_notebooks(test_cli, tmp_path):
     assert res_job.get("nbRun") == 0
     response = await test_cli.get(f"/{t_notebook}/{token}")
     assert response.status == 200
+    # print('data=>\n\n', response, '\n\n<==data')
     resp_json = await response.json()
     assert resp_json == {"foo": "bar"}
     response = await test_cli.get(f"/{t_job}")

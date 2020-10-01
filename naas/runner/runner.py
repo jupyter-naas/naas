@@ -43,7 +43,6 @@ class Runner:
     __notif = None
     __jobs = None
     __scheduler = None
-    __sentry = None
     __logger = None
     __shell_user = None
     __tz = None
@@ -145,7 +144,7 @@ class Runner:
         print("Start Runner", __version__)
         try:
             if os.environ.get("NAAS_SENTRY_DSN"):
-                self.__sentry = sentry_sdk.init(
+                sentry_sdk.init(
                     dsn=os.environ.get("NAAS_SENTRY_DSN"),
                     traces_sample_rate=1.0,
                     environment=escape_kubernet(self.__user),

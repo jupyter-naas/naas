@@ -11,6 +11,7 @@ import json
 import os
 from IPython.core.display import display, HTML
 import ipywidgets as widgets
+import copy
 
 
 class Manager:
@@ -249,39 +250,43 @@ class Manager:
 
     def add_prod(self, obj, silent):
         if "type" in obj and "path" in obj and "params" in obj and "value" in obj:
+            new_obj = copy.copy(obj)
             dev_path = obj.get("path")
-            obj["path"] = self.get_prod_path(obj.get("path"))
-            obj["status"] = t_add
             self.__copy_file_in_prod(dev_path)
+            new_obj["path"] = self.get_prod_path(dev_path)
+            new_obj["status"] = t_add
             try:
-                r = requests.post(f"{self.__local_api}/{t_job}", json=obj)
+                r = requests.post(f"{self.__local_api}/{t_job}", data=new_obj)
+                r.raise_for_status()
+                res = r.json()
                 if not silent:
-                    print(f'{r.json()["status"]} ==> {obj}')
+                    print(f'{res["status"]} ==> {new_obj}')
             except ConnectionError:
                 print(self.__error_manager_busy)
             except requests.HTTPError as e:
                 print(self.__error_manager_reject, e)
-            return obj
+            return new_obj
         else:
-            raise Exception(
-                'obj should have all keys ("type","path","params","value" )'
-            )
+            raise Exception('obj should have all keys ("type","path","params","value")')
 
     def del_prod(self, obj, silent):
         if "type" in obj and "path" in obj:
-            obj["path"] = self.get_prod_path(obj.get("path"))
-            obj["params"] = {}
-            obj["value"] = None
-            obj["status"] = t_delete
-            self.__del_file_in_prod(obj["path"])
+            new_obj = copy.copy(obj)
+            new_obj["path"] = self.get_prod_path(obj.get("path"))
+            new_obj["params"] = {}
+            new_obj["value"] = None
+            new_obj["status"] = t_delete
+            self.__del_file_in_prod(new_obj["path"])
             try:
-                r = requests.post(f"{self.__local_api}/{t_job}", json=obj)
+                r = requests.post(f"{self.__local_api}/{t_job}", json=new_obj)
+                r.raise_for_status()
+                res = r.json()
                 if not silent:
-                    print(f'{r.json()["status"]} ==> {obj}')
+                    print(f'{res[0]["status"]} ==> {new_obj}')
             except ConnectionError:
                 print(self.__error_manager_busy)
             except requests.HTTPError as e:
                 print(self.__error_manager_reject, e)
-            return obj
+            return new_obj
         else:
             raise Exception('obj should have keys ("type","path")')

@@ -70,20 +70,37 @@ def test_copy_file(tmp_path, requests_mock):
     copy2(test_file_path, new_path)
     manager = Manager()
     prod_path = manager.get_prod_path(test_file_path)
-    obj = {"type": t_notebook, "path": new_path, "params": {}, "value": token}
-    requests_mock.post(f'http://{os.environ["JUPYTERHUB_URL"]}/job', json=[obj])
+    job = {
+        "params": {},
+        "path": new_path,
+        "status": "installed",
+        "type": t_notebook,
+        "value": token,
+    }
+    obj = {
+        "id": "0929eba5-f66f-4a8c-acdf-58c0fe8ad484",
+        "status": "installed",
+        "job": {
+            **job,
+            "id": "0929eba5-f66f-4a8c-acdf-58c0fe8ad484",
+            "lastRun": 0,
+            "lastUpdate": "2020-10-01 12:58:12",
+            "nbRun": 0,
+        },
+    }
+    requests_mock.post(f'http://{os.environ["JUPYTERHUB_URL"]}/job', json=obj)
 
-    manager.add_prod(obj, True)
+    manager.add_prod(job, False)
     assert os.path.exists(prod_path)
     manager.get_prod(new_path)
     dev_dir = os.path.dirname(new_path)
     dev_finename = os.path.basename(new_path)
     secure_path = os.path.join(dev_dir, f"prod_{dev_finename}")
     assert os.path.exists(secure_path)
-    manager.del_prod(obj, True)
+    manager.del_prod(job, True)
     assert os.path.exists(prod_path)
 
-    # def __del_copy_file_in_prod(self, path):
+    # TODO test all other functions
 
     # def get_naas(self):
 

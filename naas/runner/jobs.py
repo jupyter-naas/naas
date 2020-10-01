@@ -276,7 +276,6 @@ class Jobs:
         res = t_error
         async with self.__storage_sem:
             try:
-                res = status
                 cur_elem = self.__df[
                     (self.__df.type == target_type) & (self.__df.path == path)
                 ]
@@ -298,7 +297,9 @@ class Jobs:
                         }
                     )
                     return {
+                        "status": "error",
                         "id": uid,
+                        "data": [],
                         "error": f"type {target_type} with key {value} already exist",
                     }
                 if len(cur_elem) == 1:
@@ -335,4 +336,4 @@ class Jobs:
                 raise ServerError({"id": uid, "error": str(e)}, status_code=500)
             data = self.__df.to_dict("records")
             self.__save_to_file(uid, data)
-        return {"status": res, "data": data}
+        return {"id": uid, "status": res, "data": data}

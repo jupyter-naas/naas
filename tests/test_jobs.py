@@ -31,14 +31,14 @@ async def test_add(tmp_path):
     target_type = t_notebook
     value = user_folder_name
     params = {}
-    runTime = 0
-    await jobs.update(uid, path, target_type, value, params, t_add, runTime)
+    run_time = 0
+    await jobs.update(uid, path, target_type, value, params, t_add, run_time)
     list_job = await jobs.list(uid)
     assert len(list_job) == 1
     data = await jobs.find_by_path(uid, path, target_type)
     assert data.get("value") == value
     assert data["params"] == params
-    assert data["lastRun"] == runTime
+    assert data["lastRun"] == run_time
 
 
 async def test_clean_data(tmp_path):
@@ -51,8 +51,8 @@ async def test_clean_data(tmp_path):
     target_type = t_notebook
     value = user_folder_name
     params = {}
-    runTime = 0
-    await jobs.update(uid, path, target_type, value, params, t_add, runTime)
+    run_time = 0
+    await jobs.update(uid, path, target_type, value, params, t_add, run_time)
     list_job = await jobs.list(uid)
     assert len(list_job) == 1
     jobs = None
@@ -71,11 +71,11 @@ async def test_delete(tmp_path):
     target_type = t_notebook
     value = user_folder_name
     params = {}
-    runTime = 0
-    await jobs.update(uid, path, target_type, value, params, t_add, runTime)
+    run_time = 0
+    await jobs.update(uid, path, target_type, value, params, t_add, run_time)
     list_job = await jobs.list(uid)
     assert len(list_job) == 1
-    await jobs.update(uid, path, target_type, value, params, t_delete, runTime)
+    await jobs.update(uid, path, target_type, value, params, t_delete, run_time)
     list_job = await jobs.list(uid)
     assert len(list_job) == 0
 
@@ -91,15 +91,15 @@ async def test_update(tmp_path):
     value = user_folder_name
     new_value = "value_changed"
     params = {}
-    runTime = 0
-    await jobs.update(uid, path, target_type, value, params, t_add, runTime)
+    run_time = 0
+    await jobs.update(uid, path, target_type, value, params, t_add, run_time)
     list_job = await jobs.list(uid)
     assert len(list_job) == 1
-    await jobs.update(uid, path, target_type, new_value, params, t_update, runTime)
+    await jobs.update(uid, path, target_type, new_value, params, t_update, run_time)
     list_job = await jobs.list(uid)
     assert len(list_job) == 1
     data = await jobs.find_by_path(uid, path, target_type)
     assert data["value"] == new_value
-    await jobs.update(uid, path, target_type, value, params, t_delete, runTime)
+    await jobs.update(uid, path, target_type, value, params, t_delete, run_time)
     list_job = await jobs.list(uid)
     assert len(list_job) == 0

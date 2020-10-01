@@ -115,40 +115,41 @@ class Notebooks:
             result = {"error": "file not found"}
         return result_type, result
 
-    def __get_res(self, res, filepath):
-        cells = res.get("cells")
+    def __check_output(self, output, filepath):
         result = None
         result_type = None
+        metadata = output.get("metadata", [])
+        data = output.get("data", dict())
+        for meta in metadata:
+            if metadata[meta].get("naas_api"):
+                if (
+                    data.get("text/markdown")
+                    and metadata[meta].get("naas_type") == t_notebook
+                ):
+                    (result_type, result) = self.__nb_render(filepath)
+                elif data.get(mime_json) and metadata[meta].get("naas_type"):
+                    (result_type, result) = self.__nb_file(metadata[meta], data)
+                elif data.get(mime_html) and metadata[meta].get("naas_type") == "csv":
+                    result_type = "text/csv"
+                    result = self.__convert_csv(data.get(mime_html))
+                elif data.get(mime_json):
+                    result_type = mime_json
+                    result = json.dumps(data.get(result_type))
+                else:
+                    result_type = next((i for i in mime_list if data.get(i)), None)
+                    result = data.get(result_type)
+                if result is not None or result_type is not None:
+                    return result_type, result
+        return result_type, result
+
+    def __get_res(self, res, filepath):
+        cells = res.get("cells")
         for cell in cells:
             outputs = cell.get("outputs", [])
             for output in outputs:
-                metadata = output.get("metadata", [])
-                data = output.get("data", dict())
-                for meta in metadata:
-                    if metadata[meta].get("naas_api"):
-                        if (
-                            data.get("text/markdown")
-                            and metadata[meta].get("naas_type") == t_notebook
-                        ):
-                            (result_type, result) = self.__nb_render(filepath)
-                        elif data.get(mime_json) and metadata[meta].get("naas_type"):
-                            (result_type, result) = self.__nb_file(metadata[meta], data)
-                        elif (
-                            data.get(mime_html)
-                            and metadata[meta].get("naas_type") == "csv"
-                        ):
-                            result_type = "text/csv"
-                            result = self.__convert_csv(data.get(mime_html))
-                        elif data.get(mime_json):
-                            result_type = mime_json
-                            result = json.dumps(data.get(result_type))
-                        else:
-                            result_type = next(
-                                (i for i in mime_list if data.get(i)), None
-                            )
-                            result = data.get(result_type)
-                        if result is not None or result_type is not None:
-                            return {"type": result_type, "data": result}
+                (result_type, result) = self.__check_output(output, filepath)
+                if result is not None or result_type is not None:
+                    return {"type": result_type, "data": result}
         return None
 
     def __pm_exec(self, file_dirpath, file_filepath, file_filepath_out, params):
