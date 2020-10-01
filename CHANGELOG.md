@@ -1,3 +1,9 @@
+## 0.5.16 (2020-10-01)
+
+### Fix
+
+- :bug: update code for sonar cloud + fix bugs
+
 ## 0.5.15 (2020-10-01)
 
 ### Fix
