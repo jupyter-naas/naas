@@ -11,7 +11,7 @@ set -x
 
 # Add getting started assets to Docker image
 # (1) Clone the examples repository.
-git clone git@github.com:jupyter-naas/starters.git
+git clone https://github.com/jupyter-naas/starters.git
 
 EXAMPLES_BASE_DIR=starters
 
