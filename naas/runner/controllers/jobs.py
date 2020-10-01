@@ -7,6 +7,7 @@ import uuid
 class JobsController(HTTPMethodView):
     __jobs = None
     __logger = None
+    __min_keys = sorted(list(["path", "type", "params", "value", "status"]))
 
     def __init__(self, logger, jobs, *args, **kwargs):
         super(JobsController, self).__init__(*args, **kwargs)
@@ -24,11 +25,8 @@ class JobsController(HTTPMethodView):
     async def post(self, request):
         uid = str(uuid.uuid4())
         data = request.json
-        if (
-            not data
-            or list(["path", "type", "params", "value", "status"]).sort()
-            != list(data.keys()).sort()
-        ):
+        keys = sorted(list(data.keys()))
+        if not data or self.__min_keys != keys:
             self.__logger.info(
                 {
                     "id": uid,

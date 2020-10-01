@@ -31,8 +31,6 @@ __version__ = "0.5.13"
 
 
 class Runner:
-    # Declare semaphore variable
-    __name = "naas_runner"
     __naas_folder = ".naas"
     # Declare path variable
     __path_lib_files = os.path.dirname(os.path.abspath(__file__))

@@ -10,9 +10,7 @@ class AssetsController(HTTPMethodView):
     __logger = None
     __jobs = None
     __path_lib_files = None
-    __path_html_error = None
-    __assets_files = "assets"
-    __html_files = "html"
+    __assets_folder = "assets"
 
     def __init__(self, logger, jobs, path_assets, *args, **kwargs):
         super(AssetsController, self).__init__(*args, **kwargs)
@@ -23,7 +21,7 @@ class AssetsController(HTTPMethodView):
     async def get(self, request, token):
         if token.startswith("naas_"):
             return await response.file(
-                os.path.join(self.__path_lib_files, self.__assets_files, token)
+                os.path.join(self.__path_lib_files, self.__assets_folder, token)
             )
         else:
             uid = str(uuid.uuid4())

@@ -262,15 +262,14 @@ class Jobs:
         if run_time > 0 and status != t_add:
             self.__df.at[index, "nbRun"] = self.__df.at[index, "nbRun"] + 1
             self.__df.at[index, "lastRun"] = run_time
-            totalRun = float(self.__df.at[index, "totalRun"])
-            self.__df.at[index, "totalRun"] = run_time + totalRun
-            res = t_update
+            total_run = float(self.__df.at[index, "totalRun"])
+            self.__df.at[index, "totalRun"] = run_time + total_run
+            return t_update
         elif status == t_add:
             self.__df.at[index, "nbRun"] = 0
             self.__df.at[index, "lastRun"] = 0
             self.__df.at[index, "totalRun"] = 0
-            res = t_add
-            return res
+            return t_add
 
     async def update(self, uid, path, target_type, value, params, status, run_time=0):
         data = None

@@ -11,7 +11,6 @@ user_folder_name = "test_user_folder"
 def test_init(tmp_path, caplog):
     caplog.set_level(logging.INFO)
     path_srv_root = os.path.join(os.getcwd(), user_folder_name)
-    # path_srv_root = os.path.join(str(tmp_path), user_folder_name)
     os.environ["JUPYTER_SERVER_ROOT"] = path_srv_root
     logger = Logger(clear=True)
     uid = str(uuid.uuid4())
@@ -49,7 +48,6 @@ def test_add(tmp_path, caplog):
     os.environ["JUPYTER_SERVER_ROOT"] = path_srv_root
     logger = Logger()
     uid = str(uuid.uuid4())
-    # print('logs', list(logger.list(uid).get('data')))
     data = {"id": uid, "type": t_add, "status": "test_2"}
     logger.info(data)
     all_logs = logger.list(uid).get("data")
@@ -82,6 +80,10 @@ def test_list(tmp_path, caplog):
     assert len(logger.list(uid, skip=0, limit=0, search="test_2").get("data")) == 2
     assert len(logger.list(uid, skip=0, limit=0, search="test_2").get("data")) == 2
     assert (
-        len(logger.list(uid, skip=0, limit=0, search=None, filters=[t_delete, t_add]).get("data"))
+        len(
+            logger.list(
+                uid, skip=0, limit=0, search=None, filters=[t_delete, t_add]
+            ).get("data")
+        )
         == 2
     )

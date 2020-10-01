@@ -190,6 +190,8 @@ class Manager:
             )
         if os.path.exists(path):
             os.remove(path)
+        else:
+            raise Exception(f"File {path} not Found")
 
     def get_prod(self, path):
         self.__copy_file_in_dev(path)
@@ -268,6 +270,8 @@ class Manager:
     def del_prod(self, obj, silent):
         if "type" in obj and "path" in obj:
             obj["path"] = self.get_prod_path(obj.get("path"))
+            obj["params"] = {}
+            obj["value"] = None
             obj["status"] = t_delete
             self.__del_file_in_prod(obj["path"])
             try:

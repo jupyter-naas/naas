@@ -21,6 +21,7 @@ setup(
     extras_require={
         "dev": [
             "pytest>=5,<6",
+            "pytest-tornasync",
             "pytest-mock>=3,<4",
             "pytest-sanic>=1,<2",
             "pytest-asyncio>=0,<1",
