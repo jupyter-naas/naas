@@ -1,3 +1,9 @@
+## 0.5.22 (2020-10-01)
+
+### Fix
+
+- :pencil: remove useless doc and ractor it
+
 ## 0.5.21 (2020-10-01)
 
 ### Fix
