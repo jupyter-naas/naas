@@ -21,13 +21,14 @@ Using Binder
 You can try out some of Naas features using the My Binder service.
 
 Click on a link below to try Naas, on a sandbox environment, without having to install anything.
-Test it in binder
+Test it in binder (WIP)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/jupyter-naas/naas/master)
 
 ## Install
 
 `pip3 install naas`
 
+---
 
 # DEVELOPMENT
 
@@ -51,14 +52,6 @@ open manager :
 
 `python3 -m black naas` format better
 `python3 -m flake8 naas` check if any left error
-
-## Publish
-
-Allow easy deploy by setting password in keyring
-`python3 -m keyring set https://upload.pypi.org/legacy/ bobapp`
-
-Then publish
-`publish.sh`
 
 # Supporters: 
 ![Sentry](./images/sentry.svg)
