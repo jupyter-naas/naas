@@ -1,3 +1,9 @@
+## 0.5.21 (2020-10-01)
+
+### Fix
+
+- :bug: remove useless code in binder
+
 ## 0.5.20 (2020-10-01)
 
 ### Fix
