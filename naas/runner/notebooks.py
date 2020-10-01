@@ -92,7 +92,7 @@ class Notebooks:
             result_type = mime_html
             file_filepath_out = self.get_out_path(filepath)
             (result, ressources) = self.__html_exporter.from_filename(file_filepath_out)
-        except:  # noqa: E722
+        except FileNotFoundError:  # noqa: E722
             tb = traceback.format_exc()
             result_type = mime_json
             result = {
@@ -110,7 +110,7 @@ class Notebooks:
             with open(path, "r") as f:
                 result = f.read()
                 f.close()
-        except:  # noqa: E722
+        except FileNotFoundError:  # noqa: E722
             result_type = mime_json
             result = {"error": "file not found"}
         return result_type, result

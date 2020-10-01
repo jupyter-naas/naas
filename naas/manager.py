@@ -143,7 +143,7 @@ class Manager:
     def __copy_file_in_dev(self, path):
         new_path = self.get_prod_path(path)
         if not os.path.exists(new_path):
-            raise Exception(f"file doesn't exist {new_path}")
+            raise FileNotFoundError(f"file doesn't exist {new_path}")
         if not os.path.exists(os.path.dirname(path)):
             try:
                 os.makedirs(os.path.dirname(path))
@@ -156,7 +156,7 @@ class Manager:
         try:
             copy2(new_path, secure_path)
         except Exception as e:
-            raise Exception(
+            raise FileExistsError(
                 f"Cannot copied here {secure_path}, file probabily exist {path} {str(e)}"
             )
         print(f"File copied here {secure_path}")
@@ -171,7 +171,7 @@ class Manager:
         )
         history_path = os.path.join(prod_dir, history_filename)
         if not os.path.exists(path):
-            raise Exception(f"file doesn't exist {path}")
+            raise FileNotFoundError(f"file doesn't exist {path}")
         if not os.path.exists(os.path.dirname(new_path)):
             try:
                 os.makedirs(os.path.dirname(new_path))
@@ -186,13 +186,13 @@ class Manager:
 
     def __del_file_in_prod(self, path):
         if path.find(self.__production_path) == -1:
-            raise Exception(
+            raise FileNotFoundError(
                 f"Cannot delte file {path} it's in other folder than {self.__production_path}"
             )
         if os.path.exists(path):
             os.remove(path)
         else:
-            raise Exception(f"File {path} not Found")
+            raise FileNotFoundError(f"File {path} not Found")
 
     def get_prod(self, path):
         self.__copy_file_in_dev(path)
@@ -267,7 +267,9 @@ class Manager:
                 print(self.__error_manager_reject, e)
             return new_obj
         else:
-            raise Exception('obj should have all keys ("type","path","params","value")')
+            raise ValueError(
+                'obj should have all keys ("type","path","params","value")'
+            )
 
     def del_prod(self, obj, silent):
         if "type" in obj and "path" in obj:
@@ -289,4 +291,4 @@ class Manager:
                 print(self.__error_manager_reject, e)
             return new_obj
         else:
-            raise Exception('obj should have keys ("type","path")')
+            raise ValueError('obj should have keys ("type","path")')

@@ -30,7 +30,7 @@ class Scheduler:
         try:
             pycron.is_now(text)
             res = True
-        except:  # noqa: E722
+        except ValueError:
             pass
         return res
 

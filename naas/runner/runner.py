@@ -138,7 +138,7 @@ class Runner:
     def start(self, deamon=True, port=None, debug=False):
         user = getpass.getuser()
         if user != self.__shell_user:
-            raise Exception(f"{user} not autorized, use {self.__shell_user} instead")
+            raise ValueError(f"{user} not autorized, use {self.__shell_user} instead")
         if port:
             self.__port = port
         print("Start Runner", __version__)

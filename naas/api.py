@@ -89,7 +89,7 @@ class Api:
 
     def respond_csv(self, data):
         if not isinstance(data, pd.DataFrame):
-            raise Exception("data shoud be a dataframe")
+            raise TypeError("data shoud be a dataframe")
         display(HTML(data.to_html(), metadata={"naas_api": True, "naas_type": "csv"}))
 
     def get(self, path=None):
