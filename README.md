@@ -16,6 +16,14 @@ Whenever you need it (even when you sleep).
 * Use Notebooks as API
 * Share assets securely
 
+## Try Naas
+Using Binder
+You can try out some of Naas features using the My Binder service.
+
+Click on a link below to try Naas, on a sandbox environment, without having to install anything.
+Test it in binder
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/jupyter-naas/naas/master)
+
 ## Install
 
 `pip3 install naas`
