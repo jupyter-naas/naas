@@ -152,9 +152,10 @@ class Notebooks:
                     return {"type": result_type, "data": result}
         return None
 
-    def __pm_exec(self, file_dirpath, file_filepath, file_filepath_out, params):
+    def __pm_exec(self, uid, file_dirpath, file_filepath, file_filepath_out, params):
+        res = None
         if kern_manager:
-            return pm.execute_notebook(
+            res = pm.execute_notebook(
                 input_path=file_filepath,
                 output_path=file_filepath_out,
                 progress_bar=False,
@@ -163,13 +164,56 @@ class Notebooks:
                 kernel_manager_class=kern_manager,
             )
         else:
-            return pm.execute_notebook(
+            res = pm.execute_notebook(
                 input_path=file_filepath,
                 output_path=file_filepath_out,
                 progress_bar=False,
                 cwd=file_dirpath,
                 parameters=params,
             )
+        if not res:
+            res = {"error": "Unknow error"}
+            self.__logger.error(
+                {
+                    "id": uid,
+                    "type": "Exception",
+                    "status": t_error,
+                    "filepath": file_filepath,
+                    "output_filepath": file_filepath_out,
+                    "error": res["error"],
+                }
+            )
+        else:
+            self.__logger.info(
+                {
+                    "id": uid,
+                    "type": "Done",
+                    "status": t_health,
+                    "filepath": file_filepath,
+                    "output_filepath": file_filepath_out,
+                }
+            )
+        return res
+
+    def __send_notification(self, uid, res, file_filepath, current_type, value, params):
+        notif_down = params.get("notif_down", None)
+        notif_up = params.get("notif_up", None)
+        if res.get("error"):
+            email_admin = os.environ.get("JUPYTERHUB_USER", None)
+            if email_admin is not None:
+                self.__notif.send_status(
+                    uid, "down", email_admin, file_filepath, current_type, value
+                )
+            if notif_down and self.__notif:
+                self.__notif.send_status(
+                    uid, "down", notif_down, file_filepath, current_type, value
+                )
+        elif notif_up and current_type == t_scheduler and self.__notif:
+            self.__notif.send_status(
+                uid, "up", notif_down, file_filepath, current_type, value
+            )
+        elif notif_up and self.__notif:
+            self.__notif.send_status(uid, "up", notif_up, file_filepath, current_type)
 
     def __get_output_path(self, file_filepath):
         file_dirpath = os.path.dirname(file_filepath)
@@ -196,13 +240,13 @@ class Notebooks:
         file_dirpath = os.path.dirname(file_filepath)
         file_filepath_out = self.__get_output_path(file_filepath)
         params = job.get("params", dict())
-        notif_down = params.get("notif_down", None)
-        notif_up = params.get("notif_up", None)
         params["run_uid"] = uid
         start_time = time.time()
         res = None
         try:
-            res = self.__pm_exec(file_dirpath, file_filepath, file_filepath_out, params)
+            res = self.__pm_exec(
+                uid, file_dirpath, file_filepath, file_filepath_out, params
+            )
         except pm.PapermillExecutionError as err:
             tb = traceback.format_exc()
             res = {"error": err, "traceback": str(tb)}
@@ -244,43 +288,6 @@ class Notebooks:
                     "traceback": str(tb),
                 }
             )
-        if not res:
-            res = {"error": "Unknow error"}
-            self.__logger.error(
-                {
-                    "id": uid,
-                    "type": "Exception",
-                    "status": t_error,
-                    "filepath": file_filepath,
-                    "output_filepath": file_filepath_out,
-                    "error": res["error"],
-                }
-            )
-        else:
-            self.__logger.info(
-                {
-                    "id": uid,
-                    "type": "Done",
-                    "status": t_health,
-                    "filepath": file_filepath,
-                    "output_filepath": file_filepath_out,
-                }
-            )
         res["duration"] = time.time() - start_time
-        if res.get("error"):
-            email_admin = os.environ.get("JUPYTERHUB_USER", None)
-            if email_admin is not None:
-                self.__notif.send_status(
-                    uid, "down", email_admin, file_filepath, current_type, value
-                )
-            if notif_down and self.__notif:
-                self.__notif.send_status(
-                    uid, "down", notif_down, file_filepath, current_type, value
-                )
-        elif notif_up and current_type == t_scheduler and self.__notif:
-            self.__notif.send_status(
-                uid, "up", notif_down, file_filepath, current_type, value
-            )
-        elif notif_up and self.__notif:
-            self.__notif.send_status(uid, "up", notif_up, file_filepath, current_type)
+        self.__send_notification(uid, res, file_filepath, current_type, value, params)
         return res
