@@ -86,7 +86,6 @@ class Logger:
         with open(self.__path_logs_file, "w") as fp:
             separator = ";"
             fp.write(f"{separator.join(self.__columns)}\n")
-            pass
 
     def get_file_path(self):
         return self.__path_logs_file
@@ -111,7 +110,7 @@ class Logger:
             df = pd.concat([df1, df], axis=1, sort=False)
             if len(filters) > 0:
                 df = df[df.type.isin(filters)]
-            totalRecords = len(df.index)
+            total_records = len(df.index)
             if search and search != "":
                 idx = df.apply(
                     lambda ts: any(ts.str.contains(search, na=False, regex=False)),
@@ -125,7 +124,7 @@ class Logger:
             df = df.reset_index()
             return {
                 "data": json.loads(df.to_json(orient="records")),
-                "totalRecords": totalRecords,
+                "totalRecords": total_records,
             }
         except Exception as e:
             tb = traceback.format_exc()

@@ -37,8 +37,8 @@ def get_status_server():
 def encode_proxy_url(token=""):
     client = os.environ.get("JUPYTERHUB_USER", "")
     base_public_url = os.environ.get("PUBLIC_PROXY_API", "")
-    clientEncoded = escape_kubernet(client)
-    message_bytes = clientEncoded.encode("ascii")
+    client_encoded = escape_kubernet(client)
+    message_bytes = client_encoded.encode("ascii")
     base64_bytes = b64encode(message_bytes)
     username_base64 = base64_bytes.decode("ascii")
     return f"{base_public_url}/{username_base64}/{token}"

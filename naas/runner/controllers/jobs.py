@@ -26,7 +26,7 @@ class JobsController(HTTPMethodView):
         data = request.json
         if (
             not data
-            or ["path", "type", "params", "value", "status"].sort()
+            or list(["path", "type", "params", "value", "status"]).sort()
             != list(data.keys()).sort()
         ):
             self.__logger.info(

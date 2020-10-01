@@ -3,12 +3,10 @@ from sanic.response import json
 
 
 class SchedulerController(HTTPMethodView):
-    __logger = None
     __scheduler = None
 
-    def __init__(self, logger, scheduler, *args, **kwargs):
+    def __init__(self, scheduler, *args, **kwargs):
         super(SchedulerController, self).__init__(*args, **kwargs)
-        self.__logger = logger
         self.__scheduler = scheduler
 
     async def get(self, request, mode):

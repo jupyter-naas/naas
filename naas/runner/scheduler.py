@@ -145,37 +145,37 @@ class Scheduler:
                     for job in jobs
                 ]
             )
-            durationTotal = time.time() - all_start_time
+            duration_total = time.time() - all_start_time
             self.__logger.info(
                 {
                     "id": main_uid,
                     "type": t_scheduler,
                     "status": t_health,
-                    "duration": durationTotal,
+                    "duration": duration_total,
                 }
             )
         except Exception as e:
             tb = traceback.format_exc()
-            durationTotal = time.time() - all_start_time
+            duration_total = time.time() - all_start_time
             self.__logger.error(
                 {
                     "id": main_uid,
                     "type": t_scheduler,
                     "status": t_error,
-                    "duration": durationTotal,
+                    "duration": duration_total,
                     "error": str(e),
                     "trace": tb,
                 }
             )
         except:  # noqa: E722
             tb = traceback.format_exc()
-            durationTotal = time.time() - all_start_time
+            duration_total = time.time() - all_start_time
             self.__logger.error(
                 {
                     "id": main_uid,
                     "type": t_scheduler,
                     "status": t_error,
-                    "duration": durationTotal,
+                    "duration": duration_total,
                     "error": "Unknow error",
                     "trace": tb,
                 }

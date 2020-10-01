@@ -12,7 +12,12 @@ import os
 import io
 
 kern_manager = None
-
+mime_html = "text/html"
+mime_json = "application/json"
+mime_jpeg = "image/jpeg"
+mime_png = "image/png"
+mime_svg = "image/svg+xml"
+mime_list = [mime_html, mime_jpeg, mime_png, mime_svg]
 
 try:
     from enterprise_gateway.services.kernels.remotemanager import RemoteKernelManager
@@ -80,6 +85,36 @@ class Notebooks:
         out_path = os.path.join(dirname, f"out_{filename}")
         return out_path
 
+    def __nb_render(self, filepath):
+        result_type = None
+        result = None
+        try:
+            result_type = mime_html
+            file_filepath_out = self.get_out_path(filepath)
+            (result, ressources) = self.__html_exporter.from_filename(file_filepath_out)
+        except:  # noqa: E722
+            tb = traceback.format_exc()
+            result_type = mime_json
+            result = {
+                "error": "output file not found",
+                "trace": tb,
+            }
+        return result_type, result
+
+    def __nb_file(self, meta, data):
+        result_type = None
+        result = None
+        try:
+            result_type = meta.get("naas_type")
+            path = data.get(mime_json).get("path")
+            with open(path, "r") as f:
+                result = f.read()
+                f.close()
+        except:  # noqa: E722
+            result_type = mime_json
+            result = {"error": "file not found"}
+        return result_type, result
+
     def __get_res(self, res, filepath):
         cells = res.get("cells")
         result = None
@@ -95,53 +130,23 @@ class Notebooks:
                             data.get("text/markdown")
                             and metadata[meta].get("naas_type") == t_notebook
                         ):
-                            try:
-                                result_type = "text/html"
-                                file_filepath_out = self.get_out_path(filepath)
-                                (body, ressources) = self.__html_exporter.from_filename(
-                                    file_filepath_out
-                                )
-                                result = body
-                            except:  # noqa: E722
-                                tb = traceback.format_exc()
-                                result_type = "application/json"
-                                result = {
-                                    "error": "output file not found",
-                                    "trace": tb,
-                                }
-                        elif data.get("application/json") and metadata[meta].get(
-                            "naas_type"
-                        ):
-                            try:
-                                result_type = metadata[meta].get("naas_type")
-                                path = data.get("application/json").get("path")
-                                with open(path, "r") as f:
-                                    result = f.read()
-                                    f.close()
-                            except:  # noqa: E722
-                                result_type = "application/json"
-                                result = {"error": "file not found"}
-                        elif data.get("application/json"):
-                            result_type = "application/json"
-                            result = json.dumps(data.get(result_type))
+                            (result_type, result) = self.__nb_render(filepath)
+                        elif data.get(mime_json) and metadata[meta].get("naas_type"):
+                            (result_type, result) = self.__nb_file(metadata[meta], data)
                         elif (
-                            data.get("text/html")
+                            data.get(mime_html)
                             and metadata[meta].get("naas_type") == "csv"
                         ):
                             result_type = "text/csv"
-                            result = self.__convert_csv(data.get("text/html"))
-                        elif data.get("text/html"):
-                            result_type = "text/html"
-                            result = data.get("text/html")
-                        elif data.get("image/jpeg"):
-                            result_type = "image/jpeg"
-                            result = data.get("image/jpeg")
-                        elif data.get("image/png"):
-                            result_type = "image/png"
-                            result = data.get("image/png")
-                        elif data.get("image/svg+xml"):
-                            result_type = "image/svg+xml"
-                            result = data.get("image/svg+xml")
+                            result = self.__convert_csv(data.get(mime_html))
+                        elif data.get(mime_json):
+                            result_type = mime_json
+                            result = json.dumps(data.get(result_type))
+                        else:
+                            result_type = next(
+                                (i for i in mime_list if data.get(i)), None
+                            )
+                            result = data.get(result_type)
                         if result is not None or result_type is not None:
                             return {"type": result_type, "data": result}
         return None

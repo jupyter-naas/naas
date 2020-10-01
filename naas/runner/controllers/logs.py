@@ -12,7 +12,6 @@ class LogsController(HTTPMethodView):
         self.__logger = logger
 
     async def get(self, request):
-        # return json({'data': [], 'totalRecords': 0})
         as_file = request.args.get("as_file", False)
         if as_file:
             return await file(self.__logger.get_file_path(), filename="logs.csv")

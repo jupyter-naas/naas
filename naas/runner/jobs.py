@@ -194,14 +194,90 @@ class Jobs:
             print("list", e)
         return data
 
-    async def update(self, uid, path, target_type, value, params, status, runTime=0):
+    def __delete(self, cur_elem, uid, path, target_type, value, params):
+        self.__logger.info(
+            {
+                "id": uid,
+                "type": target_type,
+                "value": value,
+                "status": t_delete,
+                "path": path,
+                "params": params,
+            }
+        )
+        self.__df = self.__df.drop(cur_elem.index)
+
+    def __add(self, uid, path, target_type, value, params, run_time):
+        now = datetime.datetime.now()
+        dt_string = now.strftime("%Y-%m-%d %H:%M:%S")
+        self.__logger.info(
+            {
+                "id": uid,
+                "type": target_type,
+                "value": value,
+                "status": t_update,
+                "path": path,
+                "params": params,
+            }
+        )
+        new_row = {
+            "id": uid,
+            "type": target_type,
+            "value": value,
+            "status": t_add,
+            "path": path,
+            "params": params,
+            "nbRun": 1 if run_time > 0 else 0,
+            "lastRun": run_time,
+            "totalRun": run_time,
+            "lastUpdate": dt_string,
+        }
+        cur_df = self.__df.to_dict("records")
+        if len(self.__df) > 0:
+            self.__df = pd.DataFrame([*cur_df, new_row])
+        else:
+            self.__df = pd.DataFrame([new_row])
+
+    def __update(
+        self, cur_elem, uid, path, target_type, value, params, status, run_time
+    ):
+        now = datetime.datetime.now()
+        dt_string = now.strftime("%Y-%m-%d %H:%M:%S")
+        self.__logger.info(
+            {
+                "id": uid,
+                "type": target_type,
+                "value": value,
+                "status": t_update,
+                "path": path,
+                "params": params,
+            }
+        )
+        index = cur_elem.index[0]
+        self.__df.at[index, "id"] = uid
+        self.__df.at[index, "status"] = status
+        self.__df.at[index, "value"] = value
+        self.__df.at[index, "params"] = params
+        self.__df.at[index, "lastUpdate"] = dt_string
+        if run_time > 0 and status != t_add:
+            self.__df.at[index, "nbRun"] = self.__df.at[index, "nbRun"] + 1
+            self.__df.at[index, "lastRun"] = run_time
+            totalRun = float(self.__df.at[index, "totalRun"])
+            self.__df.at[index, "totalRun"] = run_time + totalRun
+            res = t_update
+        elif status == t_add:
+            self.__df.at[index, "nbRun"] = 0
+            self.__df.at[index, "lastRun"] = 0
+            self.__df.at[index, "totalRun"] = 0
+            res = t_add
+            return res
+
+    async def update(self, uid, path, target_type, value, params, status, run_time=0):
         data = None
         res = t_error
         async with self.__storage_sem:
             try:
                 res = status
-                now = datetime.datetime.now()
-                dt_string = now.strftime("%Y-%m-%d %H:%M:%S")
                 cur_elem = self.__df[
                     (self.__df.type == target_type) & (self.__df.path == path)
                 ]
@@ -228,77 +304,20 @@ class Jobs:
                     }
                 if len(cur_elem) == 1:
                     if status == t_delete:
-                        self.__logger.info(
-                            {
-                                "id": uid,
-                                "type": target_type,
-                                "value": value,
-                                "status": t_delete,
-                                "path": path,
-                                "params": params,
-                            }
-                        )
-                        self.__df = self.__df.drop(cur_elem.index)
+                        self.__delete(cur_elem, uid, path, target_type, value, params)
                     else:
-                        self.__logger.info(
-                            {
-                                "id": uid,
-                                "type": target_type,
-                                "value": value,
-                                "status": t_update,
-                                "path": path,
-                                "params": params,
-                            }
+                        res = self.__update(
+                            cur_elem,
+                            uid,
+                            path,
+                            target_type,
+                            value,
+                            params,
+                            status,
+                            run_time,
                         )
-                        index = cur_elem.index[0]
-                        self.__df.at[index, "id"] = uid
-                        self.__df.at[index, "status"] = status
-                        self.__df.at[index, "value"] = value
-                        self.__df.at[index, "params"] = params
-                        self.__df.at[index, "lastUpdate"] = dt_string
-                        if runTime > 0 and status != t_add:
-                            self.__df.at[index, "nbRun"] = (
-                                self.__df.at[index, "nbRun"] + 1
-                            )
-                            self.__df.at[index, "lastRun"] = runTime
-                            totalRun = float(self.__df.at[index, "totalRun"])
-                            self.__df.at[index, "totalRun"] = runTime + totalRun
-                            res = t_update
-                        elif status == t_add:
-                            self.__df.at[index, "nbRun"] = 0
-                            self.__df.at[index, "lastRun"] = 0
-                            self.__df.at[index, "totalRun"] = 0
-                            res = t_add
                 elif status == t_add and len(cur_elem) == 0:
-                    self.__logger.info(
-                        {
-                            "id": uid,
-                            "type": target_type,
-                            "value": value,
-                            "status": t_update,
-                            "path": path,
-                            "params": params,
-                        }
-                    )
-                    new_row = [
-                        {
-                            "id": uid,
-                            "type": target_type,
-                            "value": value,
-                            "status": t_add,
-                            "path": path,
-                            "params": params,
-                            "nbRun": 1 if runTime > 0 else 0,
-                            "lastRun": runTime,
-                            "totalRun": runTime,
-                            "lastUpdate": dt_string,
-                        }
-                    ]
-                    cur_df = self.__df.to_dict("records")
-                    if len(self.__df) > 0:
-                        self.__df = pd.DataFrame([*cur_df, *new_row])
-                    else:
-                        self.__df = pd.DataFrame(new_row)
+                    self.__add(uid, path, target_type, value, params, run_time)
                 else:
                     res = t_skip
             except Exception as e:

@@ -13,27 +13,12 @@ class AssetsController(HTTPMethodView):
     __path_html_error = None
     __assets_files = "assets"
     __html_files = "html"
-    __manager_error = "error.html"
 
     def __init__(self, logger, jobs, path_assets, *args, **kwargs):
         super(AssetsController, self).__init__(*args, **kwargs)
         self.__logger = logger
         self.__jobs = jobs
         self.__path_lib_files = path_assets
-        self.__path_html_error = os.path.join(
-            self.__path_lib_files, self.__html_files, self.__manager_error
-        )
-        print("self.__path_html_error", self.__path_html_error)
-
-    def __html_error(self, content):
-        try:
-            with open(self.__path_html_error, "r") as f:
-                template = f.read()
-                f.close()
-                return template.replace("{ERROR}", content)
-        except Exception:
-            print("Cannot get html error")
-            return ""
 
     async def get(self, request, token):
         if token.startswith("naas_"):

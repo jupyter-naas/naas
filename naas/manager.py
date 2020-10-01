@@ -15,6 +15,8 @@ import ipywidgets as widgets
 
 class Manager:
     __local_api = f'http://localhost:{os.environ.get("NAAS_RUNNER_PORT", 5000)}'
+    __error_manager_busy = "Manager look busy, try to reload your machine"
+    __error_manager_reject = "Manager refused your request, reason :"
     __base_ftp_path = None
     __public_url = None
     __jup_user = None
@@ -53,9 +55,9 @@ class Manager:
             r = requests.get(f"{self.__local_api}/{t_job}")
             naas_data = r.json()
         except ConnectionError:
-            print("Manager look busy, try to reload your machine")
+            print(self.__error_manager_busy)
         except requests.HTTPError as e:
-            print("Manager refused your request, reason :", e)
+            print(self.__error_manager_reject, e)
         return naas_data
 
     def get_value(self, path, obj_type):
@@ -254,9 +256,9 @@ class Manager:
                 if not silent:
                     print(f'{r.json()["status"]} ==> {obj}')
             except ConnectionError:
-                print("Manager look busy, try to reload your machine")
+                print(self.__error_manager_busy)
             except requests.HTTPError as e:
-                print("Manager refused your request, reason :", e)
+                print(self.__error_manager_reject, e)
             return obj
         else:
             raise Exception(
@@ -273,9 +275,9 @@ class Manager:
                 if not silent:
                     print(f'{r.json()["status"]} ==> {obj}')
             except ConnectionError:
-                print("Manager look busy, try to reload your machine")
+                print(self.__error_manager_busy)
             except requests.HTTPError as e:
-                print("Manager refused your request, reason :", e)
+                print(self.__error_manager_reject, e)
             return obj
         else:
             raise Exception('obj should have keys ("type","path")')

@@ -55,17 +55,17 @@ class Assets:
         self.manager.clear_history(current_file, histo)
         print("🕣 Your Assets history has been remove from production folder.\n")
 
-    def add(self, path=None, params={}, debug=False, Force=False):
+    def add(self, path=None, params={}, debug=False, force=False):
         current_file = self.manager.get_path(path)
         if current_file is None:
             print("Missing file path in prod mode")
             return
         prod_path = self.manager.get_prod_path(current_file)
         token = self.manager.get_value(prod_path, self.role)
-        if token is None or Force is True:
+        if token is None or force is True:
             token = os.urandom(30).hex()
         url = self.manager.proxy_url(self.role, token)
-        if not self.manager.notebook_path() and Force is False:
+        if not self.manager.notebook_path() and force is False:
             print("No add done you are in already in naas folder\n")
             return url
         print("👌 Well done! Your Assets has been sent to production folder.\n")

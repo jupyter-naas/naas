@@ -29,8 +29,8 @@ class Secret:
             print("Init Secret Storage")
             self.__set_secret([])
 
-    def __set_secret(self, newSecret):
-        secret_data = json.dumps(newSecret, sort_keys=True, indent=4)
+    def __set_secret(self, new_secret):
+        secret_data = json.dumps(new_secret, sort_keys=True, indent=4)
         with open(self.__json_secrets_path, "w+") as f:
             f.write(secret_data)
             f.close()
