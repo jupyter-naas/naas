@@ -1,3 +1,9 @@
+## 0.5.14 (2020-10-01)
+
+### Refactor
+
+- :recycle: improve code with sonar cloud
+
 ## 0.5.13 (2020-10-01)
 
 ### Fix
