@@ -116,31 +116,27 @@ class Notebooks:
         return result_type, result
 
     def __check_output(self, output, filepath):
-        result = None
-        result_type = None
         metadata = output.get("metadata", [])
         data = output.get("data", dict())
-        for meta in metadata:
-            if metadata[meta].get("naas_api"):
-                if (
-                    data.get("text/markdown")
-                    and metadata[meta].get("naas_type") == t_notebook
-                ):
-                    (result_type, result) = self.__nb_render(filepath)
-                elif data.get(mime_json) and metadata[meta].get("naas_type"):
-                    (result_type, result) = self.__nb_file(metadata[meta], data)
-                elif data.get(mime_html) and metadata[meta].get("naas_type") == "csv":
-                    result_type = "text/csv"
-                    result = self.__convert_csv(data.get(mime_html))
-                elif data.get(mime_json):
-                    result_type = mime_json
-                    result = json.dumps(data.get(result_type))
-                else:
-                    result_type = next((i for i in mime_list if data.get(i)), None)
-                    result = data.get(result_type)
-                if result is not None or result_type is not None:
-                    return result_type, result
-        return result_type, result
+        meta_filtered = list(
+            filter(lambda meta: metadata[meta].get("naas_api"), metadata)
+        )
+        for meta in meta_filtered:
+            if (
+                data.get("text/markdown")
+                and metadata[meta].get("naas_type") == t_notebook
+            ):
+                return self.__nb_render(filepath)
+            elif data.get(mime_json) and metadata[meta].get("naas_type"):
+                return self.__nb_file(metadata[meta], data)
+            elif data.get(mime_html) and metadata[meta].get("naas_type") == "csv":
+                return "text/csv", self.__convert_csv(data.get(mime_html))
+            elif data.get(mime_json):
+                return mime_json, json.dumps(data.get(mime_json))
+            else:
+                result_type = next((i for i in mime_list if data.get(i)), None)
+                return result_type, data.get(result_type)
+        return None, None
 
     def __get_res(self, res, filepath):
         cells = res.get("cells")
@@ -148,7 +144,7 @@ class Notebooks:
             outputs = cell.get("outputs", [])
             for output in outputs:
                 (result_type, result) = self.__check_output(output, filepath)
-                if result is not None or result_type is not None:
+                if result is not None and result_type is not None:
                     return {"type": result_type, "data": result}
         return None
 
