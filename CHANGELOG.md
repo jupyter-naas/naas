@@ -1,3 +1,9 @@
+## 0.5.19 (2020-10-01)
+
+### Fix
+
+- :bug: add missing shebang on binder script
+
 ## 0.5.18 (2020-10-01)
 
 ### Fix
