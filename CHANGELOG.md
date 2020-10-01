@@ -1,3 +1,9 @@
+## 0.5.15 (2020-10-01)
+
+### Fix
+
+- :bug: improve assets test + fix error on delete
+
 ## 0.5.14 (2020-10-01)
 
 ### Refactor
