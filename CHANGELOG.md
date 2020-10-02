@@ -1,3 +1,9 @@
+## 0.5.24 (2020-10-02)
+
+### Fix
+
+- :bug: fix test with new debug params
+
 ## 0.5.23 (2020-10-02)
 
 ### Fix
