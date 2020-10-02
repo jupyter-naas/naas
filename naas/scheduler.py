@@ -50,13 +50,7 @@ class Scheduler:
         if not self.__check_cron(recurrence):
             print(f"WARNING : Recurrence wrong format {recurrence}")
             return
-        cron_string = pretty_cron.prettify_cron(recurrence)
         current_file = self.manager.get_path(path)
-        print("👌 Well done! Your Notebook has been sent to production folder. \n")
-        print(
-            f'⏰ It will be scheduled "{cron_string}" (more on the syntax on https://crontab.guru/).\n'
-        )
-        print('Ps: to remove the "Scheduler", just replace .add by .delete')
         self.manager.add_prod(
             {
                 "type": self.role,
@@ -64,15 +58,21 @@ class Scheduler:
                 "params": {},
                 "value": recurrence,
             },
-            not debug,
+            debug,
         )
+        cron_string = pretty_cron.prettify_cron(recurrence)
+        print("👌 Well done! Your Notebook has been sent to production folder. \n")
+        print(
+            f'⏰ It will be scheduled "{cron_string}" (more on the syntax on https://crontab.guru/).\n'
+        )
+        print('Ps: to remove the "Scheduler", just replace .add by .delete')
 
     def delete(self, path=None, all=False, debug=False):
         if not self.manager.notebook_path():
             print("No delete done you are in already in naas folder\n")
             return
         current_file = self.manager.get_path(path)
-        self.manager.del_prod({"type": self.role, "path": current_file}, not debug)
+        self.manager.del_prod({"type": self.role, "path": current_file}, debug)
         print("🗑 Done! Your Scheduler has been remove from production folder.\n")
         if all is True:
             self.clear_history(path)

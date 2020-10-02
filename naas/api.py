@@ -45,15 +45,15 @@ class Api:
         if not self.manager.notebook_path():
             print("No add done you are in already in naas folder\n")
             return url
+        self.manager.add_prod(
+            {"type": self.role, "path": current_file, "params": params, "value": token},
+            debug,
+        )
         print("👌 Well done! Your Notebook has been sent to production folder.\n")
         print(f"🔑 You can run this notebook remotely with: {url} \n")
         self.manager.copy_url(url)
         print(
             'PS: to remove the "Notebook as API" feature, just replace .add by .delete'
-        )
-        self.manager.add_prod(
-            {"type": self.role, "path": current_file, "params": params, "value": token},
-            not debug,
         )
         return url
 
@@ -103,7 +103,7 @@ class Api:
             print("No delete done you are in already in naas folder\n")
             return
         current_file = self.manager.get_path(path)
-        self.manager.del_prod({"type": self.role, "path": current_file}, not debug)
+        self.manager.del_prod({"type": self.role, "path": current_file}, debug)
         print("🗑 Done! Your Notebook has been remove from production folder.\n")
         if all is True:
             self.clear_history(path)

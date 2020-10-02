@@ -37,7 +37,7 @@ class JobsController(HTTPMethodView):
                 }
             )
             return response.json(
-                {"id": uid, "status": "error", "error": "missing keys", "data": []},
+                {"id": uid, "status": "error", "error": "missing keys", "data": [data]},
                 status=400,
             )
         updated = await self.__jobs.update(

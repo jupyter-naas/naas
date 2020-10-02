@@ -263,7 +263,7 @@ class Manager:
                 print(f"Delete {tmp_path}")
                 os.remove(tmp_path)
 
-    def add_prod(self, obj, silent):
+    def add_prod(self, obj, debug):
         if "type" in obj and "path" in obj and "params" in obj and "value" in obj:
             new_obj = copy.copy(obj)
             dev_path = obj.get("path")
@@ -271,22 +271,26 @@ class Manager:
             new_obj["path"] = self.get_prod_path(dev_path)
             new_obj["status"] = t_add
             try:
-                r = requests.post(f"{self.__local_api}/{t_job}", data=new_obj)
+                if debug:
+                    print(f'{new_obj["status"]} ==> {new_obj}')
+                r = requests.post(f"{self.__local_api}/{t_job}", json=new_obj)
                 r.raise_for_status()
                 res = r.json()
-                if not silent:
-                    print(f'{res["status"]} ==> {new_obj}')
-            except ConnectionError:
-                print(self.__error_manager_busy)
-            except requests.HTTPError as e:
-                print(self.__error_manager_reject, e)
+                if debug:
+                    print(f'{res[0]["status"]} ==> {res}')
+            except ConnectionError as err:
+                print(self.__error_manager_busy, err)
+                raise
+            except requests.HTTPError as err:
+                print(self.__error_manager_reject, err)
+                raise
             return new_obj
         else:
             raise ValueError(
                 'obj should have all keys ("type","path","params","value")'
             )
 
-    def del_prod(self, obj, silent):
+    def del_prod(self, obj, debug):
         if "type" in obj and "path" in obj:
             new_obj = copy.copy(obj)
             new_obj["path"] = self.get_prod_path(obj.get("path"))
@@ -295,15 +299,19 @@ class Manager:
             new_obj["status"] = t_delete
             self.__del_file_in_prod(new_obj["path"])
             try:
+                if debug:
+                    print(f'{new_obj["status"]} ==> {new_obj}')
                 r = requests.post(f"{self.__local_api}/{t_job}", json=new_obj)
                 r.raise_for_status()
                 res = r.json()
-                if not silent:
-                    print(f'{res[0]["status"]} ==> {new_obj}')
-            except ConnectionError:
-                print(self.__error_manager_busy)
-            except requests.HTTPError as e:
-                print(self.__error_manager_reject, e)
+                if debug:
+                    print(f'{res[0]["status"]} ==> {res}')
+            except ConnectionError as err:
+                print(self.__error_manager_busy, err)
+                raise
+            except requests.HTTPError as err:
+                print(self.__error_manager_reject, err)
+                raise
             return new_obj
         else:
             raise ValueError('obj should have keys ("type","path")')

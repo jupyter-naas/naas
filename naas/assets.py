@@ -48,14 +48,15 @@ class Assets:
         if not self.manager.notebook_path() and force is False:
             print("No add done you are in already in naas folder\n")
             return url
+        # "path", "type", "params", "value", "status"
+        self.manager.add_prod(
+            {"type": self.role, "path": current_file, "params": params, "value": token},
+            debug,
+        )
         print("👌 Well done! Your Assets has been sent to production folder.\n")
         print(f"🔗 You can access this assets remotely with: {url} \n")
         self.manager.copy_url(url)
         print('PS: to remove the "Assets" feature, just replace .add by .delete')
-        self.manager.add_prod(
-            {"type": self.role, "path": current_file, "params": params, "value": token},
-            not debug,
-        )
         return url
 
     def delete(self, path=None, all=False, debug=False):
@@ -63,7 +64,7 @@ class Assets:
             print("No delete done you are in already in naas folder\n")
             return
         current_file = self.manager.get_path(path)
-        self.manager.del_prod({"type": self.role, "path": current_file}, not debug)
+        self.manager.del_prod({"type": self.role, "path": current_file}, debug)
         print("🗑 Done! Your Assets has been remove from production folder.\n")
         if all is True:
             self.clear_history(path)

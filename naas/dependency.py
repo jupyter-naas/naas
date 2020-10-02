@@ -29,8 +29,6 @@ class Dependency:
             print("No add done you are in already in naas folder\n")
             return
         current_file = self.manager.get_path(path)
-        print("👌 Well done! Your Dependency has been sent to production folder. \n")
-        print('PS: to remove the "Dependency" feature, just replace .add by .delete')
         self.manager.add_prod(
             {
                 "type": self.role,
@@ -38,15 +36,17 @@ class Dependency:
                 "params": {},
                 "value": "Only internal",
             },
-            not debug,
+            debug,
         )
+        print("👌 Well done! Your Dependency has been sent to production folder. \n")
+        print('PS: to remove the "Dependency" feature, just replace .add by .delete')
 
     def delete(self, path=None, all=False, debug=False):
         if not self.manager.notebook_path():
             print("No delete done you are in already in naas folder\n")
             return
         current_file = self.manager.get_path(path)
-        self.manager.del_prod({"type": self.role, "path": current_file}, not debug)
+        self.manager.del_prod({"type": self.role, "path": current_file}, debug)
         print("🗑 Done! Your Dependency has been remove from production folder.\n")
         if all is True:
             self.clear_history(path)
