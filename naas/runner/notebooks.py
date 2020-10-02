@@ -4,6 +4,7 @@ from nbconvert import HTMLExporter
 from sanic import response
 import papermill as pm
 import traceback
+import mimetypes
 import json
 import time
 import bs4
@@ -56,11 +57,21 @@ class Notebooks:
         else:
             res_data = self.__get_res(res, filepath)
             if res_data and res_data.get("type"):
+                file_name = os.path.basename(filepath)
+                ext = mimetypes.guess_extension(res_data.get("type"), strict=True)
+                headers = dict()
+                if ext:
+                    file_name = file_name.split(".")[0] + ext
+                    headers[
+                        "Content-Disposition"
+                    ] = f'attachment; filename="{file_name}"'
 
                 async def streaming_fn(res):
                     await res.write(str(res_data.get("data")).encode("utf-8"))
 
-                return response.stream(streaming_fn, content_type=res_data.get("type"))
+                return response.stream(
+                    streaming_fn, headers=headers, content_type=res_data.get("type")
+                )
             else:
                 return response.json({"id": uid, "status": "Done", "time": duration})
 

@@ -28,6 +28,7 @@ class AssetsController(HTTPMethodView):
             task = await self.__jobs.find_by_value(uid, token, t_asset)
             if task:
                 file_filepath = task.get("path")
+                file_name = os.path.basename(file_filepath)
                 params = task.get("params", dict())
                 self.__logger.info(
                     {
@@ -42,7 +43,9 @@ class AssetsController(HTTPMethodView):
                     await self.__jobs.update(
                         uid, file_filepath, t_asset, token, params, t_health, 1
                     )
-                    res = await response.file(file_filepath)
+                    res = await response.file(
+                        location=file_filepath, filename=file_name
+                    )
                     self.__logger.info(
                         {
                             "id": uid,
