@@ -277,7 +277,7 @@ class Manager:
                 r.raise_for_status()
                 res = r.json()
                 if debug:
-                    print(f'{res[0]["status"]} ==> {res}')
+                    print(f'{res["status"]} ==> {res}')
             except ConnectionError as err:
                 print(self.__error_manager_busy, err)
                 raise
@@ -305,7 +305,7 @@ class Manager:
                 r.raise_for_status()
                 res = r.json()
                 if debug:
-                    print(f'{res[0]["status"]} ==> {res}')
+                    print(f'{res["status"]} ==> {res}')
             except ConnectionError as err:
                 print(self.__error_manager_busy, err)
                 raise
