@@ -1,3 +1,9 @@
+## 0.5.26 (2020-10-03)
+
+### Fix
+
+- :bug: remove old workflow ref in reademe
+
 ## 0.5.25 (2020-10-02)
 
 ### Fix
