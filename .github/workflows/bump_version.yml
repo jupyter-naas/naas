@@ -9,7 +9,7 @@ jobs:
   bump-version:
     if: "!startsWith(github.event.head_commit.message, 'bump:')"
     runs-on: ubuntu-latest
-    name: "Bump version and create changelog with commitizen then deploy"
+    name: "Bump version and create changelog with commitizen"
     steps:
       - name: Check out
         uses: actions/checkout@v2
