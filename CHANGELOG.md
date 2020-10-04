@@ -1,4 +1,10 @@
-## v6.0.0 (2020-10-04)
+
+## v6.0.0b0 (2020-10-04)
+
+### Fix
+
+- ci use version who work really with pre release
+- remove bump in dev
 
 ## 0.5.26 (2020-10-03)
 

@@ -3,7 +3,7 @@ name: Bump version
 on:
   push:
     branches:
-      - master
+      - dev
 
 jobs:
   bump-version:
@@ -17,6 +17,8 @@ jobs:
           fetch-depth: 0
           token: '${{ secrets.PERSONAL_ACCESS_TOKEN }}'
       - name: Create bump and changelog
-        uses: CashStory/commitizen-action@3.0.1
+        uses: CashStory/commitizen-action@3.0.3
         with:
+          prerelease: 'beta'
+          branch: 'dev'
           github_token: '${{ secrets.PERSONAL_ACCESS_TOKEN }}'
