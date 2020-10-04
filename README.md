@@ -54,3 +54,6 @@ open manager :
 
 # Supporters: 
 ![Sentry](./images/sentry.svg)
+
+### Authors:
+* [Martin donadieu](https://github.com/riderx)
