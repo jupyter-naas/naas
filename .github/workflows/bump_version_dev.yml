@@ -1,0 +1,24 @@
+name: Bump version
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  bump-version:
+    if: "!startsWith(github.event.head_commit.message, 'bump:')"
+    runs-on: ubuntu-latest
+    name: "Bump version and create changelog with commitizen"
+    steps:
+      - name: Check out
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          token: '${{ secrets.PERSONAL_ACCESS_TOKEN }}'
+      - name: Create bump and changelog
+        uses: CashStory/commitizen-action@3.0.1
+        with:
+          prerelease: 'beta'
+          branch: 'dev'
+          github_token: '${{ secrets.PERSONAL_ACCESS_TOKEN }}'
