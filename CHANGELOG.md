@@ -1,4 +1,16 @@
 
+## 0.6.0b2 (2020-10-04)
+
+### Fix
+
+- ci for master
+
+## 0.6.0b1 (2020-10-04)
+
+### Fix
+
+- try to trigger ci again
+
 ## 0.6.0b1 (2020-10-04)
 
 ### Fix
