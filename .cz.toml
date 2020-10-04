@@ -1,6 +1,6 @@
 [tool.commitizen]
 name = "cz_conventional_commits"
-tag_format = "v$minor.$major.$patch$prerelease"
+tag_format = "$major.$minor.$patch$prerelease"
 version = "0.6.0b0"
 version_files = [
     "naas/__init__.py",
