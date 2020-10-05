@@ -1,4 +1,65 @@
 
+## 0.6.0b4 (2020-10-05)
+
+## 0.6.0b3 (2020-10-04)
+
+## 0.6.0b2 (2020-10-04)
+
+### Fix
+
+- ci for master
+
+## 0.6.0b1 (2020-10-04)
+
+### Fix
+
+- try to trigger ci again
+
+## 0.6.0b3 (2020-10-04)
+
+## 0.6.0b2 (2020-10-04)
+
+### Fix
+
+- ci for master
+
+## 0.6.0b1 (2020-10-04)
+
+### Fix
+
+- try to trigger ci again
+
+## 0.6.0b2 (2020-10-04)
+
+### Fix
+
+- ci for master
+
+## 0.6.0b1 (2020-10-04)
+
+### Fix
+
+- try to trigger ci again
+
+## 0.6.0b1 (2020-10-04)
+
+### Fix
+
+- try to trigger ci again
+- ci version docker machine
+- try to trigger ci again
+- tag format
+- ci error in tag name
+
+## v6.0.0b0 (2020-10-04)
+
+### Fix
+
+- ci use version who work really with pre release
+- remove bump in dev
+
+## 0.6.0b0 (2020-10-04)
+
 ## v6.0.0b0 (2020-10-04)
 
 ### Fix
