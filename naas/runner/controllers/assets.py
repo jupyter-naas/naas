@@ -30,6 +30,7 @@ class AssetsController(HTTPMethodView):
                 file_filepath = task.get("path")
                 file_name = os.path.basename(file_filepath)
                 params = task.get("params", dict())
+                inline = params.get("inline", False)
                 self.__logger.info(
                     {
                         "id": uid,
@@ -44,7 +45,8 @@ class AssetsController(HTTPMethodView):
                         uid, file_filepath, t_asset, token, params, t_health, 1
                     )
                     res = await response.file(
-                        location=file_filepath, filename=file_name
+                        location=file_filepath,
+                        filename=(file_name if not inline else None),
                     )
                     self.__logger.info(
                         {
