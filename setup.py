@@ -20,7 +20,7 @@ setup(
     },
     extras_require={
         "dev": [
-            "pytest>=5,<6",
+            "pytest>=5,<7",
             "pytest-tornasync",
             "pytest-mock>=3,<4",
             "pytest-sanic>=1,<2",
