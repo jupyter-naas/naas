@@ -19,6 +19,12 @@ jobs:
         uses: actions/setup-python@v1
         with:
           python-version: '3.x'
+      - uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/setup.py') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
       - name: Install dependencies
         run: |
           python -m pip install -U pip
@@ -51,4 +57,4 @@ jobs:
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           repository: ${{ github.repository }}
           event-type: pypip-deployed
-          client-payload: '{"ref": "${{ github.repository }}", "sha": "${{ github.sha }}"}'
+          client-payload: '{"ref": "${{ github.ref }}"}'
