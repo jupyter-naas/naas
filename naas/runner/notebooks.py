@@ -59,8 +59,9 @@ class Notebooks:
             if res_data and res_data.get("type"):
                 file_name = os.path.basename(filepath)
                 ext = mimetypes.guess_extension(res_data.get("type"), strict=True)
+                inline = params.get("inline", False)
                 headers = dict()
-                if ext:
+                if ext and not inline:
                     file_name = file_name.split(".")[0] + ext
                     headers[
                         "Content-Disposition"
