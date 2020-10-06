@@ -1,5 +1,6 @@
 from naas.types import t_notebook, t_scheduler, t_asset
 from .proxy import encode_proxy_url
+from bs4 import BeautifulSoup
 import pretty_cron
 import requests
 import base64
@@ -15,8 +16,10 @@ class Notifications:
     def __init__(self, logger=None):
         self.logger = logger
 
-    def send(self, email, subject, content, html=None):
+    def send(self, email, subject, html):
         uid = str(uuid.uuid4())
+        soup = BeautifulSoup(html)
+        content = soup.get_text()
         if self.base_notif_url is None:
             jsn = {"id": uid, "type": "email error", "error": "not configured"}
             if self.logger is not None:
