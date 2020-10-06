@@ -1,4 +1,40 @@
 
+## 0.6.0b6 (2020-10-06)
+
+### Fix
+
+- :bug: remove useless depbot
+
+### Feat
+
+- :sparkles: allow show inline for asset and notebook
+
+### Refactor
+
+- :art: remove the duplication in notif send of content and html
+
+## 0.6.0b5 (2020-10-05)
+
+### Fix
+
+- :art: switch master to main
+
+## 0.6.0b4 (2020-10-05)
+
+## 0.6.0b3 (2020-10-04)
+
+## 0.6.0b2 (2020-10-04)
+
+### Fix
+
+- ci for master
+
+## 0.6.0b1 (2020-10-04)
+
+### Fix
+
+- try to trigger ci again
+
 ## 0.6.0b5 (2020-10-05)
 
 ### Fix
