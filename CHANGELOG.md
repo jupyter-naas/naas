@@ -1,4 +1,10 @@
 
+## 0.6.3 (2020-10-07)
+
+### Fix
+
+- :green_heart: add pr titlevalidation
+
 ## 0.6.2 (2020-10-06)
 
 ### Fix
