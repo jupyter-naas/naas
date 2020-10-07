@@ -1,4 +1,10 @@
 
+## 0.6.4 (2020-10-07)
+
+### Fix
+
+- :bug: add upgrade before install
+
 ## 0.6.3 (2020-10-07)
 
 ### Fix

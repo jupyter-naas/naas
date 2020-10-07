@@ -12,7 +12,7 @@ from .runner.proxy import encode_proxy_url
 import requests
 import os
 
-__version__ = "0.6.3"
+__version__ = "0.6.4"
 __location__ = os.getcwd()
 scheduler = Scheduler()
 secret = Secret()
