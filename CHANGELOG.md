@@ -1,4 +1,10 @@
 
+## 0.6.5 (2020-10-07)
+
+### Fix
+
+- remove mimetype response image args
+
 ## 0.6.4 (2020-10-07)
 
 ### Fix
