@@ -79,7 +79,8 @@ class Api:
         display(Markdown("Response Set as JSON, preview below: "))
         display(JSON(data, metadata={"naas_api": True}))
 
-    def respond_image(self, data, filename, mimetype):
+    def respond_image(self, data, filename):
+        mimetype = mimetypes.guess_type(filename)[0]
         display(Markdown("Response Set as IMAGE, preview below: "))
         display(
             Image(data, filename=filename, format=mimetype, metadata={"naas_api": True})
