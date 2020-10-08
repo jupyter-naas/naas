@@ -1,4 +1,10 @@
 
+## 0.6.6 (2020-10-08)
+
+### Refactor
+
+- **manager**: :building_construction: simplify way to get production assets
+
 ## 0.6.5 (2020-10-07)
 
 ### Fix
