@@ -48,7 +48,7 @@ class Dependency:
         self.manager.del_prod({"type": self.role, "path": current_file}, debug)
         print("🗑 Done! Your Dependency has been remove from production folder.\n")
         if all is True:
-            self.clear_history(path)
+            self.clear(path)
 
     def help(self):
         print(f"=== {type(self).__name__} === \n")
@@ -57,17 +57,14 @@ class Dependency:
             f".delete(path) => delete path to the prod {type(self).__name__} server\n"
         )
         print(
-            ".clear_history(path, histonumber) => clear history, history number and path are optionel, \
+            ".clear(path, histonumber) => clear history, history number and path are optionel, \
                 if you don't provide them it will erase full history of current file \n"
         )
         print(
-            ".list_history(path) => list history, of a path or if not provided the current file \n"
+            ".list(path) => list history, of a path or if not provided the current file \n"
         )
         print(
-            ".get_history(path, histonumber) => get history file, of a path or if not provided the current file \n"
-        )
-        print(
-            ".get(path) => get current prod file of a path, or if not provided the current file \n"
+            ".get(path, histonumber) => get prod file, of a path or if not provided the current file \n"
         )
         print(f".currents() => get current list of {type(self).__name__} prod file\n")
         print(

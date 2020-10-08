@@ -5,8 +5,8 @@ import pretty_cron
 import requests
 import base64
 import json
-import os
 import uuid
+import os
 
 
 class Notifications:
@@ -16,7 +16,7 @@ class Notifications:
     def __init__(self, logger=None):
         self.logger = logger
 
-    def send(self, email, subject, html):
+    def send(self, email, subject, html, files=[]):
         uid = str(uuid.uuid4())
         soup = BeautifulSoup(html, features="html5lib")
         content = soup.get_text()
@@ -34,7 +34,20 @@ class Notifications:
                 "content": content,
                 "html": html,
             }
-            req = requests.post(url=f"{self.base_notif_url}/send", json=data)
+            req = None
+            if len(files) > 0:
+                files = {}
+                for file in files:
+                    abs_path = os.path.abspath(os.path.join(os.getcwd(), file))
+                    try:
+                        files[file] = open(abs_path, "rb")
+                    except Exception as err:
+                        print(err)
+                req = requests.post(
+                    url=f"{self.base_notif_url}/send", files=files, json=data
+                )
+            else:
+                req = requests.post(url=f"{self.base_notif_url}/send", json=data)
             req.raise_for_status()
             jsn = req.json()
             return jsn
@@ -46,7 +59,9 @@ class Notifications:
             else:
                 print(err)
 
-    def send_status(self, uid, status, email, file_path, current_type, current_value):
+    def send_status(
+        self, uid, status, email, file_path, current_type, current_value, files=[]
+    ):
         if self.base_notif_url is None:
             jsn = {"id": uid, "type": "notification error", "error": "not configured"}
             if self.logger is not None:
@@ -84,7 +99,20 @@ class Notifications:
                     "URL_LINK": link_url,
                 },
             }
-            req = requests.post(url=f"{self.base_notif_url}/send_status", json=data)
+            req = None
+            if len(files) > 0:
+                files = {}
+                for file in files:
+                    abs_path = os.path.abspath(os.path.join(os.getcwd(), file))
+                    try:
+                        files[file] = open(abs_path, "rb")
+                    except Exception as err:
+                        print(err)
+                req = requests.post(
+                    url=f"{self.base_notif_url}/send_status", files=files, json=data
+                )
+            else:
+                req = requests.post(url=f"{self.base_notif_url}/send_status", json=data)
             req.raise_for_status()
             jsn = req.json()
             return jsn
