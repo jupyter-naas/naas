@@ -77,7 +77,7 @@ class Notebooks:
                 return response.json({"id": uid, "status": "Done", "time": duration})
 
     def __convert_csv(self, data):
-        soup = bs4.BeautifulSoup(data)
+        soup = bs4.BeautifulSoup(data, features="html5lib")
         output = []
         for table_num, table in enumerate(soup.find_all("table")):
             csv_string = io.StringIO()

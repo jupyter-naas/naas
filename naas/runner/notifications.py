@@ -18,7 +18,7 @@ class Notifications:
 
     def send(self, email, subject, html):
         uid = str(uuid.uuid4())
-        soup = BeautifulSoup(html)
+        soup = BeautifulSoup(html, features="html5lib")
         content = soup.get_text()
         if self.base_notif_url is None:
             jsn = {"id": uid, "type": "email error", "error": "not configured"}
