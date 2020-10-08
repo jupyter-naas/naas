@@ -1,4 +1,10 @@
 
+## 0.6.7 (2020-10-08)
+
+### Fix
+
+- **runner**: :bug: set feature in bs4 to remove warning
+
 ## 0.6.6 (2020-10-08)
 
 ### Refactor
