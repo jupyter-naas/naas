@@ -1,4 +1,10 @@
 
+## 0.7.0 (2020-10-08)
+
+### Feat
+
+- **notification**: :sparkles: allow send file in notification
+
 ## 0.6.7 (2020-10-08)
 
 ### Fix
