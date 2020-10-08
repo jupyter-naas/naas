@@ -9,12 +9,11 @@ class Assets:
 
     def __init__(self):
         self.manager = Manager()
+        self.list = self.manager.list_prod
+        self.clear = self.manager.clear_prod
         self.get = self.manager.get_prod
         self.get_output = self.manager.get_output
         self.clear_output = self.manager.clear_output
-        self.get_history = self.manager.get_history
-        self.list_history = self.manager.list_history
-        self.clear_history = self.manager.clear_history
 
     def current_raw(self):
         json_data = self.manager.get_naas()

@@ -9,9 +9,8 @@ class Dependency:
     def __init__(self):
         self.manager = Manager()
         self.get = self.manager.get_prod
-        self.get_history = self.manager.get_history
-        self.list_history = self.manager.list_history
-        self.clear_history = self.manager.clear_history
+        self.list = self.manager.list_prod
+        self.clear = self.manager.clear_prod
 
     def currents(self, raw=False):
         json_data = self.manager.get_naas()

@@ -195,26 +195,20 @@ class Manager:
             raise FileNotFoundError(f"File {path} not Found")
 
     def get_out_path(self, path):
-        filename = os.path.basename(path)
-        dirname = os.path.dirname(path)
+        current_path = self.get_path(path)
+        filename = os.path.basename(current_path)
+        dirname = os.path.dirname(current_path)
         out_path = os.path.join(dirname, f"out_{filename}")
         return out_path
 
-    def get_prod(self, path):
-        current_file = self.get_path(path)
-        self.__copy_file_in_dev(current_file)
-        print(
-            "🕣 Your Notebook from production folder has been copied into your dev folder.\n"
-        )
-
-    def get_output(self, path):
+    def get_output(self, path=None):
         out_path = self.get_out_path(path)
         self.__copy_file_in_dev(out_path)
         print(
             "🕣 Your Notebook OUTPUT from production folder has been copied into your dev folder\n"
         )
 
-    def clear_output(self, path):
+    def clear_output(self, path=None):
         out_path = self.get_out_path(path)
         if os.path.exists(out_path):
             os.remove(out_path)
@@ -222,7 +216,20 @@ class Manager:
         else:
             raise FileNotFoundError(f"File {out_path} not Found")
 
-    def list_history(self, path):
+    def get_prod(self, path=None, histo=None):
+        current_file = self.get_path(path)
+        if histo:
+            filename = os.path.basename(current_file)
+            dirname = os.path.dirname(current_file)
+            path_histo = os.path.join(dirname, f"{histo}_{filename}")
+            self.__copy_file_in_dev(path_histo)
+        else:
+            self.__copy_file_in_dev(current_file)
+        print(
+            "🕣 Your Notebook from production folder has been copied into your dev folder.\n"
+        )
+
+    def list_prod(self, path=None):
         current_file = self.get_path(path)
         prod_path = self.get_prod_path(current_file)
         filename = os.path.basename(current_file)
@@ -238,14 +245,7 @@ class Manager:
                 histo = histo.replace("_", "")
                 print(histo + "\n")
 
-    def get_history(self, path, histo):
-        current_file = self.get_path(path)
-        filename = os.path.basename(current_file)
-        dirname = os.path.dirname(current_file)
-        path_histo = os.path.join(dirname, f"{histo}_{filename}")
-        self.__copy_file_in_dev(path_histo)
-
-    def clear_history(self, path, histo=None):
+    def clear_prod(self, path=None, histo=None):
         current_file = self.get_path(path)
         prod_path = self.get_prod_path(current_file)
         filename = (
