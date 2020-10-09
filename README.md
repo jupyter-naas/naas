@@ -53,7 +53,8 @@ open manager :
 `python3 -m flake8 naas` check if any left error
 
 # Supporters: 
-![Sentry](./images/sentry.svg)
+![Sentry](https://raw.githubusercontent.com/jupyter-naas/naas/main/images/sentry.svg)
+![Gitbook](https://raw.githubusercontent.com/jupyter-naas/naas/main/images/gitbook.svg)
 
 ### Authors:
 * [Martin donadieu](https://github.com/riderx)
