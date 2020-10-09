@@ -54,6 +54,7 @@ open manager :
 
 # Supporters: 
 [![Sentry](https://raw.githubusercontent.com/jupyter-naas/naas/main/images/sentry.svg =200px)](http://sentry.com)
+
 [![Gitbook](https://raw.githubusercontent.com/jupyter-naas/naas/main/images/gitbook.svg =200px)](http://gitbook.com)
 
 ### Authors:
