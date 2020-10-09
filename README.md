@@ -53,9 +53,14 @@ open manager :
 `python3 -m flake8 naas` check if any left error
 
 # Supporters: 
-[![Sentry](https://raw.githubusercontent.com/jupyter-naas/naas/main/images/sentry.svg =200px)](http://sentry.com)
-
-[![Gitbook](https://raw.githubusercontent.com/jupyter-naas/naas/main/images/gitbook.svg =200px)](http://gitbook.com)
+<p>
+  <a href="http://sentry.com" title="Redirect to Sentry">
+    <img width="200px" src="https://raw.githubusercontent.com/jupyter-naas/naas/main/images/sentry.svg" alt="Sentry" />
+  </a>
+  <a href="https://gitbook.com" title="Redirect to Gitbook">
+    <img width="200px" src="https://raw.githubusercontent.com/jupyter-naas/naas/main/images/gitbook.svg" alt="Gitbooks" />
+  </a>
+</p>
 
 ### Authors:
 * [Martin donadieu](https://github.com/riderx)
