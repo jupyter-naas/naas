@@ -65,10 +65,14 @@ class Api:
         )
 
     def respond_file(self, path):
-        naas_type = mimetypes.guess_type(os.path.abspath(path))[0]
-        data = {"path": os.path.abspath(path)}
+        abs_path = os.path.abspath(path)
+        naas_type = mimetypes.guess_type(abs_path)[0]
         display(Markdown("Response Set as File, preview below: "))
-        display(JSON(data, metadata={"naas_api": True, "naas_type": naas_type}))
+        display(
+            JSON(
+                {"path": abs_path}, metadata={"naas_api": True, "naas_type": naas_type}
+            )
+        )
 
     def respond_html(self, data):
         display(Markdown("Response Set as HTML, preview below: "))
@@ -79,11 +83,8 @@ class Api:
         display(JSON(data, metadata={"naas_api": True}))
 
     def respond_image(self, data, filename):
-        mimetype = mimetypes.guess_type(filename)[0]
         display(Markdown("Response Set as IMAGE, preview below: "))
-        display(
-            Image(data, filename=filename, format=mimetype, metadata={"naas_api": True})
-        )
+        display(Image(data, filename=filename, metadata={"naas_api": True}))
 
     def respond_svg(self, data):
         display(Markdown("Response Set as SVG, preview below: "))

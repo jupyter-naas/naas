@@ -3,6 +3,7 @@
     "conventionalCommits.scopes": [
         "manager",
         "runner",
-        "notification"
+        "notification",
+        "api"
     ]
 }
