@@ -36,15 +36,15 @@ class Notifications:
             }
             req = None
             if len(files) > 0:
-                files = {}
+                files_list = []
                 for file in files:
                     abs_path = os.path.abspath(os.path.join(os.getcwd(), file))
                     try:
-                        files[file] = open(abs_path, "rb")
+                        files_list.append((file, open(abs_path, "rb")))
                     except Exception as err:
                         print(err)
                 req = requests.post(
-                    url=f"{self.base_notif_url}/send", files=files, json=data
+                    url=f"{self.base_notif_url}/send", files=files_list, json=data
                 )
             else:
                 req = requests.post(url=f"{self.base_notif_url}/send", json=data)
