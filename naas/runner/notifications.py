@@ -44,7 +44,7 @@ class Notifications:
                     except Exception as err:
                         print(err)
                 req = requests.post(
-                    url=f"{self.base_notif_url}/send", files=files_list, json=data
+                    url=f"{self.base_notif_url}/send", files=files_list, data=data
                 )
             else:
                 req = requests.post(url=f"{self.base_notif_url}/send", json=data)
