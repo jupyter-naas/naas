@@ -1,4 +1,11 @@
 
+## 0.7.1 (2020-10-10)
+
+### Fix
+
+- **notification**: :bug: fix send file with email
+- **api**: :bug: fix respond image remove mimetype
+
 ## 0.7.0 (2020-10-08)
 
 ### Feat
