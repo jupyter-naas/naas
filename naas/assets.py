@@ -53,7 +53,6 @@ class Assets:
             debug,
         )
         print("👌 Well done! Your Assets has been sent to production folder.\n")
-        print(f"🔗 You can access this assets remotely with: {url} \n")
         self.manager.copy_url(url)
         print('PS: to remove the "Assets" feature, just replace .add by .delete')
         return url

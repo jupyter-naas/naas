@@ -49,7 +49,6 @@ class Api:
             debug,
         )
         print("👌 Well done! Your Notebook has been sent to production folder.\n")
-        print(f"🔑 You can run this notebook remotely with: {url} \n")
         self.manager.copy_url(url)
         print(
             'PS: to remove the "Notebook as API" feature, just replace .add by .delete'
