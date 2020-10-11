@@ -1,4 +1,10 @@
 
+## 0.8.1 (2020-10-11)
+
+### Fix
+
+- **manager**: :memo: remove verbosity
+
 ## 0.8.0 (2020-10-11)
 
 ### Feat
