@@ -1,4 +1,16 @@
 
+## 0.8.0 (2020-10-11)
+
+### Feat
+
+- **notification**: :sparkles: allow multi emails by list or string
+
+### Fix
+
+- **notification**: :bug: fix type of date json to data when file are send
+- **notification**: :bug: fix send file with email
+- **api**: :bug: fix respond image remove mimetype
+
 ## 0.7.0 (2020-10-08)
 
 ### Feat
