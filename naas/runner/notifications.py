@@ -30,7 +30,7 @@ class Notifications:
         try:
             data = {
                 "subject": subject,
-                "email": email,
+                "email": ",".join(email) if isinstance(email, list) else email,
                 "content": content,
                 "html": html,
             }
@@ -88,7 +88,7 @@ class Notifications:
             data = {
                 "title": "Naas manager notification",
                 "subject": f"{current_type.capitalize()} {status}",
-                "email": email,
+                "email": ",".join(email) if isinstance(email, list) else email,
                 "content": content,
                 "custom_vars": {
                     "URL_HOME": encode_proxy_url(),
