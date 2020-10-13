@@ -1,4 +1,10 @@
 
+## 0.8.3 (2020-10-13)
+
+### Fix
+
+- **binder**: :bug: use new folder for binder
+
 ## 0.8.2 (2020-10-12)
 
 ### Fix
