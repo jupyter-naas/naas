@@ -4,6 +4,7 @@
         "manager",
         "runner",
         "notification",
-        "api"
+        "api",
+        "binder"
     ]
 }

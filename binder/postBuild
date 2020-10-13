@@ -18,7 +18,7 @@ EXAMPLES_BASE_DIR=starters
 # (2) Copy all getting started assets to the working directory,
 #     which is referenced when binder is invoked, e.g. 
 #     https://mybinder.org/v2/gh/elyra-ai/elyra/master?urlpath=lab/tree/binder-demo
-cp -r $EXAMPLES_BASE_DIR/binder/getting-started/* binder-demo/
+cp -r $EXAMPLES_BASE_DIR/* binder-demo/
 
 # (5) Remove cloned examples directory
 rm -rf $EXAMPLES_BASE_DIR
