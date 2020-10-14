@@ -1,4 +1,10 @@
 
+## 0.8.4 (2020-10-14)
+
+### Fix
+
+- **manager**: :sparkles: add is_production method
+
 ## 0.8.3 (2020-10-13)
 
 ### Fix
