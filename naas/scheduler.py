@@ -1,6 +1,7 @@
 from .types import t_scheduler
 from .manager import Manager
 import pretty_cron
+import requests
 import pycron
 
 
@@ -15,6 +16,27 @@ class Scheduler:
         self.list = self.manager.list_prod
         self.clear = self.manager.clear_prod
         self.get = self.manager.get_prod
+
+    def status(self):
+        req = requests.get(url=f"{self.manager.naas_api}/scheduler")
+        req.raise_for_status()
+        jsn = req.json()
+        print(jsn)
+        return jsn
+
+    def pause(self):
+        req = requests.get(url=f"{self.manager.naas_api}/scheduler/pause")
+        req.raise_for_status()
+        jsn = req.json()
+        print(jsn)
+        return jsn
+
+    def resume(self):
+        req = requests.get(url=f"{self.manager.naas_api}/scheduler/resume")
+        req.raise_for_status()
+        jsn = req.json()
+        print(jsn)
+        return jsn
 
     def currents(self, raw=False):
         json_data = self.manager.get_naas()
@@ -40,8 +62,8 @@ class Scheduler:
         return res
 
     def add(self, path=None, recurrence=None, params=None, debug=False):
-        if not self.manager.notebook_path():
-            print("No add done you are in already in naas folder\n")
+        if self.manager.is_production():
+            print("No add done you are in production\n")
             return
         if not recurrence:
             print("No recurrence provided\n")
@@ -60,42 +82,19 @@ class Scheduler:
             debug,
         )
         cron_string = pretty_cron.prettify_cron(recurrence)
-        print("👌 Well done! Your Notebook has been sent to production folder. \n")
+        print("👌 Well done! Your Notebook has been sent to production. \n")
         print(
             f'⏰ It will be scheduled "{cron_string}" (more on the syntax on https://crontab.guru/).\n'
         )
         print('Ps: to remove the "Scheduler", just replace .add by .delete')
 
     def delete(self, path=None, all=False, debug=False):
-        if not self.manager.notebook_path():
-            print("No delete done you are in already in naas folder\n")
+        if self.manager.is_production():
+            print("No delete done you are in production\n")
             return
         current_file = self.manager.get_path(path)
         self.manager.del_prod({"type": self.role, "path": current_file}, debug)
-        print("🗑 Done! Your Scheduler has been remove from production folder.\n")
+        print("🗑 Done! Your Scheduler has been remove from production.\n")
         if all is True:
             self.clear(path)
             self.clear_output(path)
-
-    def help(self):
-        print(f"=== {type(self).__name__} === \n")
-        print(
-            f".add(path, params) => add path to the prod {type(self).__name__} server\n"
-        )
-        print(
-            f".delete(path) => delete path to the prod {type(self).__name__} server\n"
-        )
-        print(
-            ".clear(path, histonumber) => clear history, history number and path are optionel, \
-                if you don't provide them it will erase full history of current file \n"
-        )
-        print(
-            ".list(path) => list history, of a path or if not provided the current file \n"
-        )
-        print(
-            ".get(path, histonumber) => get prod file, of a path or if not provided the current file \n"
-        )
-        print(f".currents() => get current list of {type(self).__name__} prod file\n")
-        print(
-            f".current(raw=True) => get json current list of {type(self).__name__} prod file\n"
-        )

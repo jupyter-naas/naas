@@ -15,7 +15,10 @@ import copy
 
 
 class Manager:
-    __local_api = f'http://localhost:{os.environ.get("NAAS_RUNNER_PORT", 5000)}'
+    naas_api = os.environ.get(
+        "NAAS_RUNNER_API",
+        f'http://localhost:{os.environ.get("NAAS_RUNNER_PORT", 5000)}',
+    )
     __error_manager_busy = "Manager look busy, try to reload your machine"
     __error_manager_reject = "Manager refused your request, reason :"
     __base_ftp_path = None
@@ -50,10 +53,24 @@ class Manager:
             if exc.errno != errno.EEXIST:
                 raise
 
+    def is_production(self):
+        return True if self.notebook_path() else False
+
+    def get(self):
+        public_url = f"{encode_proxy_url()}"
+        print("You can check your current tasks list here :")
+        display(HTML(f'<a href="{public_url}"">Manager</a>'))
+
+    def get_logs(self):
+        req = requests.get(url=f"{self.naas_api}/logs")
+        req.raise_for_status()
+        jsn = req.json()
+        return jsn
+
     def get_naas(self):
         naas_data = []
         try:
-            r = requests.get(f"{self.__local_api}/{t_job}")
+            r = requests.get(f"{self.naas_api}/{t_job}")
             naas_data = r.json()
         except ConnectionError:
             print(self.__error_manager_busy)
@@ -205,14 +222,14 @@ class Manager:
         out_path = self.get_out_path(path)
         self.__copy_file_in_dev(out_path)
         print(
-            "🕣 Your Notebook OUTPUT from production folder has been copied into your dev folder\n"
+            "🕣 Your Notebook OUTPUT from production has been copied into your dev folder\n"
         )
 
     def clear_output(self, path=None):
         out_path = self.get_out_path(path)
         if os.path.exists(out_path):
             os.remove(out_path)
-            print("🕣 Your Notebook output has been remove from production folder.\n")
+            print("🕣 Your Notebook output has been remove from production.\n")
         else:
             raise FileNotFoundError(f"File {out_path} not Found")
 
@@ -225,9 +242,7 @@ class Manager:
             self.__copy_file_in_dev(path_histo)
         else:
             self.__copy_file_in_dev(current_file)
-        print(
-            "🕣 Your Notebook from production folder has been copied into your dev folder.\n"
-        )
+        print("🕣 Your Notebook from production has been copied into your dev folder.\n")
 
     def list_prod(self, path=None):
         current_file = self.get_path(path)
@@ -273,7 +288,7 @@ class Manager:
             try:
                 if debug:
                     print(f'{new_obj["status"]} ==> {new_obj}')
-                r = requests.post(f"{self.__local_api}/{t_job}", json=new_obj)
+                r = requests.post(f"{self.naas_api}/{t_job}", json=new_obj)
                 r.raise_for_status()
                 res = r.json()
                 if debug:
@@ -301,7 +316,7 @@ class Manager:
             try:
                 if debug:
                     print(f'{new_obj["status"]} ==> {new_obj}')
-                r = requests.post(f"{self.__local_api}/{t_job}", json=new_obj)
+                r = requests.post(f"{self.naas_api}/{t_job}", json=new_obj)
                 r.raise_for_status()
                 res = r.json()
                 if debug:

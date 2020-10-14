@@ -44,48 +44,25 @@ class Assets:
         if token is None or force is True:
             token = os.urandom(30).hex()
         url = self.manager.proxy_url(self.role, token)
-        if not self.manager.notebook_path() and force is False:
-            print("No add done you are in already in naas folder\n")
+        if self.manager.is_production() and force is False:
+            print("No add done you are in production\n")
             return url
         # "path", "type", "params", "value", "status"
         self.manager.add_prod(
             {"type": self.role, "path": current_file, "params": params, "value": token},
             debug,
         )
-        print("👌 Well done! Your Assets has been sent to production folder.\n")
+        print("👌 Well done! Your Assets has been sent to production.\n")
         self.manager.copy_url(url)
         print('PS: to remove the "Assets" feature, just replace .add by .delete')
         return url
 
     def delete(self, path=None, all=False, debug=False):
-        if not self.manager.notebook_path():
-            print("No delete done you are in already in naas folder\n")
+        if self.manager.is_production():
+            print("No delete done you are in production\n")
             return
         current_file = self.manager.get_path(path)
         self.manager.del_prod({"type": self.role, "path": current_file}, debug)
-        print("🗑 Done! Your Assets has been remove from production folder.\n")
+        print("🗑 Done! Your Assets has been remove from production.\n")
         if all is True:
             self.clear(path)
-
-    def help(self):
-        print(f"=== {type(self).__name__} === \n")
-        print(
-            f".add(path, params) => add path to the prod {type(self).__name__} server\n"
-        )
-        print(
-            f".delete(path) => delete path to the prod {type(self).__name__} server\n"
-        )
-        print(
-            ".clear(path, histonumber) => clear history, history number and path are optionel, \
-                if you don't provide them it will erase full history of current file \n"
-        )
-        print(
-            ".list(path) => list history, of a path or if not provided the current file \n"
-        )
-        print(
-            ".get(path, histonumber) => get prod file, of a path or if not provided the current file \n"
-        )
-        print(f".currents() => get current list of {type(self).__name__} prod file\n")
-        print(
-            f".current(raw=True) => get json current list of {type(self).__name__} prod file\n"
-        )
