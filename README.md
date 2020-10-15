@@ -1,4 +1,4 @@
-<img width="25%" alt="Naas" src="./images/naas_logo.svg"/>
+<img width="25%" alt="Naas" src="https://raw.githubusercontent.com/jupyter-naas/naas/main/images/naas_logo.svg"/>
 
 ![Bump version](https://github.com/jupyter-naas/naas/workflows/Bump%20version/badge.svg)
 ![Upload Python Package](https://github.com/jupyter-naas/naas/workflows/Upload%20Python%20Package/badge.svg)
@@ -21,7 +21,7 @@ You can try out some of Naas features using the My Binder service.
 
 Click on a link below to try Naas, on a sandbox environment, without having to install anything.
 Test it in binder (WIP)
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/jupyter-naas/naas/master)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/jupyter-naas/naas/main)
 
 ## Install
 
