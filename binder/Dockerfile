@@ -1,5 +1,6 @@
 FROM jupyternaas/naas:latest
-ENV NB_USER=joyvan
+ARG NB_USER
+ARG NB_UID
 run mkdir -p binder-demo
 run git clone https://github.com/jupyter-naas/starters.git
 run cp -r starters/* binder-demo/
