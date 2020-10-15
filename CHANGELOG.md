@@ -1,4 +1,10 @@
 
+## 0.8.5 (2020-10-15)
+
+### Fix
+
+- **manager**: :bug: fis is production function
+
 ## 0.8.4 (2020-10-14)
 
 ### Fix
