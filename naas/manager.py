@@ -54,7 +54,7 @@ class Manager:
                 raise
 
     def is_production(self):
-        return True if self.notebook_path() else False
+        return False if self.notebook_path() else True
 
     def get(self):
         public_url = f"{encode_proxy_url()}"
