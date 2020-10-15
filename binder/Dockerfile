@@ -1,0 +1,1 @@
+FROM jupyternaas/naas:latest
