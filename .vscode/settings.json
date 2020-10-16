@@ -5,6 +5,7 @@
         "runner",
         "notification",
         "api",
-        "binder"
+        "binder",
+        "scheduler"
     ]
 }

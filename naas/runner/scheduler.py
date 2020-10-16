@@ -2,6 +2,7 @@ from naas.types import t_scheduler, t_start, t_main, t_health, t_error
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 import apscheduler.schedulers.base
 import traceback
+import requests
 import datetime
 import asyncio
 import pycron
@@ -109,6 +110,31 @@ class Scheduler:
                         "duration": res.get("duration"),
                     }
                 )
+                next_url = params.get("next_url", None)
+                if next_url is not None:
+                    if "http" not in next_url:
+                        next_url = f"{self.__api_internal}{next_url}"
+                    self.__logger.info(
+                        {
+                            "id": uid,
+                            "type": t_scheduler,
+                            "status": "next_url",
+                            "url": next_url,
+                        }
+                    )
+                    try:
+                        req = requests.get(url=next_url)
+                        req.raise_for_status()
+                    except requests.exceptions.RequestException as e:
+                        self.__logger.error(
+                            {
+                                "id": main_uid,
+                                "type": t_scheduler,
+                                "status": t_error,
+                                "error": "Error in next_url",
+                                "trace": str(e),
+                            }
+                        )
                 await self.__jobs.update(
                     uid,
                     file_filepath,
@@ -133,9 +159,9 @@ class Scheduler:
     async def __scheduler_function(self):
         # Create unique for scheduling step (one step every minute)
         main_uid = str(uuid.uuid4())
+        all_start_time = time.time()
         try:
             current_time = datetime.datetime.now()
-            all_start_time = time.time()
             # Write self.__scheduler init info in self.__logger.write
             self.__logger.info({"id": main_uid, "type": t_scheduler, "status": t_start})
             jobs = await self.__jobs.list(main_uid)
