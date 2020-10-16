@@ -4,6 +4,10 @@
 ![Upload Python Package](https://github.com/jupyter-naas/naas/workflows/Upload%20Python%20Package/badge.svg)
 ![codecov](https://codecov.io/gh/jupyter-naas/naas/branch/master/graph/badge.svg?token=UC3SAL8S0U)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=jupyter-naas_naas&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=jupyter-naas_naas)
+<a href="#badge">
+  <img alt="semantic-release" src="https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg">
+</a>
+ <a href="http://commitizen.github.io/cz-cli/"><img alt="Commitizen friendly" src="https://img.shields.io/badge/commitizen-friendly-brightgreen.svg"></a>
 # Naas (Notebooks As Automated Services)
 
 Schedule notebooks, to automate all your tasks.
