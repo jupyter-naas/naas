@@ -10,7 +10,7 @@ from .runner import Runner
 from .api import Api
 import os
 
-__version__ = "0.8.6"
+__version__ = "0.9.0"
 __location__ = os.getcwd()
 scheduler = Scheduler()
 secret = Secret()

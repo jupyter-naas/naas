@@ -1,4 +1,10 @@
 
+## 0.9.0 (2020-10-16)
+
+### Feat
+
+- **scheduler**: :sparkles: allow chaining scheduler
+
 ## 0.8.6 (2020-10-16)
 
 ### Fix
