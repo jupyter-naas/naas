@@ -150,6 +150,7 @@ class Runner:
                     environment=escape_kubernet(self.__user),
                     integrations=[SanicIntegration()],
                 )
+                sentry_sdk.set_user({"email": self.__user})
                 with sentry_sdk.configure_scope() as scope:
                     scope.set_context("Naas", {"version": __version__})
             self.__main(debug)
