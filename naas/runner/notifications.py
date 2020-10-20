@@ -16,7 +16,7 @@ class Notifications:
     def __init__(self, logger=None):
         self.logger = logger
 
-    def send(self, email, subject, html, files=[]):
+    def send(self, email_to, subject, html, files=[], email_from=None):
         uid = str(uuid.uuid4())
         soup = BeautifulSoup(html, features="html5lib")
         content = soup.get_text()
@@ -30,7 +30,8 @@ class Notifications:
         try:
             data = {
                 "subject": subject,
-                "email": ",".join(email) if isinstance(email, list) else email,
+                "from": email_from,
+                "email": ",".join(email_to) if isinstance(email_to, list) else email_to,
                 "content": content,
                 "html": html,
             }
@@ -60,7 +61,15 @@ class Notifications:
                 print(err)
 
     def send_status(
-        self, uid, status, email, file_path, current_type, current_value, files=[]
+        self,
+        uid,
+        status,
+        email_to,
+        file_path,
+        current_type,
+        current_value,
+        files=[],
+        email_from=None,
     ):
         if self.base_notif_url is None:
             jsn = {"id": uid, "type": "notification error", "error": "not configured"}
@@ -88,7 +97,8 @@ class Notifications:
             data = {
                 "title": "Naas manager notification",
                 "subject": f"{current_type.capitalize()} {status}",
-                "email": ",".join(email) if isinstance(email, list) else email,
+                "from": email_from,
+                "email": ",".join(email_to) if isinstance(email_to, list) else email_to,
                 "content": content,
                 "custom_vars": {
                     "URL_HOME": encode_proxy_url(),
