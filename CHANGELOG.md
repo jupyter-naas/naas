@@ -1,4 +1,10 @@
 
+## 0.10.0 (2020-10-20)
+
+### Feat
+
+- allow select sender email
+
 ## 0.9.0 (2020-10-16)
 
 ### Feat
