@@ -17,10 +17,11 @@ class LogsController(HTTPMethodView):
             return await file(self.__logger.get_file_path(), filename="logs.csv")
         else:
             uid = str(uuid.uuid4())
-            limit = int(request.args.get("limit", 0))
-            skip = int(request.args.get("skip", 0))
-            search = str(request.args.get("search", ""))
-            filters = list(request.args.get("filters", []))
+            data = request.json if request.json else {}
+            limit = int(request.args.get("limit") or data.get("limit") or 0)
+            skip = int(request.args.get("skip") or data.get("skip") or 0)
+            search = str(request.args.get("search") or data.get("search") or "")
+            filters = list(request.args.get("filters") or data.get("filters") or [])
             logs = self.__logger.list(uid, skip, limit, search, filters)
             self.__logger.info(
                 {

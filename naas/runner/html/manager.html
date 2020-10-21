@@ -6,6 +6,7 @@
         integrity="sha256-xltCgYXRolPa/qWvt82I4qxUBcQ96d1boWhO6C6KChg=" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/1.4.6/tailwind.min.css"
         integrity="sha256-CAI/7ThhltsmP2L2zKBYa7FknB3ZwFbD0nqL8FCdxdc=" crossorigin="anonymous" />
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <link rel="icon" href="asset/naas_fav.svg" />
     <title>Naas | Automation Manager</title>
     <style>
@@ -57,22 +58,10 @@
     </style>
     <script type="module">
         import Vue from 'https://cdn.jsdelivr.net/npm/vue@2.6.11/dist/vue.esm.browser.js';
+        import axios from 'https://cdn.jsdelivr.net/npm/@bundled-es-modules/axios@0.18.1/axios.js';
         import VueGoodTablePlugin from 'https://cdn.jsdelivr.net/npm/vue-good-table@2.19.3/dist/vue-good-table.esm.js';
 
         Vue.use(VueGoodTablePlugin);
-        const load = (path) => {
-            return new Promise((resolve, reject) => {
-                const xobj = new XMLHttpRequest();
-                xobj.overrideMimeType("application/json");
-                xobj.open('GET', path, true);
-                xobj.onreadystatechange = function () {
-                    if (xobj.readyState == 4 && xobj.status == "200") {
-                        resolve(JSON.parse(xobj.responseText));
-                    }
-                };
-                xobj.send(null);
-            });
-        };
         const app = new Vue({
             el: '#app',
             data: {
@@ -141,11 +130,71 @@
                 ],
                 env: {},
                 logs: [],
-                totalRecords: 0,
+                totalLogRecords: 0,
+                serverLogParams: {
+                    columnFilters: {
+                    },
+                    sort: {
+                        field: '',
+                        type: '',
+                    },
+                    page: 1,
+                    perPage: 15
+                },
                 tasks: []
             },
             methods: {
-                getUrl: function (value, type) {
+                updateLogParams(newProps) {
+                    this.serverLogParams = Object.assign({}, this.serverLogParams, newProps);
+                },
+                onPageLogChange(params) {
+                    this.updateLogParams({ page: params.currentPage });
+                    this.loadLogItems();
+                },
+
+                onPerPageLogChange(params) {
+                    this.updateLogParams({ perPage: params.currentPerPage });
+                    this.loadLogItems();
+                },
+
+                onSortLogChange(params) {
+                    if (params && params.columnIndex) {
+                        this.updateLogParams({
+                            sort: [{
+                                type: params.sortType,
+                                field: this.columns_logs[params.columnIndex].field,
+                            }],
+                        });
+                        this.loadLogItems();
+                    }
+                },
+
+                onColumnLogFilter(params) {
+                    this.updateLogParams(params);
+                    this.loadLogItems();
+                },
+                convertApiArgs() { 
+                    console.log(this.serverLogParams.page, this.serverLogParams.perPage);
+                    return {
+                        limit: this.serverLogParams.perPage,
+                        skip: this.serverLogParams.perPage * (this.serverLogParams.page - 1),
+                    }
+                },
+                loadLogItems() {
+                    return axios.get('log', { params: this.convertApiArgs()}).then((response) => {
+                        if (response && !response.error) {
+                            try {
+                                this.logs = response.data.data;
+                                this.totalLogRecords = response.data.totalRecords;
+                            } catch (err) {
+                                console.error(err);
+                            }
+                        }
+                    }).catch((err) => {
+                        console.error(err);
+                    })
+                },
+                getUrl (value, type) {
                     let urlList = window.location.href.split('/');
                     urlList.pop()
                     let newUrl = `${urlList.join('/')}`
@@ -156,57 +205,47 @@
                     }
                     return newUrl
                 },
-                load_data: function () {
+                load_data () {
                     const all_loads = [];
 
-                    all_loads.push(load('env').then((response) => {
+                    all_loads.push(axios.get('env').then((response) => {
                         if (response && !response.error) {
                             try {
-                                this.env = response;
+                                this.env = response.data;
                             } catch (err) {
                                 console.error(err);
                             }
                         }
                     }));
-                    all_loads.push(load('job').then((response) => {
+                    all_loads.push(axios.get('job').then((response) => {
                         if (response && !response.error) {
                             try {
-                                this.tasks = response;
+                                this.tasks = response.data;
                             } catch (err) {
                                 console.error(err);
                             }
                         }
                     }));
-                    all_loads.push(load('log').then((response) => {
-                        if (response && !response.error) {
-                            try {
-                                console.log('response', response);
-                                this.logs = response.data;
-                                // this.totalRecords = res.totalRecords;
-                            } catch (err) {
-                                console.error(err);
-                            }
-                        }
-                    }));
+                    all_loads.push(this.loadLogItems());
                     return Promise.all(all_loads);
                 },
-                setFilter: function (filter) {
+                setFilter (filter) {
                     this.filter = filter;
                 },
-                reload_data: function () {
+                reload_data () {
                     this.loading = true;
                     this.load_data().then(() => {
                         this.loading = false;
                     });
                 },
-                linkTojup: function (link) {
+                linkTojup (link) {
                     const partial = link.replace('/home/brain', 'ftp');
                     return `${this.env.JUPYTERHUB_URL}/user/${this.env.JUPYTERHUB_USER}/lab/workspaces/auto-C/tree/${partial}`;
                 },
-                go_bob: function () {
+                go_bob () {
                     window.open(this.env.PUBLIC_BOB, '_blank');
                 },
-                go_jup: function () {
+                go_jup () {
                     window.open(this.env.JUPYTERHUB_URL, '_blank');
                 }
             },
@@ -218,7 +257,7 @@
                     let tmp = '';
                     vars.forEach(function (v) {
                         tmp = v.split('=');
-                        if (tmp.length == 2){
+                        if (tmp.length == 2) {
                             getVars[tmp[0]] = decodeURIComponent(tmp[1]);
                         }
                     });
@@ -239,7 +278,7 @@
     <div id="app" class="w-full">
         <div id="cs_loader_wrap" v-if="loading">
             <div id="cs_logo_wrap">
-                <img id="cs_logo_loading" alt="Naas logo" src="asset/naas_logo.svg"/>
+                <img id="cs_logo_loading" alt="Naas logo" src="asset/naas_logo.svg" />
                 <div id="cs_spinner_loading"></div>
             </div>
         </div>
@@ -249,7 +288,7 @@
                     <div class="mb-2 sm:mb-0 flex flex-row
                     ">
                         <div class="h-50 w-50 self-center mr-2">
-                            <img alt="Naas logo" src="asset/naas_logo.svg" width="50" height="50"/>
+                            <img alt="Naas logo" src="asset/naas_logo.svg" width="50" height="50" />
                         </div>
                         <div>
                             <a href="/home"
@@ -341,7 +380,13 @@
             </vue-good-table>
             <h2 class="text-3xl pt-4 font-semibold text-gray-800 md:text-4xl">Discover what <span
                     class="text-indigo-600">happened</span></h2>
-            <vue-good-table :columns="columns_logs" :rows="logs" theme="black-rhino" :search-options="{
+            <vue-good-table mode="remote" :columns="columns_logs" 
+            @on-page-change="onPageLogChange"
+            @on-sort-change="onSortLogChange" 
+            @on-column-filter="onColumnLogFilter" 
+            @on-per-page-change="onPerPageLogChange" 
+                :total-rows="totalLogRecords"
+                :rows="logs" theme="black-rhino" :search-options="{
                 enabled: true,
                 externalQuery: filter
             }" :sort-options="{
