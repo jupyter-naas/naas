@@ -1,4 +1,10 @@
 
+## 0.12.0 (2020-10-21)
+
+### Feat
+
+- add page system in manager
+
 ## 0.11.0 (2020-10-21)
 
 ### Feat

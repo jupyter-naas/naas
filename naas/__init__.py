@@ -11,7 +11,7 @@ from .api import Api
 import requests
 import os
 
-__version__ = "0.11.0"
+__version__ = "0.12.0"
 __github_repo = "jupyter-naas/naas"
 __location__ = os.getcwd()
 scheduler = Scheduler()
