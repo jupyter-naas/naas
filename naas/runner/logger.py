@@ -92,9 +92,11 @@ class Logger:
 
     def list(
         self,
+        uid: str,
         skip: int = 0,
         limit: int = 0,
         search: str = "",
+        filters: list = [],
         sort: list = [],
     ):
         df = None
@@ -107,6 +109,8 @@ class Logger:
                 index=df.index,
             )
             df = pd.concat([df1, df], axis=1, sort=False)
+            if len(filters) > 0:
+                df = df[df.type.isin(filters)]
             if len(sort) > 0:
                 for query in sort:
                     field = [query["field"]]
@@ -125,10 +129,11 @@ class Logger:
                 df = df[:limit]
             df = df.reset_index()
             return {
+                "uid": uid,
                 "data": json.loads(df.to_json(orient="records")),
                 "totalRecords": total_records,
             }
         except Exception as e:
             tb = traceback.format_exc()
             print("list logs", e, tb)
-            return {"data": [], "totalRecords": 0}
+            return {"uid": uid, "data": [], "totalRecords": 0}

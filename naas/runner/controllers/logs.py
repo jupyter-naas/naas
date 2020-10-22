@@ -24,7 +24,8 @@ class LogsController(HTTPMethodView):
             skip = int(request.args.get("skip", 0))
             search = str(request.args.get("search", ""))
             sort = list(json.loads(request.args.get("sort", "[]")))
-            logs = self.__logger.list(skip, limit, search, sort)
+            filters = list(json.loads(request.args.get("filters", "[]")))
+            logs = self.__logger.list(uid, skip, limit, search, filters, sort)
             self.__logger.info(
                 {
                     "id": uid,
@@ -34,6 +35,7 @@ class LogsController(HTTPMethodView):
                     "skip": skip,
                     "limit": limit,
                     "search": search,
+                    "filters": filters,
                     "sort": sort,
                 }
             )
