@@ -92,11 +92,10 @@ class Logger:
 
     def list(
         self,
-        uid: str,
         skip: int = 0,
         limit: int = 0,
         search: str = "",
-        filters: list = [],
+        sort: list = [],
     ):
         df = None
         try:
@@ -108,8 +107,11 @@ class Logger:
                 index=df.index,
             )
             df = pd.concat([df1, df], axis=1, sort=False)
-            if len(filters) > 0:
-                df = df[df.type.isin(filters)]
+            if len(sort) > 0:
+                for query in sort:
+                    field = [query["field"]]
+                    ascending = False if query["type"] == "desc" else True
+                    df = df.sort_values(by=field, ascending=ascending)
             total_records = len(df.index)
             if search and search != "":
                 idx = df.apply(

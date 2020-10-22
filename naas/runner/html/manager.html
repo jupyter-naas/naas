@@ -2,10 +2,8 @@
 <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vue-good-table@2.19.3/dist/vue-good-table.min.css"
-        integrity="sha256-xltCgYXRolPa/qWvt82I4qxUBcQ96d1boWhO6C6KChg=" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/1.4.6/tailwind.min.css"
-        integrity="sha256-CAI/7ThhltsmP2L2zKBYa7FknB3ZwFbD0nqL8FCdxdc=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vue-good-table@2.21.1/dist/vue-good-table.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@1.9.5/dist/tailwind.min.css">
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <link rel="icon" href="asset/naas_fav.svg" />
     <title>Naas | Automation Manager</title>
@@ -132,16 +130,17 @@
                 logs: [],
                 totalLogRecords: 0,
                 serverLogParams: {
-                    columnFilters: {
-                    },
-                    sort: {
-                        field: '',
-                        type: '',
-                    },
+                    columnFilters: "",
+                    sort: [{ field: 'asctime', type: 'desc' }],
                     page: 1,
                     perPage: 15
                 },
                 tasks: []
+            },
+            watch: {
+                filter(val) {
+                    this.onColumnLogFilter({ "columnFilters": val });
+                },
             },
             methods: {
                 updateLogParams(newProps) {
@@ -158,30 +157,30 @@
                 },
 
                 onSortLogChange(params) {
-                    if (params && params.columnIndex) {
-                        this.updateLogParams({
-                            sort: [{
-                                type: params.sortType,
-                                field: this.columns_logs[params.columnIndex].field,
-                            }],
-                        });
-                        this.loadLogItems();
-                    }
+                    this.updateLogParams({sort: params});
+                    this.loadLogItems();
                 },
 
                 onColumnLogFilter(params) {
                     this.updateLogParams(params);
                     this.loadLogItems();
                 },
-                convertApiArgs() { 
-                    console.log(this.serverLogParams.page, this.serverLogParams.perPage);
-                    return {
+                convertApiArgs() {
+                    const query = {
                         limit: this.serverLogParams.perPage,
                         skip: this.serverLogParams.perPage * (this.serverLogParams.page - 1),
                     }
+                    if (this.serverLogParams.columnFilters !== "") {
+                        query['search'] = this.serverLogParams.columnFilters;
+                    }
+                    if (this.serverLogParams.sort.length > 0) {
+                        query['sort'] = JSON.stringify(this.serverLogParams.sort);
+                    }
+                    console.log('query', query);
+                    return query
                 },
                 loadLogItems() {
-                    return axios.get('log', { params: this.convertApiArgs()}).then((response) => {
+                    return axios.get('log', { params: this.convertApiArgs() }).then((response) => {
                         if (response && !response.error) {
                             try {
                                 this.logs = response.data.data;
@@ -194,7 +193,7 @@
                         console.error(err);
                     })
                 },
-                getUrl (value, type) {
+                getUrl(value, type) {
                     let urlList = window.location.href.split('/');
                     urlList.pop()
                     let newUrl = `${urlList.join('/')}`
@@ -205,7 +204,7 @@
                     }
                     return newUrl
                 },
-                load_data () {
+                load_data() {
                     const all_loads = [];
 
                     all_loads.push(axios.get('env').then((response) => {
@@ -229,23 +228,23 @@
                     all_loads.push(this.loadLogItems());
                     return Promise.all(all_loads);
                 },
-                setFilter (filter) {
+                setFilter(filter) {
                     this.filter = filter;
                 },
-                reload_data () {
+                reload_data() {
                     this.loading = true;
                     this.load_data().then(() => {
                         this.loading = false;
                     });
                 },
-                linkTojup (link) {
+                linkTojup(link) {
                     const partial = link.replace('/home/brain', 'ftp');
                     return `${this.env.JUPYTERHUB_URL}/user/${this.env.JUPYTERHUB_USER}/lab/workspaces/auto-C/tree/${partial}`;
                 },
-                go_bob () {
+                go_bob() {
                     window.open(this.env.PUBLIC_BOB, '_blank');
                 },
-                go_jup () {
+                go_jup() {
                     window.open(this.env.JUPYTERHUB_URL, '_blank');
                 }
             },
@@ -380,18 +379,14 @@
             </vue-good-table>
             <h2 class="text-3xl pt-4 font-semibold text-gray-800 md:text-4xl">Discover what <span
                     class="text-indigo-600">happened</span></h2>
-            <vue-good-table mode="remote" :columns="columns_logs" 
-            @on-page-change="onPageLogChange"
-            @on-sort-change="onSortLogChange" 
-            @on-column-filter="onColumnLogFilter" 
-            @on-per-page-change="onPerPageLogChange" 
-                :total-rows="totalLogRecords"
-                :rows="logs" theme="black-rhino" :search-options="{
+            <vue-good-table mode="remote" :columns="columns_logs" @on-page-change="onPageLogChange"
+                @on-sort-change="onSortLogChange" @on-column-filter="onColumnLogFilter"
+                @on-per-page-change="onPerPageLogChange" :total-rows="totalLogRecords" :rows="logs" theme="black-rhino"
+                :search-options="{
                 enabled: true,
                 externalQuery: filter
             }" :sort-options="{
                 enabled: true,
-                initialSortBy: {field: 'asctime', type: 'desc'}
             }" :pagination-options="{
                 enabled: true,
                 mode: 'records',

@@ -1,7 +1,8 @@
 from sanic.views import HTTPMethodView
-from sanic.response import json, file
+from sanic import response
 from naas.types import t_asset
 import uuid
+import json
 
 
 class LogsController(HTTPMethodView):
@@ -14,15 +15,16 @@ class LogsController(HTTPMethodView):
     async def get(self, request):
         as_file = request.args.get("as_file", False)
         if as_file:
-            return await file(self.__logger.get_file_path(), filename="logs.csv")
+            return await response.file(
+                self.__logger.get_file_path(), filename="logs.csv"
+            )
         else:
             uid = str(uuid.uuid4())
-            data = request.json if request.json else {}
-            limit = int(request.args.get("limit") or data.get("limit") or 0)
-            skip = int(request.args.get("skip") or data.get("skip") or 0)
-            search = str(request.args.get("search") or data.get("search") or "")
-            filters = list(request.args.get("filters") or data.get("filters") or [])
-            logs = self.__logger.list(uid, skip, limit, search, filters)
+            limit = int(request.args.get("limit", 0))
+            skip = int(request.args.get("skip", 0))
+            search = str(request.args.get("search", ""))
+            sort = list(json.loads(request.args.get("sort", "[]")))
+            logs = self.__logger.list(skip, limit, search, sort)
             self.__logger.info(
                 {
                     "id": uid,
@@ -32,7 +34,7 @@ class LogsController(HTTPMethodView):
                     "skip": skip,
                     "limit": limit,
                     "search": search,
-                    "filters": filters,
+                    "sort": sort,
                 }
             )
-            return json(logs)
+            return response.json(logs)
