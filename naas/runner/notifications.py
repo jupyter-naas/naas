@@ -51,6 +51,7 @@ class Notifications:
                 req = requests.post(url=f"{self.base_notif_url}/send", json=data)
             req.raise_for_status()
             jsn = req.json()
+            print("👌 💌 Email has been sent successfully !")
             return jsn
         except Exception as err:
             if self.logger is not None:
