@@ -12,7 +12,7 @@ from .api import Api
 import requests
 import os
 
-__version__ = "0.12.6"
+__version__ = "0.13.0"
 __github_repo = "jupyter-naas/naas"
 __doc_url = "https://naas.gitbook.io/naas/"
 __location__ = os.getcwd()
