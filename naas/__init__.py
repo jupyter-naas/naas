@@ -1,9 +1,10 @@
 # Copyright (c) Naas Team.
 # Distributed under the terms of the GNU AGPL License.
-
+from IPython.core.display import display, Javascript
 from .runner.notifications import Notifications
 from .dependency import Dependency
 from .scheduler import Scheduler
+import ipywidgets as widgets
 from .assets import Assets
 from .secret import Secret
 from .runner import Runner
@@ -13,6 +14,7 @@ import os
 
 __version__ = "0.12.6"
 __github_repo = "jupyter-naas/naas"
+__doc_url = "https://naas.gitbook.io/naas/"
 __location__ = os.getcwd()
 scheduler = Scheduler()
 secret = Secret()
@@ -31,6 +33,18 @@ def get_last_version():
     url = f"https://api.github.com/repos/{__github_repo}/tags"
     response = requests.get(url, headers={"Accept": "application/vnd.github.v3+json"})
     return response.json()[0]["name"]
+
+
+def doc():
+    button = widgets.Button(description="Open Doc")
+    output = widgets.Output()
+
+    def on_button_clicked(b):
+        with output:
+            display(Javascript('window.open("{url}");'.format(url=__doc_url)))
+
+    button.on_click(on_button_clicked)
+    display(button, output)
 
 
 def up_to_date():
