@@ -39,11 +39,5 @@ jobs:
         with:
           push: true
           tags: ${{ steps.prepare.outputs.tag }}
-      - name: Update repo description
-        uses: peter-evans/dockerhub-description@v2
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-          repository: jupyternaas/naas
       - name: Image digest
         run: echo ${{ steps.prepare.outputs.tag }}
