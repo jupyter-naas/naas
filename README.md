@@ -51,6 +51,10 @@ open manager :
 
 `localhost:5000/`
 
+## Publish
+
+this auto publish by github action on main branch
+
 ## Check lint
 
 `python3 -m black naas` format better
