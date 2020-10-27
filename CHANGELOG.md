@@ -1,4 +1,10 @@
 
+## 0.12.5 (2020-10-27)
+
+### Fix
+
+- remove update description
+
 ## 0.12.4 (2020-10-27)
 
 ### Fix
