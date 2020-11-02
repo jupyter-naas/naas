@@ -13,13 +13,13 @@ class NbController(HTTPMethodView):
         self.__jobs = jobs
         self.__nb = nb
 
-    async def get(self, request, token):
+    async def _get(self, data, token):
         uid = str(uuid.uuid4())
         task = await self.__jobs.find_by_value(uid, token, t_notebook)
         if task:
             value = task.get("value", None)
             file_filepath = task.get("path")
-            task["params"] = {**(task.get("params", dict())), **(request.args)}
+            task["params"] = {**(task.get("params", dict())), **(data)}
             self.__logger.info(
                 {
                     "id": uid,
@@ -91,3 +91,11 @@ class NbController(HTTPMethodView):
         raise ServerError(
             {"id": uid, "error": "Cannot find your token"}, status_code=404
         )
+
+    async def get(self, request, token):
+        data = {**(request.args)}
+        return await self._get(data, token)
+
+    async def post(self, request, token):
+        data = {**(request.args), **(request.json)}
+        return await self._get(data, token)

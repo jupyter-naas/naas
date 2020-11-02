@@ -114,6 +114,9 @@ async def test_notebooks(test_cli, tmp_path):
     assert res_job.get("value") == token
     assert res_job.get("status") == t_health
     assert res_job.get("nbRun") == 1
+    response = await test_cli.post(f"/{t_notebook}/{token}", json={"foo": "bar"})
+    assert response.status == 200
+    resp_json = await response.json()
 
 
 async def test_logs(test_cli):
