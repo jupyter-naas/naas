@@ -97,5 +97,5 @@ class NbController(HTTPMethodView):
         return await self._get(data, token)
 
     async def post(self, request, token):
-        data = {**(request.args), **(request.json)}
+        data = {**(request.args), **(request.json), **(request.form)}
         return await self._get(data, token)
