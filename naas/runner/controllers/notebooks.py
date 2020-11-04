@@ -93,9 +93,19 @@ class NbController(HTTPMethodView):
         )
 
     async def get(self, request, token):
-        data = {**(request.args)}
+        req_data = {}
+        if request.headers["content-type"] == "application/x-www-form-urlencoded":
+            req_data = request.form
+        if request.headers["content-type"] == "application/json":
+            req_data = request.json
+        data = {**(request.args), **(req_data)}
         return await self._get(data, token)
 
     async def post(self, request, token):
-        data = {**(request.args), **(request.json), **(request.form)}
+        req_data = {}
+        if request.headers["content-type"] == "application/x-www-form-urlencoded":
+            req_data = request.form
+        if request.headers["content-type"] == "application/json":
+            req_data = request.json
+        data = {**(request.args), **(req_data)}
         return await self._get(data, token)
