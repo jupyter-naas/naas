@@ -12,8 +12,12 @@ import os
 class Notifications:
     logger = None
     base_notif_url = os.environ.get("NOTIFICATIONS_API", None)
+    headers = None
 
-    def __init__(self, logger=None):
+    def __init__(self, logger):
+        self.headers = {
+            "Authorization": f'token {os.environ.get("JUPYTERHUB_API_TOKEN", None)}'
+        }
         self.logger = logger
 
     def send(self, email_to, subject, html, files=[], email_from=None):
@@ -45,10 +49,15 @@ class Notifications:
                     except Exception as err:
                         print(err)
                 req = requests.post(
-                    url=f"{self.base_notif_url}/send", files=files_list, data=data
+                    url=f"{self.base_notif_url}/send",
+                    files=files_list,
+                    headers=self.headers,
+                    data=data,
                 )
             else:
-                req = requests.post(url=f"{self.base_notif_url}/send", json=data)
+                req = requests.post(
+                    url=f"{self.base_notif_url}/send", headers=self.headers, json=data
+                )
             req.raise_for_status()
             jsn = req.json()
             print("👌 💌 Email has been sent successfully !")
@@ -120,10 +129,17 @@ class Notifications:
                     except Exception as err:
                         print(err)
                 req = requests.post(
-                    url=f"{self.base_notif_url}/send_status", files=files, json=data
+                    url=f"{self.base_notif_url}/send_status",
+                    headers=self.headers,
+                    files=files,
+                    json=data,
                 )
             else:
-                req = requests.post(url=f"{self.base_notif_url}/send_status", json=data)
+                req = requests.post(
+                    url=f"{self.base_notif_url}/send_status",
+                    headers=self.headers,
+                    json=data,
+                )
             req.raise_for_status()
             jsn = req.json()
             return jsn
@@ -137,7 +153,7 @@ class Notifications:
             else:
                 print(err)
 
-    def get_status_server(self):
+    def status(self):
         req = requests.get(url=f"{self.base_notif_url}/")
         req.raise_for_status()
         jsn = req.json()
