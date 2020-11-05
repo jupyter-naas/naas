@@ -2,6 +2,7 @@
 # Distributed under the terms of the GNU AGPL License.
 from IPython.core.display import display, Javascript
 from .runner.notifications import Notifications
+from .runner.proxy import Domain
 from .dependency import Dependency
 from .scheduler import Scheduler
 import ipywidgets as widgets
@@ -23,6 +24,7 @@ api = Api()
 assets = Assets()
 dependency = Dependency()
 notifications = Notifications()
+Domain = Domain()
 
 
 def version():
