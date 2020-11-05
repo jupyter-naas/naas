@@ -14,7 +14,7 @@ class Notifications:
     base_notif_url = os.environ.get("NOTIFICATIONS_API", None)
     headers = None
 
-    def __init__(self, logger):
+    def __init__(self, logger=None):
         self.headers = {
             "Authorization": f'token {os.environ.get("JUPYTERHUB_API_TOKEN", None)}'
         }
