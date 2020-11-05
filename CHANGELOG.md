@@ -1,4 +1,11 @@
 
+## 0.16.0 (2020-11-05)
+
+### Feat
+
+- **notifications**: add auth in notif
+- **domain**: add domain config proxy system
+
 ## 0.15.1 (2020-11-04)
 
 ### Fix
