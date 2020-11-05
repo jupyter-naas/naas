@@ -53,14 +53,26 @@ class Domain:
         jsn = req.json()
         return jsn
 
-    def add(self, domain, endpoint=None, token=None):
-        data = {"domain": domain, "endpoint": endpoint, "token": token}
+    def add(self, domain, url=None):
+        token = None
+        endpoint = None
+        if url:
+            list_url = url.split("/")
+            token = list_url.pop()
+            endpoint = list_url.pop()
+        if "://" in domain:
+            clean_domain = domain.split("://")[1]
+        else:
+            clean_domain = domain
+        data = {"domain": clean_domain, "endpoint": endpoint, "token": token}
         req = requests.post(
             url=f"{self.base_notif_url}/proxy", headers=self.headers, json=data
         )
         req.raise_for_status()
-        jsn = req.json()
-        return jsn
+        new_url = f"https://{clean_domain}"
+        if token:
+            new_url = f"{new_url}/{endpoint}/{token}"
+        return new_url
 
     def get(self, domain):
         req = requests.get(
