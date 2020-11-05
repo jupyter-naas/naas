@@ -1,0 +1,5 @@
+#!/bin/bash
+
+nohup python -m naas.runner &
+
+exec "$@"
