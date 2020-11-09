@@ -1,4 +1,10 @@
 
+## 0.17.0 (2020-11-09)
+
+### Feat
+
+- build without naas_driver image but package
+
 ## 0.16.2 (2020-11-05)
 
 ### Fix
