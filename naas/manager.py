@@ -135,7 +135,7 @@ class Manager:
         display(HTML(js2))
 
     def copy_url(self, text):
-        button = widgets.Button(description="Copy URL")
+        button = widgets.Button(description="Copy URL", button_style="primary")
         output = widgets.Output()
 
         def on_button_clicked(b):
