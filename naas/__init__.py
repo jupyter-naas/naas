@@ -97,13 +97,15 @@ def up_to_date():
     return get_last_version() == version()
 
 
+def update():
+    naas_drivers.jupyter.restart_me()
+
+
 def auto_update():
     if not up_to_date():
         update()
-
-
-def update():
-    naas_drivers.jupyter.restart_me()
+    else:
+        print("You are aready up to date")
 
 
 def is_production():
