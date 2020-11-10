@@ -10,6 +10,8 @@
   <img alt="semantic-release" src="https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg">
 </a>
 <a href="http://commitizen.github.io/cz-cli/"><img alt="Commitizen friendly" src="https://img.shields.io/badge/commitizen-friendly-brightgreen.svg"></a>
+![PyPI](https://img.shields.io/pypi/v/naas)
+
 # Naas (Notebooks As Automated Services)
 
 Schedule notebooks, to automate all your tasks.
