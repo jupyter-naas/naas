@@ -68,6 +68,9 @@ this auto publish by github action on main branch
   <a href="https://gitbook.com" title="Redirect to Gitbook">
     <img width="200px" src="https://raw.githubusercontent.com/jupyter-naas/naas/main/images/gitbook.svg" alt="Gitbooks" />
   </a>
+  <a href="https://canny.io" title="Redirect to Canny">
+    <img width="200px" src="https://raw.githubusercontent.com/jupyter-naas/naas/main/images/canny.svg" alt="Canny" />
+  </a>
 </p>
 
 ### Authors:
