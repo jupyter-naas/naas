@@ -1,5 +1,3 @@
-<img width="25%" alt="Naas" src="https://raw.githubusercontent.com/jupyter-naas/naas/main/images/naas_logo.svg"/>
-
 ![GitHub license](https://img.shields.io/github/license/jupyter-naas/drivers)
 ![Bump version](https://github.com/jupyter-naas/naas/workflows/Bump%20version/badge.svg)
 ![Upload Python Package](https://github.com/jupyter-naas/naas/workflows/Upload%20Python%20Package/badge.svg)
