@@ -219,6 +219,9 @@ class Manager:
         return out_path
 
     def get_output(self, path=None):
+        if self.is_production():
+            print("No get_output done you are in production\n")
+            return
         out_path = self.get_out_path(path)
         self.__copy_file_in_dev(out_path)
         print(
@@ -226,6 +229,9 @@ class Manager:
         )
 
     def clear_output(self, path=None):
+        if self.is_production():
+            print("No clear_output done you are in production\n")
+            return
         out_path = self.get_out_path(path)
         if os.path.exists(out_path):
             os.remove(out_path)
@@ -234,6 +240,9 @@ class Manager:
             raise FileNotFoundError(f"File {out_path} not Found")
 
     def get_prod(self, path=None, histo=None):
+        if self.is_production():
+            print("No get_prod done you are in production\n")
+            return
         current_file = self.get_path(path)
         if histo:
             filename = os.path.basename(current_file)
@@ -245,6 +254,9 @@ class Manager:
         print("🕣 Your Notebook from production has been copied into your dev folder.\n")
 
     def list_prod(self, path=None):
+        if self.is_production():
+            print("No list_prod done you are in production\n")
+            return
         current_file = self.get_path(path)
         prod_path = self.get_prod_path(current_file)
         filename = os.path.basename(current_file)
@@ -261,6 +273,9 @@ class Manager:
                 print(histo + "\n")
 
     def clear_prod(self, path=None, histo=None):
+        if self.is_production():
+            print("No clear_prod done you are in production\n")
+            return
         current_file = self.get_path(path)
         prod_path = self.get_prod_path(current_file)
         filename = (

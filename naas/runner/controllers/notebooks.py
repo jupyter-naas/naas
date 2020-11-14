@@ -55,7 +55,14 @@ class NbController(HTTPMethodView):
                     res.get("duration"),
                 )
                 raise ServerError(
-                    {"id": uid, "error": res.get("error")}, status_code=500
+                    {
+                        "id": uid,
+                        "error": res.get("error"),
+                        "data": data,
+                        "token": token,
+                        "traceback": res.get("traceback"),
+                    },
+                    status_code=500,
                 )
             self.__logger.info(
                 {
@@ -89,7 +96,13 @@ class NbController(HTTPMethodView):
             }
         )
         raise ServerError(
-            {"id": uid, "error": "Cannot find your token"}, status_code=404
+            {
+                "id": uid,
+                "error": "Cannot find your token",
+                "data": data,
+                "token": token,
+            },
+            status_code=404,
         )
 
     async def get(self, request, token):
