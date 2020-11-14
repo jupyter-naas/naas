@@ -1,6 +1,7 @@
 from naas.types import t_notebook, t_health, t_error, t_start
 from sanic.views import HTTPMethodView
 from sanic.exceptions import ServerError
+import urllib
 import uuid
 
 
@@ -11,6 +12,19 @@ def rename_keys(old_dict):
         new_key = new_key.replace("-", "_")
         new_dict[new_key] = old_dict[key]
     return new_dict
+
+
+def parse_data(request):
+    req_data = {}
+    if request.headers.get("content-type") == "multipart/form-data":
+        req_data = request.files
+    elif request.headers.get("content-type") == "application/json":
+        req_data = request.json
+    elif request.headers.get("content-type") == "application/x-www-form-urlencoded":
+        req_data = dict(urllib.parse.parse_qsl(request.body.decode("utf-8")))
+    req_data = rename_keys(req_data)
+    data = {**(request.args), **(req_data)}
+    return data
 
 
 class NbController(HTTPMethodView):
@@ -115,21 +129,7 @@ class NbController(HTTPMethodView):
         )
 
     async def get(self, request, token):
-        req_data = {}
-        if request.headers.get("content-type") == "application/x-www-form-urlencoded":
-            req_data = request.form
-        if request.headers.get("content-type") == "application/json":
-            req_data = request.json
-        req_data = rename_keys(req_data)
-        data = {**(request.args), **(req_data)}
-        return await self._get(data, token)
+        return await self._get(parse_data(request), token)
 
     async def post(self, request, token):
-        req_data = {}
-        if request.headers.get("content-type") == "application/x-www-form-urlencoded":
-            req_data = request.form
-        if request.headers.get("content-type") == "application/json":
-            req_data = request.json
-        req_data = rename_keys(req_data)
-        data = {**(request.args), **(req_data)}
-        return await self._get(data, token)
+        return await self._get(parse_data(request), token)
