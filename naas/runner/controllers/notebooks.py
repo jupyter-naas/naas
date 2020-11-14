@@ -4,6 +4,15 @@ from sanic.exceptions import ServerError
 import uuid
 
 
+def rename_keys(old_dict):
+    new_dict = {}
+    for key in old_dict.keys():
+        new_key = key.replace(" ", "_")
+        new_key = new_key.replace("-", "_")
+        new_dict[new_key] = old_dict[key]
+    return new_dict
+
+
 class NbController(HTTPMethodView):
     __logger = None
 
@@ -111,6 +120,7 @@ class NbController(HTTPMethodView):
             req_data = request.form
         if request.headers.get("content-type") == "application/json":
             req_data = request.json
+        req_data = rename_keys(req_data)
         data = {**(request.args), **(req_data)}
         return await self._get(data, token)
 
@@ -120,5 +130,6 @@ class NbController(HTTPMethodView):
             req_data = request.form
         if request.headers.get("content-type") == "application/json":
             req_data = request.json
+        req_data = rename_keys(req_data)
         data = {**(request.args), **(req_data)}
         return await self._get(data, token)
