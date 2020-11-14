@@ -73,7 +73,7 @@ class Manager:
             r = requests.get(f"{self.naas_api}/{t_job}")
             r.raise_for_status()
             naas_data = r.json()
-        except ConnectionError:
+        except requests.exceptions.ConnectionError:
             print(self.__error_manager_busy)
         except requests.HTTPError as e:
             print(self.__error_manager_reject, e)
@@ -310,7 +310,7 @@ class Manager:
                 res = r.json()
                 if debug:
                     print(f'{res["status"]} ==> {res}')
-            except ConnectionError as err:
+            except requests.exceptions.ConnectionError as err:
                 print(self.__error_manager_busy, err)
                 raise
             except requests.HTTPError as err:
@@ -338,7 +338,7 @@ class Manager:
                 res = r.json()
                 if debug:
                     print(f'{res["status"]} ==> {res}')
-            except ConnectionError as err:
+            except requests.exceptions.ConnectionError as err:
                 print(self.__error_manager_busy, err)
                 raise
             except requests.HTTPError as err:
