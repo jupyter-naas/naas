@@ -1,4 +1,10 @@
 
+## 0.17.6 (2020-11-14)
+
+### Fix
+
+- **manager**: error except reqeust wrong name
+
 ## 0.17.5 (2020-11-14)
 
 ### Fix
