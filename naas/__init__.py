@@ -10,7 +10,6 @@ from .assets import Assets
 from .secret import Secret
 from .runner import Runner
 from .api import Api
-import naas_drivers
 import requests
 import os
 
@@ -98,7 +97,17 @@ def up_to_date():
 
 
 def update():
-    naas_drivers.jupyter.restart_me()
+    token = os.environ.get("JUPYTERHUB_API_TOKEN")
+    username = os.environ.get("JUPYTERHUB_USER")
+    api_url = f'{os.environ.get("JUPYTERHUB_URL", "https://app.naas.ai")}/hub/api'
+    r = requests.delete(
+        f"{api_url}/users/{username}/server",
+        headers={
+            "Authorization": f"token {token}",
+        },
+    )
+    r.raise_for_status()
+    return r
 
 
 def auto_update():

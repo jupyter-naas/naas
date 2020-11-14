@@ -220,7 +220,7 @@ class Manager:
         return out_path
 
     def get_output(self, path=None):
-        if self.is_production():
+        if not path and self.is_production():
             print("No get_output done you are in production\n")
             return
         out_path = self.get_out_path(path)
@@ -230,7 +230,7 @@ class Manager:
         )
 
     def clear_output(self, path=None):
-        if self.is_production():
+        if not path and self.is_production():
             print("No clear_output done you are in production\n")
             return
         out_path = self.get_out_path(path)
@@ -242,7 +242,7 @@ class Manager:
             raise FileNotFoundError(f"File {out_path} not Found")
 
     def get_prod(self, path=None, histo=None):
-        if self.is_production():
+        if not path and self.is_production():
             print("No get_prod done you are in production\n")
             return
         current_file = self.get_path(path)

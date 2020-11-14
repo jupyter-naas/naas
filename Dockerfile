@@ -17,4 +17,4 @@ LABEL org.label-schema.build-date=$BUILD_DATE \
 
 
 RUN python3 -m pip install --upgrade pip
-RUN python3 -m pip install --use-feature=2020-resolver --no-cache naas==$VERSION
+RUN python3 -m pip install --use-feature=2020-resolver --no-cache naas_drivers naas==$VERSION
