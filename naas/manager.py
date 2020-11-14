@@ -71,6 +71,7 @@ class Manager:
         naas_data = []
         try:
             r = requests.get(f"{self.naas_api}/{t_job}")
+            r.raise_for_status()
             naas_data = r.json()
         except ConnectionError:
             print(self.__error_manager_busy)
