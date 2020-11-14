@@ -233,7 +233,8 @@ class Manager:
             print("No clear_output done you are in production\n")
             return
         out_path = self.get_out_path(path)
-        if os.path.exists(out_path):
+        prod_path = self.get_prod_path(out_path)
+        if os.path.exists(prod_path):
             os.remove(out_path)
             print("🕣 Your Notebook output has been remove from production.\n")
         else:
