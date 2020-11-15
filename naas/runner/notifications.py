@@ -101,7 +101,9 @@ class Notifications:
         message_bytes = file_path.encode("ascii")
         base64_bytes = base64.b64encode(message_bytes)
         file_path_base64 = base64_bytes.decode("ascii")
-        link_url = f"{encode_proxy_url()}/?filter={file_path_base64}"
+        base_url = os.environ.get("JUPYTERHUB_URL", None)
+        base_user = os.environ.get("JUPYTERHUB_USER", None)
+        link_url = f"{base_url}/user/{base_user}/naas/?filter={file_path_base64}"
         logo_url = f"{encode_proxy_url(t_asset)}/naas_logo.png"
         try:
             data = {
