@@ -1,4 +1,10 @@
 
+## 0.17.9 (2020-11-15)
+
+### Fix
+
+- **notification**: email status path
+
 ## 0.17.8 (2020-11-14)
 
 ### Fix
