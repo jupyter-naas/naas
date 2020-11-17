@@ -206,22 +206,23 @@ class Notebooks:
     def __send_notification(self, uid, res, file_filepath, current_type, value, params):
         notif_down = params.get("notif_down", None)
         notif_up = params.get("notif_up", None)
+        small_path = file_filepath.replace(os.environ.get("JUPYTER_SERVER_ROOT"), "")
         if res.get("error"):
             email_admin = os.environ.get("JUPYTERHUB_USER", None)
             if email_admin is not None:
                 self.__notif.send_status(
-                    uid, "down", email_admin, file_filepath, current_type, value
+                    uid, "down", email_admin, small_path, current_type, value
                 )
             if notif_down and self.__notif:
                 self.__notif.send_status(
-                    uid, "down", notif_down, file_filepath, current_type, value
+                    uid, "down", notif_down, small_path, current_type, value
                 )
         elif notif_up and current_type == t_scheduler and self.__notif:
             self.__notif.send_status(
-                uid, "up", notif_down, file_filepath, current_type, value
+                uid, "up", notif_down, small_path, current_type, value
             )
         elif notif_up and self.__notif:
-            self.__notif.send_status(uid, "up", notif_up, file_filepath, current_type)
+            self.__notif.send_status(uid, "up", notif_up, small_path, current_type)
 
     def __get_output_path(self, file_filepath):
         file_dirpath = os.path.dirname(file_filepath)
@@ -297,5 +298,7 @@ class Notebooks:
                 }
             )
         res["duration"] = time.time() - start_time
-        self.__send_notification(uid, res, file_filepath, current_type, value, params)
+        self.__send_notification(
+            uid, res, file_filepath_out, current_type, value, params
+        )
         return res

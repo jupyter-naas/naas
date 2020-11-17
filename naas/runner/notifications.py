@@ -88,21 +88,23 @@ class Notifications:
             else:
                 print(jsn)
             return jsn
+        base_url = os.environ.get("JUPYTERHUB_URL", None)
+        base_user = os.environ.get("JUPYTERHUB_USER", None)
         content = ""
+        file_link = f"{base_url}/user/{base_user}/tree/{file_path}"
         if current_type == t_asset or current_type == t_notebook:
-            content = f"The file {file_path} accesible at this url:<br/> {encode_proxy_url(current_type)}/{current_value}<br/>"
-            content = content + f"is {status}.<br/><br/>"
-            content = content + "Check the Logs on your manager below :<br/>"
+            content = f'The file <a href="{file_link}">{file_path}</a> <br/>'
+            content += f"Accesible at this url:<br/> {encode_proxy_url(current_type)}/{current_value}<br/>"
         elif current_type == t_scheduler:
             cron_string = pretty_cron.prettify_cron(current_value)
-            content = f"Your {file_path} who run {cron_string} is {status}, check the Logs on your manager below :"
-
+            content = f'The file <a href="{file_link}">{file_path}</a><br/>'
+            content += f"who run {cron_string}<br/>"
+        content += f"Is {status}.<br/><br/>"
+        content += "Check the Logs on your manager below :<br/>"
         status_url = f"{encode_proxy_url(t_asset)}/naas_{status}.png"
         message_bytes = file_path.encode("ascii")
         base64_bytes = base64.b64encode(message_bytes)
         file_path_base64 = base64_bytes.decode("ascii")
-        base_url = os.environ.get("JUPYTERHUB_URL", None)
-        base_user = os.environ.get("JUPYTERHUB_USER", None)
         link_url = f"{base_url}/user/{base_user}/naas/?filter={file_path_base64}"
         logo_url = f"{encode_proxy_url(t_asset)}/naas_logo.png"
         try:
