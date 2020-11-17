@@ -66,6 +66,7 @@ class Jobs:
                     {
                         "id": uid,
                         "type": "init_job_storage",
+                        "filepath": self.__json_secrets_path,
                         "status": "error",
                         "error": str(e),
                     }
@@ -201,7 +202,7 @@ class Jobs:
                 "type": target_type,
                 "value": value,
                 "status": t_delete,
-                "path": path,
+                "filepath": path,
                 "params": params,
             }
         )
@@ -216,7 +217,7 @@ class Jobs:
                 "type": target_type,
                 "value": value,
                 "status": t_update,
-                "path": path,
+                "filepath": path,
                 "params": params,
             }
         )
@@ -249,7 +250,7 @@ class Jobs:
                 "type": target_type,
                 "value": value,
                 "status": t_update,
-                "path": path,
+                "filepath": path,
                 "params": params,
             }
         )
@@ -291,7 +292,7 @@ class Jobs:
                             "type": target_type,
                             "value": value,
                             "status": t_error,
-                            "path": path,
+                            "filepath": path,
                             "params": params,
                             "error": "Already exist",
                         }
@@ -328,7 +329,7 @@ class Jobs:
                         "type": target_type,
                         "value": value,
                         "status": t_error,
-                        "path": path,
+                        "filepath": path,
                         "params": params,
                         "error": str(e),
                     }

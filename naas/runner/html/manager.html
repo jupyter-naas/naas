@@ -237,9 +237,12 @@
                         this.loading = false;
                     });
                 },
+                linkToHome(path) {
+                    return `${this.env.JUPYTERHUB_URL}/user/${this.env.JUPYTERHUB_USER}/lab`
+                },
                 linkTojup(link) {
-                    const partial = link.replace('/home/brain', 'ftp');
-                    return `${this.env.JUPYTERHUB_URL}/user/${this.env.JUPYTERHUB_USER}/lab/workspaces/auto-C/tree/${partial}`;
+                    const partial = link.replace(this.env.JUPYTER_SERVER_ROOT, '');
+                    return `${this.env.JUPYTERHUB_URL}/user/${this.env.JUPYTERHUB_USER}/tree/${partial}`;
                 },
                 go_bob() {
                     window.open(this.env.PUBLIC_BOB, '_blank');
@@ -290,7 +293,7 @@
                             <img alt="Naas logo" src="asset/naas_logo.svg" width="50" height="50" />
                         </div>
                         <div>
-                            <a href="/home"
+                            <a :href="linkToHome()"
                                 class="text-2xl no-underline text-grey-darkest hover:text-blue-dark font-sans font-bold">Naas</a><br>
                             <span class="text-xs text-grey-dark">Automation manager</span>
                         </div>
@@ -371,6 +374,10 @@
                     <span v-else-if="props.column.field == 'id'">
                         <a href="#" style="font-weight: bold; color: blue;"
                             v-on:click="setFilter(props.formattedRow[props.column.field])">{{props.formattedRow[props.column.field]}}</a>
+                    </span>
+                    <span v-else-if="props.column.field == 'path'">
+                        <a :href="linkTojup(props.formattedRow[props.column.field])" style="font-weight: bold; color: green;"
+                            >{{props.formattedRow[props.column.field]}}</a>
                     </span>
                     <span v-else>
                         {{props.formattedRow[props.column.field]}}

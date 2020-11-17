@@ -48,16 +48,21 @@ class Scheduler:
                 self.__scheduler.start()
                 uid = str(uuid.uuid4())
                 self.__logger.info(
-                    {"id": uid, "type": t_main, "status": "start SCHEDULER"}
+                    {
+                        "id": uid,
+                        "type": t_main,
+                        "filepath": "sheduler",
+                        "status": "start SCHEDULER",
+                    }
                 )
 
     async def __scheduler_greenlet(self, main_uid, current_time, task):
+        value = task.get("value", None)
+        current_type = task.get("type", None)
+        file_filepath = task.get("path", None)
+        params = task.get("params", dict())
+        uid = str(uuid.uuid4())
         try:
-            value = task.get("value", None)
-            current_type = task.get("type", None)
-            file_filepath = task.get("path")
-            params = task.get("params", dict())
-            uid = str(uuid.uuid4())
             running = await self.__jobs.is_running(uid, file_filepath, current_type)
             if (
                 current_type == t_scheduler
@@ -118,6 +123,7 @@ class Scheduler:
                         {
                             "id": uid,
                             "type": t_scheduler,
+                            "filepath": file_filepath,
                             "status": "next_url",
                             "url": next_url,
                         }
@@ -131,6 +137,7 @@ class Scheduler:
                                 "id": main_uid,
                                 "type": t_scheduler,
                                 "status": t_error,
+                                "filepath": file_filepath,
                                 "error": "Error in next_url",
                                 "trace": str(e),
                             }
@@ -151,6 +158,7 @@ class Scheduler:
                     "id": main_uid,
                     "type": t_scheduler,
                     "status": t_error,
+                    "filepath": file_filepath,
                     "error": "Unknow error",
                     "trace": str(tb),
                 }
@@ -163,7 +171,14 @@ class Scheduler:
         try:
             current_time = datetime.datetime.now()
             # Write self.__scheduler init info in self.__logger.write
-            self.__logger.info({"id": main_uid, "type": t_scheduler, "status": t_start})
+            self.__logger.info(
+                {
+                    "id": main_uid,
+                    "type": t_scheduler,
+                    "filepath": "scheduler",
+                    "status": t_start,
+                }
+            )
             jobs = await self.__jobs.list(main_uid)
             await asyncio.gather(
                 *[
@@ -176,6 +191,7 @@ class Scheduler:
                 {
                     "id": main_uid,
                     "type": t_scheduler,
+                    "filepath": "scheduler",
                     "status": t_health,
                     "duration": duration_total,
                 }
@@ -188,6 +204,7 @@ class Scheduler:
                     "id": main_uid,
                     "type": t_scheduler,
                     "status": t_error,
+                    "filepath": "scheduler",
                     "duration": duration_total,
                     "error": str(e),
                     "trace": tb,
@@ -201,6 +218,7 @@ class Scheduler:
                     "id": main_uid,
                     "type": t_scheduler,
                     "status": t_error,
+                    "filepath": "scheduler",
                     "duration": duration_total,
                     "error": "Unknow error",
                     "trace": tb,

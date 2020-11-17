@@ -7,14 +7,20 @@ import os
 from shutil import copy2
 
 user = getpass.getuser()
-env_data = {
-    "status": "healthy",
-    "JUPYTERHUB_USER": user,
-    "JUPYTERHUB_URL": "localhost:5000",
-    "PUBLIC_PROXY_API": "localhost:5001",
-    "NOTIFICATIONS_API": "localhost:5002",
-    "TZ": "Europe/Paris",
-}
+
+
+def get_env():
+    return {
+        "status": "healthy",
+        "JUPYTERHUB_USER": os.environ["JUPYTERHUB_USER"],
+        "JUPYTER_SERVER_ROOT": os.environ["JUPYTER_SERVER_ROOT"],
+        "JUPYTERHUB_URL": "localhost:5000",
+        "PUBLIC_PROXY_API": "localhost:5001",
+        "NOTIFICATIONS_API": "localhost:5002",
+        "TZ": "Europe/Paris",
+    }
+
+
 status_data = {"status": "running"}
 
 
@@ -22,7 +28,7 @@ async def test_init(test_cli):
     response = await test_cli.get("/env")
     assert response.status == 200
     resp_json = await response.json()
-    assert resp_json == env_data
+    assert resp_json == get_env()
 
 
 async def test_sheduler(test_cli):

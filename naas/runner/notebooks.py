@@ -51,7 +51,13 @@ class Notebooks:
             if "http" not in next_url:
                 next_url = f"{self.__api_internal}{next_url}"
             self.__logger.info(
-                {"id": uid, "type": t_notebook, "status": "next_url", "url": next_url}
+                {
+                    "id": uid,
+                    "type": t_notebook,
+                    "status": "next_url",
+                    "filepath": filepath,
+                    "url": next_url,
+                }
             )
             return response.redirect(next_url)
         else:
