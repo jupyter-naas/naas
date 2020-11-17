@@ -47,14 +47,39 @@ def changelog():
     display(HTML(data))
 
 
-def feature_request(mode="naas"):
+def bug_report():
     email = os.environ.get("JUPYTERHUB_USER", None)
     name = email.split(".")[0]
-    board_id = "c6bbef83-e074-4d9d-e699-758c40b6e087"
-    if mode == "naas_drivers":
-        board_id = "1358d893-a6b5-5e03-47a5-fc8e7f138ca1"
-    elif mode == "awesome-notebooks":
-        board_id = "4b9b1cd7-6b9e-2489-6aa9-6be4f88ec1a9"
+    board_id = "6a83d5c5-2165-2608-082d-49959c7f030c"
+
+    data = __cannyjs
+    data += "<div data-canny />"
+    data += """
+    <script>
+        Canny('identify', {
+            appID: '5f81748112b5d73b2faf4b15',
+            user: {
+                email: "{EMAIL}",
+                name: "{NAME}",
+                created: new Date().toISOString()
+            },
+        });
+        Canny('render', {
+            boardToken: "{BOARD}",
+        });
+    </script>
+    """
+
+    data = data.replace("{EMAIL}", email)
+    data = data.replace("{BOARD}", board_id)
+    data = data.replace("{NAME}", name)
+    display(HTML(data))
+
+
+def feature_request():
+    email = os.environ.get("JUPYTERHUB_USER", None)
+    name = email.split(".")[0]
+    board_id = "e3e3e0c3-7520-47f5-56f5-39182fb70480"
 
     data = __cannyjs
     data += "<div data-canny />"
