@@ -1,4 +1,10 @@
 
+## 0.18.0 (2020-11-17)
+
+### Feat
+
+- send direct link to file in notif status
+
 ## 0.17.9 (2020-11-15)
 
 ### Fix
