@@ -32,6 +32,7 @@ class JobsController(HTTPMethodView):
                     "id": uid,
                     "type": t_job,
                     "status": t_error,
+                    "filepath": "jobs",
                     "error": "missing keys",
                     "tb": data,
                 }
@@ -50,5 +51,7 @@ class JobsController(HTTPMethodView):
         )
         if updated.get("error"):
             return response.json(updated, status=409)
-        self.__logger.info({"id": uid, "type": t_job, "status": updated["status"]})
+        self.__logger.info(
+            {"id": uid, "type": t_job, "filepath": "jobs", "status": updated["status"]}
+        )
         return response.json(updated)

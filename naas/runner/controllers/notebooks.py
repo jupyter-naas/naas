@@ -1,7 +1,30 @@
 from naas.types import t_notebook, t_health, t_error, t_start
 from sanic.views import HTTPMethodView
 from sanic.exceptions import ServerError
+import urllib
 import uuid
+
+
+def rename_keys(old_dict):
+    new_dict = {}
+    for key in old_dict.keys():
+        new_key = key.replace(" ", "_")
+        new_key = new_key.replace("-", "_")
+        new_dict[new_key] = old_dict[key]
+    return new_dict
+
+
+def parse_data(request):
+    req_data = {}
+    if request.headers.get("content-type") == "multipart/form-data":
+        req_data = request.files
+    elif request.headers.get("content-type") == "application/json":
+        req_data = request.json
+    elif request.headers.get("content-type") == "application/x-www-form-urlencoded":
+        req_data = dict(urllib.parse.parse_qsl(request.body.decode("utf-8")))
+    req_data = rename_keys(req_data)
+    data = {**(request.args), **(req_data)}
+    return data
 
 
 class NbController(HTTPMethodView):
@@ -13,13 +36,13 @@ class NbController(HTTPMethodView):
         self.__jobs = jobs
         self.__nb = nb
 
-    async def get(self, request, token):
+    async def _get(self, data, token):
         uid = str(uuid.uuid4())
         task = await self.__jobs.find_by_value(uid, token, t_notebook)
         if task:
             value = task.get("value", None)
             file_filepath = task.get("path")
-            task["params"] = {**(task.get("params", dict())), **(request.args)}
+            task["params"] = {**(task.get("params", dict())), **(data)}
             self.__logger.info(
                 {
                     "id": uid,
@@ -55,7 +78,14 @@ class NbController(HTTPMethodView):
                     res.get("duration"),
                 )
                 raise ServerError(
-                    {"id": uid, "error": res.get("error")}, status_code=500
+                    {
+                        "id": uid,
+                        "error": res.get("error"),
+                        "data": data,
+                        "token": token,
+                        "traceback": res.get("traceback"),
+                    },
+                    status_code=500,
                 )
             self.__logger.info(
                 {
@@ -89,5 +119,17 @@ class NbController(HTTPMethodView):
             }
         )
         raise ServerError(
-            {"id": uid, "error": "Cannot find your token"}, status_code=404
+            {
+                "id": uid,
+                "error": "Cannot find your token",
+                "data": data,
+                "token": token,
+            },
+            status_code=404,
         )
+
+    async def get(self, request, token):
+        return await self._get(parse_data(request), token)
+
+    async def post(self, request, token):
+        return await self._get(parse_data(request), token)

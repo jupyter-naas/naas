@@ -1,18 +1,22 @@
 # Copyright (c) Naas Team.
-# Distributed under the terms of the Modified BSD License.
-from .scheduler import Scheduler
-from .api import Api
-from .assets import Assets
+# Distributed under the terms of the GNU AGPL License.
+from IPython.core.display import display, Javascript, HTML
+from .runner.notifications import Notifications
+from .runner.proxy import Domain
 from .dependency import Dependency
-from IPython.core.display import display, HTML
+from .scheduler import Scheduler
+import ipywidgets as widgets
+from .assets import Assets
 from .secret import Secret
 from .runner import Runner
-from .runner.notifications import Notifications
-from .runner.proxy import encode_proxy_url
+from .api import Api
 import requests
 import os
 
-__version__ = "0.6.0b6"
+__version__ = "0.19.0"
+__github_repo = "jupyter-naas/naas"
+__doc_url = "https://naas.gitbook.io/naas/"
+__cannyjs = '<script>!function(w,d,i,s){function l(){if(!d.getElementById(i)){var f=d.getElementsByTagName(s)[0],e=d.createElement(s);e.type="text/javascript",e.async=!0,e.src="https://canny.io/sdk.js",f.parentNode.insertBefore(e,f)}}if("function"!=typeof w.Canny){var c=function(){c.q.push(arguments)};c.q=[],w.Canny=c,"complete"===d.readyState?l():w.attachEvent?w.attachEvent("onload",l):w.addEventListener("load",l,!1)}}(window,document,"canny-jssdk","script");</script>'  # noqa: E501
 __location__ = os.getcwd()
 scheduler = Scheduler()
 secret = Secret()
@@ -21,55 +25,122 @@ api = Api()
 assets = Assets()
 dependency = Dependency()
 notifications = Notifications()
+Domain = Domain()
 
 
-def manager():
-    public_url = f"{encode_proxy_url()}"
-    print("You can check your current tasks list here :")
-    display(HTML(f'<a href="{public_url}"">Manager</a>'))
+def version():
+    print(__version__)
 
 
-def clean_logs():
-    req = requests.get(url="localhost:5000/logs")
-    req.raise_for_status()
-    jsn = req.json()
-    print(jsn)
-    return jsn
+def get_last_version():
+    url = f"https://api.github.com/repos/{__github_repo}/tags"
+    response = requests.get(url, headers={"Accept": "application/vnd.github.v3+json"})
+    return response.json()[0]["name"]
 
 
-def scheduler_status():
-    req = requests.get(url="localhost:5000/scheduler")
-    req.raise_for_status()
-    jsn = req.json()
-    print(jsn)
-    return jsn
+def changelog():
+    data = __cannyjs
+    data += """<button class="lm-Widget p-Widget jupyter-widgets jupyter-button widget-button mod-primary" data-canny-changelog>
+        View Changelog
+    </button>"""
+    data += "<script> Canny('initChangelog', {appID: '5f81748112b5d73b2faf4b15', position: 'bottom', align: 'left'});</script>"
+    display(HTML(data))
 
 
-def scheduler_pause():
-    req = requests.get(url="localhost:5000/scheduler/pause")
-    req.raise_for_status()
-    jsn = req.json()
-    print(jsn)
-    return jsn
+def bug_report():
+    email = os.environ.get("JUPYTERHUB_USER", None)
+    name = email.split(".")[0]
+    board_id = "6a83d5c5-2165-2608-082d-49959c7f030c"
+
+    data = __cannyjs
+    data += "<div data-canny />"
+    data += """
+    <script>
+        Canny('identify', {
+            appID: '5f81748112b5d73b2faf4b15',
+            user: {
+                email: "{EMAIL}",
+                name: "{NAME}",
+                created: new Date().toISOString()
+            },
+        });
+        Canny('render', {
+            boardToken: "{BOARD}",
+        });
+    </script>
+    """
+
+    data = data.replace("{EMAIL}", email)
+    data = data.replace("{BOARD}", board_id)
+    data = data.replace("{NAME}", name)
+    display(HTML(data))
 
 
-def scheduler_resume():
-    req = requests.get(url="localhost:5000/scheduler/resume")
-    req.raise_for_status()
-    jsn = req.json()
-    print(jsn)
-    return jsn
+def feature_request():
+    email = os.environ.get("JUPYTERHUB_USER", None)
+    name = email.split(".")[0]
+    board_id = "e3e3e0c3-7520-47f5-56f5-39182fb70480"
+
+    data = __cannyjs
+    data += "<div data-canny />"
+    data += """
+    <script>
+        Canny('identify', {
+            appID: '5f81748112b5d73b2faf4b15',
+            user: {
+                email: "{EMAIL}",
+                name: "{NAME}",
+                created: new Date().toISOString()
+            },
+        });
+        Canny('render', {
+            boardToken: "{BOARD}",
+        });
+    </script>
+    """
+
+    data = data.replace("{EMAIL}", email)
+    data = data.replace("{BOARD}", board_id)
+    data = data.replace("{NAME}", name)
+    display(HTML(data))
 
 
-def welcome():
-    print("[Nass from JupyterHub] => Welcome to your ETL, read the documentation")
-    print("Do naas.help() to get more info on what you can do.\n")
+def doc():
+    button = widgets.Button(description="Open Doc", button_style="primary")
+    output = widgets.Output()
+
+    def on_button_clicked(b):
+        with output:
+            display(Javascript('window.open("{url}");'.format(url=__doc_url)))
+
+    button.on_click(on_button_clicked)
+    display(button, output)
 
 
-def help():
-    print("naas.version() => Get the current version\n")
-    print("naas.manager() => Get the url of the manager\n")
-    print("naas.scheduler => Get the notebook scheduler driver\n")
-    print("naas.api => Get the notebook api driver\n")
-    print("naas.assets => Get the file sharing driver\n")
-    print("naas.dependency => Get the file dependency driver\n")
+def up_to_date():
+    return get_last_version() == version()
+
+
+def update():
+    token = os.environ.get("JUPYTERHUB_API_TOKEN")
+    username = os.environ.get("JUPYTERHUB_USER")
+    api_url = f'{os.environ.get("JUPYTERHUB_URL", "https://app.naas.ai")}/hub/api'
+    r = requests.delete(
+        f"{api_url}/users/{username}/server",
+        headers={
+            "Authorization": f"token {token}",
+        },
+    )
+    r.raise_for_status()
+    return r
+
+
+def auto_update():
+    if not up_to_date():
+        update()
+    else:
+        print("You are aready up to date")
+
+
+def is_production():
+    return api.manager.is_production()

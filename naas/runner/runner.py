@@ -27,7 +27,7 @@ import nest_asyncio
 asyncio.set_event_loop_policy(None)
 nest_asyncio.apply()
 
-__version__ = "0.6.0b6"
+__version__ = "0.19.0"
 
 
 class Runner:
@@ -73,7 +73,9 @@ class Runner:
     def __main(self, debug=True):
         self.init_app()
         uid = str(uuid.uuid4())
-        self.__logger.info({"id": uid, "type": t_main, "status": "start API"})
+        self.__logger.info(
+            {"id": uid, "type": t_main, "filepath": "runner", "status": "start API"}
+        )
         self.__app.run(host="0.0.0.0", port=self.__port, debug=debug, access_log=debug)
 
     async def initialize_before_start(self, app, loop):
@@ -125,6 +127,7 @@ class Runner:
                 self.__proxy_url,
                 self.__notifications_url,
                 self.__tz,
+                self.__path_user_files,
             ),
             "/env",
         )
@@ -132,7 +135,9 @@ class Runner:
         self.__app.static("/", self.__path_manager_index, name="manager.html")
         self.__app.blueprint(swagger_blueprint)
         uid = str(uuid.uuid4())
-        self.__logger.info({"id": uid, "type": t_main, "status": "init API"})
+        self.__logger.info(
+            {"id": uid, "type": t_main, "filepath": "runner", "status": "init API"}
+        )
         return self.__app
 
     def start(self, deamon=True, port=None, debug=False):
@@ -150,6 +155,7 @@ class Runner:
                     environment=escape_kubernet(self.__user),
                     integrations=[SanicIntegration()],
                 )
+                sentry_sdk.set_user({"email": self.__user})
                 with sentry_sdk.configure_scope() as scope:
                     scope.set_context("Naas", {"version": __version__})
             self.__main(debug)

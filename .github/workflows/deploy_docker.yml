@@ -14,7 +14,7 @@ jobs:
         with:
           fetch-depth: 0
           token: '${{ secrets.PERSONAL_ACCESS_TOKEN }}'
-      - run: echo ${{ github.event.client_payload.ref }} ${{ github.event.client_payload.sha }}
+      - run: echo ${{ github.event.client_payload.ref }}
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
       - name: Set up Docker Buildx
@@ -29,8 +29,9 @@ jobs:
       - run: echo ${{ steps.get_version.outputs.version }}
       - name: Get smart tag
         id: prepare
-        uses: Surgo/docker-smart-tag-action@v1
+        uses: jupyter-naas/docker-smart-tag-action@1.0.0
         with:
+          ref: ${{ github.event.client_payload.ref }}
           docker_image: jupyternaas/naas
       - name: Build and push
         id: docker_build
@@ -38,11 +39,5 @@ jobs:
         with:
           push: true
           tags: ${{ steps.prepare.outputs.tag }}
-      - name: Update repo description
-        uses: peter-evans/dockerhub-description@v2
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-          repository: jupyternaas/naas
       - name: Image digest
         run: echo ${{ steps.prepare.outputs.tag }}

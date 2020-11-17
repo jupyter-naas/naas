@@ -1,9 +1,9 @@
-FROM jupyternaas/naas-drivers:latest
+FROM jupyternaas/singleuser:latest
 
 # Build-time metadata as defined at http://label-schema.org
 ARG BUILD_DATE
 ARG VCS_REF
-ENV VERSION 0.6.0b6
+ENV VERSION 0.19.0
 
 LABEL org.label-schema.build-date=$BUILD_DATE \
     org.label-schema.name="Naas machine" \
@@ -16,4 +16,5 @@ LABEL org.label-schema.build-date=$BUILD_DATE \
     org.label-schema.schema-version="1.0"
 
 
-RUN python3 -m pip install --use-feature=2020-resolver --no-cache naas==$VERSION
+RUN python3 -m pip install --upgrade pip
+RUN python3 -m pip install --use-feature=2020-resolver --no-cache naas_drivers naas==$VERSION

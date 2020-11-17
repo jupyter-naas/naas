@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="naas",
-    version="0.6.0b6",
+    version="0.19.0",
     scripts=["scripts/naas"],
     author="Martin Donadieu",
     author_email="martindonadieu@gmail.com",
@@ -20,7 +20,7 @@ setup(
     },
     extras_require={
         "dev": [
-            "pytest>=5,<6",
+            "pytest>=5,<7",
             "pytest-tornasync",
             "pytest-mock>=3,<4",
             "pytest-sanic>=1,<2",
@@ -55,6 +55,7 @@ setup(
         "nbconvert>=6,<7",
         "nbclient>=0,<1",
         "beautifulsoup4>=4,<5",
+        "naas-drivers>=0,<1",
     ],
     classifiers=[
         "Programming Language :: Python :: 3.8",

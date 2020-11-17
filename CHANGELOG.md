@@ -1,63 +1,282 @@
 
-## 0.6.0b6 (2020-10-06)
-
-### Fix
-
-- :bug: remove useless depbot
+## 0.19.0 (2020-11-17)
 
 ### Feat
 
-- :sparkles: allow show inline for asset and notebook
+- add bug_report board
+
+## 0.18.1 (2020-11-17)
+
+### Fix
+
+- logs
+
+## 0.18.0 (2020-11-17)
+
+### Feat
+
+- send direct link to file in notif status
+
+## 0.17.9 (2020-11-15)
+
+### Fix
+
+- **notification**: email status path
+
+## 0.17.8 (2020-11-14)
+
+### Fix
+
+- test
+
+## 0.17.7 (2020-11-14)
+
+### Fix
+
+- **runner**: don't use request.form
+
+## 0.17.6 (2020-11-14)
+
+### Fix
+
+- **manager**: error except reqeust wrong name
+
+## 0.17.5 (2020-11-14)
+
+### Fix
+
+- **manager**: add missing raise
+
+## 0.17.4 (2020-11-14)
+
+### Fix
+
+- **manager**: fix clear_output
+
+## 0.17.3 (2020-11-14)
+
+### Fix
+
+- **runner**: wrong key name
+
+## 0.17.2 (2020-11-14)
+
+### Fix
+
+- output call in production
+
+## 0.17.1 (2020-11-09)
+
+### Fix
+
+- auto_update
+
+## 0.17.0 (2020-11-09)
+
+### Feat
+
+- build without naas_driver image but package
+
+## 0.16.2 (2020-11-05)
+
+### Fix
+
+- proxy add function
+
+## 0.16.1 (2020-11-05)
+
+### Fix
+
+- notification and test
+
+## 0.16.0 (2020-11-05)
+
+### Feat
+
+- **notifications**: add auth in notif
+- **domain**: add domain config proxy system
+
+## 0.15.1 (2020-11-04)
+
+### Fix
+
+- **runner**: allow form and json
+
+## 0.15.0 (2020-11-04)
+
+### Feat
+
+- **runner**: add form request
+
+## 0.14.0 (2020-11-02)
+
+### Feat
+
+- add post capability
+
+## 0.13.0 (2020-10-27)
+
+### Feat
+
+- add doc function
+
+## 0.12.6 (2020-10-27)
+
+### Fix
+
+- doc add publish
+
+## 0.12.5 (2020-10-27)
+
+### Fix
+
+- remove update description
+
+## 0.12.4 (2020-10-27)
+
+### Fix
+
+- workflow build
+
+## 0.12.3 (2020-10-25)
+
+### Fix
+
+- messange notif send
+
+## 0.12.2 (2020-10-22)
+
+### Fix
+
+- loggers tests
+
+## 0.12.1 (2020-10-22)
+
+### Fix
+
+- sort and on manager
+
+## 0.12.0 (2020-10-21)
+
+### Feat
+
+- add page system in manager
+
+## 0.11.0 (2020-10-21)
+
+### Feat
+
+- add update command
+
+## 0.10.1 (2020-10-20)
+
+### Fix
+
+- add user email in sentry
+
+## 0.10.0 (2020-10-20)
+
+### Feat
+
+- allow select sender email
+
+## 0.9.0 (2020-10-16)
+
+### Feat
+
+- **scheduler**: :sparkles: allow chaining scheduler
+
+## 0.8.6 (2020-10-16)
+
+### Fix
+
+- build version python 3.8
+
+## 0.8.5 (2020-10-15)
+
+### Fix
+
+- **manager**: :bug: fis is production function
+
+## 0.8.4 (2020-10-14)
+
+### Fix
+
+- **manager**: :sparkles: add is_production method
+
+## 0.8.3 (2020-10-13)
+
+### Fix
+
+- **binder**: :bug: use new folder for binder
+
+## 0.8.2 (2020-10-12)
+
+### Fix
+
+-  Licence switch to AGPL
+
+## 0.8.1 (2020-10-11)
+
+### Fix
+
+- **manager**: :memo: remove verbosity
+
+## 0.8.0 (2020-10-11)
+
+### Feat
+
+- **notification**: :sparkles: allow multi emails by list or string
+
+### Fix
+
+- **notification**: :bug: fix type of date json to data when file are send
+- **notification**: :bug: fix send file with email
+- **api**: :bug: fix respond image remove mimetype
+
+## 0.7.0 (2020-10-08)
+
+### Feat
+
+- **notification**: :sparkles: allow send file in notification
+
+## 0.6.7 (2020-10-08)
+
+### Fix
+
+- **runner**: :bug: set feature in bs4 to remove warning
+
+## 0.6.6 (2020-10-08)
 
 ### Refactor
 
-- :art: remove the duplication in notif send of content and html
+- **manager**: :building_construction: simplify way to get production assets
 
-## 0.6.0b5 (2020-10-05)
-
-### Fix
-
-- :art: switch master to main
-
-## 0.6.0b4 (2020-10-05)
-
-## 0.6.0b3 (2020-10-04)
-
-## 0.6.0b2 (2020-10-04)
+## 0.6.5 (2020-10-07)
 
 ### Fix
 
-- ci for master
+- remove mimetype response image args
 
-## 0.6.0b1 (2020-10-04)
-
-### Fix
-
-- try to trigger ci again
-
-## 0.6.0b5 (2020-10-05)
+## 0.6.4 (2020-10-07)
 
 ### Fix
 
-- :art: switch master to main
+- :bug: add upgrade before install
 
-## 0.6.0b4 (2020-10-05)
-
-## 0.6.0b3 (2020-10-04)
-
-## 0.6.0b2 (2020-10-04)
+## 0.6.3 (2020-10-07)
 
 ### Fix
 
-- ci for master
+- :green_heart: add pr titlevalidation
 
-## 0.6.0b1 (2020-10-04)
+## 0.6.2 (2020-10-06)
 
 ### Fix
 
-- try to trigger ci again
+- :green_heart: use good ref to build
 
-## 0.6.0b4 (2020-10-05)
+## 0.6.1 (2020-10-05)
 
 ## 0.6.0b3 (2020-10-04)
 

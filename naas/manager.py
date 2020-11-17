@@ -15,7 +15,10 @@ import copy
 
 
 class Manager:
-    __local_api = f'http://localhost:{os.environ.get("NAAS_RUNNER_PORT", 5000)}'
+    naas_api = os.environ.get(
+        "NAAS_RUNNER_API",
+        f'http://localhost:{os.environ.get("NAAS_RUNNER_PORT", 5000)}',
+    )
     __error_manager_busy = "Manager look busy, try to reload your machine"
     __error_manager_reject = "Manager refused your request, reason :"
     __base_ftp_path = None
@@ -50,12 +53,27 @@ class Manager:
             if exc.errno != errno.EEXIST:
                 raise
 
+    def is_production(self):
+        return False if self.notebook_path() else True
+
+    def get(self):
+        public_url = f"{encode_proxy_url()}"
+        print("You can check your current tasks list here :")
+        display(HTML(f'<a href="{public_url}"">Manager</a>'))
+
+    def get_logs(self):
+        req = requests.get(url=f"{self.naas_api}/logs")
+        req.raise_for_status()
+        jsn = req.json()
+        return jsn
+
     def get_naas(self):
         naas_data = []
         try:
-            r = requests.get(f"{self.__local_api}/{t_job}")
+            r = requests.get(f"{self.naas_api}/{t_job}")
+            r.raise_for_status()
             naas_data = r.json()
-        except ConnectionError:
+        except requests.exceptions.ConnectionError:
             print(self.__error_manager_busy)
         except requests.HTTPError as e:
             print(self.__error_manager_reject, e)
@@ -118,7 +136,7 @@ class Manager:
         display(HTML(js2))
 
     def copy_url(self, text):
-        button = widgets.Button(description="Copy URL")
+        button = widgets.Button(description="Copy URL", button_style="primary")
         output = widgets.Output()
 
         def on_button_clicked(b):
@@ -195,34 +213,52 @@ class Manager:
             raise FileNotFoundError(f"File {path} not Found")
 
     def get_out_path(self, path):
-        filename = os.path.basename(path)
-        dirname = os.path.dirname(path)
+        current_path = self.get_path(path)
+        filename = os.path.basename(current_path)
+        dirname = os.path.dirname(current_path)
         out_path = os.path.join(dirname, f"out_{filename}")
         return out_path
 
-    def get_prod(self, path):
-        current_file = self.get_path(path)
-        self.__copy_file_in_dev(current_file)
-        print(
-            "🕣 Your Notebook from production folder has been copied into your dev folder.\n"
-        )
-
-    def get_output(self, path):
+    def get_output(self, path=None):
+        if not path and self.is_production():
+            print("No get_output done you are in production\n")
+            return
         out_path = self.get_out_path(path)
         self.__copy_file_in_dev(out_path)
         print(
-            "🕣 Your Notebook OUTPUT from production folder has been copied into your dev folder\n"
+            "🕣 Your Notebook OUTPUT from production has been copied into your dev folder\n"
         )
 
-    def clear_output(self, path):
+    def clear_output(self, path=None):
+        if not path and self.is_production():
+            print("No clear_output done you are in production\n")
+            return
         out_path = self.get_out_path(path)
-        if os.path.exists(out_path):
+        prod_path = self.get_prod_path(out_path)
+        if os.path.exists(prod_path):
             os.remove(out_path)
-            print("🕣 Your Notebook output has been remove from production folder.\n")
+            print("🕣 Your Notebook output has been remove from production.\n")
         else:
             raise FileNotFoundError(f"File {out_path} not Found")
 
-    def list_history(self, path):
+    def get_prod(self, path=None, histo=None):
+        if not path and self.is_production():
+            print("No get_prod done you are in production\n")
+            return
+        current_file = self.get_path(path)
+        if histo:
+            filename = os.path.basename(current_file)
+            dirname = os.path.dirname(current_file)
+            path_histo = os.path.join(dirname, f"{histo}_{filename}")
+            self.__copy_file_in_dev(path_histo)
+        else:
+            self.__copy_file_in_dev(current_file)
+        print("🕣 Your Notebook from production has been copied into your dev folder.\n")
+
+    def list_prod(self, path=None):
+        if self.is_production():
+            print("No list_prod done you are in production\n")
+            return
         current_file = self.get_path(path)
         prod_path = self.get_prod_path(current_file)
         filename = os.path.basename(current_file)
@@ -238,14 +274,10 @@ class Manager:
                 histo = histo.replace("_", "")
                 print(histo + "\n")
 
-    def get_history(self, path, histo):
-        current_file = self.get_path(path)
-        filename = os.path.basename(current_file)
-        dirname = os.path.dirname(current_file)
-        path_histo = os.path.join(dirname, f"{histo}_{filename}")
-        self.__copy_file_in_dev(path_histo)
-
-    def clear_history(self, path, histo=None):
+    def clear_prod(self, path=None, histo=None):
+        if self.is_production():
+            print("No clear_prod done you are in production\n")
+            return
         current_file = self.get_path(path)
         prod_path = self.get_prod_path(current_file)
         filename = (
@@ -273,12 +305,12 @@ class Manager:
             try:
                 if debug:
                     print(f'{new_obj["status"]} ==> {new_obj}')
-                r = requests.post(f"{self.__local_api}/{t_job}", json=new_obj)
+                r = requests.post(f"{self.naas_api}/{t_job}", json=new_obj)
                 r.raise_for_status()
                 res = r.json()
                 if debug:
                     print(f'{res["status"]} ==> {res}')
-            except ConnectionError as err:
+            except requests.exceptions.ConnectionError as err:
                 print(self.__error_manager_busy, err)
                 raise
             except requests.HTTPError as err:
@@ -301,12 +333,12 @@ class Manager:
             try:
                 if debug:
                     print(f'{new_obj["status"]} ==> {new_obj}')
-                r = requests.post(f"{self.__local_api}/{t_job}", json=new_obj)
+                r = requests.post(f"{self.naas_api}/{t_job}", json=new_obj)
                 r.raise_for_status()
                 res = r.json()
                 if debug:
                     print(f'{res["status"]} ==> {res}')
-            except ConnectionError as err:
+            except requests.exceptions.ConnectionError as err:
                 print(self.__error_manager_busy, err)
                 raise
             except requests.HTTPError as err:
