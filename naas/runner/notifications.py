@@ -11,12 +11,12 @@ import os
 
 class Notifications:
     logger = None
-    base_notif_url = os.environ.get("NOTIFICATIONS_API", None)
+    base_notif_url = os.environ.get("NOTIFICATIONS_API", "")
     headers = None
 
     def __init__(self, logger=None):
         self.headers = {
-            "Authorization": f'token {os.environ.get("JUPYTERHUB_API_TOKEN", None)}'
+            "Authorization": f'token {os.environ.get("JUPYTERHUB_API_TOKEN", "")}'
         }
         self.logger = logger
 
@@ -88,8 +88,8 @@ class Notifications:
             else:
                 print(jsn)
             return jsn
-        base_url = os.environ.get("JUPYTERHUB_URL", None)
-        base_user = os.environ.get("JUPYTERHUB_USER", None)
+        base_url = os.environ.get("JUPYTERHUB_URL", "")
+        base_user = os.environ.get("JUPYTERHUB_USER", "")
         content = ""
         file_link = f"{base_url}/user/{base_user}/tree/{file_path}"
         if current_type == t_asset or current_type == t_notebook:

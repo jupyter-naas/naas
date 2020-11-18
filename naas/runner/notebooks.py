@@ -212,7 +212,9 @@ class Notebooks:
     def __send_notification(self, uid, res, file_filepath, current_type, value, params):
         notif_down = params.get("notif_down", None)
         notif_up = params.get("notif_up", None)
-        small_path = file_filepath.replace(os.environ.get("JUPYTER_SERVER_ROOT"), "")
+        small_path = file_filepath.replace(
+            os.environ.get("JUPYTER_SERVER_ROOT", ""), ""
+        )
         if res.get("error"):
             email_admin = os.environ.get("JUPYTERHUB_USER", None)
             if email_admin is not None:
