@@ -61,7 +61,7 @@ class Scheduler:
             pass
         return res
 
-    def add(self, path=None, recurrence=None, params=None, debug=False):
+    def add(self, path=None, recurrence=None, params={}, debug=False):
         if self.manager.is_production():
             print("No add done you are in production\n")
             return
@@ -76,7 +76,7 @@ class Scheduler:
             {
                 "type": self.role,
                 "path": current_file,
-                "params": {},
+                "params": params,
                 "value": recurrence,
             },
             debug,

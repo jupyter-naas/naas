@@ -42,7 +42,8 @@ class NbController(HTTPMethodView):
         if task:
             value = task.get("value", None)
             file_filepath = task.get("path")
-            task["params"] = {**(task.get("params", dict())), **(data)}
+            cur_task = task.copy()
+            cur_task["params"] = {**(task.get("params", dict())), **(data)}
             self.__logger.info(
                 {
                     "id": uid,
@@ -55,7 +56,7 @@ class NbController(HTTPMethodView):
             await self.__jobs.update(
                 uid, file_filepath, t_notebook, value, task.get("params"), t_start
             )
-            res = await self.__nb.exec(uid, task)
+            res = await self.__nb.exec(uid, cur_task)
             if res.get("error"):
                 self.__logger.error(
                     {
@@ -83,7 +84,6 @@ class NbController(HTTPMethodView):
                         "error": res.get("error"),
                         "data": data,
                         "token": token,
-                        "traceback": res.get("traceback"),
                     },
                     status_code=500,
                 )

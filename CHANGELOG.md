@@ -1,3 +1,18 @@
+## 0.20.0b0 (2020-11-17)
+
+## 0.6.0b6 (2020-10-06)
+
+### Fix
+
+- :bug: remove useless depbot
+
+### Feat
+
+- :sparkles: allow show inline for asset and notebook
+
+### Refactor
+
+- :art: remove the duplication in notif send of content and html
 
 ## 0.19.1 (2020-11-23)
 
