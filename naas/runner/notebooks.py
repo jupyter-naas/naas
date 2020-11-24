@@ -1,4 +1,4 @@
-from naas.types import t_notebook, t_scheduler, t_error, t_health
+from naas.types import t_notebook, t_scheduler, t_error
 from .proxy import escape_kubernet
 from nbconvert import HTMLExporter
 from sanic import response
@@ -186,27 +186,7 @@ class Notebooks:
                 parameters=params,
             )
         if not res:
-            res = {"error": "Unknow error"}
-            self.__logger.error(
-                {
-                    "id": uid,
-                    "type": "Exception",
-                    "status": t_error,
-                    "filepath": file_filepath,
-                    "output_filepath": file_filepath_out,
-                    "error": res["error"],
-                }
-            )
-        else:
-            self.__logger.info(
-                {
-                    "id": uid,
-                    "type": "Done",
-                    "status": t_health,
-                    "filepath": file_filepath,
-                    "output_filepath": file_filepath_out,
-                }
-            )
+            res = {"error": "Unknow error", "duration": 0}
         return res
 
     def __send_notification(self, uid, res, file_filepath, current_type, value, params):

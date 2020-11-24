@@ -84,7 +84,6 @@ class NbController(HTTPMethodView):
                         "error": res.get("error"),
                         "data": data,
                         "token": token,
-                        "traceback": res.get("traceback"),
                     },
                     status_code=500,
                 )

@@ -163,6 +163,14 @@ class Scheduler:
                     "trace": str(tb),
                 }
             )
+            await self.__jobs.update(
+                uid,
+                file_filepath,
+                t_scheduler,
+                value,
+                params,
+                t_error,
+            )
 
     async def __scheduler_function(self):
         # Create unique for scheduling step (one step every minute)
