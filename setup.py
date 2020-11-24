@@ -55,7 +55,6 @@ setup(
         "nbconvert>=6,<7",
         "nbclient>=0,<1",
         "beautifulsoup4>=4,<5",
-        "naas-drivers>=0,<1",
     ],
     classifiers=[
         "Programming Language :: Python :: 3.8",
