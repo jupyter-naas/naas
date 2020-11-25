@@ -135,7 +135,6 @@ async def test_logs(test_cli):
     assert status == "init API"
 
 
-@pytest.fixture
 async def test_scheduler(test_cli, tmp_path):
     recur = "*/5 * * * *"
     test_notebook = "tests/demo/demo_scheduler.ipynb"

@@ -102,6 +102,13 @@ class Runner:
             )
             await self.__scheduler.start()
 
+    async def initialize_before_stop(self, app, loop):
+        if self.__jobs:
+            await self.__scheduler.stop()
+            self.__scheduler = None
+            self.__nb = None
+            self.__jobs = None
+
     def init_app(self):
         if not os.path.exists(self.__path_naas_files):
             try:
@@ -119,6 +126,7 @@ class Runner:
         self.__app.register_listener(
             self.initialize_before_start, "before_server_start"
         )
+        self.__app.register_listener(self.initialize_before_stop, "before_server_stop")
         self.__app.add_route(
             EnvController.as_view(
                 self.__logger,

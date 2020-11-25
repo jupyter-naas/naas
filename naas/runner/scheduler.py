@@ -12,6 +12,7 @@ import os
 
 NAAS_SCHEDULER_TIME = int(os.environ.get("NAAS_SCHEDULER_TIME", "60"))
 NAAS_SCHEDULER_INSTANCE_MAX = int(os.environ.get("NAAS_SCHEDULER_INSTANCE_MAX", "60"))
+NAAS_JOB_NAME = "naas_scheduler_job"
 
 
 class Scheduler:
@@ -33,6 +34,12 @@ class Scheduler:
         elif self.__scheduler.state == apscheduler.schedulers.base.STATE_PAUSED:
             return "paused"
 
+    async def stop(self):
+        await self.__scheduler.shutdown(wait=False)
+        await self.__scheduler.pause()
+        await self.__scheduler.remove_job(NAAS_JOB_NAME)
+        self.__scheduler = None
+
     async def start(self, test_mode=False):
         if test_mode:
             await self.__scheduler_function()
@@ -41,6 +48,7 @@ class Scheduler:
                 self.__scheduler.add_job(
                     func=self.__scheduler_function,
                     trigger="interval",
+                    id=NAAS_JOB_NAME,
                     seconds=NAAS_SCHEDULER_TIME,
                     max_instances=NAAS_SCHEDULER_INSTANCE_MAX,
                 )
@@ -55,14 +63,30 @@ class Scheduler:
                     }
                 )
 
+    async def __check_run(self, uid, file_filepath, current_type, last_update_str):
+        running = await self.__jobs.is_running(uid, file_filepath, current_type)
+        if last_update_str:
+            try:
+                last_update = datetime.datetime.strptime(
+                    last_update_str, "%d/%m/%y %H:%M:%S"
+                )
+                timeout_date = datetime.datetime.today() - datetime.timedelta(days=1)
+                running = True if last_update < timeout_date else running
+            except ValueError:
+                pass
+        return running
+
     async def __scheduler_greenlet(self, main_uid, current_time, task):
         value = task.get("value", None)
         current_type = task.get("type", None)
         file_filepath = task.get("path", None)
+        last_update = task.get("lastUpdate", None)
         params = task.get("params", dict())
         uid = str(uuid.uuid4())
         try:
-            running = await self.__jobs.is_running(uid, file_filepath, current_type)
+            running = await self.__check_run(
+                uid, file_filepath, current_type, last_update
+            )
             if (
                 current_type == t_scheduler
                 and value is not None
