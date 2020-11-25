@@ -11,6 +11,8 @@ import bs4
 import csv
 import os
 import io
+import datetime
+import shutil
 
 kern_manager = None
 mime_html = "text/html"
@@ -110,7 +112,7 @@ class Notebooks:
             result_type = mime_html
             file_filepath_out = self.get_out_path(filepath)
             (result, ressources) = self.__html_exporter.from_filename(file_filepath_out)
-        except FileNotFoundError:  # noqa: E722
+        except FileNotFoundError:
             tb = traceback.format_exc()
             result_type = mime_json
             result = {
@@ -166,6 +168,17 @@ class Notebooks:
                     return {"type": result_type, "data": result}
         return None
 
+    def __keep_out_history(self, file_filepath_out):
+        if os.path.exists(file_filepath_out):
+            try:
+                out_finename = os.path.basename(file_filepath_out)
+                out_dir = os.path.dirname(file_filepath_out)
+                history_filename = f'{datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")}_{out_finename}'
+                history_path = os.path.join(out_dir, history_filename)
+                shutil.copy(file_filepath_out, history_path)
+            except:  # noqa: E722
+                pass
+
     def __pm_exec(self, uid, file_dirpath, file_filepath, file_filepath_out, params):
         res = None
         if kern_manager:
@@ -187,6 +200,7 @@ class Notebooks:
             )
         if not res:
             res = {"error": "Unknow error", "duration": 0}
+        self.__keep_out_history(file_filepath_out)
         return res
 
     def __send_notification(self, uid, res, file_filepath, current_type, value, params):

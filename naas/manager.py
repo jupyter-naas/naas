@@ -12,6 +12,7 @@ import os
 from IPython.core.display import display, HTML
 import ipywidgets as widgets
 import copy
+import pandas as pd
 
 
 class Manager:
@@ -209,27 +210,60 @@ class Manager:
         out_path = os.path.join(dirname, f"out_{filename}")
         return out_path
 
-    def get_output(self, path=None):
+    def list_output(self, path=None):
+        if self.is_production():
+            print("No list_output done you are in production\n")
+            return
+        out_path = self.get_out_path(path)
+        filename = os.path.basename(out_path)
+        dirname = os.path.dirname(out_path)
+        d = {"timestamp": [], "filepath": []}
+        for ffile in os.listdir(dirname):
+            if ffile.endswith(filename):
+                histo = ffile.replace(filename, "")
+                histo = ffile.replace("_", "")
+                tmp_path = os.path.join(dirname, ffile)
+                d["timestamp"].append(histo)
+                d["filepath"].append(tmp_path)
+        return pd.DataFrame(data=d)
+
+    def get_output(self, path=None, histo=None):
         if not path and self.is_production():
             print("No get_output done you are in production\n")
             return
         out_path = self.get_out_path(path)
-        self.__copy_file_in_dev(out_path)
+        if histo:
+            filename = os.path.basename(out_path)
+            dirname = os.path.dirname(out_path)
+            path_histo = os.path.join(dirname, f"{histo}_{filename}")
+            self.__copy_file_in_dev(path_histo)
+        else:
+            self.__copy_file_in_dev(out_path)
         print(
             "🕣 Your Notebook OUTPUT from production has been copied into your dev folder\n"
         )
 
-    def clear_output(self, path=None):
-        if not path and self.is_production():
-            print("No clear_output done you are in production\n")
+    def clear_output(self, path=None, histo=None):
+        if self.is_production():
+            print("No clear_prod done you are in production\n")
             return
         out_path = self.get_out_path(path)
-        prod_path = self.get_prod_path(out_path)
-        if os.path.exists(prod_path):
-            os.remove(out_path)
-            print("🕣 Your Notebook output has been remove from production.\n")
-        else:
-            raise FileNotFoundError(f"File {out_path} not Found")
+        filename = (
+            os.path.basename(out_path)
+            if not histo
+            else f"{histo}_{os.path.basename(out_path)}"
+        )
+        dirname = os.path.dirname(out_path)
+        for ffile in os.listdir(dirname):
+            if not ffile.startswith("out_") and (
+                (histo and filename == ffile)
+                or (not histo and ffile.endswith(filename) and filename != ffile)
+            ):
+                tmp_path = os.path.join(dirname, ffile)
+                print(
+                    f"🕣 Your Notebook output {tmp_path} has been remove from production.\n"
+                )
+                os.remove(tmp_path)
 
     def get_prod(self, path=None, histo=None):
         if not path and self.is_production():
@@ -253,7 +287,7 @@ class Manager:
         prod_path = self.get_prod_path(current_file)
         filename = os.path.basename(current_file)
         dirname = os.path.dirname(prod_path)
-        print("Avaliable :\n")
+        d = {"timestamp": [], "filepath": []}
         for ffile in os.listdir(dirname):
             if (
                 ffile.endswith(filename)
@@ -262,7 +296,10 @@ class Manager:
             ):
                 histo = ffile.replace(filename, "")
                 histo = histo.replace("_", "")
-                print(histo + "\n")
+                tmp_path = os.path.join(dirname, ffile)
+                d["timestamp"].append(histo)
+                d["filepath"].append(tmp_path)
+        return pd.DataFrame(data=d)
 
     def clear_prod(self, path=None, histo=None):
         if self.is_production():
@@ -282,7 +319,7 @@ class Manager:
                 or (not histo and ffile.endswith(filename) and filename != ffile)
             ):
                 tmp_path = os.path.join(dirname, ffile)
-                print(f"Delete {tmp_path}")
+                print(f"🕣 Your Notebook {tmp_path} has been remove from production.\n")
                 os.remove(tmp_path)
 
     def add_prod(self, obj, debug):
