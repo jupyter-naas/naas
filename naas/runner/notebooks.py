@@ -193,7 +193,10 @@ class Notebooks:
         notif_down = params.get("notif_down", None)
         notif_up = params.get("notif_up", None)
         small_path = file_filepath.replace(
-            os.environ.get("JUPYTER_SERVER_ROOT", ""), ""
+            os.environ.get(
+                "JUPYTER_SERVER_ROOT", f'/home/{os.environ.get("NB_USER", "ftp")}'
+            ),
+            "",
         )
         if res.get("error"):
             email_admin = os.environ.get("JUPYTERHUB_USER", None)
