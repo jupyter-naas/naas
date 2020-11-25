@@ -61,7 +61,6 @@ class Notifications:
             req.raise_for_status()
             jsn = req.json()
             print("👌 💌 Email has been sent successfully !")
-            return jsn
         except Exception as err:
             if self.logger is not None:
                 self.logger.error(

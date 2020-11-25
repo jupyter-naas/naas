@@ -1,4 +1,3 @@
-
 ## 0.20.0b0 (2020-11-17)
 
 ## 0.6.0b6 (2020-10-06)
@@ -15,7 +14,11 @@
 
 - :art: remove the duplication in notif send of content and html
 
-## 0.6.0b5 (2020-10-05)
+## 0.19.1 (2020-11-23)
+
+### Fix
+
+- remove return json when success
 
 ## 0.19.0 (2020-11-17)
 
