@@ -271,6 +271,21 @@ class Notebooks:
                     "traceback": str(tb),
                 }
             )
+
+        except RuntimeError as err:
+            tb = traceback.format_exc()
+            res = {"error": err, "traceback": str(tb)}
+            self.__logger.error(
+                {
+                    "id": uid,
+                    "type": "Exception",
+                    "status": t_error,
+                    "filepath": file_filepath,
+                    "output_filepath": file_filepath_out,
+                    "error": err,
+                    "traceback": str(tb),
+                }
+            )
         except:  # noqa: E722
             tb = traceback.format_exc()
             res = {"error": "Unknow error", "traceback": str(tb)}
@@ -286,7 +301,21 @@ class Notebooks:
                 }
             )
         res["duration"] = time.time() - start_time
-        self.__send_notification(
-            uid, res, file_filepath_out, current_type, value, params
-        )
+        try:
+            self.__send_notification(
+                uid, res, file_filepath_out, current_type, value, params
+            )
+        except ConnectionError as err:
+            self.__logger.error(
+                {
+                    "id": uid,
+                    "type": "Exception",
+                    "status": t_error,
+                    "filepath": file_filepath,
+                    "output_filepath": file_filepath_out,
+                    "error": "Cannot send notification",
+                    "traceback": str(err),
+                }
+            )
+            pass
         return res

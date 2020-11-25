@@ -1,7 +1,7 @@
 from sanic.views import HTTPMethodView
 from sanic import response
 from sanic.exceptions import ServerError
-from naas.types import t_asset, t_health, t_error, t_start
+from naas.types import t_asset, t_health, t_error, t_start, t_send
 import uuid
 import os
 
@@ -52,7 +52,7 @@ class AssetsController(HTTPMethodView):
                         {
                             "id": uid,
                             "type": t_asset,
-                            "status": t_start,
+                            "status": t_send,
                             "filepath": file_filepath,
                             "token": token,
                         }

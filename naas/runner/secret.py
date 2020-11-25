@@ -188,7 +188,7 @@ class Secret:
                 "id": uid,
                 "type": t_secret,
                 "value": name,
-                "status": t_update,
+                "status": t_add,
                 "params": {},
             }
         )

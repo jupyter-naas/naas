@@ -1,10 +1,11 @@
-from naas.types import t_add, t_notebook, t_job, t_health, t_scheduler, t_asset
+from naas.types import t_add, t_notebook, t_job, t_health, t_scheduler, t_asset, t_start
 import getpass
 import pytest  # noqa: F401
 import json
 import uuid
 import os
 from shutil import copy2
+import asyncio
 
 user = getpass.getuser()
 
@@ -14,9 +15,9 @@ def get_env():
         "status": "healthy",
         "JUPYTERHUB_USER": os.environ["JUPYTERHUB_USER"],
         "JUPYTER_SERVER_ROOT": os.environ["JUPYTER_SERVER_ROOT"],
-        "JUPYTERHUB_URL": "localhost:5000",
-        "PUBLIC_PROXY_API": "localhost:5001",
-        "NOTIFICATIONS_API": "localhost:5002",
+        "JUPYTERHUB_URL": "http://localhost:5000",
+        "PUBLIC_PROXY_API": "http://localhost:5001",
+        "NOTIFICATIONS_API": "http://localhost:5002",
         "TZ": "Europe/Paris",
     }
 
@@ -31,7 +32,7 @@ async def test_init(test_cli):
     assert resp_json == get_env()
 
 
-async def test_sheduler(test_cli):
+async def test_scheduler_status(test_cli):
     response = await test_cli.get("/scheduler/status")
     assert response.status == 200
     resp_json = await response.json()
@@ -134,8 +135,9 @@ async def test_logs(test_cli):
     assert status == "init API"
 
 
+@pytest.fixture
 async def test_scheduler(test_cli, tmp_path):
-    recur = "* * * * *"
+    recur = "*/5 * * * *"
     test_notebook = "tests/demo/demo_scheduler.ipynb"
     cur_path = os.path.join(os.getcwd(), test_notebook)
     new_path = os.path.join(tmp_path, test_notebook)
@@ -150,6 +152,8 @@ async def test_scheduler(test_cli, tmp_path):
     }
     response = await test_cli.post(f"/{t_job}", data=json.dumps(job))
     assert response.status == 200
+    resp_json = await response.json()
+    assert resp_json.get("status") == t_add
     response = await test_cli.get(f"/{t_job}")
     assert response.status == 200
     resp_json = await response.json()
@@ -159,13 +163,19 @@ async def test_scheduler(test_cli, tmp_path):
     assert res_job.get("path") == new_path
     assert res_job.get("value") == recur
     assert res_job.get("status") == t_add
-    # TODO test scheduler result
-    # time.sleep(60)
-    # response = await test_cli.get(f"/{t_job}")
-    # assert response.status == 200
-    # resp_json = await response.json()
-    # print('resp_json', resp_json)
-    # assert res_job.get("type") == t_scheduler
-    # assert res_job.get('path') == new_path
-    # assert res_job.get('value') == recur
-    # assert res_job.get('status') == t_health
+    await asyncio.sleep(6)
+    response = await test_cli.get(f"/{t_job}")
+    assert response.status == 200
+    resp_json = await response.json()
+    assert res_job.get("type") == t_scheduler
+    assert res_job.get("path") == new_path
+    assert res_job.get("value") == recur
+    assert res_job.get("status") == t_start
+    await asyncio.sleep(3)
+    response = await test_cli.get(f"/{t_job}")
+    assert response.status == 200
+    resp_json = await response.json()
+    assert res_job.get("type") == t_scheduler
+    assert res_job.get("path") == new_path
+    assert res_job.get("value") == recur
+    assert res_job.get("status") == t_health

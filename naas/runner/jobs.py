@@ -196,48 +196,58 @@ class Jobs:
         return data
 
     def __delete(self, cur_elem, uid, path, target_type, value, params):
-        self.__logger.info(
-            {
-                "id": uid,
-                "type": target_type,
-                "value": value,
-                "status": t_delete,
-                "filepath": path,
-                "params": params,
-            }
-        )
-        self.__df = self.__df.drop(cur_elem.index)
+        try:
+            self.__logger.info(
+                {
+                    "id": uid,
+                    "type": target_type,
+                    "value": value,
+                    "status": t_delete,
+                    "filepath": path,
+                    "params": params,
+                }
+            )
+            self.__df = self.__df.drop(cur_elem.index)
+            return t_delete
+        except Exception as e:
+            print("delete", e)
+            return t_error
 
     def __add(self, uid, path, target_type, value, params, run_time):
-        now = datetime.datetime.now()
-        dt_string = now.strftime("%Y-%m-%d %H:%M:%S")
-        self.__logger.info(
-            {
+        try:
+            now = datetime.datetime.now()
+            dt_string = now.strftime("%Y-%m-%d %H:%M:%S")
+            self.__logger.info(
+                {
+                    "id": uid,
+                    "type": target_type,
+                    "value": value,
+                    "status": t_add,
+                    "filepath": path,
+                    "params": params,
+                }
+            )
+            new_row = {
                 "id": uid,
                 "type": target_type,
                 "value": value,
-                "status": t_update,
-                "filepath": path,
+                "status": t_add,
+                "path": path,
                 "params": params,
+                "nbRun": 1 if run_time > 0 else 0,
+                "lastRun": run_time,
+                "totalRun": run_time,
+                "lastUpdate": dt_string,
             }
-        )
-        new_row = {
-            "id": uid,
-            "type": target_type,
-            "value": value,
-            "status": t_add,
-            "path": path,
-            "params": params,
-            "nbRun": 1 if run_time > 0 else 0,
-            "lastRun": run_time,
-            "totalRun": run_time,
-            "lastUpdate": dt_string,
-        }
-        cur_df = self.__df.to_dict("records")
-        if len(self.__df) > 0:
-            self.__df = pd.DataFrame([*cur_df, new_row])
-        else:
-            self.__df = pd.DataFrame([new_row])
+            cur_df = self.__df.to_dict("records")
+            if len(self.__df) > 0:
+                self.__df = pd.DataFrame([*cur_df, new_row])
+            else:
+                self.__df = pd.DataFrame([new_row])
+            return t_add
+        except Exception as e:
+            print("add", e)
+            return t_error
 
     def __update(
         self, cur_elem, uid, path, target_type, value, params, status, run_time
@@ -271,6 +281,8 @@ class Jobs:
             self.__df.at[index, "lastRun"] = 0
             self.__df.at[index, "totalRun"] = 0
             return t_add
+        else:
+            return t_skip
 
     async def update(self, uid, path, target_type, value, params, status, run_time=0):
         data = None
@@ -297,15 +309,20 @@ class Jobs:
                             "error": "Already exist",
                         }
                     )
-                    return {
-                        "status": "error",
-                        "id": uid,
-                        "data": [],
-                        "error": f"type {target_type} with key {value} already exist",
-                    }
+                    raise ServerError(
+                        {
+                            "status": "error",
+                            "id": uid,
+                            "data": [],
+                            "error": f"type {target_type} with key {value} already exist",
+                        },
+                        status_code=403,
+                    )
                 if len(cur_elem) == 1:
                     if status == t_delete:
-                        self.__delete(cur_elem, uid, path, target_type, value, params)
+                        res = self.__delete(
+                            cur_elem, uid, path, target_type, value, params
+                        )
                     else:
                         res = self.__update(
                             cur_elem,
@@ -318,9 +335,22 @@ class Jobs:
                             run_time,
                         )
                 elif status == t_add and len(cur_elem) == 0:
-                    self.__add(uid, path, target_type, value, params, run_time)
+                    res = self.__add(uid, path, target_type, value, params, run_time)
                 else:
                     res = t_skip
+                if res == t_error:
+                    raise ServerError(
+                        {
+                            "status": "error",
+                            "id": uid,
+                            "data": [],
+                            "error": "unknow error",
+                        },
+                        status_code=500,
+                    )
+                data = self.__df.to_dict("records")
+                self.__save_to_file(uid, data)
+                return {"id": uid, "status": res, "data": data}
             except Exception as e:
                 print("cannot update", e)
                 self.__logger.error(
@@ -334,7 +364,7 @@ class Jobs:
                         "error": str(e),
                     }
                 )
-                raise ServerError({"id": uid, "error": str(e)}, status_code=500)
-            data = self.__df.to_dict("records")
-            self.__save_to_file(uid, data)
-        return {"id": uid, "status": res, "data": data}
+                raise ServerError(
+                    {"status": "error", "id": uid, "data": [], "error": str(e)},
+                    status_code=500,
+                )

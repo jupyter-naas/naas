@@ -1,6 +1,6 @@
 from sanic.views import HTTPMethodView
 from sanic import response
-from naas.types import t_asset, t_job, t_error
+from naas.types import t_secret, t_error, t_send
 import uuid
 
 
@@ -18,7 +18,7 @@ class SecretController(HTTPMethodView):
         uid = str(uuid.uuid4())
         status = await self.__secrets.list(uid)
         self.__logger.info(
-            {"id": uid, "type": t_asset, "status": "send", "filepath": "status"}
+            {"id": uid, "type": t_secret, "status": t_send, "filepath": t_secret}
         )
         return response.json(status)
 
@@ -30,9 +30,9 @@ class SecretController(HTTPMethodView):
             self.__logger.info(
                 {
                     "id": uid,
-                    "type": t_job,
+                    "type": t_secret,
                     "status": t_error,
-                    "filepath": "jobs",
+                    "filepath": t_secret,
                     "error": "missing keys",
                     "tb": data,
                 }
@@ -50,6 +50,11 @@ class SecretController(HTTPMethodView):
         if updated.get("error"):
             return response.json(updated, status=409)
         self.__logger.info(
-            {"id": uid, "type": t_job, "filepath": "jobs", "status": updated["status"]}
+            {
+                "id": uid,
+                "type": t_secret,
+                "filepath": t_secret,
+                "status": updated["status"],
+            }
         )
         return response.json(updated)

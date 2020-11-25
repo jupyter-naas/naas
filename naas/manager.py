@@ -27,8 +27,6 @@ class Manager:
     __jup_token = None
     __production_path = None
     __folder_name = ".naas"
-    __readme_name = "README.md"
-    __readme_path = None
 
     def __init__(self):
         self.__base_ftp_path = os.environ.get(
@@ -38,20 +36,12 @@ class Manager:
         self.__jup_token = os.environ.get("JUPYTERHUB_API_TOKEN", "")
         self.__jup_user = os.environ.get("JUPYTERHUB_USER", "")
         self.__production_path = os.path.join(self.__base_ftp_path, self.__folder_name)
-        self.__readme_path = os.path.join(self.__production_path, self.__readme_name)
         if not os.path.exists(self.__production_path):
             try:
                 os.makedirs(self.__production_path)
             except OSError as exc:  # Guard against race condition
                 if exc.errno != errno.EEXIST:
                     raise
-        try:
-            with open(self.__readme_path, "w+") as readme:
-                readme.write("Welcome NAAS")
-                readme.close()
-        except OSError as exc:  # Guard against race condition
-            if exc.errno != errno.EEXIST:
-                raise
 
     def is_production(self):
         return False if self.notebook_path() else True

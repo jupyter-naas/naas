@@ -18,8 +18,10 @@ setup(
     package_data={
         "naas": ["runner/html/*.html", "runner/assets/*.png", "runner/assets/*.svg"],
     },
+    setup_requires=["wheel"],
     extras_require={
         "dev": [
+            "backports.zoneinfo>=0,<1",
             "pytest>=5,<7",
             "pytest-tornasync",
             "pytest-mock>=3,<4",
@@ -55,7 +57,6 @@ setup(
         "nbconvert>=6,<7",
         "nbclient>=0,<1",
         "beautifulsoup4>=4,<5",
-        "naas-drivers>=0,<1",
     ],
     classifiers=[
         "Programming Language :: Python :: 3.8",
