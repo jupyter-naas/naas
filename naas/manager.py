@@ -267,7 +267,6 @@ class Manager:
             new_obj["path"] = self.get_prod_path(dev_path)
             new_obj["file"] = self.__open_file(dev_path)
             new_obj["status"] = t_add
-            new_obj["params"] = new_obj["params"]
             try:
                 if debug:
                     print(f'{new_obj["status"]} ==> {new_obj}')
