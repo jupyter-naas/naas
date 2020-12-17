@@ -12,7 +12,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v1
       with:
-        python-version: '3.x'
+        python-version: '3.8'
     - uses: actions/cache@v2
       with:
         path: ~/.cache/pip
@@ -27,5 +27,11 @@ jobs:
       run: |
         python3 -m black naas
         python3 -m flake8 naas
-    - name: Validate PR title with commitizen
-      uses: CashStory/commitizen-action-pr@1.0.1
+    - uses: aslafy-z/conventional-pr-title-action@master
+      with:
+        success-state: Title follows the specification.
+        failure-state: Title does not follow the specification.
+        context-name: conventional-pr-title
+        preset: conventional-changelog-angular@latest
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

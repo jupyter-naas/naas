@@ -5,15 +5,21 @@ import os
 
 class Assets:
     naas = None
+    manager = None
     role = t_asset
 
     def __init__(self):
-        self.manager = Manager()
-        self.list = self.manager.list_prod
-        self.clear = self.manager.clear_prod
-        self.get = self.manager.get_prod
-        self.get_output = self.manager.get_output
-        self.clear_output = self.manager.clear_output
+        self.manager = Manager(t_asset)
+        self.path = self.manager.path
+
+    def list(self, path=None):
+        return self.manager.list_prod(None, path)
+
+    def get(self, path=None):
+        return self.manager.get_file(path)
+
+    def clear(self, path=None, histo=None):
+        return self.manager.clear_file(path, None, histo)
 
     def current_raw(self):
         json_data = self.manager.get_naas()

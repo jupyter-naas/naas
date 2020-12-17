@@ -1,5 +1,5 @@
 from naas.types import t_notebook, t_scheduler, t_error
-from .proxy import escape_kubernet
+from .env_var import n_env
 from nbconvert import HTMLExporter
 from sanic import response
 import papermill as pm
@@ -11,6 +11,8 @@ import bs4
 import csv
 import os
 import io
+import datetime
+import shutil
 
 kern_manager = None
 mime_html = "text/html"
@@ -30,16 +32,10 @@ except ImportError:
 
 class Notebooks:
     __logger = None
-    __port = None
     __notif = None
-    __api_internal = None
     __html_exporter = None
 
     def __init__(self, logger, notif=None):
-        self.__port = int(os.environ.get("NAAS_RUNNER_PORT", 5000))
-        self.__user = os.environ.get("JUPYTERHUB_USER", "joyvan@naas.com")
-        self.__single_user_api_path = os.environ.get("SINGLEUSER_PATH", "")
-        self.__api_internal = f"http://jupyter-{escape_kubernet(self.__user)}{self.__single_user_api_path}:{self.__port}/"
         self.__logger = logger
         self.__notif = notif
         self.__html_exporter = HTMLExporter()
@@ -47,9 +43,18 @@ class Notebooks:
 
     def response(self, uid, filepath, res, duration, params):
         next_url = params.get("next_url", None)
-        if next_url is not None:
-            if "http" not in next_url:
-                next_url = f"{self.__api_internal}{next_url}"
+        if next_url is not None and "https://" not in next_url:
+            self.__logger.error(
+                {
+                    "id": uid,
+                    "type": t_notebook,
+                    "status": "next_url",
+                    "filepath": filepath,
+                    "url": next_url,
+                    "error": "url not in right format",
+                }
+            )
+        if next_url is not None and "https" in next_url:
             self.__logger.info(
                 {
                     "id": uid,
@@ -110,7 +115,7 @@ class Notebooks:
             result_type = mime_html
             file_filepath_out = self.get_out_path(filepath)
             (result, ressources) = self.__html_exporter.from_filename(file_filepath_out)
-        except FileNotFoundError:  # noqa: E722
+        except FileNotFoundError:
             tb = traceback.format_exc()
             result_type = mime_json
             result = {
@@ -166,6 +171,17 @@ class Notebooks:
                     return {"type": result_type, "data": result}
         return None
 
+    def __keep_out_history(self, file_filepath_out):
+        if os.path.exists(file_filepath_out):
+            try:
+                out_finename = os.path.basename(file_filepath_out)
+                out_dir = os.path.dirname(file_filepath_out)
+                history_filename = f'{datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")}_{out_finename}'
+                history_path = os.path.join(out_dir, history_filename)
+                shutil.copy(file_filepath_out, history_path)
+            except:  # noqa: E722
+                pass
+
     def __pm_exec(self, uid, file_dirpath, file_filepath, file_filepath_out, params):
         res = None
         if kern_manager:
@@ -187,22 +203,17 @@ class Notebooks:
             )
         if not res:
             res = {"error": "Unknow error", "duration": 0}
+        self.__keep_out_history(file_filepath_out)
         return res
 
     def __send_notification(self, uid, res, file_filepath, current_type, value, params):
         notif_down = params.get("notif_down", None)
         notif_up = params.get("notif_up", None)
-        small_path = file_filepath.replace(
-            os.environ.get(
-                "JUPYTER_SERVER_ROOT", f'/home/{os.environ.get("NB_USER", "ftp")}'
-            ),
-            "",
-        )
+        small_path = file_filepath.replace(n_env.server_root, "")
         if res.get("error"):
-            email_admin = os.environ.get("JUPYTERHUB_USER", None)
-            if email_admin is not None:
+            if n_env.user is not None:
                 self.__notif.send_status(
-                    uid, "down", email_admin, small_path, current_type, value
+                    uid, "down", n_env.user, small_path, current_type, value
                 )
             if notif_down and self.__notif:
                 self.__notif.send_status(
@@ -274,6 +285,21 @@ class Notebooks:
                     "traceback": str(tb),
                 }
             )
+
+        except RuntimeError as err:
+            tb = traceback.format_exc()
+            res = {"error": err, "traceback": str(tb)}
+            self.__logger.error(
+                {
+                    "id": uid,
+                    "type": "Exception",
+                    "status": t_error,
+                    "filepath": file_filepath,
+                    "output_filepath": file_filepath_out,
+                    "error": err,
+                    "traceback": str(tb),
+                }
+            )
         except:  # noqa: E722
             tb = traceback.format_exc()
             res = {"error": "Unknow error", "traceback": str(tb)}
@@ -289,7 +315,20 @@ class Notebooks:
                 }
             )
         res["duration"] = time.time() - start_time
-        self.__send_notification(
-            uid, res, file_filepath_out, current_type, value, params
-        )
+        try:
+            self.__send_notification(
+                uid, res, file_filepath_out, current_type, value, params
+            )
+        except ConnectionError as err:
+            self.__logger.error(
+                {
+                    "id": uid,
+                    "type": "Exception",
+                    "status": t_error,
+                    "filepath": file_filepath,
+                    "output_filepath": file_filepath_out,
+                    "error": "Cannot send notification",
+                    "traceback": str(err),
+                }
+            )
         return res

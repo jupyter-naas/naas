@@ -133,3 +133,4 @@ tests/.DS_Store
 
 #vim files
 .vim/*
+pytest_tmp/

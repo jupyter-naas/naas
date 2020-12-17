@@ -9,6 +9,7 @@ clean = True
 init_data = []
 
 user_folder_name = "test_user_folder"
+test_file = "test_add.py"
 
 
 async def test_init(tmp_path):
@@ -27,7 +28,7 @@ async def test_add(tmp_path):
     logger = Logger()
     uid = str(uuid.uuid4())
     jobs = Jobs(logger, clean, init_data)
-    path = os.path.join(os.getcwd(), "test_add.py")
+    path = os.path.join(os.getcwd(), test_file)
     target_type = t_notebook
     value = user_folder_name
     params = {}
@@ -61,6 +62,41 @@ async def test_delete(tmp_path):
     await jobs.update(uid, path, target_type, value, params, t_delete, run_time)
     list_job = await jobs.list(uid)
     assert len(list_job) == 0
+
+
+async def test_keep(tmp_path):
+    path_srv_root = os.path.join(str(tmp_path), user_folder_name)
+    os.environ["JUPYTER_SERVER_ROOT"] = str(path_srv_root)
+    logger = Logger()
+    uid = str(uuid.uuid4())
+    jobs = Jobs(logger, clean, init_data)
+    path = os.path.join(os.getcwd(), test_file)
+    target_type = t_notebook
+    value = user_folder_name
+    params = {}
+    run_time = 0
+    await jobs.update(uid, path, target_type, value, params, t_add, run_time)
+    jobs_two = Jobs(logger, False, [])
+    assert len(await jobs_two.list(uid)) == 1
+    await jobs.update(uid, path, target_type, value, params, t_delete, run_time)
+    jobs_tree = Jobs(logger, False, [])
+    assert len(await jobs_tree.list(uid)) == 0
+
+
+async def test_clean(tmp_path):
+    path_srv_root = os.path.join(str(tmp_path), user_folder_name)
+    os.environ["JUPYTER_SERVER_ROOT"] = str(path_srv_root)
+    logger = Logger()
+    uid = str(uuid.uuid4())
+    jobs = Jobs(logger, clean, init_data)
+    path = os.path.join(os.getcwd(), test_file)
+    target_type = t_notebook
+    value = user_folder_name
+    params = {}
+    run_time = 0
+    await jobs.update(uid, path, target_type, value, params, t_add, run_time)
+    jobs_two = Jobs(logger, clean, init_data)
+    assert len(await jobs_two.list(uid)) == 0
 
 
 async def test_update(tmp_path):

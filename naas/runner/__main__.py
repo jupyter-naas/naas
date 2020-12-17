@@ -8,15 +8,13 @@ if __name__ == "__main__":
     parser.add_argument(
         "-c", "--check", action="store_true", help="check if already running"
     )
-    parser.add_argument("-d", "--deamon", action="store_true", help="deamon mode")
     parser.add_argument("-k", "--kill", action="store_true", help="kill me")
     args = parser.parse_args()
     port = int(args.port) if args.port else None
-    deamon = True if args.deamon else False
     kill = True if args.kill else False
     debug = False if args.prod else True
     runner = Runner()
     if kill:
         runner.kill()
     else:
-        runner.start(deamon=deamon, port=port, debug=debug)
+        runner.start(port=port, debug=debug)

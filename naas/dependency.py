@@ -5,12 +5,20 @@ from .manager import Manager
 class Dependency:
     naas = None
     role = t_dependency
+    manager = None
 
     def __init__(self):
-        self.manager = Manager()
-        self.get = self.manager.get_prod
-        self.list = self.manager.list_prod
-        self.clear = self.manager.clear_prod
+        self.manager = Manager(t_dependency)
+        self.path = self.manager.path
+
+    def list(self, path=None):
+        return self.manager.list_prod(None, path)
+
+    def get(self, path=None):
+        return self.manager.get_file(path)
+
+    def clear(self, path=None, histo=None):
+        return self.manager.clear_file(path, None, histo)
 
     def currents(self, raw=False):
         json_data = self.manager.get_naas()
@@ -26,7 +34,7 @@ class Dependency:
     def add(self, path=None, debug=False):
         if self.manager.is_production():
             print("No add done you are in production\n")
-            return
+            return self.get_prod_path(path)
         current_file = self.manager.get_path(path)
         self.manager.add_prod(
             {
@@ -39,6 +47,7 @@ class Dependency:
         )
         print("👌 Well done! Your Dependency has been sent to production. \n")
         print('PS: to remove the "Dependency" feature, just replace .add by .delete')
+        return self.get_prod_path(current_file)
 
     def delete(self, path=None, all=False, debug=False):
         if self.manager.is_production():
