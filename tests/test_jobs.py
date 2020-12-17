@@ -9,6 +9,7 @@ clean = True
 init_data = []
 
 user_folder_name = "test_user_folder"
+test_file = "test_add.py"
 
 
 async def test_init(tmp_path):
@@ -27,7 +28,7 @@ async def test_add(tmp_path):
     logger = Logger()
     uid = str(uuid.uuid4())
     jobs = Jobs(logger, clean, init_data)
-    path = os.path.join(os.getcwd(), "test_add.py")
+    path = os.path.join(os.getcwd(), test_file)
     target_type = t_notebook
     value = user_folder_name
     params = {}
@@ -69,7 +70,7 @@ async def test_keep(tmp_path):
     logger = Logger()
     uid = str(uuid.uuid4())
     jobs = Jobs(logger, clean, init_data)
-    path = os.path.join(os.getcwd(), "test_add.py")
+    path = os.path.join(os.getcwd(), test_file)
     target_type = t_notebook
     value = user_folder_name
     params = {}
@@ -88,7 +89,7 @@ async def test_clean(tmp_path):
     logger = Logger()
     uid = str(uuid.uuid4())
     jobs = Jobs(logger, clean, init_data)
-    path = os.path.join(os.getcwd(), "test_add.py")
+    path = os.path.join(os.getcwd(), test_file)
     target_type = t_notebook
     value = user_folder_name
     params = {}

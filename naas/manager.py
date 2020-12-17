@@ -255,7 +255,7 @@ class Manager:
             raise
 
     def path(self, path):
-        if self.manager.is_production():
+        if self.is_production():
             return self.get_prod_path(path)
         else:
             return path

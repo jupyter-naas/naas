@@ -331,5 +331,4 @@ class Notebooks:
                     "traceback": str(err),
                 }
             )
-            pass
         return res
