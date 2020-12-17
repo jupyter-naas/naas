@@ -2,8 +2,9 @@
 # Distributed under the terms of the GNU AGPL License.
 from IPython.core.display import display, Javascript, HTML
 from .runner.notifications import Notifications
-from .runner.proxy import Domain
+from .runner.env_var import n_env
 from .dependency import Dependency
+from .runner.proxy import Domain
 from .scheduler import Scheduler
 import ipywidgets as widgets
 from .assets import Assets
@@ -16,8 +17,9 @@ import os
 __version__ = "0.20.0"
 __github_repo = "jupyter-naas/naas"
 __doc_url = "https://naas.gitbook.io/naas/"
-__cannyjs = '<script>!function(w,d,i,s){function l(){if(!d.getElementById(i)){var f=d.getElementsByTagName(s)[0],e=d.createElement(s);e.type="text/javascript",e.async=!0,e.src="https://canny.io/sdk.js",f.parentNode.insertBefore(e,f)}}if("function"!=typeof w.Canny){var c=function(){c.q.push(arguments)};c.q=[],w.Canny=c,"complete"===d.readyState?l():w.attachEvent?w.attachEvent("onload",l):w.addEventListener("load",l,!1)}}(window,document,"canny-jssdk","script");</script>'  # noqa: E501
+__canny_js = '<script>!function(w,d,i,s){function l(){if(!d.getElementById(i)){var f=d.getElementsByTagName(s)[0],e=d.createElement(s);e.type="text/javascript",e.async=!0,e.src="https://canny.io/sdk.js",f.parentNode.insertBefore(e,f)}}if("function"!=typeof w.Canny){var c=function(){c.q.push(arguments)};c.q=[],w.Canny=c,"complete"===d.readyState?l():w.attachEvent?w.attachEvent("onload",l):w.addEventListener("load",l,!1)}}(window,document,"canny-jssdk","script");</script>'  # noqa: E501
 __location__ = os.getcwd()
+
 scheduler = Scheduler()
 secret = Secret()
 runner = Runner()
@@ -39,7 +41,7 @@ def get_last_version():
 
 
 def changelog():
-    data = __cannyjs
+    data = __canny_js
     data += """<button class="lm-Widget p-Widget jupyter-widgets jupyter-button widget-button mod-primary" data-canny-changelog>
         View Changelog
     </button>"""
@@ -48,11 +50,12 @@ def changelog():
 
 
 def bug_report():
-    email = os.environ.get("JUPYTERHUB_USER", None)
+    email = n_env.user
     name = email.split(".")[0]
+    name = email.split("@")[0]
     board_id = "6a83d5c5-2165-2608-082d-49959c7f030c"
 
-    data = __cannyjs
+    data = __canny_js
     data += "<div data-canny />"
     data += """
     <script>
@@ -70,18 +73,19 @@ def bug_report():
     </script>
     """
 
-    data = data.replace("{EMAIL}", email)
+    data = data.replace("{EMAIL}", str(n_env.user))
     data = data.replace("{BOARD}", board_id)
     data = data.replace("{NAME}", name)
     display(HTML(data))
 
 
 def feature_request():
-    email = os.environ.get("JUPYTERHUB_USER", None)
+    email = str(n_env.user)
     name = email.split(".")[0]
+    name = email.split("@")[0]
     board_id = "e3e3e0c3-7520-47f5-56f5-39182fb70480"
 
-    data = __cannyjs
+    data = __canny_js
     data += "<div data-canny />"
     data += """
     <script>
@@ -99,7 +103,7 @@ def feature_request():
     </script>
     """
 
-    data = data.replace("{EMAIL}", email)
+    data = data.replace("{EMAIL}", str(n_env.user))
     data = data.replace("{BOARD}", board_id)
     data = data.replace("{NAME}", name)
     display(HTML(data))
@@ -122,13 +126,12 @@ def up_to_date():
 
 
 def update():
-    token = os.environ.get("JUPYTERHUB_API_TOKEN")
-    username = os.environ.get("JUPYTERHUB_USER")
-    api_url = f'{os.environ.get("JUPYTERHUB_URL", "https://app.naas.ai")}/hub/api'
+    username = n_env.user
+    api_url = f"{n_env.hub_api}/hub/api"
     r = requests.delete(
         f"{api_url}/users/{username}/server",
         headers={
-            "Authorization": f"token {token}",
+            "Authorization": f"token {n_env.token}",
         },
     )
     r.raise_for_status()

@@ -7,6 +7,8 @@ t_secret = "secret"
 t_job = "job"
 t_log = "log"
 
+t_output = "output"
+t_list = "list"
 t_send = "send"
 t_add = "installed"
 t_delete = "delete"

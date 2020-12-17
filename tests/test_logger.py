@@ -1,5 +1,6 @@
 from naas.types import t_add, t_delete, t_update
 from naas.runner.logger import Logger
+from naas.runner import n_env
 import pytest  # noqa: F401
 import logging
 import uuid
@@ -10,8 +11,8 @@ user_folder_name = "test_user_folder"
 
 def test_init(tmp_path, caplog):
     caplog.set_level(logging.INFO)
-    path_srv_root = os.path.join(os.getcwd(), user_folder_name)
-    os.environ["JUPYTER_SERVER_ROOT"] = path_srv_root
+    path_srv_root = os.path.join(str(tmp_path), user_folder_name)
+    n_env.server_root = path_srv_root
     logger = Logger(clear=True)
     uid = str(uuid.uuid4())
     data = logger.list(uid).get("data")
@@ -28,7 +29,7 @@ def test_init(tmp_path, caplog):
 def test_clean(tmp_path, caplog):
     caplog.set_level(logging.INFO)
     path_srv_root = os.path.join(str(tmp_path), user_folder_name)
-    os.environ["JUPYTER_SERVER_ROOT"] = path_srv_root
+    n_env.server_root = path_srv_root
     logger = Logger(clear=True)
     uid = str(uuid.uuid4())
     data = logger.list(uid).get("data")
@@ -45,8 +46,8 @@ def test_clean(tmp_path, caplog):
 def test_add(tmp_path, caplog):
     caplog.set_level(logging.INFO)
     path_srv_root = os.path.join(str(tmp_path), user_folder_name)
-    os.environ["JUPYTER_SERVER_ROOT"] = path_srv_root
-    logger = Logger()
+    n_env.server_root = path_srv_root
+    logger = Logger(clear=True)
     uid = str(uuid.uuid4())
     data = {"id": uid, "type": t_add, "status": "test_2"}
     logger.info(data)
@@ -63,8 +64,8 @@ def test_add(tmp_path, caplog):
 def test_list(tmp_path, caplog):
     caplog.set_level(logging.INFO)
     path_srv_root = os.path.join(str(tmp_path), user_folder_name)
-    os.environ["JUPYTER_SERVER_ROOT"] = path_srv_root
-    logger = Logger()
+    n_env.server_root = path_srv_root
+    logger = Logger(clear=True)
     uid = str(uuid.uuid4())
     data = {"id": uid, "type": t_add, "status": "test_1"}
     data_two = {"id": uid, "type": t_delete, "status": "test_2"}

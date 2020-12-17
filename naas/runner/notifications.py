@@ -1,5 +1,6 @@
 from naas.types import t_notebook, t_scheduler, t_asset
 from .proxy import encode_proxy_url
+from .env_var import n_env
 from bs4 import BeautifulSoup
 import pretty_cron
 import requests
@@ -11,26 +12,17 @@ import os
 
 class Notifications:
     logger = None
-    base_notif_url = os.environ.get("NOTIFICATIONS_API", "")
+
     headers = None
 
     def __init__(self, logger=None):
-        self.headers = {
-            "Authorization": f'token {os.environ.get("JUPYTERHUB_API_TOKEN", "")}'
-        }
+        self.headers = {"Authorization": f"token {n_env.token}"}
         self.logger = logger
 
     def send(self, email_to, subject, html, files=[], email_from=None):
         uid = str(uuid.uuid4())
         soup = BeautifulSoup(html, features="html5lib")
         content = soup.get_text()
-        if self.base_notif_url is None:
-            jsn = {"id": uid, "type": "email error", "error": "not configured"}
-            if self.logger is not None:
-                self.logger.error(json.dumps(jsn))
-            else:
-                print(jsn)
-            return jsn
         try:
             data = {
                 "subject": subject,
@@ -49,17 +41,16 @@ class Notifications:
                     except Exception as err:
                         print(err)
                 req = requests.post(
-                    url=f"{self.base_notif_url}/send",
+                    url=f"{n_env.notif_api}/send",
                     files=files_list,
                     headers=self.headers,
                     data=data,
                 )
             else:
                 req = requests.post(
-                    url=f"{self.base_notif_url}/send", headers=self.headers, json=data
+                    url=f"{n_env.notif_api}/send", headers=self.headers, json=data
                 )
             req.raise_for_status()
-            jsn = req.json()
             print("👌 💌 Email has been sent successfully !")
         except Exception as err:
             if self.logger is not None:
@@ -80,17 +71,15 @@ class Notifications:
         files=[],
         email_from=None,
     ):
-        if self.base_notif_url is None:
+        if n_env.notif_api is None:
             jsn = {"id": uid, "type": "notification error", "error": "not configured"}
             if self.logger is not None:
                 self.logger.error(json.dumps(jsn))
             else:
                 print(jsn)
             return jsn
-        base_url = os.environ.get("JUPYTERHUB_URL", "")
-        base_user = os.environ.get("JUPYTERHUB_USER", "")
         content = ""
-        file_link = f"{base_url}/user/{base_user}/tree/{file_path}"
+        file_link = f"{n_env.hub_api}/user/{n_env.user}/tree/{file_path}"
         if current_type == t_asset or current_type == t_notebook:
             content = f'The file <a href="{file_link}">{file_path}</a> <br/>'
             content += f"Accesible at this url:<br/> {encode_proxy_url(current_type)}/{current_value}<br/>"
@@ -104,7 +93,7 @@ class Notifications:
         message_bytes = file_path.encode("ascii")
         base64_bytes = base64.b64encode(message_bytes)
         file_path_base64 = base64_bytes.decode("ascii")
-        link_url = f"{base_url}/user/{base_user}/naas/?filter={file_path_base64}"
+        link_url = f"{n_env.hub_api}/user/{n_env.user}/naas/?filter={file_path_base64}"
         logo_url = f"{encode_proxy_url(t_asset)}/naas_logo.png"
         try:
             data = {
@@ -132,14 +121,14 @@ class Notifications:
                     except Exception as err:
                         print(err)
                 req = requests.post(
-                    url=f"{self.base_notif_url}/send_status",
+                    url=f"{n_env.notif_api}/send_status",
                     headers=self.headers,
                     files=files,
                     json=data,
                 )
             else:
                 req = requests.post(
-                    url=f"{self.base_notif_url}/send_status",
+                    url=f"{n_env.notif_api}/send_status",
                     headers=self.headers,
                     json=data,
                 )
@@ -157,7 +146,7 @@ class Notifications:
                 print(err)
 
     def status(self):
-        req = requests.get(url=f"{self.base_notif_url}/")
+        req = requests.get(url=f"{n_env.notif_api}/")
         req.raise_for_status()
         jsn = req.json()
         return jsn

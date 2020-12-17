@@ -1,18 +1,20 @@
 from naas.types import t_scheduler, t_start, t_main, t_health, t_error, t_busy
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 import apscheduler.schedulers.base
+from .env_var import n_env
 import traceback
-import requests
 import datetime
 import asyncio
+import aiohttp
 import pycron
 import time
 import uuid
-import os
 
-NAAS_SCHEDULER_TIME = int(os.environ.get("NAAS_SCHEDULER_TIME", "60"))
-NAAS_SCHEDULER_INSTANCE_MAX = int(os.environ.get("NAAS_SCHEDULER_INSTANCE_MAX", "60"))
-NAAS_JOB_NAME = "naas_scheduler_job"
+
+async def fetch(url):
+    with aiohttp.ClientSession() as session:
+        async with session.get(url, timeout=n_env.scheduler_timeout) as response:
+            return await response.json()
 
 
 class Scheduler:
@@ -35,10 +37,11 @@ class Scheduler:
             return "paused"
 
     async def stop(self):
-        await self.__scheduler.shutdown(wait=False)
-        await self.__scheduler.pause()
-        await self.__scheduler.remove_job(NAAS_JOB_NAME)
-        self.__scheduler = None
+        if self.__scheduler is not None:
+            self.__scheduler.pause()
+            self.__scheduler.remove_job(n_env.scheduler_job_name)
+            self.__scheduler.shutdown(wait=False)
+            self.__scheduler = None
 
     async def start(self, test_mode=False):
         if test_mode:
@@ -48,9 +51,9 @@ class Scheduler:
                 self.__scheduler.add_job(
                     func=self.__scheduler_function,
                     trigger="interval",
-                    id=NAAS_JOB_NAME,
-                    seconds=NAAS_SCHEDULER_TIME,
-                    max_instances=NAAS_SCHEDULER_INSTANCE_MAX,
+                    id=n_env.scheduler_job_name,
+                    seconds=n_env.scheduler_interval,
+                    max_instances=n_env.scheduler_job_max,
                 )
                 self.__scheduler.start()
                 uid = str(uuid.uuid4())
@@ -59,7 +62,7 @@ class Scheduler:
                         "id": uid,
                         "type": t_main,
                         "filepath": "sheduler",
-                        "status": f"start SCHEDULER seconds={NAAS_SCHEDULER_TIME}, max_instances={NAAS_SCHEDULER_INSTANCE_MAX}",
+                        "status": f"start SCHEDULER seconds={n_env.scheduler_interval}, max_instances={n_env.scheduler_job_max}",
                     }
                 )
 
@@ -70,7 +73,8 @@ class Scheduler:
                 last_update = datetime.datetime.strptime(
                     last_update_str, "%d/%m/%y %H:%M:%S"
                 )
-                timeout_date = datetime.datetime.today() - datetime.timedelta(days=1)
+                # Timeout run 1h
+                timeout_date = datetime.datetime.today() - datetime.timedelta(hours=1)
                 running = True if last_update < timeout_date else running
             except ValueError:
                 pass
@@ -93,7 +97,6 @@ class Scheduler:
                 and pycron.is_now(value, current_time)
                 and not running
             ):
-                # raise ValueError("greenlet", value, file_filepath, pycron.is_now(value, current_time))
                 self.__logger.info(
                     {
                         "main_id": str(main_uid),
@@ -130,22 +133,31 @@ class Scheduler:
                     )
                     return
                 next_url = params.get("next_url", None)
-                if next_url is not None:
-                    if "http" not in next_url:
-                        next_url = f"{self.__api_internal}{next_url}"
+                if next_url is not None and "https://" not in next_url:
+                    self.__logger.error(
+                        {
+                            "id": uid,
+                            "type": t_scheduler,
+                            "status": "next_url",
+                            "filepath": file_filepath,
+                            "url": next_url,
+                            "error": "url not in right format",
+                        }
+                    )
+                elif next_url is not None and "https://" in next_url:
                     self.__logger.info(
                         {
                             "id": uid,
                             "type": t_scheduler,
-                            "filepath": file_filepath,
                             "status": "next_url",
+                            "filepath": file_filepath,
                             "url": next_url,
                         }
                     )
                     try:
-                        req = requests.get(url=next_url)
-                        req.raise_for_status()
-                    except requests.exceptions.RequestException as e:
+                        await fetch(url=next_url)
+                    except:  # noqa: E722
+                        tb = traceback.format_exc()
                         self.__logger.error(
                             {
                                 "id": main_uid,
@@ -153,7 +165,7 @@ class Scheduler:
                                 "status": t_error,
                                 "filepath": file_filepath,
                                 "error": "Error in next_url",
-                                "trace": str(e),
+                                "trace": str(tb),
                             }
                         )
                 self.__logger.info(
@@ -211,16 +223,16 @@ class Scheduler:
         main_uid = str(uuid.uuid4())
         all_start_time = time.time()
         try:
-            if NAAS_SCHEDULER_TIME == 60:
+            if n_env.scheduler_interval == 60:
                 current_time = datetime.datetime.now()
-            elif NAAS_SCHEDULER_TIME == 1:
+            elif n_env.scheduler_interval == 1:
                 # for speed test in ci
                 current_time = datetime.datetime.now()
                 current_sec = current_time.second
                 current_time = current_time.replace(minute=current_sec)
             else:
                 raise ValueError(
-                    f"naas doesn't support NAAS_SCHEDULER_TIME={NAAS_SCHEDULER_TIME}"
+                    f"naas doesn't support NAAS_SCHEDULER_TIME={n_env.scheduler_interval}"
                 )
             print(f"\n\n================ {current_time} ============== \n\n")
             self.__logger.info(

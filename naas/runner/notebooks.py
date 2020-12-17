@@ -1,5 +1,5 @@
 from naas.types import t_notebook, t_scheduler, t_error
-from .proxy import escape_kubernet
+from .env_var import n_env
 from nbconvert import HTMLExporter
 from sanic import response
 import papermill as pm
@@ -32,16 +32,10 @@ except ImportError:
 
 class Notebooks:
     __logger = None
-    __port = None
     __notif = None
-    __api_internal = None
     __html_exporter = None
 
     def __init__(self, logger, notif=None):
-        self.__port = int(os.environ.get("NAAS_RUNNER_PORT", 5000))
-        self.__user = os.environ.get("JUPYTERHUB_USER", "joyvan@naas.com")
-        self.__single_user_api_path = os.environ.get("SINGLEUSER_PATH", "")
-        self.__api_internal = f"http://jupyter-{escape_kubernet(self.__user)}{self.__single_user_api_path}:{self.__port}/"
         self.__logger = logger
         self.__notif = notif
         self.__html_exporter = HTMLExporter()
@@ -49,9 +43,18 @@ class Notebooks:
 
     def response(self, uid, filepath, res, duration, params):
         next_url = params.get("next_url", None)
-        if next_url is not None:
-            if "http" not in next_url:
-                next_url = f"{self.__api_internal}{next_url}"
+        if next_url is not None and "https://" not in next_url:
+            self.__logger.error(
+                {
+                    "id": uid,
+                    "type": t_notebook,
+                    "status": "next_url",
+                    "filepath": filepath,
+                    "url": next_url,
+                    "error": "url not in right format",
+                }
+            )
+        if next_url is not None and "https" in next_url:
             self.__logger.info(
                 {
                     "id": uid,
@@ -206,17 +209,11 @@ class Notebooks:
     def __send_notification(self, uid, res, file_filepath, current_type, value, params):
         notif_down = params.get("notif_down", None)
         notif_up = params.get("notif_up", None)
-        small_path = file_filepath.replace(
-            os.environ.get(
-                "JUPYTER_SERVER_ROOT", f'/home/{os.environ.get("NB_USER", "ftp")}'
-            ),
-            "",
-        )
+        small_path = file_filepath.replace(n_env.server_root, "")
         if res.get("error"):
-            email_admin = os.environ.get("JUPYTERHUB_USER", None)
-            if email_admin is not None:
+            if n_env.user is not None:
                 self.__notif.send_status(
-                    uid, "down", email_admin, small_path, current_type, value
+                    uid, "down", n_env.user, small_path, current_type, value
                 )
             if notif_down and self.__notif:
                 self.__notif.send_status(

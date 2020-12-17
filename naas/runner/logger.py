@@ -1,3 +1,5 @@
+from .env_var import n_env
+import datetime as dt
 import pandas as pd
 import traceback
 import logging
@@ -6,7 +8,6 @@ import json
 import csv
 import io
 import os
-import datetime as dt
 
 
 class CsvFormatter(logging.Formatter):
@@ -47,16 +48,11 @@ class Logger:
     __name = "naas_logger"
     __logs_filename = "logs.csv"
     __naas_folder = ".naas"
-    __path_user_files = None
     __columns = ["asctime", "levelname", "name", "message"]
 
     def __init__(self, clear=False):
-        self.__path_user_files = os.environ.get(
-            "JUPYTER_SERVER_ROOT", f'/home/{os.environ.get("NB_USER", "ftp")}'
-        )
-        self.__path_naas_files = os.path.join(
-            self.__path_user_files, self.__naas_folder
-        )
+
+        self.__path_naas_files = os.path.join(n_env.server_root, self.__naas_folder)
         self.__path_logs_file = os.path.join(
             self.__path_naas_files, self.__logs_filename
         )

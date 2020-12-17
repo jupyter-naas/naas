@@ -66,7 +66,7 @@ class AssetsController(HTTPMethodView):
                             "status": t_error,
                             "filepath": file_filepath,
                             "token": token,
-                            "error": e,
+                            "error": str(e),
                         }
                     )
                     await self.__jobs.update(

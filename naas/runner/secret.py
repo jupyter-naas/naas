@@ -18,6 +18,7 @@ import json
 import os
 import uuid
 from sanic.exceptions import ServerError
+from .env_var import n_env
 import base64
 
 
@@ -27,19 +28,14 @@ filters_api = [t_notebook, t_asset]
 
 class Secret:
     __storage_sem = None
-    __path_user_files = None
     __df = None
     __logger = None
     __naas_folder = ".naas"
     __json_name = "secrets.json"
 
     def __init__(self, logger, clean=False, init_data=[]):
-        self.__path_user_files = os.environ.get(
-            "JUPYTER_SERVER_ROOT", f'/home/{os.environ.get("NB_USER", "ftp")}'
-        )
-        self.__path_naas_files = os.path.join(
-            self.__path_user_files, self.__naas_folder
-        )
+
+        self.__path_naas_files = os.path.join(n_env.server_root, self.__naas_folder)
         self.__json_secrets_path = os.path.join(
             self.__path_naas_files, self.__json_name
         )

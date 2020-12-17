@@ -1,20 +1,14 @@
 from .types import t_secret, t_add
+from .runner.env_var import n_env
 import pandas as pd
 import requests
 import base64
-import os
 
 
 class Secret:
-
-    naas_api = os.environ.get(
-        "NAAS_RUNNER_API",
-        f'http://localhost:{os.environ.get("NAAS_RUNNER_PORT", 5000)}',
-    )
-
     def list(self):
         try:
-            r = requests.get(f"{self.naas_api}/{t_secret}")
+            r = requests.get(f"{n_env.api}/{t_secret}")
             r.raise_for_status()
             res = r.json()
             return pd.DataFrame.from_records(res)
@@ -31,7 +25,7 @@ class Secret:
         secret_base64 = base64_bytes.decode("ascii")
         obj = {"name": name, "secret": secret_base64, "status": t_add}
         try:
-            r = requests.post(f"{self.naas_api}/{t_secret}", json=obj)
+            r = requests.post(f"{n_env.api}/{t_secret}", json=obj)
             r.raise_for_status()
             print("👌 Well done! Your Secret has been sent to production. \n")
             print('PS: to remove the "Secret" feature, just replace .add by .delete')

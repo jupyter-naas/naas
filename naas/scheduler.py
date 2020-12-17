@@ -1,4 +1,4 @@
-from .types import t_scheduler
+from .types import t_scheduler, t_output
 from .manager import Manager
 import pretty_cron
 import requests
@@ -8,14 +8,29 @@ import pycron
 class Scheduler:
     naas = None
     role = t_scheduler
+    manager = None
 
     def __init__(self):
-        self.manager = Manager()
-        self.get_output = self.manager.get_output
-        self.clear_output = self.manager.clear_output
-        self.list = self.manager.list_prod
-        self.clear = self.manager.clear_prod
-        self.get = self.manager.get_prod
+        self.manager = Manager(t_scheduler)
+        self.path = self.manager.path
+
+    def list(self, path=None):
+        return self.manager.list_prod(None, path)
+
+    def list_output(self, path=None):
+        return self.manager.list_prod(t_output, path)
+
+    def get(self, path=None):
+        return self.manager.get_file(path)
+
+    def get_output(self, path=None):
+        return self.manager.get_file(path, t_output)
+
+    def clear(self, path=None, histo=None):
+        return self.manager.clear_file(path, None, histo)
+
+    def clear_output(self, path=None, histo=None):
+        return self.manager.clear_file(path, t_output, histo)
 
     def status(self):
         req = requests.get(url=f"{self.manager.naas_api}/scheduler")

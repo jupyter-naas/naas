@@ -4,7 +4,7 @@ from naas.types import t_log, t_send
 import uuid
 import json
 
-filepath = "logs"
+endpoint = "logs"
 
 
 class LogsController(HTTPMethodView):
@@ -33,7 +33,7 @@ class LogsController(HTTPMethodView):
                     "id": uid,
                     "type": t_log,
                     "status": t_send,
-                    "filepath": filepath,
+                    "filepath": endpoint,
                     "skip": skip,
                     "limit": limit,
                     "search": search,

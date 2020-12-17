@@ -21,6 +21,7 @@ setup(
     setup_requires=["wheel"],
     extras_require={
         "dev": [
+            "syncer>=1,<2",
             "backports.zoneinfo>=0,<1",
             "pytest>=5,<7",
             "pytest-tornasync",
