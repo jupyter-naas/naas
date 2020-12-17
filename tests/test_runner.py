@@ -1,3 +1,5 @@
+from base64 import b64encode
+from naas.runner.proxy import escape_kubernet
 from naas.types import t_add, t_notebook, t_job, t_health, t_scheduler, t_asset
 import getpass
 import pytest  # noqa: F401
@@ -14,6 +16,14 @@ from syncer import sync
 
 
 user = getpass.getuser()
+
+
+def getUserb64():
+    client_encoded = escape_kubernet(n_env.user)
+    message_bytes = client_encoded.encode("ascii")
+    base64_bytes = b64encode(message_bytes)
+    username_base64 = base64_bytes.decode("ascii")
+    return username_base64
 
 
 def get_env():
@@ -103,7 +113,7 @@ async def test_asset(mocker, requests_mock, test_cli, tmp_path):
     mock_session(mocker, requests_mock, cur_path)
     mock_job(requests_mock, test_cli)
     url = assets.add(new_path)
-    assert url.startswith("http://localhost:5001/bWFydGluZG9uYWRpZXU=/asset/")
+    assert url.startswith(f"http://localhost:5001/{getUserb64()}/asset/")
     response = await test_cli.get(f"/{t_job}")
     assert response.status == 200
     resp_json = await response.json()
@@ -134,7 +144,7 @@ async def test_notebooks(mocker, requests_mock, test_cli, tmp_path):
     mock_session(mocker, requests_mock, new_path)
     mock_job(requests_mock, test_cli)
     url = api.add(new_path)
-    assert url.startswith("http://localhost:5001/bWFydGluZG9uYWRpZXU=/notebook/")
+    assert url.startswith(f"http://localhost:5001/{getUserb64()}/notebook/")
     response = await test_cli.get(f"/{t_job}")
     assert response.status == 200
     resp_json = await response.json()
