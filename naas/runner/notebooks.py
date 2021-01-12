@@ -72,17 +72,18 @@ class Notebooks:
                 ext = mimetypes.guess_extension(res_data.get("type"), strict=True)
                 inline = params.get("inline", False)
                 headers = dict()
+                new_file_name = f'{file_name.split(".")[0]}{ext}'
                 if ext and not inline:
-                    file_name = file_name.split(".")[0] + ext
                     headers[
                         "Content-Disposition"
-                    ] = f'attachment; filename="{file_name}"'
+                    ] = f'attachment; filename="{new_file_name}"'
 
                 async def streaming_fn(res):
+                    # await res.write(str(res_data.get("data")))
                     await res.write(str(res_data.get("data")).encode("utf-8"))
 
                 return response.stream(
-                    streaming_fn, headers=headers, content_type=res_data.get("type")
+                    streaming_fn, headers=headers, content_type=mimetypes.guess_type(new_file_name)[0]
                 )
             else:
                 return response.json({"id": uid, "status": "Done", "time": duration})

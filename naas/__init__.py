@@ -24,6 +24,7 @@ scheduler = Scheduler()
 secret = Secret()
 runner = Runner()
 api = Api()
+webhook = api
 assets = Assets()
 dependency = Dependency()
 notifications = Notifications()
