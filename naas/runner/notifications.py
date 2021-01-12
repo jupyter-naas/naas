@@ -161,7 +161,7 @@ class Notifications:
         req.raise_for_status()
         jsn = req.json()
         return jsn
-    
+
     def list(self):
         req = requests.post(
             url=f"{self.base_notif_url}/list",
