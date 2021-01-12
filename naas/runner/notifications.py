@@ -166,7 +166,6 @@ class Notifications:
         req = requests.post(
             url=f"{self.base_notif_url}/list",
             headers=self.headers,
-            json=data,
         )
         jsn = req.json()
         return jsn
@@ -175,7 +174,6 @@ class Notifications:
         req = requests.post(
             url=f"{self.base_notif_url}/list_all",
             headers=self.headers,
-            json=data,
         )
         jsn = req.json()
         return jsn
