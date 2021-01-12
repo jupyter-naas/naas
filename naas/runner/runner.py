@@ -5,13 +5,14 @@ from .controllers.assets import AssetsController
 from .controllers.notebooks import NbController
 from .controllers.jobs import JobsController
 from .controllers.logs import LogsController
+from sanic_openapi import swagger_blueprint
 from .controllers.env import EnvController
 from .notifications import Notifications
+from .proxy import escape_kubernet
 from .scheduler import Scheduler
 from .notebooks import Notebooks
-from sanic_openapi import swagger_blueprint
+from .env_var import n_env
 from .logger import Logger
-from .proxy import escape_kubernet
 from .jobs import Jobs
 from sanic import Sanic
 import sentry_sdk
@@ -27,15 +28,13 @@ import nest_asyncio
 asyncio.set_event_loop_policy(None)
 nest_asyncio.apply()
 
-__version__ = "0.20.1"
+__version__ = "0.21.0b1"
 
 
 class Runner:
     __naas_folder = ".naas"
     # Declare path variable
     __path_lib_files = os.path.dirname(os.path.abspath(__file__))
-    __path_user_files = None
-    __port = 5000
     __html_files = "html"
     __manager_index = "manager.html"
     __app = None
@@ -44,27 +43,9 @@ class Runner:
     __jobs = None
     __scheduler = None
     __logger = None
-    __shell_user = None
-    __tz = None
-    public_url = None
-    proxy_url = None
 
     def __init__(self):
-        self.__path_user_files = os.environ.get(
-            "JUPYTER_SERVER_ROOT", f'/home/{os.environ.get("NB_USER", "ftp")}'
-        )
-        self.__port = int(os.environ.get("NAAS_RUNNER_PORT", 5000))
-        self.__user = os.environ.get("JUPYTERHUB_USER", "joyvan@naas.com")
-        self.__shell_user = os.environ.get("NB_USER", None)
-        self.__public_url = os.environ.get("JUPYTERHUB_URL", "")
-        self.__proxy_url = os.environ.get("PUBLIC_PROXY_API", "http://localhost:3002")
-        self.__notifications_url = os.environ.get(
-            "NOTIFICATIONS_API", "http://localhost:3003"
-        )
-        self.__tz = os.environ.get("TZ", "Europe/Paris")
-        self.__path_naas_files = os.path.join(
-            self.__path_user_files, self.__naas_folder
-        )
+        self.__path_naas_files = os.path.join(n_env.server_root, self.__naas_folder)
         self.__path_html_files = os.path.join(self.__path_lib_files, self.__html_files)
         self.__path_manager_index = os.path.join(
             self.__path_html_files, self.__manager_index
@@ -76,7 +57,9 @@ class Runner:
         self.__logger.info(
             {"id": uid, "type": t_main, "filepath": "runner", "status": "start API"}
         )
-        self.__app.run(host="0.0.0.0", port=self.__port, debug=debug, access_log=debug)
+        self.__app.run(
+            host="0.0.0.0", port=n_env.api_port, debug=debug, access_log=debug
+        )
 
     async def initialize_before_start(self, app, loop):
         if self.__jobs is None:
@@ -88,7 +71,7 @@ class Runner:
             )
             self.__scheduler = Scheduler(self.__logger, self.__jobs, self.__nb, loop)
             self.__app.add_route(
-                SchedulerController.as_view(self.__scheduler),
+                SchedulerController.as_view(self.__scheduler, self.__logger),
                 f"/{t_scheduler}/<mode>",
             )
             self.__app.add_route(
@@ -101,6 +84,15 @@ class Runner:
                 JobsController.as_view(self.__logger, self.__jobs), f"/{t_job}"
             )
             await self.__scheduler.start()
+
+    async def initialize_before_stop(self, app, loop):
+        if self.__nb is not None:
+            self.__nb = None
+        if self.__scheduler is not None:
+            await self.__scheduler.stop()
+            self.__scheduler = None
+        if self.__jobs is not None:
+            self.__jobs = None
 
     def init_app(self):
         if not os.path.exists(self.__path_naas_files):
@@ -119,15 +111,16 @@ class Runner:
         self.__app.register_listener(
             self.initialize_before_start, "before_server_start"
         )
+        self.__app.register_listener(self.initialize_before_stop, "before_server_stop")
         self.__app.add_route(
             EnvController.as_view(
                 self.__logger,
-                self.__user,
-                self.__public_url,
-                self.__proxy_url,
-                self.__notifications_url,
-                self.__tz,
-                self.__path_user_files,
+                n_env.user,
+                n_env.hub_api,
+                n_env.proxy_api,
+                n_env.notif_api,
+                n_env.tz,
+                n_env.server_root,
             ),
             "/env",
         )
@@ -140,22 +133,22 @@ class Runner:
         )
         return self.__app
 
-    def start(self, deamon=True, port=None, debug=False):
+    def start(self, port=None, debug=False):
         user = getpass.getuser()
-        if user != self.__shell_user:
-            raise ValueError(f"{user} not autorized, use {self.__shell_user} instead")
+        if user != n_env.shell_user:
+            raise ValueError(f"{user} not autorized, use {n_env.shell_user} instead")
         if port:
-            self.__port = port
+            n_env.api_port = port
         print("Start Runner", __version__)
         try:
-            if os.environ.get("NAAS_SENTRY_DSN"):
+            if n_env.sentry_dsn:
                 sentry_sdk.init(
-                    dsn=os.environ.get("NAAS_SENTRY_DSN"),
+                    dsn=n_env.sentry_dsn,
                     traces_sample_rate=1.0,
-                    environment=escape_kubernet(self.__user),
+                    environment=escape_kubernet(n_env.user),
                     integrations=[SanicIntegration()],
                 )
-                sentry_sdk.set_user({"email": self.__user})
+                sentry_sdk.set_user({"email": n_env.user})
                 with sentry_sdk.configure_scope() as scope:
                     scope.set_context("Naas", {"version": __version__})
             self.__main(debug)

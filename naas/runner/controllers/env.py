@@ -3,6 +3,8 @@ from sanic.response import json
 from naas.types import t_health, t_asset
 import uuid
 
+endpoint = "env"
+
 
 class EnvController(HTTPMethodView):
     __notif_url = None
@@ -43,6 +45,6 @@ class EnvController(HTTPMethodView):
             "TZ": self.__tz,
         }
         self.__logger.info(
-            {"id": uid, "type": t_asset, "status": "send", "filepath": "env"}
+            {"id": uid, "type": t_asset, "status": "send", "filepath": endpoint}
         )
         return json(env)

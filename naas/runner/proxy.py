@@ -1,7 +1,7 @@
+from .env_var import n_env
 from base64 import b64encode
 import escapism
 import string
-import os
 import requests
 
 _docker_safe_chars = set(string.ascii_letters + string.digits)
@@ -28,27 +28,22 @@ def escape_docker(s):
 
 
 def encode_proxy_url(token=""):
-    client = os.environ.get("JUPYTERHUB_USER", "")
-    base_public_url = os.environ.get("PUBLIC_PROXY_API", "")
-    client_encoded = escape_kubernet(client)
+    client_encoded = escape_kubernet(n_env.user)
     message_bytes = client_encoded.encode("ascii")
     base64_bytes = b64encode(message_bytes)
     username_base64 = base64_bytes.decode("ascii")
-    return f"{base_public_url}/{username_base64}/{token}"
+    return f"{n_env.proxy_api}/{username_base64}/{token}"
 
 
 class Domain:
 
-    base_notif_url = os.environ.get("PUBLIC_PROXY_API", None)
     headers = None
 
     def __init__(self):
-        self.headers = {
-            "Authorization": f'token {os.environ.get("JUPYTERHUB_API_TOKEN", None)}'
-        }
+        self.headers = {"Authorization": f"token {n_env.token}"}
 
     def status(self):
-        req = requests.get(url=f"{self.base_notif_url}/status")
+        req = requests.get(url=f"{n_env.proxy_api}/status")
         req.raise_for_status()
         jsn = req.json()
         return jsn
@@ -66,7 +61,7 @@ class Domain:
             clean_domain = domain
         data = {"domain": clean_domain, "endpoint": endpoint, "token": token}
         req = requests.post(
-            url=f"{self.base_notif_url}/proxy", headers=self.headers, json=data
+            url=f"{n_env.proxy_api}/proxy", headers=self.headers, json=data
         )
         req.raise_for_status()
         new_url = f"https://{clean_domain}"
@@ -76,7 +71,7 @@ class Domain:
 
     def get(self, domain):
         req = requests.get(
-            url=f"{self.base_notif_url}/proxy",
+            url=f"{n_env.proxy_api}/proxy",
             headers=self.headers,
             json={"domain": domain},
         )
@@ -86,7 +81,7 @@ class Domain:
 
     def delete(self, domain):
         req = requests.delete(
-            url=f"{self.base_notif_url}/proxy",
+            url=f"{n_env.proxy_api}/proxy",
             headers=self.headers,
             json={"domain": domain},
         )

@@ -1,82 +1,43 @@
+from .types import t_secret, t_add
+from .runner.env_var import n_env
+import pandas as pd
+import requests
 import base64
-import errno
-import json
-import os
 
 
 class Secret:
-    __path_user_files = None
-    __naas_folder = ".naas"
-    __json_name = "secrets.json"
-
-    def __init__(self, clean=False):
-        self.__path_user_files = os.environ.get(
-            "JUPYTER_SERVER_ROOT", f'/home/{os.environ.get("NB_USER", "ftp")}'
-        )
-        self.__path_naas_files = os.path.join(
-            self.__path_user_files, self.__naas_folder
-        )
-        self.__json_secrets_path = os.path.join(
-            self.__path_naas_files, self.__json_name
-        )
-        if not os.path.exists(self.__path_naas_files):
-            try:
-                os.makedirs(self.__path_naas_files)
-            except OSError as exc:  # Guard against race condition
-                if exc.errno != errno.EEXIST:
-                    raise
-        if clean:
-            print("Init Secret Storage")
-            self.__set_secret([])
-
-    def __set_secret(self, new_secret):
-        secret_data = json.dumps(new_secret, sort_keys=True, indent=4)
-        with open(self.__json_secrets_path, "w+") as f:
-            f.write(secret_data)
-            f.close()
-
-    def __get_all(self):
-        secret_data = []
-        try:
-            with open(self.__json_secrets_path, "r") as f:
-                secret_data = json.load(f)
-                f.close()
-        except IOError:
-            secret_data = []
-        return secret_data
-
     def list(self):
-        all_secret = self.__get_all()
-        all_keys = []
-        for item in all_secret:
-            all_keys.append(item["name"])
-        return all_keys
+        try:
+            r = requests.get(f"{n_env.api}/{t_secret}")
+            r.raise_for_status()
+            res = r.json()
+            return pd.DataFrame.from_records(res)
+        except requests.exceptions.ConnectionError as err:
+            print(self.__error_manager_busy, err)
+            raise
+        except requests.HTTPError as err:
+            print(self.__error_manager_reject, err)
+            raise
 
     def add(self, name=None, secret=None):
-        new_obj = []
-        obj = {}
-        json_data = self.__get_all()
-        replaced = False
         message_bytes = secret.encode("ascii")
         base64_bytes = base64.b64encode(message_bytes)
         secret_base64 = base64_bytes.decode("ascii")
-        for item in json_data:
-            if name == item["name"]:
-                obj = {"name": name, "secret": secret_base64}
-                new_obj.append(obj)
-                print("Edited =>>", obj)
-                replaced = True
-            else:
-                new_obj.append(item)
-        if replaced is False:
-            obj = {"name": name, "secret": secret_base64}
-            new_obj.append(obj)
-            print("Added =>>", obj)
-        self.__set_secret(new_obj)
-        return None
+        obj = {"name": name, "secret": secret_base64, "status": t_add}
+        try:
+            r = requests.post(f"{n_env.api}/{t_secret}", json=obj)
+            r.raise_for_status()
+            print("👌 Well done! Your Secret has been sent to production. \n")
+            print('PS: to remove the "Secret" feature, just replace .add by .delete')
+        except requests.exceptions.ConnectionError as err:
+            print(self.__error_manager_busy, err)
+            raise
+        except requests.HTTPError as err:
+            print(self.__error_manager_reject, err)
+            raise
 
     def get(self, name=None, default_value=None):
-        all_secret = self.__get_all()
+        all_secret = self.list()
         secret_item = None
         for item in all_secret:
             if name == item["name"]:

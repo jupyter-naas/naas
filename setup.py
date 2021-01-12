@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="naas",
-    version="0.20.1",
+    version="0.21.0b1",
     scripts=["scripts/naas"],
     author="Martin Donadieu",
     author_email="martindonadieu@gmail.com",
@@ -18,8 +18,11 @@ setup(
     package_data={
         "naas": ["runner/html/*.html", "runner/assets/*.png", "runner/assets/*.svg"],
     },
+    setup_requires=["wheel"],
     extras_require={
         "dev": [
+            "syncer>=1,<2",
+            "backports.zoneinfo>=0,<1",
             "pytest>=5,<7",
             "pytest-tornasync",
             "pytest-mock>=3,<4",

@@ -3,7 +3,7 @@ FROM jupyternaas/singleuser:latest
 # Build-time metadata as defined at http://label-schema.org
 ARG BUILD_DATE
 ARG VCS_REF
-ENV VERSION 0.20.1
+ENV VERSION 0.21.0b1
 
 LABEL org.label-schema.build-date=$BUILD_DATE \
     org.label-schema.name="Naas machine" \
@@ -16,5 +16,6 @@ LABEL org.label-schema.build-date=$BUILD_DATE \
     org.label-schema.schema-version="1.0"
 
 
+RUN git config --global credential.helper store #Auto save git credentials
 RUN python3 -m pip install --upgrade pip
 RUN python3 -m pip install --use-feature=2020-resolver --no-cache naas_drivers naas==$VERSION
