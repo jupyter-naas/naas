@@ -1,3 +1,13 @@
+## 0.21.0b3 (2021-01-13)
+
+### Feat
+
+- **notifications-list**: added notifications list
+- **notifications-list**: added notifications list
+- **notifications-list**: added notifications list
+
+## 0.21.0b2 (2021-01-12)
+
 ## 0.21.0b2 (2021-01-12)
 
 ### Fix
