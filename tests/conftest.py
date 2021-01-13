@@ -23,11 +23,9 @@ def runner(caplog, tmp_path):
     n_env.proxy_api = "http://localhost:5001"
     n_env.notif_api = "http://localhost:5002"
 
-    app = Runner().init_app()
-
-    yield app
+    yield Runner().init_app()
 
 
 @pytest.fixture
 def test_cli(loop, runner, sanic_client):
-    return loop.run_until_complete(sanic_client(runner))
+    yield loop.run_until_complete(sanic_client(runner))

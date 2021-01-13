@@ -60,7 +60,7 @@ setup(
         "beautifulsoup4>=4,<5",
     ],
     classifiers=[
-        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
         "License :: OSI Approved :: BSD License",
         "Framework :: Jupyter",
         "Operating System :: OS Independent",
