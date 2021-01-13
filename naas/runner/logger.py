@@ -117,8 +117,10 @@ class Logger:
                 idx = df.apply(
                     lambda ts: any(ts.str.contains(search, na=False, regex=False)),
                     axis=1,
+                    raw=False,
+                    result_type='broadcast'
                 )
-                df = df[idx]
+                df = df[idx.id]
             if skip > 0:
                 df = df.iloc[skip:]
             if limit > 0:
