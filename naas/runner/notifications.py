@@ -150,3 +150,19 @@ class Notifications:
         req.raise_for_status()
         jsn = req.json()
         return jsn
+
+    def list(self):
+        req = requests.post(
+            url=f"{self.base_notif_url}/list",
+            headers=self.headers,
+        )
+        jsn = req.json()
+        return jsn
+
+    def list_all(self):
+        req = requests.post(
+            url=f"{self.base_notif_url}/list_all",
+            headers=self.headers,
+        )
+        jsn = req.json()
+        return jsn
