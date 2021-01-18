@@ -68,14 +68,14 @@ class Scheduler:
 
     async def __check_run(self, uid, file_filepath, current_type, last_update_str):
         running = await self.__jobs.is_running(uid, file_filepath, current_type)
-        if last_update_str:
+        if last_update_str and running:
             try:
                 last_update = datetime.datetime.strptime(
                     last_update_str, "%d/%m/%y %H:%M:%S"
                 )
                 # Timeout run 1h
                 timeout_date = datetime.datetime.today() - datetime.timedelta(hours=1)
-                running = True if last_update < timeout_date else running
+                running = True if last_update > timeout_date else False
             except ValueError:
                 pass
         return running
