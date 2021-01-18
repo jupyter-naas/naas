@@ -140,7 +140,7 @@ async def test_secret(mocker, requests_mock, test_runner, tmp_path):
     assert res == "yolo"
     secret.delete("test_3")
     res = secret.get("test_3")
-    assert res in None
+    assert res is None
     response = await test_runner.get("/secret")
     assert response.status == 200
     resp_json = await response.json()
