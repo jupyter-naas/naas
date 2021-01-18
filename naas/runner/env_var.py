@@ -3,7 +3,6 @@ import os
 
 
 class n_env:
-    __remote_api = "https://public.naas.ai/runner"
     _api = None
     _api_port = None
     _notif_api = None
@@ -17,6 +16,7 @@ class n_env:
     _user = None
     _tz = None
     _sentry_dsn = None
+    _scheduler = True
     _scheduler_interval = None
     _scheduler_job_max = None
     _scheduler_job_name = None
@@ -34,9 +34,7 @@ class n_env:
     def api(self):
         return self._api or os.environ.get(
             "NAAS_API",
-            f"http://localhost:{self._api_port}"
-            if self._api_port
-            else self.__remote_api,
+            f"http://localhost:{self._api_port}" if self._api_port else self.remote_api,
         )
 
     @api.setter
@@ -88,6 +86,10 @@ class n_env:
         self._shell_user = shell_user
 
     @property
+    def remote_api(self):
+        return f"{self.proxy_api}/runner"
+
+    @property
     def token(self):
         return self._token or os.environ.get("JUPYTERHUB_API_TOKEN", "")
 
@@ -118,6 +120,14 @@ class n_env:
     @sentry_dsn.setter
     def sentry_dsn(self, sentry_dsn):
         self._sentry_dsn = sentry_dsn
+
+    @property
+    def scheduler(self):
+        return bool(self._scheduler)
+
+    @scheduler.setter
+    def scheduler(self, scheduler):
+        self._scheduler = bool(self._scheduler)
 
     @property
     def scheduler_interval(self):
