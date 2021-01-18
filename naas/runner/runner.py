@@ -28,7 +28,7 @@ import nest_asyncio
 asyncio.set_event_loop_policy(None)
 nest_asyncio.apply()
 
-__version__ = "0.22.2b1"
+__version__ = "0.22.2b2"
 
 
 class Runner:
