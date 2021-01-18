@@ -4,6 +4,7 @@ import os
 
 class n_env:
     _api = None
+    _remote_mode = False
     _api_port = None
     _notif_api = None
     _proxy_api = None
@@ -31,11 +32,19 @@ class n_env:
         self._api_port = api_port
 
     @property
+    def remote_mode(self):
+        return self._remote_mode
+
+    @remote_mode.setter
+    def remote_mode(self, remote_mode):
+        self._remote_mode = remote_mode
+
+    @property
     def api(self):
         return self._api or os.environ.get(
             "NAAS_API",
-            f"http://localhost:{self._api_port}"
-            if not self._api_port
+            f"http://localhost:{self.api_port}"
+            if not self.remote_mode
             else self.remote_api,
         )
 

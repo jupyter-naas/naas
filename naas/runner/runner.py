@@ -1,7 +1,8 @@
-from naas.types import t_main, t_notebook, t_scheduler, t_asset, t_job
+from naas.types import t_main, t_notebook, t_scheduler, t_asset, t_job, t_secret
 from sentry_sdk.integrations.sanic import SanicIntegration
 from .controllers.scheduler import SchedulerController
 from .controllers.assets import AssetsController
+from .controllers.secret import SecretController
 from .controllers.notebooks import NbController
 from .controllers.jobs import JobsController
 from .controllers.logs import LogsController
@@ -14,6 +15,7 @@ from .notebooks import Notebooks
 from .env_var import n_env
 from .logger import Logger
 from .jobs import Jobs
+from .secret import Secret
 from sanic import Sanic
 import sentry_sdk
 import asyncio
@@ -64,6 +66,7 @@ class Runner:
     async def initialize_before_start(self, app, loop):
         if self.__jobs is None:
             self.__jobs = Jobs(self.__logger)
+            self.__secret = Secret(self.__logger)
             self.__nb = Notebooks(self.__logger, self.__notif)
             self.__app.add_route(
                 NbController.as_view(self.__logger, self.__jobs, self.__nb),
@@ -85,6 +88,9 @@ class Runner:
             )
             self.__app.add_route(
                 JobsController.as_view(self.__logger, self.__jobs), f"/{t_job}"
+            )
+            self.__app.add_route(
+                SecretController.as_view(self.__logger, self.__secret), f"/{t_secret}"
             )
             if n_env.scheduler:
                 await self.__scheduler.start()

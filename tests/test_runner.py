@@ -1,6 +1,14 @@
 from base64 import b64encode
 from naas.runner.proxy import escape_kubernet
-from naas.types import t_add, t_notebook, t_job, t_health, t_scheduler, t_asset
+from naas.types import (
+    t_add,
+    t_notebook,
+    t_job,
+    t_health,
+    t_scheduler,
+    t_asset,
+    t_secret,
+)
 import getpass
 import pytest  # noqa: F401
 
@@ -12,7 +20,7 @@ from datetime import datetime, timedelta
 
 # import asyncio
 from naas.runner import n_env
-from naas import assets, api, scheduler
+from naas import assets, api, scheduler, secret
 from syncer import sync
 
 
@@ -58,6 +66,25 @@ def mock_session(mocker, requests_mock, cur_path):
     requests_mock.register_uri("GET", url, json=mock_json, status_code=200)
 
 
+def mock_secret(requests_mock, test_runner):
+    url_api = f"{n_env.api}/{t_secret}"
+
+    def post_json(request, context):
+        data = request.json()
+        res = sync(test_runner.post(f"/{t_secret}", json=data))
+        data_res = sync(res.json())
+        return data_res
+
+    def get_json(request, context):
+        data = {}
+        res = sync(test_runner.get(f"/{t_secret}", json=data))
+        data_res = sync(res.json())
+        return data_res
+
+    requests_mock.register_uri("GET", url_api, json=get_json, status_code=200)
+    requests_mock.register_uri("POST", url_api, json=post_json, status_code=200)
+
+
 def mock_job(requests_mock, test_runner):
     url_api = f"{n_env.api}/{t_job}"
 
@@ -93,6 +120,31 @@ async def test_scheduler_status(test_runner):
     assert response.status == 200
     resp_json = await response.json()
     assert resp_json == status_data
+
+
+async def test_secret(mocker, requests_mock, test_runner, tmp_path):
+    mock_session(mocker, requests_mock, tmp_path)
+    mock_secret(requests_mock, test_runner)
+    response = await test_runner.get("/secret")
+    assert response.status == 200
+    resp_json = await response.json()
+    assert len(resp_json) == 0
+    secret.add("test_3", "yolo")
+    response = await test_runner.get("/secret")
+    assert response.status == 200
+    resp_json = await response.json()
+    assert len(resp_json) == 1
+    assert resp_json[0]["name"] == "test_3"
+    assert resp_json[0]["secret"] == "yolo"
+    res = secret.get("test_3")
+    assert res == "yolo"
+    secret.delete("test_3")
+    res = secret.get("test_3")
+    assert res in None
+    response = await test_runner.get("/secret")
+    assert response.status == 200
+    resp_json = await response.json()
+    assert len(resp_json) == 0
 
 
 async def test_asset(mocker, requests_mock, test_runner, tmp_path):
