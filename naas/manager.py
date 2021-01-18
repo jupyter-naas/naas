@@ -24,8 +24,8 @@ except ImportError:
 
 
 class Manager:
-    __error_manager_busy = "Manager look busy, try to reload your machine"
-    __error_manager_reject = "Manager refused your request, reason :"
+    __error_busy = "Naas look busy, try to reload your machine"
+    __error_reject = "Naas refused your request, reason :"
     __production_path = None
     __folder_name = ".naas"
     __filetype = None
@@ -63,9 +63,9 @@ class Manager:
             r.raise_for_status()
             naas_data = r.json()
         except requests.exceptions.ConnectionError:
-            print(self.__error_manager_busy)
+            print(self.__error_busy)
         except requests.HTTPError as e:
-            print(self.__error_manager_reject, e)
+            print(self.__error_reject, e)
         return naas_data
 
     def get_value(self, path, obj_type):
@@ -194,10 +194,10 @@ class Manager:
                 print(f"🕣 Your Notebook output {ff} has been remove from production.\n")
             return pd.DataFrame(data=res.get("files", []))
         except requests.exceptions.ConnectionError as err:
-            print(self.__error_manager_busy, err)
+            print(self.__error_busy, err)
             raise
         except requests.HTTPError as err:
-            print(self.__error_manager_reject, err)
+            print(self.__error_reject, err)
             raise
 
     def list_prod(self, mode, path=None):
@@ -218,10 +218,10 @@ class Manager:
             else:
                 return pd.DataFrame(data=res)
         except requests.exceptions.ConnectionError as err:
-            print(self.__error_manager_busy, err)
+            print(self.__error_busy, err)
             raise
         except requests.HTTPError as err:
-            print(self.__error_manager_reject, err)
+            print(self.__error_reject, err)
             raise
 
     def get_file(self, path=None, mode=None):
@@ -248,10 +248,10 @@ class Manager:
             )
             return res
         except requests.exceptions.ConnectionError as err:
-            print(self.__error_manager_busy, err)
+            print(self.__error_busy, err)
             raise
         except requests.HTTPError as err:
-            print(self.__error_manager_reject, err)
+            print(self.__error_reject, err)
             raise
 
     def path(self, path):
@@ -276,10 +276,10 @@ class Manager:
                 if debug:
                     print(f'{res["status"]} ==> {res}')
             except requests.exceptions.ConnectionError as err:
-                print(self.__error_manager_busy, err)
+                print(self.__error_busy, err)
                 raise
             except requests.HTTPError as err:
-                print(self.__error_manager_reject, err)
+                print(self.__error_reject, err)
                 raise
             return new_obj
         else:
@@ -304,10 +304,10 @@ class Manager:
                 if debug:
                     print(f'{res["status"]} ==> {res}')
             except requests.exceptions.ConnectionError as err:
-                print(self.__error_manager_busy, err)
+                print(self.__error_busy, err)
                 raise
             except requests.HTTPError as err:
-                print(self.__error_manager_reject, err)
+                print(self.__error_reject, err)
                 raise
             return new_obj
         else:

@@ -6,6 +6,10 @@ import base64
 
 
 class Secret:
+
+    __error_busy = "Naas look busy, try to reload your machine"
+    __error_reject = "Naas refused your request, reason :"
+
     def list(self):
         try:
             r = requests.get(f"{n_env.api}/{t_secret}")
@@ -13,10 +17,10 @@ class Secret:
             res = r.json()
             return pd.DataFrame.from_records(res)
         except requests.exceptions.ConnectionError as err:
-            print(self.__error_manager_busy, err)
+            print(self.__error_busy, err)
             raise
         except requests.HTTPError as err:
-            print(self.__error_manager_reject, err)
+            print(self.__error_reject, err)
             raise
 
     def add(self, name=None, secret=None):
