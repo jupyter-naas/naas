@@ -1,15 +1,17 @@
 repos:
 - hooks:
   - id: black
-    language_version: python3
+    language_version: python3.9
   repo: https://github.com/ambv/black
   rev: stable
 - hooks:
   - id: flake8
+    language_version: python3.9
   repo: https://github.com/pre-commit/pre-commit-hooks
   rev: v1.2.3
 - hooks:
   - id: commitizen
+    language_version: python3.9
     stages:
     - commit-msg
   repo: https://github.com/commitizen-tools/commitizen

@@ -1,4 +1,17 @@
-## 0.21.0b4 (2021-01-13)
+## 0.22.1 (2021-01-18)
+
+### Fix
+
+- testing sanic conftest
+
+## 0.22.0 (2021-01-13)
+
+### Fix
+
+- update version
+- remove changelog for now
+- log search error
+- log search error
 
 ## 0.21.0b3 (2021-01-13)
 

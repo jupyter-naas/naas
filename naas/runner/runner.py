@@ -28,7 +28,7 @@ import nest_asyncio
 asyncio.set_event_loop_policy(None)
 nest_asyncio.apply()
 
-__version__ = "0.21.0b4"
+__version__ = "0.22.1"
 
 
 class Runner:
@@ -132,6 +132,9 @@ class Runner:
             {"id": uid, "type": t_main, "filepath": "runner", "status": "init API"}
         )
         return self.__app
+
+    def kill(self):
+        self.__app.stop()
 
     def start(self, port=None, debug=False):
         user = getpass.getuser()

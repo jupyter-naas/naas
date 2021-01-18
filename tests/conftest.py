@@ -1,10 +1,10 @@
 import pytest  # noqa: F401
-import black  # noqa: F401  # FIX for https://github.com/psf/black/issues/1143
 import os
 import getpass
 import logging
-from naas.runner import Runner, n_env  # noqa: E402
+from naas.runner import Runner, n_env
 
+os.environ["SANIC_REGISTER"] = "False"
 user_folder_name = "pytest_tmp"
 path_srv_root = os.path.join(os.getcwd(), user_folder_name)
 n_env.server_root = str(path_srv_root)
@@ -26,6 +26,7 @@ def runner(caplog, tmp_path):
     app = Runner().init_app()
 
     yield app
+    app.stop()
 
 
 @pytest.fixture

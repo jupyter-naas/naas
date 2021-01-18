@@ -49,6 +49,7 @@ Test it in binder (WIP)
 ## Install
 
 `pip3 install -e '.[dev]'`
+`pre-commit install`
 
 ## Run test 
 
