@@ -69,7 +69,10 @@ class Runner:
                 NbController.as_view(self.__logger, self.__jobs, self.__nb),
                 f"/{t_notebook}/<token>",
             )
-            self.__scheduler = Scheduler(self.__logger, self.__jobs, self.__nb, loop)
+            if n_env.scheduler:
+                self.__scheduler = Scheduler(
+                    self.__logger, self.__jobs, self.__nb, loop
+                )
             self.__app.add_route(
                 SchedulerController.as_view(self.__scheduler, self.__logger),
                 f"/{t_scheduler}/<mode>",
@@ -83,12 +86,13 @@ class Runner:
             self.__app.add_route(
                 JobsController.as_view(self.__logger, self.__jobs), f"/{t_job}"
             )
-            await self.__scheduler.start()
+            if n_env.scheduler:
+                await self.__scheduler.start()
 
     async def initialize_before_stop(self, app, loop):
         if self.__nb is not None:
             self.__nb = None
-        if self.__scheduler is not None:
+        if n_env.scheduler and self.__scheduler is not None:
             await self.__scheduler.stop()
             self.__scheduler = None
         if self.__jobs is not None:

@@ -292,6 +292,7 @@ class Manager:
             new_obj = copy.copy(obj)
             new_obj["path"] = self.get_prod_path(obj.get("path"))
             new_obj["params"] = {}
+            new_obj["file"] = None
             new_obj["value"] = None
             new_obj["status"] = t_delete
             try:

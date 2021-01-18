@@ -11,7 +11,7 @@ user_folder_name = "test_user_folder"
 user = getpass.getuser()
 
 
-async def test_notebook(test_cli, tmp_path):
+async def test_notebook(test_runner, tmp_path):
     test_notebook = "tests/demo/demo_scheduler.ipynb"
     cur_path = os.path.join(os.getcwd(), test_notebook)
     new_path = os.path.join(tmp_path, test_notebook)
