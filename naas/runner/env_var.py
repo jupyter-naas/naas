@@ -34,7 +34,9 @@ class n_env:
     def api(self):
         return self._api or os.environ.get(
             "NAAS_API",
-            f"http://localhost:{self._api_port}" if self._api_port else self.remote_api,
+            f"http://localhost:{self._api_port}"
+            if not self._api_port
+            else self.remote_api,
         )
 
     @api.setter

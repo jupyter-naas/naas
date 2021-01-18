@@ -8,6 +8,7 @@ import pytest  # noqa: F401
 # import uuid
 import os
 from shutil import copy2
+from datetime import datetime, timedelta
 
 # import asyncio
 from naas.runner import n_env
@@ -193,7 +194,10 @@ async def test_logs(test_runner):
 
 
 async def test_scheduler(mocker, requests_mock, test_scheduler, tmp_path):
-    recur = "*/5 * * * *"
+    curr_time = datetime.now()
+    curr_time = curr_time + timedelta(seconds=2)
+    sec = curr_time.strftime("%S")
+    recur = f"{sec} * * * *"
     test_notebook = "tests/demo/demo_scheduler.ipynb"
     cur_path = os.path.join(os.getcwd(), test_notebook)
     new_path = os.path.join(tmp_path, test_notebook)
@@ -212,8 +216,8 @@ async def test_scheduler(mocker, requests_mock, test_scheduler, tmp_path):
     assert res_job.get("value") == recur
     assert res_job.get("status") == t_add
     # TODO fix
-    # await asyncio.sleep(6)
-    # response = await test_runner.get(f"/{t_job}")
+    # await asyncio.sleep(2)
+    # response = await test_scheduler.get(f"/{t_job}")
     # assert response.status == 200
     # resp_json = await response.json()
     # assert res_job.get("type") == t_scheduler
@@ -221,7 +225,7 @@ async def test_scheduler(mocker, requests_mock, test_scheduler, tmp_path):
     # assert res_job.get("value") == recur
     # assert res_job.get("status") == t_start
     # await asyncio.sleep(3)
-    # response = await test_runner.get(f"/{t_job}")
+    # response = await test_scheduler.get(f"/{t_job}")
     # assert response.status == 200
     # resp_json = await response.json()
     # assert res_job.get("type") == t_scheduler

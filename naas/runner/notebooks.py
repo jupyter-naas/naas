@@ -83,7 +83,9 @@ class Notebooks:
                     await res.write(str(res_data.get("data")).encode("utf-8"))
 
                 return response.stream(
-                    streaming_fn, headers=headers, content_type=mimetypes.guess_type(new_file_name)[0]
+                    streaming_fn,
+                    headers=headers,
+                    content_type=mimetypes.guess_type(new_file_name)[0],
                 )
             else:
                 return response.json({"id": uid, "status": "Done", "time": duration})
@@ -203,7 +205,7 @@ class Notebooks:
                 parameters=params,
             )
         if not res:
-            res = {"error": "Unknow error", "duration": 0}
+            res = {"uid": uid, "error": "Unknow error", "duration": 0}
         self.__keep_out_history(file_filepath_out)
         return res
 
