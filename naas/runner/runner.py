@@ -133,6 +133,9 @@ class Runner:
         )
         return self.__app
 
+    def kill(self):
+        self.__app.stop()
+
     def start(self, port=None, debug=False):
         user = getpass.getuser()
         if user != n_env.shell_user:
