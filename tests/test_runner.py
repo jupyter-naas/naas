@@ -38,7 +38,7 @@ def getUserb64():
 def get_env():
     return {
         "status": "healthy",
-        "VERSION": n_env.version,
+        "version": n_env.version,
         "JUPYTERHUB_USER": n_env.user,
         "JUPYTER_SERVER_ROOT": n_env.server_root,
         "JUPYTERHUB_URL": "http://localhost:5000",
