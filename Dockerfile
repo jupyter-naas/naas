@@ -19,7 +19,6 @@ LABEL org.label-schema.build-date=$BUILD_DATE \
 
 RUN git config --global credential.helper store #Auto save git credentials
 RUN python3 -m pip install --upgrade pip
-RUN pip uninstall urllib3 && \   
-    pip uninstall chardet && \
-    pip install requests
+RUN pip install --upgrade urllib3 && \   
+    pip install --upgrade chardet
 RUN python3 -m pip install --no-cache naas_drivers naas==$VERSION

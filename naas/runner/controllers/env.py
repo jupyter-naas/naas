@@ -1,6 +1,7 @@
 from sanic.views import HTTPMethodView
 from sanic.response import json
 from naas.types import t_health, t_asset
+from naas.runner.env_var import n_env
 import uuid
 
 endpoint = "env"
@@ -37,6 +38,7 @@ class EnvController(HTTPMethodView):
         uid = str(uuid.uuid4())
         env = {
             "status": t_health,
+            "version": n_env.version,
             "NOTIFICATIONS_API": self.__notif_url,
             "JUPYTERHUB_USER": self.__user,
             "JUPYTER_SERVER_ROOT": self.__server_root,

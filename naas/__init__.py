@@ -35,6 +35,9 @@ def version():
     print(__version__)
 
 
+n_env.version = __version__
+
+
 def get_last_version():
     url = f"https://api.github.com/repos/{__github_repo}/tags"
     response = requests.get(url, headers={"Accept": "application/vnd.github.v3+json"})

@@ -4,6 +4,7 @@ import os
 
 class n_env:
     _api = None
+    _version = None
     _remote_mode = False
     _api_port = None
     _notif_api = None
@@ -30,6 +31,14 @@ class n_env:
     @api_port.setter
     def api_port(self, api_port: int):
         self._api_port = api_port
+
+    @property
+    def version(self):
+        return self._version
+
+    @version.setter
+    def version(self, version: str):
+        self._version = version
 
     @property
     def remote_mode(self):

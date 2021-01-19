@@ -5,6 +5,7 @@ t_scheduler = "scheduler"
 t_secret = "secret"
 
 t_job = "job"
+t_env = "env"
 t_log = "log"
 
 t_output = "output"

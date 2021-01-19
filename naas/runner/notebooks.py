@@ -254,7 +254,9 @@ class Notebooks:
         file_dirpath = os.path.dirname(file_filepath)
         file_filepath_out = self.__get_output_path(file_filepath)
         params = job.get("params", dict())
-        params["run_uid"] = uid
+        params["naas_uid"] = uid
+        params["naas_runtime"] = datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")
+        params["naas_env"] = "PRODUCTION"
         start_time = time.time()
         res = None
         try:
