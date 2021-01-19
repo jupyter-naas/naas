@@ -1,4 +1,10 @@
 
+## 0.23.3 (2021-01-19)
+
+### Fix
+
+- notification list feature
+
 ## 0.23.2 (2021-01-19)
 
 ### Fix
