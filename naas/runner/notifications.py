@@ -153,7 +153,7 @@ class Notifications:
 
     def list(self):
         req = requests.post(
-            url=f"{self.base_notif_url}/list",
+            url=f"{n_env.notif_api}/list",
             headers=self.headers,
         )
         jsn = req.json()
@@ -161,7 +161,7 @@ class Notifications:
 
     def list_all(self):
         req = requests.post(
-            url=f"{self.base_notif_url}/list_all",
+            url=f"{n_env.notif_api}/list_all",
             headers=self.headers,
         )
         jsn = req.json()
