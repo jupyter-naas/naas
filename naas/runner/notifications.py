@@ -2,6 +2,7 @@ from naas.types import t_notebook, t_scheduler, t_asset
 from .proxy import encode_proxy_url
 from .env_var import n_env
 from bs4 import BeautifulSoup
+import pandas as pd
 import pretty_cron
 import requests
 import base64
@@ -157,7 +158,7 @@ class Notifications:
             headers=self.headers,
         )
         jsn = req.json()
-        return jsn
+        return pd.DataFrame(data=jsn.get("emails"))
 
     def list_all(self):
         req = requests.post(
@@ -165,4 +166,4 @@ class Notifications:
             headers=self.headers,
         )
         jsn = req.json()
-        return jsn
+        return pd.DataFrame(data=jsn.get("emails"))
