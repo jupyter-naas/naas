@@ -17,6 +17,7 @@ user_folder_name = "test_user_folder"
 user = getpass.getuser()
 
 status_data = {"status": "running"}
+seps = os.sep + os.altsep if os.altsep else os.sep
 
 
 def mock_session(mocker, requests_mock, cur_path):
@@ -126,8 +127,10 @@ async def test_scheduler_runner(mocker, requests_mock, test_scheduler, tmp_path)
     resp_json = await response.json()
     assert len(resp_json) == 1
     res_job = resp_json[0]
+    strip_path = os.path.splitdrive(new_path)[1].lstrip(seps)
+    real_path = os.path.join(tmp_path, "pytest_tmp", ".naas", strip_path)
     assert res_job.get("type") == t_scheduler
-    assert res_job.get("path") == new_path
+    assert res_job.get("path") == real_path
     assert res_job.get("value") == recur
     assert res_job.get("status") == t_add
     # TODO fix
