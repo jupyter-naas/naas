@@ -1,4 +1,28 @@
 
+## 0.23.7 (2021-01-19)
+
+### Fix
+
+- urllib issue
+
+## 0.23.6 (2021-01-19)
+
+### Fix
+
+- test version lowercase
+
+## 0.23.5 (2021-01-19)
+
+### Fix
+
+- test missing version in env
+
+## 0.23.4 (2021-01-19)
+
+### Fix
+
+- urllib issue
+
 ## 0.23.3 (2021-01-19)
 
 ### Fix

@@ -3,7 +3,7 @@ FROM jupyternaas/singleuser:latest
 # Build-time metadata as defined at http://label-schema.org
 ARG BUILD_DATE
 ARG VCS_REF
-ENV VERSION 0.23.3
+ENV VERSION 0.23.7
 
 
 LABEL org.label-schema.build-date=$BUILD_DATE \
@@ -19,6 +19,4 @@ LABEL org.label-schema.build-date=$BUILD_DATE \
 
 RUN git config --global credential.helper store #Auto save git credentials
 RUN python3 -m pip install --upgrade pip
-RUN pip install --upgrade urllib3 && \   
-    pip install --upgrade chardet
 RUN python3 -m pip install --no-cache naas_drivers naas==$VERSION
