@@ -28,13 +28,6 @@ def mock_for_nb_path(mocker, requests_mock):
     requests_mock.register_uri("GET", url, json=mock_json, status_code=200)
 
 
-def test_init(tmp_path):
-    path_srv_root = os.path.join(str(tmp_path), user_folder_name)
-    n_env.server_root = path_srv_root
-    Manager(t_notebook)
-    assert os.path.exists(os.path.join(path_srv_root, ".naas"))
-
-
 def test_nb_path(mocker, requests_mock, tmp_path):
     path_srv_root = os.path.join(str(tmp_path), user_folder_name)
     n_env.server_root = path_srv_root
@@ -55,49 +48,6 @@ def test_get_path(mocker, requests_mock, tmp_path):
     )
     assert manager.get_path(test_file_path) == test_file_path
 
-
-# def test_copy_file(tmp_path, requests_mock):
-#     path_srv_root = os.path.join(str(tmp_path), user_folder_name)
-#     os.environ["JUPYTER_SERVER_ROOT"] = path_srv_root
-#     os.environ["JUPYTERHUB_USER"] = "joyvan"
-#     os.environ["JUPYTERHUB_URL"] = "localhost:5000"
-#     os.environ["NAAS_API"] = "localhost:6000"
-#     os.environ["PUBLIC_PROXY_API"] = "proxy:5000"
-
-#     new_path = os.path.join(path_srv_root, test_file)
-#     os.makedirs(os.path.dirname(new_path))
-#     copy2(test_file_path, new_path)
-#     manager = Manager(t_notebook)
-#     prod_path = manager.get_prod_path(test_file_path)
-#     job = {
-#         "params": {},
-#         "path": new_path,
-#         "status": "installed",
-#         "type": t_notebook,
-#         "value": token,
-#     }
-#     obj = {
-#         "id": "0929eba5-f66f-4a8c-acdf-58c0fe8ad484",
-#         "status": "installed",
-#         "job": {
-#             **job,
-#             "id": "0929eba5-f66f-4a8c-acdf-58c0fe8ad484",
-#             "lastRun": 0,
-#             "lastUpdate": "2020-10-01 12:58:12",
-#             "nbRun": 0,
-#         },
-#     }
-#     requests_mock.post(f'{os.environ["NAAS_API"]}/job', json=obj)
-
-#     manager.add_prod(job, False)
-#     assert os.path.exists(prod_path)
-#     manager.get_prod(new_path)
-#     dev_dir = os.path.dirname(new_path)
-#     dev_finename = os.path.basename(new_path)
-#     secure_path = os.path.join(dev_dir, f"prod_{dev_finename}")
-#     assert os.path.exists(secure_path)
-#     manager.del_prod(job, True)
-#     assert os.path.exists(prod_path)
 
 # TODO test all other functions
 

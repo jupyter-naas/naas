@@ -1,12 +1,11 @@
 from IPython.core.display import display, HTML
 from .runner.proxy import encode_proxy_url
-from .types import t_delete, t_job, t_add
+from .types import t_delete, t_job, t_add, t_env
 from .runner.env_var import n_env
 import ipywidgets as widgets
 import pandas as pd
 import ipykernel
 import requests
-import errno
 import copy
 import uuid
 import os
@@ -26,24 +25,28 @@ except ImportError:
 class Manager:
     __error_busy = "Naas look busy, try to reload your machine"
     __error_reject = "Naas refused your request, reason :"
-    __production_path = None
-    __folder_name = ".naas"
     __filetype = None
     headers = None
 
     def __init__(self, filetype):
         self.headers = {"Authorization": f"token {n_env.token}"}
         self.__filetype = filetype
-        self.__production_path = os.path.join(n_env.server_root, self.__folder_name)
-        if not os.path.exists(self.__production_path):
-            try:
-                os.makedirs(self.__production_path)
-            except OSError as exc:  # Guard against race condition
-                if exc.errno != errno.EEXIST:
-                    raise
+        self.set_runner_mode()
 
     def is_production(self):
-        return False if self.notebook_path() else True
+        if "naas_env" in globals():
+            return True if naas_env == "PRODUCTION" else False  # type: ignore  # noqa: F821
+        else:
+            return False
+
+    def set_runner_mode(self):
+        try:
+            r = requests.get(
+                f"{n_env.api}/{t_env}",
+            )
+            r.raise_for_status()
+        except Exception:
+            n_env.remote_mode = not n_env.remote_mode
 
     def get(self):
         public_url = f"{encode_proxy_url()}"
@@ -156,9 +159,6 @@ class Manager:
             public_url = f"{public_url}/{token}"
         return public_url
 
-    def get_prod_path(self, path):
-        return path.replace(n_env.server_root, self.__production_path)
-
     def __open_file(self, path):
         filename = os.path.basename(path)
         if not os.path.exists(path):
@@ -167,13 +167,23 @@ class Manager:
         encoded = base64.b64encode(data)
         return {"filename": filename, "data": encoded.decode("ascii")}
 
-    def __save_file(self, path, data=None):
-        if not data:
+    def safe_filepath(self, path, mode=None):
+        path = os.path.join(n_env.server_root, path)
+        filename = os.path.basename(path)
+        if mode and filename.find(mode) != -1:
+            return path
+        else:
+            dirname = os.path.dirname(path)
+            filename_safe = f"prod_{filename}"
+            return os.path.join(dirname, filename_safe)
+
+    def __save_file(self, path, filedata=None):
+        if not filedata:
             return
-        if not os.path.exists(path):
-            raise FileNotFoundError(f"file doesn't exist {path}")
+        if os.path.exists(path):
+            raise FileNotFoundError(f"file already exist {path}")
         f = open(path, "wb")
-        decoded = base64.b64decode(data)
+        decoded = base64.b64decode(filedata["data"])
         f.write(decoded)
         f.close()
 
@@ -181,12 +191,11 @@ class Manager:
         if not path and self.is_production():
             print("No clear_prod done you are in production\n")
             return
-        current_file = self.get_path(path)
-        prod_path = self.get_prod_path(current_file)
+        prod_path = self.get_path(path)
         try:
             r = requests.delete(
                 f"{n_env.api}/{t_job}",
-                json={"path": prod_path, "histo": histo, "mode": mode},
+                params={"path": prod_path, "histo": histo, "mode": mode},
             )
             r.raise_for_status()
             res = r.json()
@@ -205,11 +214,10 @@ class Manager:
             print("No list_prod done you are in production\n")
             return
         current_file = self.get_path(path)
-        prod_path = self.get_prod_path(current_file)
         try:
             r = requests.get(
                 f"{n_env.api}/{t_job}",
-                json={"path": prod_path, "type": self.__filetype, "mode": mode},
+                params={"path": current_file, "type": self.__filetype, "mode": mode},
             )
             r.raise_for_status()
             res = r.json()
@@ -234,19 +242,17 @@ class Manager:
             dirname = os.path.dirname(current_file)
             filename = f"{mode}_{filename}"
             current_file = os.path.join(dirname, filename)
-        prod_path = self.get_prod_path(current_file)
         try:
             r = requests.get(
                 f"{n_env.api}/{t_job}",
-                json={"path": prod_path, "type": self.__filetype, "mode": mode},
+                params={"path": current_file, "type": self.__filetype, "mode": mode},
             )
             r.raise_for_status()
             res = r.json()
-            self.__save_file(current_file, res.get("file"))
+            self.__save_file(self.safe_filepath(current_file, mode), res.get("file"))
             print(
-                f"🕣 Your Notebook {filename} from {mode} has been copied into your local folder.\n"
+                f"🕣 Your Notebook {filename}, has been copied into your local folder.\n"
             )
-            return res
         except requests.exceptions.ConnectionError as err:
             print(self.__error_busy, err)
             raise
@@ -254,17 +260,26 @@ class Manager:
             print(self.__error_reject, err)
             raise
 
-    def path(self, path):
-        if self.is_production():
-            return self.get_prod_path(path)
-        else:
-            return path
+    def path(self, filetype):
+        def mode_path(self, path):
+            nonlocal filetype
+            if self.is_production():
+                # filename = os.path.basename(path)
+                # dirname = os.path.dirname(path)
+                # filename = f"{filetype}_{filename}"
+                # type_path = os.path.join(dirname, filename)
+                type_path = path
+                return self.get_path(type_path)
+            else:
+                return path
+
+        return mode_path
 
     def add_prod(self, obj, debug):
         if "type" in obj and "path" in obj and "params" in obj and "value" in obj:
             new_obj = copy.copy(obj)
             dev_path = obj.get("path")
-            new_obj["path"] = self.get_prod_path(dev_path)
+            new_obj["path"] = self.get_path(dev_path)
             new_obj["file"] = self.__open_file(dev_path)
             new_obj["status"] = t_add
             try:
@@ -290,7 +305,7 @@ class Manager:
     def del_prod(self, obj, debug):
         if "type" in obj and "path" in obj:
             new_obj = copy.copy(obj)
-            new_obj["path"] = self.get_prod_path(obj.get("path"))
+            new_obj["path"] = self.get_path(obj.get("path"))
             new_obj["params"] = {}
             new_obj["file"] = None
             new_obj["value"] = None

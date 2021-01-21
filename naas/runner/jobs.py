@@ -163,7 +163,7 @@ class Jobs:
                     if target_type:
                         cur_jobs = self.__df[
                             (self.__df.type == target_type)
-                            & (self.__df.path == filepath)
+                            & (self.__df.path.str.lower() == filepath.lower())
                         ]
                     else:
                         cur_jobs = self.__df[(self.__df.path == filepath)]

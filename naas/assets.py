@@ -45,7 +45,7 @@ class Assets:
         if current_file is None:
             print("Missing file path in prod mode")
             return
-        prod_path = self.manager.get_prod_path(current_file)
+        prod_path = self.manager.get_path(current_file)
         token = self.manager.get_value(prod_path, self.role)
         if token is None or force is True:
             token = os.urandom(30).hex()

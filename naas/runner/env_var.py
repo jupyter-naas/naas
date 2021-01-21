@@ -147,7 +147,7 @@ class n_env:
 
     @scheduler.setter
     def scheduler(self, scheduler):
-        self._scheduler = bool(self._scheduler)
+        self._scheduler = bool(scheduler)
 
     @property
     def scheduler_interval(self):
