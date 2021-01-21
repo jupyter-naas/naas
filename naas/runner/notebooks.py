@@ -1,4 +1,4 @@
-from naas.types import t_notebook, t_scheduler, t_error
+from naas.types import t_notebook, t_scheduler, t_error, t_output
 from .env_var import n_env
 from nbconvert import HTMLExporter
 from sanic import response
@@ -108,7 +108,7 @@ class Notebooks:
     def get_out_path(self, path):
         filename = os.path.basename(path)
         dirname = os.path.dirname(path)
-        out_path = os.path.join(dirname, f"out_{filename}")
+        out_path = os.path.join(dirname, f"{t_output}_{filename}")
         return out_path
 
     def __nb_render(self, filepath):

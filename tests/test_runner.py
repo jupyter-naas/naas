@@ -184,6 +184,14 @@ async def test_asset(mocker, requests_mock, test_runner, tmp_path):
     dirname = os.path.dirname(new_path)
     new_path_prod = os.path.join(dirname, f"prod_{filename}")
     assert os.path.isfile(new_path_prod)
+    list_in_prod = assets.list(new_path)
+    assert len(list_in_prod) == 1
+    histo = list_in_prod.to_dict("records")[0]
+    assets.get(new_path, histo.get("timestamp"))
+    filename = os.path.basename(new_path)
+    dirname = os.path.dirname(new_path)
+    new_path_histo = os.path.join(dirname, f"{histo.get('timestamp')}_{filename}")
+    assert os.path.isfile(new_path_histo)
     assets.delete(new_path)
     response = await test_runner.get(f"/{t_job}")
     assert response.status == 200
@@ -216,7 +224,11 @@ async def test_notebooks(mocker, requests_mock, test_runner, tmp_path):
     assert res_job.get("value") == token
     assert res_job.get("status") == t_add
     assert res_job.get("nbRun") == 0
+    list_in_prod = api.list(new_path)
+    assert len(list_in_prod) == 2
     response = await test_runner.get(f"/{t_notebook}/{token}")
+    list_out_in_prod = api.list_output(new_path)
+    assert len(list_out_in_prod) == 1
     assert response.status == 200
     resp_json = await response.json()
     assert resp_json == {"foo": "bar"}

@@ -167,22 +167,19 @@ class Manager:
         encoded = base64.b64encode(data)
         return {"filename": filename, "data": encoded.decode("ascii")}
 
-    def safe_filepath(self, path, mode=None):
+    def safe_filepath(self, path):
         path = os.path.join(n_env.server_root, path)
-        filename = os.path.basename(path)
-        if mode and filename.find(mode) != -1:
-            return path
-        else:
-            dirname = os.path.dirname(path)
-            filename_safe = f"prod_{filename}"
-            return os.path.join(dirname, filename_safe)
+        return path
 
     def __save_file(self, path, filedata=None):
+        dirname = os.path.dirname(path)
+        filename = filedata["filename"] or os.path.basename(path)
+        new_path = os.path.join(dirname, filename)
         if not filedata:
             return
-        if os.path.exists(path):
-            raise FileNotFoundError(f"file already exist {path}")
-        f = open(path, "wb")
+        if os.path.exists(new_path):
+            raise FileNotFoundError(f"file already exist {new_path}")
+        f = open(new_path, "wb")
         decoded = base64.b64decode(filedata["data"])
         f.write(decoded)
         f.close()
@@ -232,26 +229,27 @@ class Manager:
             print(self.__error_reject, err)
             raise
 
-    def get_file(self, path=None, mode=None):
+    def get_file(self, path=None, mode=None, histo=None):
         if not path and self.is_production():
             print("No get_prod done you are in production\n")
             return
         current_file = self.get_path(path)
         filename = os.path.basename(current_file)
-        if mode:
-            dirname = os.path.dirname(current_file)
-            filename = f"{mode}_{filename}"
-            current_file = os.path.join(dirname, filename)
         try:
             r = requests.get(
                 f"{n_env.api}/{t_job}",
-                params={"path": current_file, "type": self.__filetype, "mode": mode},
+                params={
+                    "path": current_file,
+                    "type": self.__filetype,
+                    "mode": mode,
+                    "histo": histo,
+                },
             )
             r.raise_for_status()
             res = r.json()
-            self.__save_file(self.safe_filepath(current_file, mode), res.get("file"))
+            self.__save_file(self.safe_filepath(current_file), res.get("file"))
             print(
-                f"🕣 Your Notebook {filename}, has been copied into your local folder.\n"
+                f"🕣 Your Notebook {mode or ''} {filename}, has been copied into your local folder.\n"
             )
         except requests.exceptions.ConnectionError as err:
             print(self.__error_busy, err)

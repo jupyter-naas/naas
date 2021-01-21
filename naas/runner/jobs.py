@@ -194,19 +194,19 @@ class Jobs:
         else:
             return False
 
-    def clear_file(self, uid, path, histo):
+    def clear_file(self, uid, path, histo, mode=None):
         # possible format
         # histo_filename
         # out_filename
         # histo_out_filename
-        filename = None
+        filename = os.path.basename(path)
         clear_all = False
+        if mode:
+            filename = f"{mode}_{filename}"
         if histo and histo == "all":
             clear_all = True
         elif histo:
-            filename = f"{histo}_{os.path.basename(path)}"
-        else:
-            filename = os.path.basename(path)
+            filename = f"{histo}_{filename}"
         removed = []
         dirname = os.path.dirname(path)
         if os.path.exists(path):
@@ -231,12 +231,14 @@ class Jobs:
         d = []
         dirname = os.path.dirname(path)
         filename = os.path.basename(path)
+        # if output:
+        #     filename = f"output_{filetype}_{filename}"
+        # else:
+        #     filename = f"{filetype}_{filename}"
         if output:
-            filename = f"output_{filetype}_{filename}"
-        else:
-            filename = f"{filetype}_{filename}"
+            filename = f"output_{filename}"
         for ffile in os.listdir(dirname):
-            if ffile.endswith(filename):
+            if ffile.endswith(filename) and len(ffile.split("_")) > 1:
                 histo = ffile.split("_")[0]
                 tmp_path = os.path.join(dirname, ffile)
                 d.append({"timestamp": histo, "filepath": tmp_path})

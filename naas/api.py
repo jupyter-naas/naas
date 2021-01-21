@@ -4,36 +4,53 @@ from .manager import Manager
 import pandas as pd
 import mimetypes
 import os
+import warnings
 
 
 class Api:
     naas = None
     role = t_notebook
     manager = None
+    deprecated_name = False
 
-    def __init__(self):
+    def __init__(self, deprecated_name=False):
+        self.deprecated_name = deprecated_name
         self.manager = Manager(t_notebook)
         self.path = self.manager.path
 
+    def deprecatedPrint(self):
+        # TODO remove this in june 2021
+        if self.deprecated_name:
+            warnings.warn(
+                "[Warning], naas.api is deprecated,\n use naas.webhook instead it will be remove in 1 june 2021"
+            )
+
     def list(self, path=None):
-        return self.manager.list_prod(None, path)
+        self.deprecatedPrint()
+        return self.manager.list_prod("list_history", path)
 
     def list_output(self, path=None):
-        return self.manager.list_prod(t_output, path)
+        self.deprecatedPrint()
+        return self.manager.list_prod("list_output", path)
 
-    def get(self, path=None):
-        return self.manager.get_file(path)
+    def get(self, path=None, histo=None):
+        self.deprecatedPrint()
+        return self.manager.get_file(path, histo=histo)
 
-    def get_output(self, path=None):
-        return self.manager.get_file(path, t_output)
+    def get_output(self, path=None, histo=None):
+        self.deprecatedPrint()
+        return self.manager.get_file(path, t_output, histo)
 
     def clear(self, path=None, histo=None):
+        self.deprecatedPrint()
         return self.manager.clear_file(path, None, histo)
 
     def clear_output(self, path=None, histo=None):
+        self.deprecatedPrint()
         return self.manager.clear_file(path, t_output, histo)
 
     def currents(self, raw=False):
+        self.deprecatedPrint()
         json_data = self.manager.get_naas()
         if raw:
             for item in json_data:
@@ -47,6 +64,7 @@ class Api:
                     print(f"File ==> {item['path']} is {kind}")
 
     def add(self, path=None, params={}, debug=False):
+        self.deprecatedPrint()
         current_file = self.manager.get_path(path)
         if current_file is None:
             print("Missing file path in prod mode")
@@ -71,6 +89,7 @@ class Api:
         return url
 
     def respond_notebook(self):
+        self.deprecatedPrint()
         display(
             Markdown(
                 "Response Set as Notebook !",
@@ -79,6 +98,7 @@ class Api:
         )
 
     def respond_file(self, path):
+        self.deprecatedPrint()
         abs_path = os.path.abspath(path)
         naas_type = mimetypes.guess_type(abs_path)[0]
         display(Markdown("Response Set as File, preview below: "))
@@ -89,31 +109,38 @@ class Api:
         )
 
     def respond_html(self, data):
+        self.deprecatedPrint()
         display(Markdown("Response Set as HTML, preview below: "))
         display(HTML(data, metadata={"naas_api": True}))
 
     def respond_json(self, data):
+        self.deprecatedPrint()
         display(Markdown("Response Set as JSON, preview below: "))
         display(JSON(data, metadata={"naas_api": True}))
 
     def respond_image(self, data, filename):
+        self.deprecatedPrint()
         display(Markdown("Response Set as IMAGE, preview below: "))
         display(Image(data, filename=filename, metadata={"naas_api": True}))
 
     def respond_svg(self, data):
+        self.deprecatedPrint()
         display(Markdown("Response Set as SVG, preview below: "))
         display(SVG(data, metadata={"naas_api": True}))
 
     def respond_markdown(self, data):
+        self.deprecatedPrint()
         display(Markdown("Response Set as Markdown, preview below: "))
         display(Markdown(data, metadata={"naas_api": True}))
 
     def respond_csv(self, data):
+        self.deprecatedPrint()
         if not isinstance(data, pd.DataFrame):
             raise TypeError("data shoud be a dataframe")
         display(HTML(data.to_html(), metadata={"naas_api": True, "naas_type": "csv"}))
 
     def delete(self, path=None, all=False, debug=False):
+        self.deprecatedPrint()
         if self.manager.is_production():
             print("No delete done you are in production\n")
             return

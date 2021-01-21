@@ -13,10 +13,10 @@ class Assets:
         self.path = self.manager.path
 
     def list(self, path=None):
-        return self.manager.list_prod(None, path)
+        return self.manager.list_prod("list_history", path)
 
-    def get(self, path=None):
-        return self.manager.get_file(path)
+    def get(self, path=None, histo=None):
+        return self.manager.get_file(path, histo=histo)
 
     def clear(self, path=None, histo=None):
         return self.manager.clear_file(path, None, histo)
