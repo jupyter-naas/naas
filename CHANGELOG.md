@@ -1,4 +1,10 @@
 
+## 0.23.12 (2021-01-22)
+
+### Fix
+
+- test runner with good papermill version
+
 ## 0.23.11 (2021-01-21)
 
 ### Fix
