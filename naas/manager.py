@@ -218,10 +218,16 @@ class Manager:
             )
             r.raise_for_status()
             res = r.json()
-            if res.get("files", None):
+            print(
+                "\n+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n",
+                res,
+                "\n+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n",
+            )
+            if res.get("files", None) and len(res.get("files", [])) > 0:
                 return pd.DataFrame(data=res.get("files", []))
             else:
-                return pd.DataFrame(data=res)
+                print("No files found in prod")
+                return []
         except requests.exceptions.ConnectionError as err:
             print(self.__error_busy, err)
             raise

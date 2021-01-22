@@ -13,7 +13,7 @@ import pytest  # noqa: F401
 import os
 from shutil import copy2
 from naas.runner import n_env
-from naas import assets, api, secret
+from naas import assets, webhook, secret
 from syncer import sync
 
 
@@ -211,7 +211,7 @@ async def test_notebooks(mocker, requests_mock, test_runner, tmp_path):
     mock_job(requests_mock, test_runner)
     strip_path = os.path.splitdrive(new_path)[1].lstrip(seps)
     real_path = os.path.join(tmp_path, "pytest_tmp", ".naas", strip_path)
-    url = api.add(new_path)
+    url = webhook.add(new_path)
     assert url.startswith(f"http://localhost:5001/{getUserb64()}/notebook/")
     response = await test_runner.get(f"/{t_job}")
     assert response.status == 200
@@ -224,11 +224,11 @@ async def test_notebooks(mocker, requests_mock, test_runner, tmp_path):
     assert res_job.get("value") == token
     assert res_job.get("status") == t_add
     assert res_job.get("nbRun") == 0
-    list_in_prod = api.list(new_path)
+    list_in_prod = webhook.list(new_path)
     assert len(list_in_prod) == 2
     response = await test_runner.get(f"/{t_notebook}/{token}")
-    list_out_in_prod = api.list_output(new_path)
-    assert len(list_out_in_prod) == 1
+    list_out_in_prod = webhook.list_output(new_path)
+    assert len(list_out_in_prod) == 2
     assert response.status == 200
     resp_json = await response.json()
     assert resp_json == {"foo": "bar"}
@@ -246,7 +246,7 @@ async def test_notebooks(mocker, requests_mock, test_runner, tmp_path):
     assert response.status == 200
     resp_json = await response.json()
     assert resp_json == {"foo": "bar"}
-    api.delete(new_path)
+    webhook.delete(new_path)
     response = await test_runner.get(f"/{t_job}")
     assert response.status == 200
     resp_json = await response.json()

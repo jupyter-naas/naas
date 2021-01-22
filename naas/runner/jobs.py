@@ -236,7 +236,7 @@ class Jobs:
         # else:
         #     filename = f"{filetype}_{filename}"
         if output:
-            filename = f"output_{filename}"
+            filename = f"out_{filename}"
         for ffile in os.listdir(dirname):
             if ffile.endswith(filename) and len(ffile.split("_")) > 1:
                 histo = ffile.split("_")[0]
