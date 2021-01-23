@@ -48,7 +48,7 @@ Test it in binder (WIP)
 
 ## Install
 
-`pip3 install -e '.[dev]'`
+`pip install -e '.[dev]'`
 `pre-commit install`
 
 ## Run test 
@@ -69,8 +69,8 @@ this auto publish by github action on main branch
 
 ## Check lint
 
-`python3 -m black naas` format better
-`python3 -m flake8 naas` check if any left error
+`python -m black naas` format better
+`python -m flake8 naas` check if any left error
 
 # Supporters: 
 <p>
