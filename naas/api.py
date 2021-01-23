@@ -5,6 +5,7 @@ import pandas as pd
 import mimetypes
 import os
 import warnings
+import markdown2
 
 
 class Api:
@@ -63,16 +64,18 @@ class Api:
                     kind = f"callable with this url {self.manager.proxy_url('notebooks', item['value'])}"
                     print(f"File ==> {item['path']} is {kind}")
 
-    def add(self, path=None, params={}, debug=False):
+    def add(self, path=None, params={}, debug=False, force=False):
         self.deprecatedPrint()
         current_file = self.manager.get_path(path)
         if current_file is None:
             print("Missing file path in prod mode")
             return
-        prod_path = self.manager.get_path(current_file)
-        token = self.manager.get_value(prod_path, self.role)
-        if token is None:
-            token = os.urandom(30).hex()
+        token = os.urandom(30).hex()
+        if not force:
+            try:
+                token = self.manager.get_value(current_file)
+            except:  # noqa: E722
+                pass
         url = self.manager.proxy_url(self.role, token)
         if self.manager.is_production():
             print("No add done you are in production\n")
@@ -118,7 +121,7 @@ class Api:
         display(Markdown("Response Set as JSON, preview below: "))
         display(JSON(data, metadata={"naas_api": True}))
 
-    def respond_image(self, data, filename):
+    def respond_image(self, data=None, filename=None):
         self.deprecatedPrint()
         display(Markdown("Response Set as IMAGE, preview below: "))
         display(Image(data, filename=filename, metadata={"naas_api": True}))
@@ -128,10 +131,16 @@ class Api:
         display(Markdown("Response Set as SVG, preview below: "))
         display(SVG(data, metadata={"naas_api": True}))
 
+    def respond_text(self, data):
+        self.deprecatedPrint()
+        display(Markdown("Response Set as Text, preview below: "))
+        display(HTML(data, metadata={"naas_api": True, "naas_type": "text"}))
+
     def respond_markdown(self, data):
         self.deprecatedPrint()
         display(Markdown("Response Set as Markdown, preview below: "))
-        display(Markdown(data, metadata={"naas_api": True}))
+        html = markdown2.markdown(data)
+        display(HTML(html, metadata={"naas_api": True, "naas_type": "markdown"}))
 
     def respond_csv(self, data):
         self.deprecatedPrint()

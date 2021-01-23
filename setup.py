@@ -32,6 +32,7 @@ setup(
             "twine>=3,<4",
             "flake8>=3,<4",
             "black",
+            "imgcompare>=2,<3",
             "commitizen>=2,<3",
             "pytest-cov>=2,<3",
         ]
@@ -44,6 +45,9 @@ setup(
         "pretty-cron>=1,<2",
         "APScheduler>=3,<4",
         "pycron>=3,<4",
+        "html5lib>=1,<2",
+        "Pillow>=8,<9",
+        "markdown2>=2,<3",
         "pandas>=1,<2",
         "daemonize>=2,<3",
         "escapism>=1,<2",

@@ -71,13 +71,25 @@ class Manager:
             print(self.__error_reject, e)
         return naas_data
 
-    def get_value(self, path, obj_type):
-        json_data = self.get_naas()
-        value = None
-        for item in json_data:
-            if item["type"] == obj_type and item["path"] == path:
-                value = item["value"]
-        return value
+    def get_value(self, path):
+        try:
+            r = requests.get(
+                f"{n_env.api}/{t_job}",
+                params={
+                    "path": path,
+                    "type": self.__filetype,
+                    "light": True,
+                },
+            )
+            r.raise_for_status()
+            data = r.json()
+            return data.get("value")
+        except requests.exceptions.ConnectionError as err:
+            print(self.__error_busy, err)
+            raise
+        except requests.exceptions.HTTPError as err:
+            print(self.__error_reject, err)
+            raise
 
     def notebook_path(self):
         try:

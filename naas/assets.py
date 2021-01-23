@@ -45,10 +45,12 @@ class Assets:
         if current_file is None:
             print("Missing file path in prod mode")
             return
-        prod_path = self.manager.get_path(current_file)
-        token = self.manager.get_value(prod_path, self.role)
-        if token is None or force is True:
-            token = os.urandom(30).hex()
+        token = os.urandom(30).hex()
+        if not force:
+            try:
+                token = self.manager.get_value(current_file)
+            except:  # noqa: E722
+                pass
         url = self.manager.proxy_url(self.role, token)
         if self.manager.is_production() and force is False:
             print("No add done you are in production\n")

@@ -15,8 +15,15 @@ import os
 from shutil import copy2
 from naas.runner import n_env
 from naas import assets, webhook, secret
+from nbconvert import HTMLExporter
 from syncer import sync
+import pandas as pd
+import csv
+import markdown
 
+# import imgcompare
+# from PIL import Image
+# import io
 
 user = getpass.getuser()
 seps = os.sep + os.altsep if os.altsep else os.sep
@@ -193,6 +200,8 @@ async def test_asset(mocker, requests_mock, test_runner, tmp_path):
     dirname = os.path.dirname(new_path)
     new_path_histo = os.path.join(dirname, f"{histo.get('timestamp')}___{filename}")
     assert os.path.isfile(new_path_histo)
+    url_new = assets.add(new_path)
+    assert url == url_new
     assets.delete(new_path)
     response = await test_runner.get(f"/{t_job}")
     assert response.status == 200
@@ -230,6 +239,7 @@ async def test_notebooks(mocker, requests_mock, test_runner, tmp_path):
     response = await test_runner.get(f"/{t_notebook}/{token}")
     assert response.status == 200
     resp_json = await response.json()
+    assert response.headers.get("Content-Disposition") is not None
     assert resp_json == {"foo": "bar"}
     list_out_in_prod = webhook.list_output(new_path)
     assert len(list_out_in_prod) == 1
@@ -262,6 +272,410 @@ async def test_notebooks(mocker, requests_mock, test_runner, tmp_path):
     assert len(resp_json) == 0
     response = await test_runner.get(f"/{t_notebook}/{token}")
     assert response.status == 404
+
+
+async def test_notebooks_res(mocker, requests_mock, test_runner, tmp_path):
+    # test json
+    test_notebook = "tests/demo/demo_res_json.ipynb"
+    cur_path = os.path.join(os.getcwd(), test_notebook)
+    new_path = os.path.join(tmp_path, test_notebook)
+    os.makedirs(os.path.dirname(new_path))
+    copy2(cur_path, new_path)
+    mock_session(mocker, requests_mock, new_path)
+    mock_job(requests_mock, test_runner)
+    url = webhook.add(new_path, params={"inline": True})
+    assert url.startswith(f"http://localhost:5001/{getUserb64()}/notebook/")
+    token = url.split("/")[-1]
+    response = await test_runner.get(f"/{t_notebook}/{token}")
+    assert response.status == 200
+    assert response.headers.get("Content-Type") == "application/json"
+    assert response.headers.get("Content-Disposition") is None
+    resp_json = await response.json()
+    assert resp_json == {"foo": "bar"}
+    # test csv
+    test_notebook = "tests/demo/demo_res_csv.ipynb"
+    cur_path = os.path.join(os.getcwd(), test_notebook)
+    new_path = os.path.join(tmp_path, test_notebook)
+    copy2(cur_path, new_path)
+    mock_session(mocker, requests_mock, new_path)
+    mock_job(requests_mock, test_runner)
+    url = webhook.add(new_path)
+    assert url.startswith(f"http://localhost:5001/{getUserb64()}/notebook/")
+    token = url.split("/")[-1]
+    response = await test_runner.get(f"/{t_notebook}/{token}")
+    assert response.status == 200
+    assert response.headers.get("Content-Type") == "text/csv"
+    res_text = await response.content.read()
+    res_text = res_text.decode("utf-8")
+    empoyees = [
+        (
+            "jack",
+            34,
+            "Sydney",
+            5,
+            111,
+            112,
+            134,
+            122,
+            445,
+            122,
+            111,
+            15,
+            111,
+            112,
+            134,
+            122,
+            1445,
+            122,
+            111,
+            15,
+            111,
+            112,
+            134,
+            122,
+            445,
+            122,
+            111,
+        ),
+        (
+            "Riti",
+            31,
+            "Delhia",
+            27,
+            211,
+            212,
+            234,
+            222,
+            2445,
+            222,
+            211,
+            25,
+            211,
+            212,
+            234,
+            222,
+            2445,
+            222,
+            211,
+            25,
+            211,
+            212,
+            234,
+            222,
+            2445,
+            222,
+            211,
+        ),
+        (
+            "Aadi",
+            16,
+            "Tokyo",
+            39,
+            311,
+            312,
+            334,
+            322,
+            3445,
+            322,
+            311,
+            35,
+            311,
+            312,
+            334,
+            322,
+            3445,
+            322,
+            311,
+            35,
+            311,
+            312,
+            334,
+            322,
+            3445,
+            322,
+            311,
+        ),
+        (
+            "Sunil",
+            41,
+            "Delhi",
+            412,
+            411,
+            412,
+            434,
+            422,
+            4445,
+            422,
+            411,
+            45,
+            411,
+            412,
+            434,
+            422,
+            4445,
+            422,
+            411,
+            45,
+            411,
+            412,
+            434,
+            422,
+            4445,
+            422,
+            411,
+        ),
+        (
+            "Veena",
+            33,
+            "Delhi",
+            54,
+            511,
+            512,
+            534,
+            522,
+            5445,
+            522,
+            511,
+            55,
+            511,
+            512,
+            534,
+            522,
+            5445,
+            522,
+            511,
+            55,
+            511,
+            512,
+            534,
+            522,
+            5445,
+            522,
+            511,
+        ),
+        (
+            "Shaunak",
+            35,
+            "Mumbai",
+            665,
+            611,
+            612,
+            634,
+            622,
+            6445,
+            622,
+            611,
+            65,
+            611,
+            612,
+            634,
+            622,
+            6445,
+            622,
+            611,
+            65,
+            611,
+            612,
+            634,
+            622,
+            6445,
+            622,
+            611,
+        ),
+        (
+            "Shaun",
+            35,
+            "Colombo",
+            711,
+            711,
+            712,
+            734,
+            722,
+            7445,
+            722,
+            711,
+            75,
+            711,
+            712,
+            734,
+            722,
+            7445,
+            722,
+            711,
+            75,
+            711,
+            712,
+            734,
+            722,
+            7445,
+            722,
+            711,
+        ),
+    ]
+    empDfObj = pd.DataFrame(
+        empoyees,
+        columns=[
+            "A",
+            "B",
+            "C",
+            "D",
+            "E",
+            "F",
+            "G",
+            "H",
+            "I",
+            "J",
+            "K",
+            "L",
+            "M",
+            "N",
+            "O",
+            "P",
+            "Q",
+            "R",
+            "S",
+            "T",
+            "U",
+            "V",
+            "W",
+            "X",
+            "Y",
+            "Z",
+            "AA",
+        ],
+    )
+    empDfObj = empDfObj.append([empDfObj] * 8, ignore_index=True)
+    csv_text = empDfObj.to_csv(sep=";", quoting=csv.QUOTE_ALL)
+    assert res_text == csv_text
+    # test notebook
+    test_notebook = "tests/demo/demo_res_nb.ipynb"
+    cur_path = os.path.join(os.getcwd(), test_notebook)
+    new_path = os.path.join(tmp_path, test_notebook)
+    copy2(cur_path, new_path)
+    mock_session(mocker, requests_mock, new_path)
+    mock_job(requests_mock, test_runner)
+    url = webhook.add(new_path)
+    assert url.startswith(f"http://localhost:5001/{getUserb64()}/notebook/")
+    token = url.split("/")[-1]
+    response = await test_runner.get(f"/{t_notebook}/{token}")
+    assert response.status == 200
+    assert response.headers.get("Content-Type") == "text/html"
+    res_text = await response.content.read()
+    res_text = res_text.decode("utf-8")
+    html_exporter = HTMLExporter()
+    html_exporter.template_name = "lab"
+    strip_path = os.path.splitdrive(new_path)[1].lstrip(seps)
+    real_path = os.path.join(tmp_path, "pytest_tmp", ".naas", strip_path)
+    filename = os.path.basename(real_path)
+    dirname = os.path.dirname(real_path)
+    new_path_out = os.path.join(dirname, f"{t_output}__{filename}")
+    (result, ressources) = html_exporter.from_filename(new_path_out)
+    assert res_text == result
+    # test html
+    test_notebook = "tests/demo/demo_res_html.ipynb"
+    cur_path = os.path.join(os.getcwd(), test_notebook)
+    new_path = os.path.join(tmp_path, test_notebook)
+    copy2(cur_path, new_path)
+    mock_session(mocker, requests_mock, new_path)
+    mock_job(requests_mock, test_runner)
+    url = webhook.add(new_path)
+    assert url.startswith(f"http://localhost:5001/{getUserb64()}/notebook/")
+    token = url.split("/")[-1]
+    response = await test_runner.get(f"/{t_notebook}/{token}")
+    assert response.status == 200
+    assert response.headers.get("Content-Type") == "text/html"
+    res_text = await response.content.read()
+    res_text = res_text.decode("utf-8")
+    demo_html = open("tests/demo/demo.html")
+    html_text = demo_html.read()
+    assert res_text == html_text
+    # test markdown
+    test_notebook = "tests/demo/demo_res_md.ipynb"
+    cur_path = os.path.join(os.getcwd(), test_notebook)
+    new_path = os.path.join(tmp_path, test_notebook)
+    copy2(cur_path, new_path)
+    mock_session(mocker, requests_mock, new_path)
+    mock_job(requests_mock, test_runner)
+    url = webhook.add(new_path)
+    assert url.startswith(f"http://localhost:5001/{getUserb64()}/notebook/")
+    token = url.split("/")[-1]
+    response = await test_runner.get(f"/{t_notebook}/{token}")
+    assert response.status == 200
+    assert response.headers.get("Content-Type") == "text/html"
+    res_text = await response.content.read()
+    res_text = res_text.decode("utf-8")
+    demo_html = open("tests/demo/demo.md")
+    md_text = demo_html.read()
+    html_text = markdown.markdown(md_text)
+    assert res_text == html_text
+    # test text
+    test_notebook = "tests/demo/demo_res_text.ipynb"
+    cur_path = os.path.join(os.getcwd(), test_notebook)
+    new_path = os.path.join(tmp_path, test_notebook)
+    copy2(cur_path, new_path)
+    mock_session(mocker, requests_mock, new_path)
+    mock_job(requests_mock, test_runner)
+    url = webhook.add(new_path)
+    assert url.startswith(f"http://localhost:5001/{getUserb64()}/notebook/")
+    token = url.split("/")[-1]
+    response = await test_runner.get(f"/{t_notebook}/{token}")
+    assert response.status == 200
+    assert response.headers.get("Content-Type") == "text/html"
+    res_text = await response.content.read()
+    res_text = res_text.decode("utf-8")
+    demo_html = open("tests/demo/demo.md")
+    md_text = demo_html.read()
+    assert res_text == md_text
+    # test file
+    test_notebook = "tests/demo/demo_res_file.ipynb"
+    cur_path = os.path.join(os.getcwd(), test_notebook)
+    new_path = os.path.join(tmp_path, test_notebook)
+    copy2(cur_path, new_path)
+    mock_session(mocker, requests_mock, new_path)
+    mock_job(requests_mock, test_runner)
+    url = webhook.add(new_path)
+    assert url.startswith(f"http://localhost:5001/{getUserb64()}/notebook/")
+    token = url.split("/")[-1]
+    response = await test_runner.get(f"/{t_notebook}/{token}")
+    assert response.status == 200
+    assert response.headers.get("Content-Type") == "text/csv"
+    res_text = await response.content.read()
+    csv_val = open("tests/demo/PEIX.csv", "rb").read()
+    assert res_text == csv_val
+    # test SVG
+    test_notebook = "tests/demo/demo_res_svg.ipynb"
+    cur_path = os.path.join(os.getcwd(), test_notebook)
+    new_path = os.path.join(tmp_path, test_notebook)
+    copy2(cur_path, new_path)
+    mock_session(mocker, requests_mock, new_path)
+    mock_job(requests_mock, test_runner)
+    url = webhook.add(new_path)
+    assert url.startswith(f"http://localhost:5001/{getUserb64()}/notebook/")
+    token = url.split("/")[-1]
+    response = await test_runner.get(f"/{t_notebook}/{token}")
+    assert response.status == 200
+    assert response.headers.get("Content-Type") == "image/svg+xml"
+    res_text = await response.content.read()
+    csv_val = open("tests/demo/demo.svg", "rb").read()
+    assert res_text == csv_val
+    # test image
+    # test_notebook = "tests/demo/demo_res_image.ipynb"
+    # cur_path = os.path.join(os.getcwd(), test_notebook)
+    # new_path = os.path.join(tmp_path, test_notebook)
+    # copy2(cur_path, new_path)
+    # mock_session(mocker, requests_mock, new_path)
+    # mock_job(requests_mock, test_runner)
+    # url = webhook.add(new_path)
+    # assert url.startswith(f"http://localhost:5001/{getUserb64()}/notebook/")
+    # token = url.split("/")[-1]
+    # response = await test_runner.get(f"/{t_notebook}/{token}")
+    # assert response.status == 200
+    # assert response.headers.get("Content-Type") == "image/jpeg"
+    # res_text = await response.content.read()
+    # image_a = Image.open('tests/demo/dog.jpeg')
+    # image_b = Image.open(io.BytesIO(res_text))
+    # percentage = imgcompare.image_diff_percent(image_a, image_b)
+    # assert percentage < 1
 
 
 async def test_logs(test_runner):

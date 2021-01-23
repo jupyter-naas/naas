@@ -16,6 +16,10 @@ import shutil
 
 kern_manager = None
 mime_html = "text/html"
+mime_csv = "text/csv"
+mime_html = "text/html"
+mime_md = "text/markdown"
+mime_text = "text/plain"
 mime_json = "application/json"
 mime_jpeg = "image/jpeg"
 mime_png = "image/png"
@@ -95,7 +99,9 @@ class Notebooks:
         output = []
         for table_num, table in enumerate(soup.find_all("table")):
             csv_string = io.StringIO()
-            csv_writer = csv.writer(csv_string, delimiter=";", quoting=csv.QUOTE_ALL)
+            csv_writer = csv.writer(
+                csv_string, delimiter=";", lineterminator="\n", quoting=csv.QUOTE_ALL
+            )
             for tr in table.find_all("tr"):
                 row = [
                     "".join(cell.stripped_strings) for cell in tr.find_all(["td", "th"])
@@ -148,15 +154,16 @@ class Notebooks:
             filter(lambda meta: metadata[meta].get("naas_api"), metadata)
         )
         for meta in meta_filtered:
-            if (
-                data.get("text/markdown")
-                and metadata[meta].get("naas_type") == t_notebook
-            ):
+            if data.get(mime_md) and metadata[meta].get("naas_type") == t_notebook:
                 return self.__nb_render(filepath)
             elif data.get(mime_json) and metadata[meta].get("naas_type"):
                 return self.__nb_file(metadata[meta], data)
+            elif data.get(mime_html) and metadata[meta].get("naas_type") == "markdown":
+                return mime_html, data.get(mime_html)
+            elif data.get(mime_html) and metadata[meta].get("naas_type") == "text":
+                return mime_text, data.get(mime_html)
             elif data.get(mime_html) and metadata[meta].get("naas_type") == "csv":
-                return "text/csv", self.__convert_csv(data.get(mime_html))
+                return mime_csv, self.__convert_csv(data.get(mime_html))
             elif data.get(mime_json):
                 return mime_json, json.dumps(data.get(mime_json))
             else:

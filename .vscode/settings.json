@@ -7,5 +7,6 @@
         "api",
         "binder",
         "scheduler"
-    ]
+    ],
+    "jupyter.jupyterServerType": "local"
 }
