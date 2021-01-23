@@ -28,7 +28,6 @@ async def test_notebook(test_runner, tmp_path):
     }
     uid = str(uuid.uuid4())
     res = await notebook.exec(uid, job)
-    print("\n\n\nres\n\n", res, "\n\n\n END")
     assert res is not None
     assert res.get("cells") is not None
     # TODO add more test

@@ -27,7 +27,9 @@ class JobsController(HTTPMethodView):
         if mode:
             filename = f"{mode}_{filename}"
         if not os.path.exists(path):
-            raise FileNotFoundError(f"file doesn't exist {path}")
+            data = bytes(f"File not found at path {path}", "utf-8")
+            encoded = base64.b64encode(data)
+            return {"filename": "Not_found.txt", "data": encoded.decode("ascii")}
         data = open(path, "rb").read()
         encoded = base64.b64encode(data)
         return {"filename": filename, "data": encoded.decode("ascii")}
@@ -61,7 +63,7 @@ class JobsController(HTTPMethodView):
         dt_string = datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")
         dirname = os.path.dirname(path)
         filename = os.path.basename(path)
-        filename = f"{dt_string}_{filename}"
+        filename = f"{dt_string}___{filename}"
         new_path = os.path.join(dirname, filename)
         self.__save_file(new_path, data)
 
@@ -90,11 +92,11 @@ class JobsController(HTTPMethodView):
             dirname = os.path.dirname(new_path)
             filename = os.path.basename(new_path)
             if cur_mode and histo:
-                filename = f"{histo}_{cur_mode}_{filename}"
+                filename = f"{histo}___{cur_mode}__{filename}"
             elif cur_mode:
-                filename = f"{cur_mode}_{filename}"
+                filename = f"{cur_mode}__{filename}"
             else:
-                filename = f"{histo}_{filename}"
+                filename = f"{histo}___{filename}"
             new_path = os.path.join(dirname, filename)
             job["file"] = self.__open_file(new_path)
         self.__logger.info(

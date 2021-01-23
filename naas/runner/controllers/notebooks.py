@@ -69,7 +69,7 @@ class NbController(HTTPMethodView):
                         "status": t_error,
                         "filepath": file_filepath,
                         "duration": res.get("duration"),
-                        "error": res.get("error"),
+                        "error": str(res.get("error")),
                     }
                 )
                 await self.__jobs.update(

@@ -67,7 +67,7 @@ class Manager:
             naas_data = r.json()
         except requests.exceptions.ConnectionError:
             print(self.__error_busy)
-        except requests.HTTPError as e:
+        except requests.exceptions.HTTPError as e:
             print(self.__error_reject, e)
         return naas_data
 
@@ -110,7 +110,7 @@ class Manager:
             return notebooks
         except requests.exceptions.ConnectionError as e:
             print(e)
-        except requests.HTTPError as e:
+        except requests.exceptions.HTTPError as e:
             print(e)
         except Exception as e:
             tb = traceback.format_exc()
@@ -197,12 +197,12 @@ class Manager:
             r.raise_for_status()
             res = r.json()
             for ff in res:
-                print(f"🕣 Your Notebook output {ff} has been remove from production.\n")
+                print(f"🕣 Your file {ff} has been remove from production.\n")
             return pd.DataFrame(data=res.get("files", []))
         except requests.exceptions.ConnectionError as err:
             print(self.__error_busy, err)
             raise
-        except requests.HTTPError as err:
+        except requests.exceptions.HTTPError as err:
             print(self.__error_reject, err)
             raise
 
@@ -218,11 +218,6 @@ class Manager:
             )
             r.raise_for_status()
             res = r.json()
-            print(
-                "\n+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n",
-                res,
-                "\n+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n",
-            )
             if res.get("files", None) and len(res.get("files", [])) > 0:
                 return pd.DataFrame(data=res.get("files", []))
             else:
@@ -231,7 +226,7 @@ class Manager:
         except requests.exceptions.ConnectionError as err:
             print(self.__error_busy, err)
             raise
-        except requests.HTTPError as err:
+        except requests.exceptions.HTTPError as err:
             print(self.__error_reject, err)
             raise
 
@@ -260,7 +255,7 @@ class Manager:
         except requests.exceptions.ConnectionError as err:
             print(self.__error_busy, err)
             raise
-        except requests.HTTPError as err:
+        except requests.exceptions.HTTPError as err:
             print(self.__error_reject, err)
             raise
 
@@ -297,7 +292,7 @@ class Manager:
             except requests.exceptions.ConnectionError as err:
                 print(self.__error_busy, err)
                 raise
-            except requests.HTTPError as err:
+            except requests.exceptions.HTTPError as err:
                 print(self.__error_reject, err)
                 raise
             return new_obj
@@ -325,7 +320,7 @@ class Manager:
             except requests.exceptions.ConnectionError as err:
                 print(self.__error_busy, err)
                 raise
-            except requests.HTTPError as err:
+            except requests.exceptions.HTTPError as err:
                 print(self.__error_reject, err)
                 raise
             return new_obj

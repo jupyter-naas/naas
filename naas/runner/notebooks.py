@@ -108,7 +108,7 @@ class Notebooks:
     def get_out_path(self, path):
         filename = os.path.basename(path)
         dirname = os.path.dirname(path)
-        out_path = os.path.join(dirname, f"{t_output}_{filename}")
+        out_path = os.path.join(dirname, f"{t_output}__{filename}")
         return out_path
 
     def __nb_render(self, filepath):
@@ -179,7 +179,7 @@ class Notebooks:
             try:
                 out_finename = os.path.basename(file_filepath_out)
                 out_dir = os.path.dirname(file_filepath_out)
-                history_filename = f'{datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")}_{out_finename}'
+                history_filename = f'{datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")}___{out_finename}'
                 history_path = os.path.join(out_dir, history_filename)
                 shutil.copy(file_filepath_out, history_path)
             except:  # noqa: E722
@@ -232,7 +232,7 @@ class Notebooks:
     def __get_output_path(self, file_filepath):
         file_dirpath = os.path.dirname(file_filepath)
         file_filename = os.path.basename(file_filepath)
-        file_filepath_out = os.path.join(file_dirpath, f"out_{file_filename}")
+        file_filepath_out = os.path.join(file_dirpath, f"{t_output}__{file_filename}")
         return file_filepath_out
 
     async def exec(self, uid, job):

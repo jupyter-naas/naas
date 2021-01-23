@@ -8,6 +8,7 @@ from naas.types import (
     t_start,
     t_notebook,
     t_asset,
+    t_output,
     t_dependency,
     t_scheduler,
     t_list,
@@ -236,10 +237,13 @@ class Jobs:
         # else:
         #     filename = f"{filetype}_{filename}"
         if output:
-            filename = f"out_{filename}"
+            filename = f"___{t_output}__{filename}"
+        else:
+            filename = f"___{filename}"
         for ffile in os.listdir(dirname):
-            if ffile.endswith(filename) and len(ffile.split("_")) > 1:
-                histo = ffile.split("_")[0]
+            if ffile.endswith(filename):
+                split_list = ffile.split("___")
+                histo = split_list[0]
                 tmp_path = os.path.join(dirname, ffile)
                 d.append({"timestamp": histo, "filepath": tmp_path})
         self.__logger.info(

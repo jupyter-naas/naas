@@ -7,6 +7,7 @@ from naas.types import (
     t_health,
     t_asset,
     t_secret,
+    t_output,
 )
 import getpass
 import pytest  # noqa: F401
@@ -190,7 +191,7 @@ async def test_asset(mocker, requests_mock, test_runner, tmp_path):
     assets.get(new_path, histo.get("timestamp"))
     filename = os.path.basename(new_path)
     dirname = os.path.dirname(new_path)
-    new_path_histo = os.path.join(dirname, f"{histo.get('timestamp')}_{filename}")
+    new_path_histo = os.path.join(dirname, f"{histo.get('timestamp')}___{filename}")
     assert os.path.isfile(new_path_histo)
     assets.delete(new_path)
     response = await test_runner.get(f"/{t_job}")
@@ -225,13 +226,21 @@ async def test_notebooks(mocker, requests_mock, test_runner, tmp_path):
     assert res_job.get("status") == t_add
     assert res_job.get("nbRun") == 0
     list_in_prod = webhook.list(new_path)
-    assert len(list_in_prod) == 2
+    assert len(list_in_prod) == 1
     response = await test_runner.get(f"/{t_notebook}/{token}")
-    list_out_in_prod = webhook.list_output(new_path)
-    assert len(list_out_in_prod) == 2
     assert response.status == 200
     resp_json = await response.json()
     assert resp_json == {"foo": "bar"}
+    list_out_in_prod = webhook.list_output(new_path)
+    assert len(list_out_in_prod) == 1
+    histo = list_out_in_prod.to_dict("records")[0]
+    webhook.get_output(new_path, histo.get("timestamp"))
+    filename = os.path.basename(new_path)
+    dirname = os.path.dirname(new_path)
+    new_path_out_histo = os.path.join(
+        dirname, f"{histo.get('timestamp')}___{t_output}__{filename}"
+    )
+    assert os.path.isfile(new_path_out_histo)
     response = await test_runner.get(f"/{t_job}")
     assert response.status == 200
     resp_json = await response.json()

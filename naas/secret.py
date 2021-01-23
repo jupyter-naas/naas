@@ -21,7 +21,7 @@ class Secret:
         except requests.exceptions.ConnectionError as err:
             print(self.__error_busy, err)
             raise
-        except requests.HTTPError as err:
+        except requests.exceptions.HTTPError as err:
             print(self.__error_reject, err)
             raise
 
@@ -35,7 +35,7 @@ class Secret:
         except requests.exceptions.ConnectionError as err:
             print(self.__error_busy, err)
             raise
-        except requests.HTTPError as err:
+        except requests.exceptions.HTTPError as err:
             print(self.__error_reject, err)
             raise
 
@@ -59,6 +59,6 @@ class Secret:
         except requests.exceptions.ConnectionError as err:
             print(self.__error_busy, err)
             raise
-        except requests.HTTPError as err:
+        except requests.exceptions.HTTPError as err:
             print(self.__error_reject, err)
             raise
