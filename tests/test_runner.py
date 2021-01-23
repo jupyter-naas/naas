@@ -19,7 +19,7 @@ from nbconvert import HTMLExporter
 from syncer import sync
 import pandas as pd
 import csv
-import markdown
+import markdown2
 
 # import imgcompare
 # from PIL import Image
@@ -606,7 +606,7 @@ async def test_notebooks_res(mocker, requests_mock, test_runner, tmp_path):
     res_text = res_text.decode("utf-8")
     demo_html = open("tests/demo/demo.md")
     md_text = demo_html.read()
-    html_text = markdown.markdown(md_text)
+    html_text = markdown2.markdown(md_text)
     assert res_text == html_text
     # test text
     test_notebook = "tests/demo/demo_res_text.ipynb"
