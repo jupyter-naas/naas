@@ -95,11 +95,11 @@ class Runner:
             if n_env.scheduler:
                 await self.__scheduler.start()
 
-    async def initialize_before_stop(self, app, loop):
+    def initialize_before_stop(self, app, loop):
         if self.__nb is not None:
             self.__nb = None
         if n_env.scheduler and self.__scheduler is not None:
-            await self.__scheduler.stop()
+            self.__scheduler.stop()
             self.__scheduler = None
         if self.__jobs is not None:
             self.__jobs = None
@@ -143,8 +143,8 @@ class Runner:
         )
         return self.__app
 
-    def kill(self):
-        self.__app.stop()
+    async def kill(self):
+        await self.__app.stop()
 
     def start(self, port=None, debug=False):
         user = getpass.getuser()

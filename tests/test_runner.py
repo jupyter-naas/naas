@@ -1,4 +1,4 @@
-from base64 import b64encode
+from base64 import b64encode, b64decode
 from naas.runner.proxy import escape_kubernet
 from naas.types import (
     t_add,
@@ -21,9 +21,9 @@ import pandas as pd
 import csv
 import markdown2
 
-# import imgcompare
-# from PIL import Image
-# import io
+import imgcompare
+from PIL import Image
+import io
 
 user = getpass.getuser()
 seps = os.sep + os.altsep if os.altsep else os.sep
@@ -659,23 +659,24 @@ async def test_notebooks_res(mocker, requests_mock, test_runner, tmp_path):
     csv_val = open("tests/demo/demo.svg", "rb").read()
     assert res_text == csv_val
     # test image
-    # test_notebook = "tests/demo/demo_res_image.ipynb"
-    # cur_path = os.path.join(os.getcwd(), test_notebook)
-    # new_path = os.path.join(tmp_path, test_notebook)
-    # copy2(cur_path, new_path)
-    # mock_session(mocker, requests_mock, new_path)
-    # mock_job(requests_mock, test_runner)
-    # url = webhook.add(new_path)
-    # assert url.startswith(f"http://localhost:5001/{getUserb64()}/notebook/")
-    # token = url.split("/")[-1]
-    # response = await test_runner.get(f"/{t_notebook}/{token}")
-    # assert response.status == 200
-    # assert response.headers.get("Content-Type") == "image/jpeg"
-    # res_text = await response.content.read()
-    # image_a = Image.open('tests/demo/dog.jpeg')
-    # image_b = Image.open(io.BytesIO(res_text))
-    # percentage = imgcompare.image_diff_percent(image_a, image_b)
-    # assert percentage < 1
+    test_notebook = "tests/demo/demo_res_image.ipynb"
+    cur_path = os.path.join(os.getcwd(), test_notebook)
+    new_path = os.path.join(tmp_path, test_notebook)
+    copy2(cur_path, new_path)
+    mock_session(mocker, requests_mock, new_path)
+    mock_job(requests_mock, test_runner)
+    url = webhook.add(new_path)
+    assert url.startswith(f"http://localhost:5001/{getUserb64()}/notebook/")
+    token = url.split("/")[-1]
+    response = await test_runner.get(f"/{t_notebook}/{token}")
+    assert response.status == 200
+    assert response.headers.get("Content-Type") == "image/jpeg"
+    res_text = await response.content.read()
+    image_a = Image.open("tests/demo/dog.jpeg")
+    byte_data = b64decode(res_text)
+    image_b = Image.open(io.BytesIO(byte_data))
+    percentage = imgcompare.image_diff_percent(image_a, image_b)
+    assert percentage < 1
 
 
 async def test_logs(test_runner):

@@ -36,7 +36,7 @@ class Scheduler:
         elif self.__scheduler.state == apscheduler.schedulers.base.STATE_PAUSED:
             return "paused"
 
-    async def stop(self):
+    def stop(self):
         if self.__scheduler is not None:
             self.__scheduler.pause()
             self.__scheduler.remove_job(n_env.scheduler_job_name)
