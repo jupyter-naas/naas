@@ -34,10 +34,7 @@ class Manager:
         self.set_runner_mode()
 
     def is_production(self):
-        if "naas_env" in globals():
-            return True if naas_env == "PRODUCTION" else False  # type: ignore  # noqa: F821
-        else:
-            return False
+        return False if self.notebook_path() else True
 
     def set_runner_mode(self):
         try:
@@ -221,7 +218,7 @@ class Manager:
     def list_prod(self, mode, path=None):
         if not path and self.is_production():
             print("No list_prod done you are in production\n")
-            return
+            return []
         current_file = self.get_path(path)
         try:
             r = requests.get(
