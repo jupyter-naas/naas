@@ -34,7 +34,7 @@ class Dependency:
     def add(self, path=None, debug=False):
         if self.manager.is_production():
             print("No add done you are in production\n")
-            return self.get_path(path)
+            return self.manager.get_path(path)
         current_file = self.manager.get_path(path)
         self.manager.add_prod(
             {
@@ -47,7 +47,7 @@ class Dependency:
         )
         print("👌 Well done! Your Dependency has been sent to production. \n")
         print('PS: to remove the "Dependency" feature, just replace .add by .delete')
-        return self.get_path(current_file)
+        return self.manager.get_path(current_file)
 
     def delete(self, path=None, all=False, debug=False):
         if self.manager.is_production():
