@@ -1,18 +1,20 @@
 from naas.types import t_notebook, t_scheduler, t_error, t_output
-from .env_var import n_env
 from nbconvert import HTMLExporter
 from sanic import response
+from .env_var import n_env
 import papermill as pm
 import traceback
 import mimetypes
+import datetime
+import shutil
+import base64
 import json
 import time
 import bs4
 import csv
 import os
 import io
-import datetime
-import shutil
+
 
 kern_manager = None
 mime_html = "text/html"
@@ -24,7 +26,7 @@ mime_json = "application/json"
 mime_jpeg = "image/jpeg"
 mime_png = "image/png"
 mime_svg = "image/svg+xml"
-mime_list = [mime_html, mime_jpeg, mime_png, mime_svg]
+mime_list = [mime_html, mime_svg]
 
 try:
     from enterprise_gateway.services.kernels.remotemanager import RemoteKernelManager
@@ -81,10 +83,12 @@ class Notebooks:
                     headers[
                         "Content-Disposition"
                     ] = f'attachment; filename="{new_file_name}"'
+                else:
+                    headers["Content-Type"] = res_data.get("type")
 
                 async def streaming_fn(res):
-                    # await res.write(str(res_data.get("data")))
-                    await res.write(str(res_data.get("data")).encode("utf-8"))
+                    # await res.write(str(res_data.get("data").decode('UTF-8')))
+                    await res.write(res_data.get("data"))
 
                 return response.stream(
                     streaming_fn,
@@ -166,6 +170,12 @@ class Notebooks:
                 return mime_csv, self.__convert_csv(data.get(mime_html))
             elif data.get(mime_json):
                 return mime_json, json.dumps(data.get(mime_json))
+            elif data.get(mime_jpeg):
+                im_byt = io.BytesIO(base64.b64decode(data.get(mime_jpeg)))
+                return mime_jpeg, im_byt.getvalue()
+            elif data.get(mime_png):
+                im_byt = io.BytesIO(base64.b64decode(data.get(mime_png)))
+                return mime_png, im_byt.getvalue()
             else:
                 result_type = next((i for i in mime_list if data.get(i)), None)
                 return result_type, data.get(result_type)

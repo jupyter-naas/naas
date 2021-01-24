@@ -1,4 +1,4 @@
-from base64 import b64encode, b64decode
+from base64 import b64encode
 from naas.runner.proxy import escape_kubernet
 from naas.types import (
     t_add,
@@ -640,7 +640,7 @@ async def test_notebooks_res(mocker, requests_mock, test_runner, tmp_path):
     assert response.status == 200
     assert response.headers.get("Content-Type") == "text/csv"
     res_text = await response.content.read()
-    csv_val = open("tests/demo/PEIX.csv", "rb").read()
+    csv_val = open("tests/demo/demo.csv", "rb").read()
     assert res_text == csv_val
     # test SVG
     test_notebook = "tests/demo/demo_res_svg.ipynb"
@@ -673,8 +673,7 @@ async def test_notebooks_res(mocker, requests_mock, test_runner, tmp_path):
     assert response.headers.get("Content-Type") == "image/jpeg"
     res_text = await response.content.read()
     image_a = Image.open("tests/demo/dog.jpeg")
-    byte_data = b64decode(res_text)
-    image_b = Image.open(io.BytesIO(byte_data))
+    image_b = Image.open(io.BytesIO(res_text))
     percentage = imgcompare.image_diff_percent(image_a, image_b)
     assert percentage < 1
 
