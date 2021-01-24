@@ -1,4 +1,18 @@
-from naas.types import t_notebook, t_scheduler, t_error, t_output
+from naas.types import (
+    t_notebook,
+    t_scheduler,
+    t_error,
+    t_output,
+    guess_ext,
+    mime_json,
+    mime_html,
+    mime_md,
+    mime_text,
+    mime_csv,
+    mime_jpeg,
+    mime_png,
+    mime_list,
+)
 from nbconvert import HTMLExporter
 from sanic import response
 from .env_var import n_env
@@ -17,16 +31,6 @@ import io
 
 
 kern_manager = None
-mime_html = "text/html"
-mime_csv = "text/csv"
-mime_html = "text/html"
-mime_md = "text/markdown"
-mime_text = "text/plain"
-mime_json = "application/json"
-mime_jpeg = "image/jpeg"
-mime_png = "image/png"
-mime_svg = "image/svg+xml"
-mime_list = [mime_html, mime_svg]
 
 try:
     from enterprise_gateway.services.kernels.remotemanager import RemoteKernelManager
@@ -75,7 +79,7 @@ class Notebooks:
             res_data = self.__get_res(res, filepath)
             if res_data and res_data.get("type"):
                 file_name = os.path.basename(filepath)
-                ext = mimetypes.guess_extension(res_data.get("type"), strict=True)
+                ext = res_data.get("ext")
                 inline = params.get("inline", False)
                 headers = dict()
                 new_file_name = f'{file_name.split(".")[0]}{ext}'
@@ -135,7 +139,8 @@ class Notebooks:
                 "error": "output file not found",
                 "trace": tb,
             }
-        return result_type, result
+        result_ext = guess_ext(result_type)
+        return result_type, result_ext, result
 
     def __nb_file(self, meta, data):
         result_type = None
@@ -149,7 +154,8 @@ class Notebooks:
         except FileNotFoundError:  # noqa: E722
             result_type = mime_json
             result = {"error": "file not found"}
-        return result_type, result
+        result_ext = guess_ext(result_type)
+        return result_type, result_ext, result
 
     def __check_output(self, output, filepath):
         metadata = output.get("metadata", [])
@@ -163,32 +169,41 @@ class Notebooks:
             elif data.get(mime_json) and metadata[meta].get("naas_type"):
                 return self.__nb_file(metadata[meta], data)
             elif data.get(mime_html) and metadata[meta].get("naas_type") == "markdown":
-                return mime_html, data.get(mime_html)
+                result_ext = guess_ext(mime_html)
+                return mime_html, result_ext, data.get(mime_html)
             elif data.get(mime_html) and metadata[meta].get("naas_type") == "text":
-                return mime_text, data.get(mime_html)
+                result_ext = guess_ext(mime_text)
+                return mime_text, result_ext, data.get(mime_html)
             elif data.get(mime_html) and metadata[meta].get("naas_type") == "csv":
-                return mime_csv, self.__convert_csv(data.get(mime_html))
+                result_ext = guess_ext(mime_csv)
+                return mime_csv, result_ext, self.__convert_csv(data.get(mime_html))
             elif data.get(mime_json):
-                return mime_json, json.dumps(data.get(mime_json))
+                result_ext = guess_ext(mime_json)
+                return mime_json, result_ext, json.dumps(data.get(mime_json))
             elif data.get(mime_jpeg):
                 im_byt = io.BytesIO(base64.b64decode(data.get(mime_jpeg)))
-                return mime_jpeg, im_byt.getvalue()
+                result_ext = guess_ext(mime_jpeg)
+                return mime_jpeg, result_ext, im_byt.getvalue()
             elif data.get(mime_png):
                 im_byt = io.BytesIO(base64.b64decode(data.get(mime_png)))
-                return mime_png, im_byt.getvalue()
+                result_ext = guess_ext(mime_png)
+                return mime_png, result_ext, im_byt.getvalue()
             else:
                 result_type = next((i for i in mime_list if data.get(i)), None)
-                return result_type, data.get(result_type)
-        return None, None
+                result_ext = guess_ext(result_type)
+                return result_type, result_ext, data.get(result_type)
+        return None, None, None
 
     def __get_res(self, res, filepath):
         cells = res.get("cells")
         for cell in cells:
             outputs = cell.get("outputs", [])
             for output in outputs:
-                (result_type, result) = self.__check_output(output, filepath)
+                (result_type, result_ext, result) = self.__check_output(
+                    output, filepath
+                )
                 if result is not None and result_type is not None:
-                    return {"type": result_type, "data": result}
+                    return {"type": result_type, "ext": result_ext, "data": result}
         return None
 
     def __keep_out_history(self, file_filepath_out):

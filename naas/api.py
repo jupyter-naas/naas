@@ -1,11 +1,10 @@
 from IPython.core.display import display, HTML, JSON, Image, SVG, Markdown
-from .types import t_notebook, t_output
+from .types import t_notebook, t_output, guess_type
 from .manager import Manager
 import pandas as pd
-import mimetypes
-import os
-import warnings
 import markdown2
+import warnings
+import os
 
 
 class Api:
@@ -103,7 +102,7 @@ class Api:
     def respond_file(self, path):
         self.deprecatedPrint()
         abs_path = os.path.abspath(path)
-        naas_type = mimetypes.guess_type(abs_path)[0]
+        naas_type = guess_type(abs_path)
         display(Markdown("Response Set as File, preview below: "))
         display(
             JSON(

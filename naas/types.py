@@ -1,3 +1,5 @@
+import mimetypes
+
 t_notebook = "notebook"
 t_asset = "asset"
 t_dependency = "dependency"
@@ -24,3 +26,29 @@ t_skip = "skiped"
 t_error = "error"
 t_health = "healthy"
 t_main = "main"
+
+mime_html = "text/html"
+mime_csv = "text/csv"
+mime_html = "text/html"
+mime_md = "text/markdown"
+mime_text = "text/plain"
+mime_json = "application/json"
+mime_nb = "application/vnd.jupyter"
+mime_jpeg = "image/jpeg"
+mime_png = "image/png"
+mime_svg = "image/svg+xml"
+mime_list = [mime_html, mime_svg]
+
+
+def guess_type(filepath):
+    result_type = mimetypes.guess_type(filepath)[0]
+    if result_type is None and filepath.endswith(".ipynb"):
+        result_type = mime_nb
+    return result_type
+
+
+def guess_ext(cur_type):
+    result_ext = mimetypes.guess_extension(cur_type, strict=False)
+    if result_ext is None and cur_type == mime_nb:
+        result_ext = ".ipynb"
+    return result_ext
