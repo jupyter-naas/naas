@@ -1,4 +1,10 @@
 
+## 0.25.0 (2021-01-24)
+
+### Feat
+
+- support respond_file for notebook
+
 ## 0.24.0 (2021-01-24)
 
 ### Feat
