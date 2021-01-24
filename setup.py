@@ -51,7 +51,7 @@ setup(
         "pandas>=1,<2",
         "daemonize>=2,<3",
         "escapism>=1,<2",
-        "notebook==6.1.5",
+        "notebook>=6,<7",
         "ipython>=7,<8",
         "ipykernel>=5,<6",
         "requests>=2,<3",
