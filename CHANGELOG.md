@@ -1,4 +1,10 @@
 
+## 0.24.0 (2021-01-24)
+
+### Feat
+
+- test update notebook version
+
 ## 0.23.20 (2021-01-24)
 
 ### Fix
