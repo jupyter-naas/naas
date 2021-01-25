@@ -6,6 +6,7 @@ t_dependency = "dependency"
 t_scheduler = "scheduler"
 t_secret = "secret"
 
+t_tz = "timezone"
 t_job = "job"
 t_env = "env"
 t_log = "log"
@@ -38,6 +39,9 @@ mime_jpeg = "image/jpeg"
 mime_png = "image/png"
 mime_svg = "image/svg+xml"
 mime_list = [mime_html, mime_svg]
+
+error_busy = "Naas look busy, try to reload your machine"
+error_reject = "Naas refused your request, reason :"
 
 
 def guess_type(filepath):

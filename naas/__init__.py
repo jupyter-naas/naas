@@ -2,6 +2,7 @@
 # Distributed under the terms of the GNU AGPL License.
 from IPython.core.display import display, Javascript, HTML
 from .runner.notifications import Notifications
+from .types import t_tz, error_busy, error_reject
 from .runner.env_var import n_env
 from .dependency import Dependency
 from .runner.proxy import Domain
@@ -18,6 +19,7 @@ __version__ = "0.26.1"
 __github_repo = "jupyter-naas/naas"
 __doc_url = "https://naas.gitbook.io/naas/"
 __canny_js = '<script>!function(w,d,i,s){function l(){if(!d.getElementById(i)){var f=d.getElementsByTagName(s)[0],e=d.createElement(s);e.type="text/javascript",e.async=!0,e.src="https://canny.io/sdk.js",f.parentNode.insertBefore(e,f)}}if("function"!=typeof w.Canny){var c=function(){c.q.push(arguments)};c.q=[],w.Canny=c,"complete"===d.readyState?l():w.attachEvent?w.attachEvent("onload",l):w.addEventListener("load",l,!1)}}(window,document,"canny-jssdk","script");</script>'  # noqa: E501
+__crisp = '<script type="text/javascript">window.$crisp=[];window.CRISP_WEBSITE_ID="34ee7d04-1056-4e11-aea7-1c02c0d2bef3";(function(){d=document;s=d.createElement("script");s.src="https://client.crisp.chat/l.js";s.async=1;d.getElementsByTagName("head")[0].appendChild(s);})();</script>'  # noqa: E501
 __location__ = os.getcwd()
 
 scheduler = Scheduler()
@@ -53,6 +55,21 @@ def changelog():
     display(HTML(data))
 
 
+def open_help():
+    data = __crisp
+    data += (
+        f'<script>$crisp.push(["set", "user:email", ["{str(n_env.user)}"]])</script>'
+    )
+    data += f'<script>$crisp.push(["set", "session:data", [[["naas_version", "{str(n_env.version)}"]]]])</script>'
+    data += '<script>$crisp.push(["do", "chat:open"])</script>'
+    display(HTML(data))
+
+
+def close_help():
+    data = '<script>$crisp.push(["do", "chat:hide"])</script>'
+    display(HTML(data))
+
+
 def bug_report():
     email = n_env.user
     name = email.split(".")[0]
@@ -62,7 +79,7 @@ def bug_report():
     data = __canny_js
     data += "<div data-canny />"
     data += """
-    <script>
+    <>
         Canny('identify', {
             appID: '5f81748112b5d73b2faf4b15',
             user: {
@@ -74,7 +91,7 @@ def bug_report():
         Canny('render', {
             boardToken: "{BOARD}",
         });
-    </script>
+    </>
     """
 
     data = data.replace("{EMAIL}", str(n_env.user))
@@ -92,7 +109,7 @@ def feature_request():
     data = __canny_js
     data += "<div data-canny />"
     data += """
-    <script>
+    <>
         Canny('identify', {
             appID: '5f81748112b5d73b2faf4b15',
             user: {
@@ -104,7 +121,7 @@ def feature_request():
         Canny('render', {
             boardToken: "{BOARD}",
         });
-    </script>
+    </>
     """
 
     data = data.replace("{EMAIL}", str(n_env.user))
@@ -151,3 +168,39 @@ def auto_update():
 
 def is_production():
     return api.manager.is_production()
+
+
+def remote_connect(user, token):
+    n_env.token = token
+    n_env.user = user
+
+
+def get_remote_timezone():
+    try:
+        r = requests.get(f"{n_env.api}/{t_tz}")
+        r.raise_for_status()
+        res = r.json()
+        print(f"🕣 Your Production Timezone is {res.get('tz')}\n")
+        return res
+    except requests.exceptions.ConnectionError as err:
+        print(error_busy, err)
+        raise
+    except requests.exceptions.HTTPError as err:
+        print(error_reject, err)
+        raise
+
+
+def set_remote_timezone(timezone):
+    n_env.tz = timezone
+    try:
+        r = requests.post(f"{n_env.api}/{t_tz}", json={"tz": timezone})
+        r.raise_for_status()
+        res = r.json()
+        print(f"🕣 Your Production Timezone is {res.get('tz')}\n")
+        return res
+    except requests.exceptions.ConnectionError as err:
+        print(error_busy, err)
+        raise
+    except requests.exceptions.HTTPError as err:
+        print(error_reject, err)
+        raise

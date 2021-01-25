@@ -224,10 +224,10 @@ class Scheduler:
         all_start_time = time.time()
         try:
             if n_env.scheduler_interval == 60:
-                current_time = datetime.datetime.now()
+                current_time = datetime.datetime.now(tz=n_env)
             elif n_env.scheduler_interval == 1:
                 # for speed test in ci
-                current_time = datetime.datetime.now()
+                current_time = datetime.datetime.now(tz=n_env)
                 current_sec = current_time.second
                 current_time = current_time.replace(minute=current_sec)
             else:

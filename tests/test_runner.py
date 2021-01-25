@@ -20,7 +20,7 @@ from syncer import sync
 import pandas as pd
 import csv
 import markdown2
-
+from tzlocal import get_localzone
 import imgcompare
 from PIL import Image
 import io
@@ -46,8 +46,13 @@ def get_env():
         "JUPYTERHUB_URL": "http://localhost:5000",
         "PUBLIC_PROXY_API": "http://localhost:5001",
         "NOTIFICATIONS_API": "http://localhost:5002",
-        "TZ": "Europe/Paris",
+        "TZ": n_env.tz,
     }
+
+
+def get_tz():
+    local_tz = get_localzone()
+    return {"tz": str(local_tz)}
 
 
 def mock_session(mocker, requests_mock, cur_path):
@@ -117,6 +122,15 @@ async def test_init(test_runner):
     assert response.status == 200
     resp_json = await response.json()
     assert resp_json == get_env()
+    response = await test_runner.get("/timezone")
+    assert response.status == 200
+    resp_json = await response.json()
+    assert resp_json == get_tz()
+    response = await test_runner.post("/timezone", json={"tz": "Africa/Asmera"})
+    assert response.status == 200
+    resp_json = await response.json()
+    assert resp_json is not get_tz()
+    assert resp_json == {"tz": "Africa/Asmera"}
 
 
 async def test_secret(mocker, requests_mock, test_runner, tmp_path):

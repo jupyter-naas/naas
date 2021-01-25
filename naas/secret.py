@@ -1,14 +1,10 @@
-from .types import t_secret, t_add, t_delete
+from .types import t_secret, t_add, t_delete, error_reject, error_busy
 from .runner.env_var import n_env
 import pandas as pd
 import requests
 
 
 class Secret:
-
-    __error_busy = "Naas look busy, try to reload your machine"
-    __error_reject = "Naas refused your request, reason :"
-
     def list(self, raw=False):
         try:
             r = requests.get(f"{n_env.api}/{t_secret}")
@@ -19,10 +15,10 @@ class Secret:
             else:
                 return pd.DataFrame.from_records(res)
         except requests.exceptions.ConnectionError as err:
-            print(self.__error_busy, err)
+            print(error_busy, err)
             raise
         except requests.exceptions.HTTPError as err:
-            print(self.__error_reject, err)
+            print(error_reject, err)
             raise
 
     def add(self, name=None, secret=None):
@@ -33,10 +29,10 @@ class Secret:
             print("👌 Well done! Your Secret has been sent to production. \n")
             print('PS: to remove the "Secret" feature, just replace .add by .delete')
         except requests.exceptions.ConnectionError as err:
-            print(self.__error_busy, err)
+            print(error_busy, err)
             raise
         except requests.exceptions.HTTPError as err:
-            print(self.__error_reject, err)
+            print(error_reject, err)
             raise
 
     def get(self, name=None, default_value=None):
@@ -57,8 +53,8 @@ class Secret:
             r.raise_for_status()
             print("👌 Well done! Your Secret has been remove in production. \n")
         except requests.exceptions.ConnectionError as err:
-            print(self.__error_busy, err)
+            print(error_busy, err)
             raise
         except requests.exceptions.HTTPError as err:
-            print(self.__error_reject, err)
+            print(error_reject, err)
             raise

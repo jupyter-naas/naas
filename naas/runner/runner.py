@@ -1,9 +1,10 @@
-from naas.types import t_main, t_notebook, t_scheduler, t_asset, t_job, t_secret
+from naas.types import t_main, t_notebook, t_scheduler, t_asset, t_job, t_secret, t_tz
 from sentry_sdk.integrations.sanic import SanicIntegration
 from .controllers.scheduler import SchedulerController
 from .controllers.assets import AssetsController
 from .controllers.secret import SecretController
 from .controllers.notebooks import NbController
+from .controllers.timezone import TimezoneController
 from .controllers.jobs import JobsController
 from .controllers.logs import LogsController
 from sanic_openapi import swagger_blueprint
@@ -89,6 +90,7 @@ class Runner:
             self.__app.add_route(
                 JobsController.as_view(self.__logger, self.__jobs), f"/{t_job}"
             )
+            self.__app.add_route(TimezoneController.as_view(self.__logger), f"/{t_tz}")
             self.__app.add_route(
                 SecretController.as_view(self.__logger, self.__secret), f"/{t_secret}"
             )

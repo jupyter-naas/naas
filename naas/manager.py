@@ -1,4 +1,4 @@
-from .types import t_delete, t_job, t_add, t_env
+from .types import t_delete, t_job, t_add, t_env, error_busy, error_reject
 from IPython.core.display import display, HTML
 from .runner.proxy import encode_proxy_url
 from .runner.env_var import n_env
@@ -23,8 +23,6 @@ except ImportError:
 
 
 class Manager:
-    __error_busy = "Naas look busy, try to reload your machine"
-    __error_reject = "Naas refused your request, reason :"
     __filetype = None
     headers = None
 
@@ -63,9 +61,9 @@ class Manager:
             r.raise_for_status()
             naas_data = r.json()
         except requests.exceptions.ConnectionError:
-            print(self.__error_busy)
+            print(error_busy)
         except requests.exceptions.HTTPError as e:
-            print(self.__error_reject, e)
+            print(error_reject, e)
         return naas_data
 
     def get_value(self, path):
@@ -82,10 +80,10 @@ class Manager:
             data = r.json()
             return data.get("value")
         except requests.exceptions.ConnectionError as err:
-            print(self.__error_busy, err)
+            print(error_busy, err)
             raise
         except requests.exceptions.HTTPError as err:
-            print(self.__error_reject, err)
+            print(error_reject, err)
             raise
 
     def notebook_path(self):
@@ -209,10 +207,10 @@ class Manager:
                 print(f"🕣 Your file {ff} has been remove from production.\n")
             return pd.DataFrame(data=res.get("files", []))
         except requests.exceptions.ConnectionError as err:
-            print(self.__error_busy, err)
+            print(error_busy, err)
             raise
         except requests.exceptions.HTTPError as err:
-            print(self.__error_reject, err)
+            print(error_reject, err)
             raise
 
     def list_prod(self, mode, path=None):
@@ -233,10 +231,10 @@ class Manager:
                 print("No files found in prod")
                 return []
         except requests.exceptions.ConnectionError as err:
-            print(self.__error_busy, err)
+            print(error_busy, err)
             raise
         except requests.exceptions.HTTPError as err:
-            print(self.__error_reject, err)
+            print(error_reject, err)
             raise
 
     def get_file(self, path=None, mode=None, histo=None):
@@ -262,10 +260,10 @@ class Manager:
                 f"🕣 Your Notebook {mode or ''} {filename}, has been copied into your local folder.\n"
             )
         except requests.exceptions.ConnectionError as err:
-            print(self.__error_busy, err)
+            print(error_busy, err)
             raise
         except requests.exceptions.HTTPError as err:
-            print(self.__error_reject, err)
+            print(error_reject, err)
             raise
 
     def path(self, filetype):
@@ -299,10 +297,10 @@ class Manager:
                 if debug:
                     print(f'{res["status"]} ==> {res}')
             except requests.exceptions.ConnectionError as err:
-                print(self.__error_busy, err)
+                print(error_busy, err)
                 raise
             except requests.exceptions.HTTPError as err:
-                print(self.__error_reject, err)
+                print(error_reject, err)
                 raise
             return new_obj
         else:
@@ -327,10 +325,10 @@ class Manager:
                 if debug:
                     print(f'{res["status"]} ==> {res}')
             except requests.exceptions.ConnectionError as err:
-                print(self.__error_busy, err)
+                print(error_busy, err)
                 raise
             except requests.exceptions.HTTPError as err:
-                print(self.__error_reject, err)
+                print(error_reject, err)
                 raise
             return new_obj
         else:

@@ -1,4 +1,5 @@
 from pathlib import Path
+from tzlocal import get_localzone
 import os
 
 
@@ -127,7 +128,7 @@ class n_env:
 
     @property
     def tz(self):
-        return self._tz or os.environ.get("TZ", "Europe/Paris")
+        return self._tz or os.environ.get("TZ", str(get_localzone()))
 
     @tz.setter
     def tz(self, tz):
