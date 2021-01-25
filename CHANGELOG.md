@@ -1,4 +1,11 @@
 
+## 0.26.1 (2021-01-25)
+
+### Fix
+
+- deploy to githib docker registry
+- response file name
+
 ## 0.26.0 (2021-01-25)
 
 ### Feat
