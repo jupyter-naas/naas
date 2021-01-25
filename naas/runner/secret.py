@@ -20,7 +20,7 @@ import uuid
 from sanic.exceptions import ServerError
 from .env_var import n_env
 import base64
-
+import pytz
 
 filters = [t_notebook, t_asset, t_dependency, t_scheduler]
 filters_api = [t_notebook, t_asset]
@@ -177,7 +177,7 @@ class Secret:
         self.__df = self.__df.drop(cur_elem.index)
 
     def __add(self, uid, name, secret):
-        now = datetime.datetime.now()
+        now = datetime.datetime.now(tz=pytz.timezone(n_env.tz))
         dt_string = now.strftime("%Y-%m-%d %H:%M:%S")
         self.__logger.info(
             {
@@ -201,7 +201,7 @@ class Secret:
             self.__df = pd.DataFrame([new_row])
 
     def __update(self, cur_elem, uid, name, secret, status):
-        now = datetime.datetime.now()
+        now = datetime.datetime.now(tz=pytz.timezone(n_env.tz))
         dt_string = now.strftime("%Y-%m-%d %H:%M:%S")
         self.__logger.info(
             {

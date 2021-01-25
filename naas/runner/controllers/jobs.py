@@ -7,6 +7,7 @@ import errno
 import uuid
 import os
 import datetime
+import pytz
 
 endpoint = "jobs"
 
@@ -60,7 +61,9 @@ class JobsController(HTTPMethodView):
         f.close()
 
     def __save_history(self, path, data=None):
-        dt_string = datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")
+        dt_string = datetime.datetime.now(tz=pytz.timezone(n_env.tz)).strftime(
+            "%Y%m%d%H%M%S%f"
+        )
         dirname = os.path.dirname(path)
         filename = os.path.basename(path)
         filename = f"{dt_string}___{filename}"

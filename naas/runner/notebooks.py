@@ -27,7 +27,7 @@ import bs4
 import csv
 import os
 import io
-
+import pytz
 
 kern_manager = None
 
@@ -217,7 +217,7 @@ class Notebooks:
             try:
                 out_finename = os.path.basename(file_filepath_out)
                 out_dir = os.path.dirname(file_filepath_out)
-                history_filename = f'{datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")}___{out_finename}'
+                history_filename = f'{datetime.datetime.now(tz=pytz.timezone(n_env.tz)).strftime("%Y%m%d%H%M%S%f")}___{out_finename}'
                 history_path = os.path.join(out_dir, history_filename)
                 shutil.copy(file_filepath_out, history_path)
             except:  # noqa: E722
@@ -293,7 +293,9 @@ class Notebooks:
         file_filepath_out = self.__get_output_path(file_filepath)
         params = job.get("params", dict())
         params["naas_uid"] = uid
-        params["naas_runtime"] = datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")
+        params["naas_runtime"] = datetime.datetime.now(
+            tz=pytz.timezone(n_env.tz)
+        ).strftime("%Y%m%d%H%M%S%f")
         params["naas_env"] = "PRODUCTION"
         start_time = time.time()
         res = None

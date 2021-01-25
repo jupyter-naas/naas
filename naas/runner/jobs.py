@@ -21,7 +21,7 @@ import json
 import os
 import uuid
 from sanic.exceptions import ServerError
-
+import pytz
 
 filters = [t_notebook, t_asset, t_dependency, t_scheduler]
 filters_api = [t_notebook, t_asset]
@@ -290,7 +290,7 @@ class Jobs:
 
     def __add(self, uid, path, target_type, value, params, run_time):
         try:
-            now = datetime.datetime.now()
+            now = datetime.datetime.now(tz=pytz.timezone(n_env.tz))
             dt_string = now.strftime("%Y-%m-%d %H:%M:%S")
             self.__logger.info(
                 {
@@ -330,7 +330,7 @@ class Jobs:
     def __update(
         self, cur_elem, uid, path, target_type, value, params, status, run_time
     ):
-        now = datetime.datetime.now()
+        now = datetime.datetime.now(tz=pytz.timezone(n_env.tz))
         dt_string = now.strftime("%Y-%m-%d %H:%M:%S")
         self.__logger.info(
             {
