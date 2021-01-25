@@ -1,4 +1,10 @@
 
+## 0.26.0 (2021-01-25)
+
+### Feat
+
+- add to github docker registry
+
 ## 0.25.0 (2021-01-24)
 
 ### Feat
