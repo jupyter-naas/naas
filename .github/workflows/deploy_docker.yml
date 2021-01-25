@@ -45,7 +45,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
           registry: docker.pkg.github.com
-          repository: jupyter-naas/naas
+          repository: naas
           tags: ${{ steps.prepare.outputs.tag }}
       - name: Image digest
         run: echo ${{ steps.prepare.outputs.tag }}
