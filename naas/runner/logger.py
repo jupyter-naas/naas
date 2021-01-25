@@ -73,10 +73,20 @@ class Logger:
 
     def info(self, data):
         print("info", data, self.__path_logs_file)
-        self.__log.info(str(data))
+        message = ""
+        try:
+            message = json.dumps(data)
+        except:  # noqa: E722
+            message = str(data)
+        self.__log.info(message)
 
     def error(self, data):
-        self.__log.error(str(data))
+        message = ""
+        try:
+            message = json.dumps(data)
+        except:  # noqa: E722
+            message = str(data)
+        self.__log.error(message)
 
     def clear(self):
         with open(self.__path_logs_file, "w") as fp:
