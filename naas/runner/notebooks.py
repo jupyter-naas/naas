@@ -84,15 +84,12 @@ class Notebooks:
                     headers[
                         "Content-Disposition"
                     ] = f'attachment; filename="{file_name}"'
-                else:
-                    headers["Content-Type"] = res_data.get("type")
 
                 async def streaming_fn(res):
                     await res.write(res_data.get("data"))
 
                 return response.stream(
-                    streaming_fn,
-                    headers=headers,
+                    streaming_fn, headers=headers, content_type=res_data.get("type")
                 )
             else:
                 return response.json({"id": uid, "status": "Done", "time": duration})
