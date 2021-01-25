@@ -1,17 +1,24 @@
 from naas.types import t_add, t_health, t_scheduler, t_job
-from naas.runner.logger import Logger
-from naas.runner.jobs import Jobs
 from naas.runner.scheduler import Scheduler
 from naas.runner.notebooks import Notebooks
+from datetime import datetime, timedelta
+from naas.runner.logger import Logger
+from naas.runner.jobs import Jobs
+from naas.runner import n_env
 from naas import scheduler
+from shutil import copy2
+from syncer import sync
+import nest_asyncio
+import asyncio
 import getpass
 import pytest  # noqa: F401
 import uuid
+import pytz
 import os
-from shutil import copy2
-from datetime import datetime, timedelta
-from naas.runner import n_env
-from syncer import sync
+
+# TODO remove this fix when papermill and nest_asyncio support uvloop
+asyncio.set_event_loop_policy(None)
+nest_asyncio.apply()
 
 user_folder_name = "test_user_folder"
 user = getpass.getuser()
@@ -65,7 +72,6 @@ async def test_scheduler_status(test_scheduler):
 
 
 async def test_scheduler(tmp_path, event_loop):
-    recur = "* * * * *"
     test_notebook = "tests/demo/demo_scheduler.ipynb"
     cur_path = os.path.join(os.getcwd(), test_notebook)
     new_path = os.path.join(tmp_path, test_notebook)
@@ -76,6 +82,7 @@ async def test_scheduler(tmp_path, event_loop):
     scheduler = Scheduler(logger, jobs, notebooks, event_loop)
     uid = str(uuid.uuid4())
     copy2(cur_path, new_path)
+    recur = "* * * * *"
     job = {
         "type": t_scheduler,
         "path": new_path,
@@ -106,14 +113,9 @@ async def test_scheduler(tmp_path, event_loop):
     assert res_job.get("path") == new_path
     assert res_job.get("value") == recur
     assert res_job.get("status") == t_health
-    # TODO add more tests
 
 
 async def test_scheduler_runner(mocker, requests_mock, test_scheduler, tmp_path):
-    curr_time = datetime.now()
-    curr_time = curr_time + timedelta(seconds=2)
-    sec = curr_time.strftime("%S")
-    recur = f"{sec} * * * *"
     test_notebook = "tests/demo/demo_scheduler.ipynb"
     cur_path = os.path.join(os.getcwd(), test_notebook)
     new_path = os.path.join(tmp_path, test_notebook)
@@ -121,6 +123,10 @@ async def test_scheduler_runner(mocker, requests_mock, test_scheduler, tmp_path)
     copy2(cur_path, new_path)
     mock_session(mocker, requests_mock, new_path)
     mock_job(requests_mock, test_scheduler)
+    curr_time = datetime.now(tz=pytz.timezone(n_env.tz))
+    curr_time = curr_time + timedelta(seconds=1)
+    sec = curr_time.strftime("%S")
+    recur = f"{sec} * * * *"
     scheduler.add(new_path, recur)
     response = await test_scheduler.get(f"/{t_job}")
     assert response.status == 200
@@ -134,19 +140,20 @@ async def test_scheduler_runner(mocker, requests_mock, test_scheduler, tmp_path)
     assert res_job.get("value") == recur
     assert res_job.get("status") == t_add
     # TODO fix
-    # await asyncio.sleep(2)
+    # sync(asyncio.sleep(2))
+    # print("\n\n+++++++++++++++++++++++++++\n\n", datetime.now(tz=pytz.timezone(n_env.tz)), "\n\n+++++++++++++++++++++++++++\n\n")
     # response = await test_scheduler.get(f"/{t_job}")
     # assert response.status == 200
     # resp_json = await response.json()
     # assert res_job.get("type") == t_scheduler
-    # assert res_job.get("path") == new_path
+    # assert res_job.get("path") == real_path
     # assert res_job.get("value") == recur
     # assert res_job.get("status") == t_start
-    # await asyncio.sleep(3)
+    # sync(asyncio.sleep(2))
     # response = await test_scheduler.get(f"/{t_job}")
     # assert response.status == 200
     # resp_json = await response.json()
     # assert res_job.get("type") == t_scheduler
-    # assert res_job.get("path") == new_path
+    # assert res_job.get("path") == real_path
     # assert res_job.get("value") == recur
     # assert res_job.get("status") == t_health

@@ -73,10 +73,10 @@ class Logger:
 
     def info(self, data):
         print("info", data, self.__path_logs_file)
-        self.__log.info(json.dumps(data))
+        self.__log.info(str(data))
 
     def error(self, data):
-        self.__log.error(json.dumps(data))
+        self.__log.error(str(data))
 
     def clear(self):
         with open(self.__path_logs_file, "w") as fp:
@@ -118,7 +118,7 @@ class Logger:
                     lambda ts: any(ts.str.contains(search, na=False, regex=False)),
                     axis=1,
                     raw=False,
-                    result_type='broadcast'
+                    result_type="broadcast",
                 )
                 df = df[idx.id]
             if skip > 0:

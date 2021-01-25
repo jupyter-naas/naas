@@ -27,7 +27,7 @@ import sys
 import errno
 import nest_asyncio
 
-# TODO remove this fix when papermill support uvloop of Sanic support option to don't use uvloop
+# TODO remove this fix when papermill and nest_asyncio support uvloop
 asyncio.set_event_loop_policy(None)
 nest_asyncio.apply()
 
