@@ -1,4 +1,10 @@
 
+## 0.27.0 (2021-01-25)
+
+### Feat
+
+- add timezone switcher + crips help
+
 ## 0.26.2 (2021-01-25)
 
 ### Fix
