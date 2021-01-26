@@ -1,4 +1,10 @@
 
+## 0.27.4 (2021-01-26)
+
+### Fix
+
+- loggin error when update assets
+
 ## 0.27.3 (2021-01-25)
 
 ### Fix
