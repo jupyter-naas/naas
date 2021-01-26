@@ -72,7 +72,7 @@ class Api:
         token = os.urandom(30).hex()
         if not force:
             try:
-                token = self.manager.get_value(current_file)
+                token = self.manager.get_value(current_file, False)
             except:  # noqa: E722
                 pass
         url = self.manager.proxy_url(self.role, token)

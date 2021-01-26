@@ -66,7 +66,7 @@ class Manager:
             print(error_reject, e)
         return naas_data
 
-    def get_value(self, path):
+    def get_value(self, path, print=True):
         try:
             r = requests.get(
                 f"{n_env.api}/{t_job}",
@@ -80,10 +80,12 @@ class Manager:
             data = r.json()
             return data.get("value")
         except requests.exceptions.ConnectionError as err:
-            print(error_busy, err)
+            if print:
+                print(error_busy, err)
             raise
         except requests.exceptions.HTTPError as err:
-            print(error_reject, err)
+            if print:
+                print(error_reject, err)
             raise
 
     def notebook_path(self):
