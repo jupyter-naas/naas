@@ -1,3 +1,9 @@
+## 0.27.9 (2021-01-27)
+
+### Fix
+
+- use newest nest_asyncio thanks for the quick fix
+
 ## 0.27.8 (2021-01-27)
 
 ### Fix
