@@ -1,7 +1,7 @@
 ![GitHub license](https://img.shields.io/github/license/jupyter-naas/drivers)
 ![Bump version](https://github.com/jupyter-naas/naas/workflows/Bump%20version/badge.svg)
 ![Upload Python Package](https://github.com/jupyter-naas/naas/workflows/Upload%20Python%20Package/badge.svg)
-![codecov](https://codecov.io/gh/jupyter-naas/naas/branch/master/graph/badge.svg?token=UC3SAL8S0U)
+![codecov](https://codecov.io/gh/jupyter-naas/naas/branch/main/graph/badge.svg?token=UC3SAL8S0U)
 ![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=jupyter-naas_naas&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=jupyter-naas_naas)
 <a href="#badge">
