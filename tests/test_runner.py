@@ -4,6 +4,7 @@ from naas.types import (
     t_add,
     t_notebook,
     t_job,
+    t_dependency,
     t_health,
     t_asset,
     t_secret,
@@ -14,7 +15,7 @@ import pytest  # noqa: F401
 import os
 from shutil import copy2
 from naas.runner import n_env
-from naas import assets, webhook, secret
+from naas import assets, webhook, secret, dependency
 from nbconvert import HTMLExporter
 from syncer import sync
 import pandas as pd
@@ -158,6 +159,50 @@ async def test_secret(mocker, requests_mock, test_runner, tmp_path):
     assert len(resp_json) == 0
 
 
+async def test_dependency(mocker, requests_mock, test_runner, tmp_path):
+    path_test_dep = "tests/demo/demo.json"
+    cur_path = os.path.join(os.getcwd(), path_test_dep)
+    new_path = os.path.join(tmp_path, path_test_dep)
+    strip_path = os.path.splitdrive(new_path)[1].lstrip(seps)
+    real_path = os.path.join(tmp_path, "pytest_tmp", ".naas", strip_path)
+    os.makedirs(os.path.dirname(new_path))
+    copy2(cur_path, new_path)
+    assert os.path.isfile(new_path)
+    mock_session(mocker, requests_mock, cur_path)
+    mock_job(requests_mock, test_runner)
+    dependency.add(new_path)
+    response = await test_runner.get(f"/{t_job}")
+    assert response.status == 200
+    resp_json = await response.json()
+    assert len(resp_json) == 1
+    resp_json = dependency.currents(True)
+    assert len(resp_json) == 1
+    res_job = resp_json[0]
+    assert res_job.get("type") == t_dependency
+    assert res_job.get("path") == real_path
+    assert res_job.get("status") == t_add
+    assert res_job.get("nbRun") == 0
+    assert os.path.isfile(real_path)
+    dependency.get(new_path)
+    filename = os.path.basename(new_path)
+    dirname = os.path.dirname(new_path)
+    new_path_prod = os.path.join(dirname, f"prod_{filename}")
+    assert os.path.isfile(new_path_prod)
+    list_in_prod = dependency.list(new_path)
+    assert len(list_in_prod) == 1
+    histo = list_in_prod.to_dict("records")[0]
+    dependency.get(new_path, histo.get("timestamp"))
+    filename = os.path.basename(new_path)
+    dirname = os.path.dirname(new_path)
+    new_path_histo = os.path.join(dirname, f"{histo.get('timestamp')}___{filename}")
+    assert os.path.isfile(new_path_histo)
+    dependency.delete(new_path)
+    response = await test_runner.get(f"/{t_job}")
+    assert response.status == 200
+    resp_json = await response.json()
+    assert len(resp_json) == 0
+
+
 async def test_asset(mocker, requests_mock, test_runner, tmp_path):
     response = await test_runner.get("/asset/naas_up.png")
     assert response.status == 200
@@ -185,12 +230,10 @@ async def test_asset(mocker, requests_mock, test_runner, tmp_path):
     assert response.status == 200
     resp_json = await response.json()
     assert len(resp_json) == 1
+    resp_json = assets.currents(True)
+    assert len(resp_json) == 1
     res_job = resp_json[0]
     assert res_job.get("type") == t_asset
-    # filename = os.path.basename(new_path)
-    # dirname = os.path.dirname(new_path)
-    # filename = f"{t_asset}_{filename}"
-    # new_path_out = os.path.join(dirname, filename)
     assert res_job.get("path") == real_path
     token = url.split("/")[-1]
     assert res_job.get("value") == token
@@ -240,6 +283,8 @@ async def test_notebooks(mocker, requests_mock, test_runner, tmp_path):
     response = await test_runner.get(f"/{t_job}")
     assert response.status == 200
     resp_json = await response.json()
+    assert len(resp_json) == 1
+    resp_json = webhook.currents(True)
     assert len(resp_json) == 1
     res_job = resp_json[0]
     assert res_job.get("type") == t_notebook

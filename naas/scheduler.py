@@ -56,9 +56,12 @@ class Scheduler:
     def currents(self, raw=False):
         json_data = self.manager.get_naas()
         if raw:
+            json_filtered = []
             for item in json_data:
                 if item["type"] == self.role:
                     print(item)
+                    json_filtered.append(item)
+                return json_filtered
         else:
             for item in json_data:
                 kind = None

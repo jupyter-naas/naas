@@ -21,18 +21,15 @@ class Assets:
     def clear(self, path=None, histo=None):
         return self.manager.clear_file(path, None, histo)
 
-    def current_raw(self):
-        json_data = self.manager.get_naas()
-        for item in json_data:
-            if item["type"] == self.role:
-                print(item)
-
     def currents(self, raw=False):
         json_data = self.manager.get_naas()
         if raw:
+            json_filtered = []
             for item in json_data:
                 if item["type"] == self.role:
                     print(item)
+                    json_filtered.append(item)
+                return json_filtered
         else:
             for item in json_data:
                 kind = None
