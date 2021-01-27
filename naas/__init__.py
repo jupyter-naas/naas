@@ -1,10 +1,11 @@
 # Copyright (c) Naas Team.
 # Distributed under the terms of the GNU AGPL License.
 from IPython.core.display import display, Javascript, HTML
-from .runner.notifications import Notifications
 from .types import t_tz, error_busy, error_reject
-from .runner.env_var import n_env
+from .runner.notifications import Notifications
+from .runner.callback import Callback
 from .dependency import Dependency
+from .runner.env_var import n_env
 from .runner.proxy import Domain
 from .scheduler import Scheduler
 import ipywidgets as widgets
@@ -30,6 +31,7 @@ webhook = Api()
 assets = Assets()
 dependency = Dependency()
 notifications = Notifications()
+callback = Callback()
 Domain = Domain()
 
 

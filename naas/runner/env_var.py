@@ -9,6 +9,7 @@ class n_env:
     _remote_mode = False
     _api_port = None
     _notif_api = None
+    _callback_api = None
     _proxy_api = None
     _hub_api = None
 
@@ -71,6 +72,16 @@ class n_env:
     @notif_api.setter
     def notif_api(self, notif_api):
         self._notif_api = notif_api
+
+    @property
+    def callback_api(self):
+        return self._callback_api or os.environ.get(
+            "CALLBACK_API", "https://callback.naas.ai"
+        )
+
+    @callback_api.setter
+    def callback_api(self, callback_api):
+        self._callback_api = callback_api
 
     @property
     def proxy_api(self):
