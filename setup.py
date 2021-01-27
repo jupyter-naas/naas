@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="naas",
-    version="0.27.7",
+    version="0.27.8",
     scripts=["scripts/naas"],
     author="Martin Donadieu",
     author_email="martindonadieu@gmail.com",
@@ -39,7 +39,7 @@ setup(
     },
     install_requires=[
         "nbconvert>=6,<7",
-        "nest_asyncio>=,<2",
+        "nest_asyncio>1=,<2",
         "ipywidgets>=7,<8",
         "sentry_sdk>=0,<1",
         "papermill>=2,<3",
