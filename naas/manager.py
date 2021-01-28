@@ -2,14 +2,12 @@ from .types import t_delete, t_job, t_add, t_env, error_busy, error_reject
 from IPython.core.display import display, HTML
 from .runner.proxy import encode_proxy_url
 from .runner.env_var import n_env
-import ipywidgets as widgets
 import pandas as pd
 import traceback
 import ipykernel
 import requests
 import base64
 import copy
-import uuid
 import os
 
 
@@ -131,36 +129,6 @@ class Manager:
             return os.path.abspath(os.path.join(os.getcwd(), path))
         else:
             return self.notebook_path()
-
-    def copy_clipboard(self, text):
-        uid = uuid.uuid4().hex
-        js = """<script>
-        function copyToClipboard_{uid}(text) {
-            const dummy = document.createElement("textarea");
-            document.body.appendChild(dummy);
-            dummy.value = text;
-            dummy.select();
-            document.execCommand("copy");
-            document.body.removeChild(dummy);
-        }
-        </script>"""
-        js = js.replace("{uid}", uid)
-        display(HTML(js))
-        js2 = f"<script>copyToClipboard_{uid}(`" + text + "`);</script>"
-        display(HTML(js2))
-
-    def copy_url(self, text):
-        button = widgets.Button(description="Copy URL", button_style="primary")
-        output = widgets.Output()
-
-        def on_button_clicked(b):
-            with output:
-                self.copy_clipboard(text)
-                html_div = '<div id="pasting_to_clipboard">✅ Copied !</div>'
-                display(HTML(html_div))
-
-        button.on_click(on_button_clicked)
-        display(button, output)
 
     def proxy_url(self, endpoint, token=None):
         public_url = encode_proxy_url(endpoint)

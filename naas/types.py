@@ -1,4 +1,7 @@
+from IPython.core.display import display, HTML
+import ipywidgets as widgets
 import mimetypes
+import uuid
 
 t_notebook = "notebook"
 t_asset = "asset"
@@ -56,3 +59,35 @@ def guess_ext(cur_type):
     if result_ext is None and cur_type == mime_nb:
         result_ext = ".ipynb"
     return result_ext
+
+
+def copy_clipboard(text):
+    uid = uuid.uuid4().hex
+    js = """<script>
+    function copyToClipboard_{uid}(text) {
+        const dummy = document.createElement("textarea");
+        document.body.appendChild(dummy);
+        dummy.value = text;
+        dummy.select();
+        document.execCommand("copy");
+        document.body.removeChild(dummy);
+    }
+    </script>"""
+    js = js.replace("{uid}", uid)
+    display(HTML(js))
+    js2 = f"<script>copyToClipboard_{uid}(`" + text + "`);</script>"
+    display(HTML(js2))
+
+
+def copy_button(text, title="Copy URL"):
+    button = widgets.Button(description=title, button_style="primary")
+    output = widgets.Output()
+
+    def on_button_clicked(b):
+        with output:
+            copy_clipboard(text)
+            html_div = '<div id="pasting_to_clipboard">✅ Copied !</div>'
+            display(HTML(html_div))
+
+    button.on_click(on_button_clicked)
+    display(button, output)

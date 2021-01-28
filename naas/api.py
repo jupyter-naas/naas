@@ -1,5 +1,5 @@
 from IPython.core.display import display, HTML, JSON, Image, SVG, Markdown
-from .types import t_notebook, t_output, guess_type
+from .types import t_notebook, t_output, guess_type, copy_button
 from .manager import Manager
 import pandas as pd
 import markdown2
@@ -87,7 +87,7 @@ class Api:
             debug,
         )
         print("👌 Well done! Your Notebook has been sent to production.\n")
-        self.manager.copy_url(url)
+        copy_button(url)
         print(
             'PS: to remove the "Notebook as API" feature, just replace .add by .delete'
         )

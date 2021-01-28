@@ -1,4 +1,4 @@
-from .types import t_asset
+from .types import t_asset, copy_button
 from .manager import Manager
 import os
 
@@ -58,7 +58,7 @@ class Assets:
             debug,
         )
         print("👌 Well done! Your Assets has been sent to production.\n")
-        self.manager.copy_url(url)
+        copy_button(url)
         print('PS: to remove the "Assets" feature, just replace .add by .delete')
         return url
 
