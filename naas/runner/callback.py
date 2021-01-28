@@ -16,10 +16,11 @@ class Callback:
         self.headers = {"Authorization": f"token {n_env.token}"}
         self.logger = logger
 
-    def add(self, response=None, responseHeaders=None):
+    def add(self, response=None, responseHeaders=None, autoDelete=True):
         try:
             data = {
                 "response": response,
+                "autoDelete": autoDelete,
                 "responseHeaders": responseHeaders,
             }
             req = None
