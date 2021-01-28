@@ -1,3 +1,9 @@
+## 0.30.0 (2021-01-28)
+
+### Feat
+
+- add callback autodelete
+
 ## 0.29.0 (2021-01-28)
 
 ### Feat
