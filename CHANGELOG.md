@@ -1,3 +1,9 @@
+## 0.29.0 (2021-01-28)
+
+### Feat
+
+- add full callback integration
+
 ## 0.28.0 (2021-01-27)
 
 ### Feat
