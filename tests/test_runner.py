@@ -42,6 +42,7 @@ def get_env():
     return {
         "status": "healthy",
         "version": n_env.version,
+        "NAAS_BASE_PATH": n_env.path_naas_folder,
         "JUPYTERHUB_USER": n_env.user,
         "JUPYTER_SERVER_ROOT": n_env.server_root,
         "JUPYTERHUB_URL": "http://localhost:5000",

@@ -39,6 +39,7 @@ class EnvController(HTTPMethodView):
         env = {
             "status": t_health,
             "version": n_env.version,
+            "NAAS_BASE_PATH": n_env.path_naas_folder,
             "NOTIFICATIONS_API": self.__notif_url,
             "JUPYTERHUB_USER": self.__user,
             "JUPYTER_SERVER_ROOT": self.__server_root,

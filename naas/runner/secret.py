@@ -30,23 +30,20 @@ class Secret:
     __storage_sem = None
     __df = None
     __logger = None
-    __naas_folder = ".naas"
     __json_name = "secrets.json"
 
     def __init__(self, logger, clean=False, init_data=[]):
-
-        self.__path_naas_files = os.path.join(n_env.server_root, self.__naas_folder)
         self.__json_secrets_path = os.path.join(
-            self.__path_naas_files, self.__json_name
+            n_env.path_naas_folder, self.__json_name
         )
         self.__storage_sem = Semaphore(1)
         self.__logger = logger
-        if not os.path.exists(self.__path_naas_files):
+        if not os.path.exists(n_env.path_naas_folder):
             try:
                 print("Init Naas folder Secret")
-                os.makedirs(self.__path_naas_files)
+                os.makedirs(n_env.path_naas_folder)
             except OSError as exc:  # Guard against race condition
-                print("__path_naas_files", self.__path_naas_files)
+                print("__path_naas_files", n_env.path_naas_folder)
                 if exc.errno != errno.EEXIST:
                     raise
             except Exception as e:
