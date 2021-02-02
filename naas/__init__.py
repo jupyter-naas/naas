@@ -81,7 +81,7 @@ def bug_report():
     data = __canny_js
     data += "<div data-canny />"
     data += """
-    <>
+    <script>
         Canny('identify', {
             appID: '5f81748112b5d73b2faf4b15',
             user: {
@@ -93,7 +93,7 @@ def bug_report():
         Canny('render', {
             boardToken: "{BOARD}",
         });
-    </>
+    </script>
     """
 
     data = data.replace("{EMAIL}", str(n_env.user))
@@ -111,7 +111,7 @@ def feature_request():
     data = __canny_js
     data += "<div data-canny />"
     data += """
-    <>
+    <script>
         Canny('identify', {
             appID: '5f81748112b5d73b2faf4b15',
             user: {
@@ -123,7 +123,7 @@ def feature_request():
         Canny('render', {
             boardToken: "{BOARD}",
         });
-    </>
+    </script>
     """
 
     data = data.replace("{EMAIL}", str(n_env.user))
