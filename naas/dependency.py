@@ -36,7 +36,7 @@ class Dependency:
 
     def add(self, path=None, debug=False):
         if self.manager.is_production():
-            print("No add done you are in production\n")
+            print("No add done, you are in production\n")
             return self.manager.get_path(path)
         current_file = self.manager.get_path(path)
         self.manager.add_prod(
@@ -54,7 +54,7 @@ class Dependency:
 
     def delete(self, path=None, all=False, debug=False):
         if self.manager.is_production():
-            print("No delete done you are in production\n")
+            print("No delete done, you are in production\n")
             return
         current_file = self.manager.get_path(path)
         self.manager.del_prod({"type": self.role, "path": current_file}, debug)

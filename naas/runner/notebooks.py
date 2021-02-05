@@ -49,6 +49,7 @@ class Notebooks:
         self.__notif = notif
         self.__html_exporter = HTMLExporter()
         self.__html_exporter.template_name = "lab"
+        os.environ["naas_env"] = "PRODUCTION"
 
     def response(self, uid, filepath, res, duration, params):
         next_url = params.get("next_url", None)

@@ -34,8 +34,29 @@ class CsvFormatter(logging.Formatter):
     def format(self, record):
         print("record", record)
         record.asctime = self.formatTime(record, self.datefmt)
+        try:
+            data = json.loads(record.msg or "{}")
+            if type(data) != dict:
+                data = {"status": data}
+        except ValueError:
+            data = {"status": record.msg}
+        record.id = data.get("id", "")
+        record.type = data.get("type", "")
+        record.filepath = data.get("filepath", "")
+        record.status = data.get("status", "")
+        record.error = data.get("error", "")
+
         self.writer.writerow(
-            [record.asctime, record.levelname, record.name, record.msg]
+            [
+                record.asctime,
+                record.levelname,
+                record.name,
+                record.id,
+                record.type,
+                record.filepath,
+                record.status,
+                record.error,
+            ]
         )
         data = self.output.getvalue()
         self.output.truncate(0)
@@ -47,7 +68,16 @@ class Logger:
     __log = None
     __name = "naas_logger"
     __logs_filename = "logs.csv"
-    __columns = ["asctime", "levelname", "name", "message"]
+    __columns = [
+        "asctime",
+        "levelname",
+        "name",
+        "id",
+        "type",
+        "filepath",
+        "status",
+        "error",
+    ]
 
     def __init__(self, clear=False):
         self.__path_logs_file = os.path.join(
@@ -73,7 +103,7 @@ class Logger:
         message = ""
         try:
             message = json.dumps(data)
-        except:  # noqa: E722
+        except ValueError:
             message = str(data)
         self.__log.info(message)
 
@@ -81,7 +111,7 @@ class Logger:
         message = ""
         try:
             message = json.dumps(data)
-        except:  # noqa: E722
+        except ValueError:
             message = str(data)
         self.__log.error(message)
 
@@ -105,13 +135,13 @@ class Logger:
         df = None
         try:
             df = pd.read_csv(
-                self.__path_logs_file, sep=";", usecols=self.__columns, index_col=0
+                self.__path_logs_file,
+                sep=";",
+                usecols=self.__columns,
+                index_col=0,
+                error_bad_lines=False,
+                quoting=csv.QUOTE_ALL,
             )
-            df1 = pd.DataFrame(
-                df.pop("message").apply(pd.io.json.loads).values.tolist(),
-                index=df.index,
-            )
-            df = pd.concat([df1, df], axis=1, sort=False)
             if len(filters) > 0:
                 df = df[df.type.isin(filters)]
             if len(sort) > 0:

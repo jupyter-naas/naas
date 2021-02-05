@@ -81,7 +81,7 @@ class Scheduler:
 
     def add(self, path=None, recurrence=None, params={}, debug=False):
         if self.manager.is_production():
-            print("No add done you are in production\n")
+            print("No add done, you are in production\n")
             return
         if not recurrence:
             print("No recurrence provided\n")
@@ -108,7 +108,7 @@ class Scheduler:
 
     def delete(self, path=None, all=False, debug=False):
         if self.manager.is_production():
-            print("No delete done you are in production\n")
+            print("No delete done, you are in production\n")
             return
         current_file = self.manager.get_path(path)
         self.manager.del_prod({"type": self.role, "path": current_file}, debug)

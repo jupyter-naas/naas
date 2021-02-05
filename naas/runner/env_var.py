@@ -7,7 +7,6 @@ class n_env:
     _api = None
     _version = None
     _remote_mode = False
-    _remote_mode = False
     _api_port = None
     _notif_api = None
     _callback_api = None
@@ -118,7 +117,7 @@ class n_env:
 
     @property
     def path_naas_folder(self):
-        return os.path.join(self._server_root, self._naas_folder)
+        return os.path.join(self.server_root, self.naas_folder)
 
     @server_root.setter
     def server_root(self, server_root):

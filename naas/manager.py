@@ -30,7 +30,7 @@ class Manager:
         self.set_runner_mode()
 
     def is_production(self):
-        return False if self.notebook_path() else True
+        return True if os.environ.get("naas_env") == "PRODUCTION" else False
 
     def set_runner_mode(self):
         try:

@@ -50,7 +50,7 @@ class Assets:
                 pass
         url = self.manager.proxy_url(self.role, token)
         if self.manager.is_production() and force is False:
-            print("No add done you are in production\n")
+            print("No add done, you are in production\n")
             return url
         # "path", "type", "params", "value", "status"
         self.manager.add_prod(
@@ -64,7 +64,7 @@ class Assets:
 
     def delete(self, path=None, all=False, debug=False):
         if self.manager.is_production():
-            print("No delete done you are in production\n")
+            print("No delete done, you are in production\n")
             return
         current_file = self.manager.get_path(path)
         self.manager.del_prod({"type": self.role, "path": current_file}, debug)

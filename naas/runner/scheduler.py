@@ -110,7 +110,7 @@ class Scheduler:
                 await self.__jobs.update(
                     uid, file_filepath, t_scheduler, value, params, t_start
                 )
-                res = await self.__nb.exec(uid, task)
+                res = await self.__nb.exec(uid, task.copy())
                 if res.get("error"):
                     self.__logger.error(
                         {
@@ -249,7 +249,8 @@ class Scheduler:
                 *[
                     self.__scheduler_greenlet(main_uid, current_time, job)
                     for job in jobs
-                ]
+                ],
+                return_exceptions=False,
             )
             duration_total = time.time() - all_start_time
             self.__logger.info(

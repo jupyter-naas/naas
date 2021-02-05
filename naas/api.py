@@ -80,7 +80,7 @@ class Api:
                 pass
         url = self.manager.proxy_url(self.role, token)
         if self.manager.is_production():
-            print("No add done you are in production\n")
+            print("No add done, you are in production\n")
             return url
         self.manager.add_prod(
             {"type": self.role, "path": current_file, "params": params, "value": token},
@@ -153,7 +153,7 @@ class Api:
     def delete(self, path=None, all=False, debug=False):
         self.deprecatedPrint()
         if self.manager.is_production():
-            print("No delete done you are in production\n")
+            print("No delete done, you are in production\n")
             return
         current_file = self.manager.get_path(path)
         self.manager.del_prod({"type": self.role, "path": current_file}, debug)

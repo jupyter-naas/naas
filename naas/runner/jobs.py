@@ -32,6 +32,18 @@ class Jobs:
     __df = None
     __logger = None
     __json_name = "jobs.json"
+    __colums = [
+        "id",
+        "type",
+        "value",
+        "path",
+        "status",
+        "params",
+        "lastUpdate",
+        "lastRun",
+        "nbRun",
+        "totalRun",
+    ]
 
     def __init__(self, logger, clean=False, init_data=[]):
         self.__json_secrets_path = os.path.join(
@@ -71,20 +83,7 @@ class Jobs:
             self.__df = self.__get_save_from_file(uid)
             self.__cleanup_jobs()
         if self.__df is None or len(self.__df) == 0:
-            self.__df = pd.DataFrame(
-                columns=[
-                    "id",
-                    "type",
-                    "value",
-                    "path",
-                    "status",
-                    "params",
-                    "lastUpdate",
-                    "lastRun",
-                    "nbRun",
-                    "totalRun",
-                ]
-            )
+            self.__df = pd.DataFrame(columns=self.__colums)
 
     def __cleanup_jobs(self):
         if len(self.__df) > 0:
@@ -322,9 +321,6 @@ class Jobs:
             print("add", e)
             return t_error
 
-    def __clean_dup(self):
-        self.__df = self.__df.drop_duplicates(subset=["type", "value"])
-
     def __update(
         self, cur_elem, uid, path, target_type, value, params, status, run_time
     ):
@@ -365,13 +361,14 @@ class Jobs:
         res = t_error
         async with self.__storage_sem:
             try:
-                self.__clean_dup()
                 cur_elem = self.__df.query(
                     f'type == "{target_type}" and path == "{path}"'
                 )
                 if len(cur_elem) == 1 and status == t_delete:
+                    print("delete")
                     res = self.__delete(cur_elem, uid, path, target_type, value, params)
                 elif len(cur_elem) == 1:
+                    print("delete")
                     res = self.__update(
                         cur_elem,
                         uid,
