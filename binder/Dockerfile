@@ -11,5 +11,5 @@ COPY setup.cfg /home/$NB_USER/naas/setup.cfg
 COPY setup.py /home/$NB_USER/naas/setup.py
 COPY scripts /home/$NB_USER/naas/scripts
 COPY README.md /home/$NB_USER/naas/README.md
-RUN cd /home/$NB_USER/naas && pip install -e '.[dev]' && pre-commit install
+RUN cd /home/$NB_USER/naas && pip install -e '.[dev]'
 RUN (echo ""; echo "os.system('python -m naas.runner &')"; echo "") >> /etc/jupyter/jupyter_notebook_config.py
