@@ -1,3 +1,14 @@
+## 0.31.0b0 (2021-02-09)
+
+### Fix
+
+- binder
+- manager usage
+
+### Feat
+
+- add docker env for test
+
 ## 0.30.0 (2021-01-28)
 
 ### Feat
