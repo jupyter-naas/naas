@@ -1,5 +1,4 @@
 {
-    "python.pythonPath": "/usr/local/bin/python3",
     "conventionalCommits.scopes": [
         "manager",
         "runner",
@@ -7,5 +6,6 @@
         "api",
         "binder",
         "scheduler"
-    ]
+    ],
+    "jupyter.jupyterServerType": "local"
 }

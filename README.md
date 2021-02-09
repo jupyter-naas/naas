@@ -1,7 +1,7 @@
 ![GitHub license](https://img.shields.io/github/license/jupyter-naas/drivers)
 ![Bump version](https://github.com/jupyter-naas/naas/workflows/Bump%20version/badge.svg)
 ![Upload Python Package](https://github.com/jupyter-naas/naas/workflows/Upload%20Python%20Package/badge.svg)
-![codecov](https://codecov.io/gh/jupyter-naas/naas/branch/master/graph/badge.svg?token=UC3SAL8S0U)
+![codecov](https://codecov.io/gh/jupyter-naas/naas/branch/main/graph/badge.svg?token=UC3SAL8S0U)
 ![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=jupyter-naas_naas&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=jupyter-naas_naas)
 <a href="#badge">
@@ -48,18 +48,23 @@ Test it in binder (WIP)
 
 ## Install
 
-`pip3 install -e '.[dev]'`
-`pre-commit install`
+`./build_runner_dev.sh`
+
 
 ## Run test 
 
+run it in the shell of jupyter
 `pytest -x`  
 
 ## Test local server
 
-`./test_runner.sh`
+`./test_runner_dev.sh`
 
-open manager :
+Then copy url logged and connect to jupyter
+it should start like:
+`localhost:8888/`
+
+open manager outsite of jupyter (to livereload) :
 
 `localhost:5000/`
 
@@ -69,8 +74,8 @@ this auto publish by github action on main branch
 
 ## Check lint
 
-`python3 -m black naas` format better
-`python3 -m flake8 naas` check if any left error
+`python -m black naas` format better
+`python -m flake8 naas` check if any left error
 
 # Supporters: 
 <p>

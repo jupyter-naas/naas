@@ -1,4 +1,4 @@
-from .types import t_asset
+from .types import t_asset, copy_button
 from .manager import Manager
 import os
 
@@ -13,26 +13,23 @@ class Assets:
         self.path = self.manager.path
 
     def list(self, path=None):
-        return self.manager.list_prod(None, path)
+        return self.manager.list_prod("list_history", path)
 
-    def get(self, path=None):
-        return self.manager.get_file(path)
+    def get(self, path=None, histo=None):
+        return self.manager.get_file(path, histo=histo)
 
     def clear(self, path=None, histo=None):
         return self.manager.clear_file(path, None, histo)
 
-    def current_raw(self):
-        json_data = self.manager.get_naas()
-        for item in json_data:
-            if item["type"] == self.role:
-                print(item)
-
     def currents(self, raw=False):
         json_data = self.manager.get_naas()
         if raw:
+            json_filtered = []
             for item in json_data:
                 if item["type"] == self.role:
                     print(item)
+                    json_filtered.append(item)
+                return json_filtered
         else:
             for item in json_data:
                 kind = None
@@ -45,13 +42,15 @@ class Assets:
         if current_file is None:
             print("Missing file path in prod mode")
             return
-        prod_path = self.manager.get_prod_path(current_file)
-        token = self.manager.get_value(prod_path, self.role)
-        if token is None or force is True:
-            token = os.urandom(30).hex()
+        token = os.urandom(30).hex()
+        if not force:
+            try:
+                token = self.manager.get_value(current_file, False)
+            except:  # noqa: E722
+                pass
         url = self.manager.proxy_url(self.role, token)
         if self.manager.is_production() and force is False:
-            print("No add done you are in production\n")
+            print("No add done, you are in production\n")
             return url
         # "path", "type", "params", "value", "status"
         self.manager.add_prod(
@@ -59,13 +58,13 @@ class Assets:
             debug,
         )
         print("👌 Well done! Your Assets has been sent to production.\n")
-        self.manager.copy_url(url)
+        copy_button(url)
         print('PS: to remove the "Assets" feature, just replace .add by .delete')
         return url
 
     def delete(self, path=None, all=False, debug=False):
         if self.manager.is_production():
-            print("No delete done you are in production\n")
+            print("No delete done, you are in production\n")
             return
         current_file = self.manager.get_path(path)
         self.manager.del_prod({"type": self.role, "path": current_file}, debug)

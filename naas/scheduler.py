@@ -15,16 +15,16 @@ class Scheduler:
         self.path = self.manager.path
 
     def list(self, path=None):
-        return self.manager.list_prod(None, path)
+        return self.manager.list_prod("list_history", path)
 
     def list_output(self, path=None):
-        return self.manager.list_prod(t_output, path)
+        return self.manager.list_prod("list_output", path)
 
-    def get(self, path=None):
-        return self.manager.get_file(path)
+    def get(self, path=None, histo=None):
+        return self.manager.get_file(path, histo=histo)
 
-    def get_output(self, path=None):
-        return self.manager.get_file(path, t_output)
+    def get_output(self, path=None, histo=None):
+        return self.manager.get_file(path, t_output, histo)
 
     def clear(self, path=None, histo=None):
         return self.manager.clear_file(path, None, histo)
@@ -56,9 +56,12 @@ class Scheduler:
     def currents(self, raw=False):
         json_data = self.manager.get_naas()
         if raw:
+            json_filtered = []
             for item in json_data:
                 if item["type"] == self.role:
                     print(item)
+                    json_filtered.append(item)
+                return json_filtered
         else:
             for item in json_data:
                 kind = None
@@ -78,7 +81,7 @@ class Scheduler:
 
     def add(self, path=None, recurrence=None, params={}, debug=False):
         if self.manager.is_production():
-            print("No add done you are in production\n")
+            print("No add done, you are in production\n")
             return
         if not recurrence:
             print("No recurrence provided\n")
@@ -105,7 +108,7 @@ class Scheduler:
 
     def delete(self, path=None, all=False, debug=False):
         if self.manager.is_production():
-            print("No delete done you are in production\n")
+            print("No delete done, you are in production\n")
             return
         current_file = self.manager.get_path(path)
         self.manager.del_prod({"type": self.role, "path": current_file}, debug)

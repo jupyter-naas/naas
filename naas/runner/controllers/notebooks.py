@@ -23,7 +23,10 @@ def parse_data(request):
     elif request.headers.get("content-type") == "application/x-www-form-urlencoded":
         req_data = dict(urllib.parse.parse_qsl(request.body.decode("utf-8")))
     req_data = rename_keys(req_data)
-    data = {**(request.args), **(req_data)}
+    args = dict(
+        urllib.parse.parse_qsl(request.query_string)
+    )  # fix to don't have array for each args
+    data = {**(args), **(req_data)}
     return data
 
 
@@ -66,7 +69,7 @@ class NbController(HTTPMethodView):
                         "status": t_error,
                         "filepath": file_filepath,
                         "duration": res.get("duration"),
-                        "error": res.get("error"),
+                        "error": str(res.get("error")),
                     }
                 )
                 await self.__jobs.update(

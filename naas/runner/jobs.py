@@ -8,6 +8,7 @@ from naas.types import (
     t_start,
     t_notebook,
     t_asset,
+    t_output,
     t_dependency,
     t_scheduler,
     t_list,
@@ -20,7 +21,7 @@ import json
 import os
 import uuid
 from sanic.exceptions import ServerError
-
+import pytz
 
 filters = [t_notebook, t_asset, t_dependency, t_scheduler]
 filters_api = [t_notebook, t_asset]
@@ -30,22 +31,32 @@ class Jobs:
     __storage_sem = None
     __df = None
     __logger = None
-    __naas_folder = ".naas"
     __json_name = "jobs.json"
+    __colums = [
+        "id",
+        "type",
+        "value",
+        "path",
+        "status",
+        "params",
+        "lastUpdate",
+        "lastRun",
+        "nbRun",
+        "totalRun",
+    ]
 
     def __init__(self, logger, clean=False, init_data=[]):
-        self.__path_naas_files = os.path.join(n_env.server_root, self.__naas_folder)
         self.__json_secrets_path = os.path.join(
-            self.__path_naas_files, self.__json_name
+            n_env.path_naas_folder, self.__json_name
         )
         self.__storage_sem = Semaphore(1)
         self.__logger = logger
-        if not os.path.exists(self.__path_naas_files):
+        if not os.path.exists(n_env.path_naas_folder):
             try:
                 print("Init Naas folder Jobs")
-                os.makedirs(self.__path_naas_files)
+                os.makedirs(n_env.path_naas_folder)
             except OSError as exc:  # Guard against race condition
-                print("__path_naas_files", self.__path_naas_files)
+                print("__path_naas_files", n_env.path_naas_folder)
                 if exc.errno != errno.EEXIST:
                     raise
             except Exception as e:
@@ -72,20 +83,7 @@ class Jobs:
             self.__df = self.__get_save_from_file(uid)
             self.__cleanup_jobs()
         if self.__df is None or len(self.__df) == 0:
-            self.__df = pd.DataFrame(
-                columns=[
-                    "id",
-                    "type",
-                    "value",
-                    "path",
-                    "status",
-                    "params",
-                    "lastUpdate",
-                    "lastRun",
-                    "nbRun",
-                    "totalRun",
-                ]
-            )
+            self.__df = pd.DataFrame(columns=self.__colums)
 
     def __cleanup_jobs(self):
         if len(self.__df) > 0:
@@ -163,7 +161,7 @@ class Jobs:
                     if target_type:
                         cur_jobs = self.__df[
                             (self.__df.type == target_type)
-                            & (self.__df.path == filepath)
+                            & (self.__df.path.str.lower() == filepath.lower())
                         ]
                     else:
                         cur_jobs = self.__df[(self.__df.path == filepath)]
@@ -194,19 +192,19 @@ class Jobs:
         else:
             return False
 
-    def clear_file(self, uid, path, histo):
+    def clear_file(self, uid, path, histo, mode=None):
         # possible format
         # histo_filename
         # out_filename
         # histo_out_filename
-        filename = None
+        filename = os.path.basename(path)
         clear_all = False
+        if mode:
+            filename = f"{mode}_{filename}"
         if histo and histo == "all":
             clear_all = True
         elif histo:
-            filename = f"{histo}_{os.path.basename(path)}"
-        else:
-            filename = os.path.basename(path)
+            filename = f"{histo}_{filename}"
         removed = []
         dirname = os.path.dirname(path)
         if os.path.exists(path):
@@ -231,13 +229,18 @@ class Jobs:
         d = []
         dirname = os.path.dirname(path)
         filename = os.path.basename(path)
+        # if output:
+        #     filename = f"output_{filetype}_{filename}"
+        # else:
+        #     filename = f"{filetype}_{filename}"
         if output:
-            filename = f"output_{filetype}_{filename}"
+            filename = f"___{t_output}__{filename}"
         else:
-            filename = f"{filetype}_{filename}"
+            filename = f"___{filename}"
         for ffile in os.listdir(dirname):
             if ffile.endswith(filename):
-                histo = ffile.split("_")[0]
+                split_list = ffile.split("___")
+                histo = split_list[0]
                 tmp_path = os.path.join(dirname, ffile)
                 d.append({"timestamp": histo, "filepath": tmp_path})
         self.__logger.info(
@@ -284,7 +287,7 @@ class Jobs:
 
     def __add(self, uid, path, target_type, value, params, run_time):
         try:
-            now = datetime.datetime.now()
+            now = datetime.datetime.now(tz=pytz.timezone(n_env.tz))
             dt_string = now.strftime("%Y-%m-%d %H:%M:%S")
             self.__logger.info(
                 {
@@ -318,13 +321,10 @@ class Jobs:
             print("add", e)
             return t_error
 
-    def __clean_dup(self):
-        self.__df = self.__df.drop_duplicates(subset=["type", "value"])
-
     def __update(
         self, cur_elem, uid, path, target_type, value, params, status, run_time
     ):
-        now = datetime.datetime.now()
+        now = datetime.datetime.now(tz=pytz.timezone(n_env.tz))
         dt_string = now.strftime("%Y-%m-%d %H:%M:%S")
         self.__logger.info(
             {
@@ -361,13 +361,14 @@ class Jobs:
         res = t_error
         async with self.__storage_sem:
             try:
-                self.__clean_dup()
                 cur_elem = self.__df.query(
                     f'type == "{target_type}" and path == "{path}"'
                 )
                 if len(cur_elem) == 1 and status == t_delete:
+                    print("delete")
                     res = self.__delete(cur_elem, uid, path, target_type, value, params)
                 elif len(cur_elem) == 1:
+                    print("delete")
                     res = self.__update(
                         cur_elem,
                         uid,

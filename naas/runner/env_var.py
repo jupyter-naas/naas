@@ -1,13 +1,19 @@
+from tzlocal import get_localzone
 from pathlib import Path
 import os
 
 
 class n_env:
     _api = None
+    _version = None
+    _remote_mode = False
     _api_port = None
     _notif_api = None
+    _callback_api = None
     _proxy_api = None
     _hub_api = None
+
+    _naas_folder = None
 
     _server_root = None
     _shell_user = None
@@ -31,10 +37,28 @@ class n_env:
         self._api_port = api_port
 
     @property
+    def version(self):
+        return self._version
+
+    @version.setter
+    def version(self, version: str):
+        self._version = version
+
+    @property
+    def remote_mode(self):
+        return self._remote_mode
+
+    @remote_mode.setter
+    def remote_mode(self, remote_mode):
+        self._remote_mode = remote_mode
+
+    @property
     def api(self):
         return self._api or os.environ.get(
             "NAAS_API",
-            f"http://localhost:{self._api_port}" if self._api_port else self.remote_api,
+            f"http://localhost:{self.api_port}"
+            if not self.remote_mode
+            else self.remote_api,
         )
 
     @api.setter
@@ -50,6 +74,16 @@ class n_env:
     @notif_api.setter
     def notif_api(self, notif_api):
         self._notif_api = notif_api
+
+    @property
+    def callback_api(self):
+        return self._callback_api or os.environ.get(
+            "CALLBACK_API", "https://callback.naas.ai"
+        )
+
+    @callback_api.setter
+    def callback_api(self, callback_api):
+        self._callback_api = callback_api
 
     @property
     def proxy_api(self):
@@ -68,10 +102,22 @@ class n_env:
         self._hub_api = hub_api
 
     @property
+    def naas_folder(self):
+        return self._naas_folder or os.environ.get("NAAS_FOLDER", ".naas")
+
+    @naas_folder.setter
+    def naas_folder(self, naas_folder):
+        self._naas_folder = naas_folder
+
+    @property
     def server_root(self):
         return self._server_root or os.environ.get(
             "JUPYTER_SERVER_ROOT", str(Path.home())
         )
+
+    @property
+    def path_naas_folder(self):
+        return os.path.join(self.server_root, self.naas_folder)
 
     @server_root.setter
     def server_root(self, server_root):
@@ -107,7 +153,7 @@ class n_env:
 
     @property
     def tz(self):
-        return self._tz or os.environ.get("TZ", "Europe/Paris")
+        return self._tz or os.environ.get("TZ", str(get_localzone()))
 
     @tz.setter
     def tz(self, tz):
@@ -127,7 +173,7 @@ class n_env:
 
     @scheduler.setter
     def scheduler(self, scheduler):
-        self._scheduler = bool(self._scheduler)
+        self._scheduler = bool(scheduler)
 
     @property
     def scheduler_interval(self):

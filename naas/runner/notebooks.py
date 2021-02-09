@@ -1,26 +1,35 @@
-from naas.types import t_notebook, t_scheduler, t_error
-from .env_var import n_env
+from naas.types import (
+    t_notebook,
+    t_scheduler,
+    t_error,
+    t_output,
+    guess_ext,
+    mime_json,
+    mime_html,
+    mime_md,
+    mime_text,
+    mime_csv,
+    mime_jpeg,
+    mime_png,
+    mime_list,
+)
 from nbconvert import HTMLExporter
 from sanic import response
+from .env_var import n_env
 import papermill as pm
 import traceback
-import mimetypes
+import datetime
+import shutil
+import base64
 import json
 import time
 import bs4
 import csv
 import os
 import io
-import datetime
-import shutil
+import pytz
 
 kern_manager = None
-mime_html = "text/html"
-mime_json = "application/json"
-mime_jpeg = "image/jpeg"
-mime_png = "image/png"
-mime_svg = "image/svg+xml"
-mime_list = [mime_html, mime_jpeg, mime_png, mime_svg]
 
 try:
     from enterprise_gateway.services.kernels.remotemanager import RemoteKernelManager
@@ -40,6 +49,7 @@ class Notebooks:
         self.__notif = notif
         self.__html_exporter = HTMLExporter()
         self.__html_exporter.template_name = "lab"
+        os.environ["naas_env"] = "PRODUCTION"
 
     def response(self, uid, filepath, res, duration, params):
         next_url = params.get("next_url", None)
@@ -68,22 +78,19 @@ class Notebooks:
         else:
             res_data = self.__get_res(res, filepath)
             if res_data and res_data.get("type"):
-                file_name = os.path.basename(filepath)
-                ext = mimetypes.guess_extension(res_data.get("type"), strict=True)
+                file_name = res_data.get("filename")
                 inline = params.get("inline", False)
                 headers = dict()
-                new_file_name = f'{file_name.split(".")[0]}{ext}'
-                if ext and not inline:
+                if not inline:
                     headers[
                         "Content-Disposition"
-                    ] = f'attachment; filename="{new_file_name}"'
+                    ] = f'attachment; filename="{file_name}"'
 
                 async def streaming_fn(res):
-                    # await res.write(str(res_data.get("data")))
-                    await res.write(str(res_data.get("data")).encode("utf-8"))
+                    await res.write(res_data.get("data"))
 
                 return response.stream(
-                    streaming_fn, headers=headers, content_type=mimetypes.guess_type(new_file_name)[0]
+                    streaming_fn, headers=headers, content_type=res_data.get("type")
                 )
             else:
                 return response.json({"id": uid, "status": "Done", "time": duration})
@@ -93,7 +100,9 @@ class Notebooks:
         output = []
         for table_num, table in enumerate(soup.find_all("table")):
             csv_string = io.StringIO()
-            csv_writer = csv.writer(csv_string, delimiter=";", quoting=csv.QUOTE_ALL)
+            csv_writer = csv.writer(
+                csv_string, delimiter=";", lineterminator="\n", quoting=csv.QUOTE_ALL
+            )
             for tr in table.find_all("tr"):
                 row = [
                     "".join(cell.stripped_strings) for cell in tr.find_all(["td", "th"])
@@ -106,7 +115,7 @@ class Notebooks:
     def get_out_path(self, path):
         filename = os.path.basename(path)
         dirname = os.path.dirname(path)
-        out_path = os.path.join(dirname, f"out_{filename}")
+        out_path = os.path.join(dirname, f"{t_output}__{filename}")
         return out_path
 
     def __nb_render(self, filepath):
@@ -123,11 +132,16 @@ class Notebooks:
                 "error": "output file not found",
                 "trace": tb,
             }
-        return result_type, result
+        result_ext = guess_ext(result_type)
+        old_filename = os.path.basename(filepath)
+        name = old_filename.split(".")[0]
+        filename = f"{name}{result_ext}"
+        return result_type, filename, result
 
     def __nb_file(self, meta, data):
         result_type = None
         result = None
+        path = "error.json"
         try:
             result_type = meta.get("naas_type")
             path = data.get(mime_json).get("path")
@@ -137,7 +151,11 @@ class Notebooks:
         except FileNotFoundError:  # noqa: E722
             result_type = mime_json
             result = {"error": "file not found"}
-        return result_type, result
+        result_ext = guess_ext(result_type)
+        old_filename = os.path.basename(path)
+        name = old_filename.split(".")[0]
+        filename = f"{name}{result_ext}"
+        return result_type, filename, result
 
     def __check_output(self, output, filepath):
         metadata = output.get("metadata", [])
@@ -145,31 +163,54 @@ class Notebooks:
         meta_filtered = list(
             filter(lambda meta: metadata[meta].get("naas_api"), metadata)
         )
+        old_filename = os.path.basename(filepath)
+        name = old_filename.split(".")[0]
         for meta in meta_filtered:
-            if (
-                data.get("text/markdown")
-                and metadata[meta].get("naas_type") == t_notebook
-            ):
+            if data.get(mime_md) and metadata[meta].get("naas_type") == t_notebook:
                 return self.__nb_render(filepath)
             elif data.get(mime_json) and metadata[meta].get("naas_type"):
                 return self.__nb_file(metadata[meta], data)
+            elif data.get(mime_html) and metadata[meta].get("naas_type") == "markdown":
+                result_ext = guess_ext(mime_html)
+                filename = f"{name}{result_ext}"
+                return mime_html, filename, data.get(mime_html)
+            elif data.get(mime_html) and metadata[meta].get("naas_type") == "text":
+                result_ext = guess_ext(mime_text)
+                filename = f"{name}{result_ext}"
+                return mime_text, filename, data.get(mime_html)
             elif data.get(mime_html) and metadata[meta].get("naas_type") == "csv":
-                return "text/csv", self.__convert_csv(data.get(mime_html))
+                result_ext = guess_ext(mime_csv)
+                filename = f"{name}{result_ext}"
+                return mime_csv, filename, self.__convert_csv(data.get(mime_html))
             elif data.get(mime_json):
-                return mime_json, json.dumps(data.get(mime_json))
+                result_ext = guess_ext(mime_json)
+                filename = f"{name}{result_ext}"
+                return mime_json, filename, json.dumps(data.get(mime_json))
+            elif data.get(mime_jpeg):
+                im_byt = io.BytesIO(base64.b64decode(data.get(mime_jpeg)))
+                result_ext = guess_ext(mime_jpeg)
+                filename = f"{name}{result_ext}"
+                return mime_jpeg, filename, im_byt.getvalue()
+            elif data.get(mime_png):
+                im_byt = io.BytesIO(base64.b64decode(data.get(mime_png)))
+                result_ext = guess_ext(mime_png)
+                filename = f"{name}{result_ext}"
+                return mime_png, filename, im_byt.getvalue()
             else:
                 result_type = next((i for i in mime_list if data.get(i)), None)
-                return result_type, data.get(result_type)
-        return None, None
+                result_ext = guess_ext(result_type)
+                filename = f"{name}{result_ext}"
+                return result_type, filename, data.get(result_type)
+        return None, None, None
 
     def __get_res(self, res, filepath):
         cells = res.get("cells")
         for cell in cells:
             outputs = cell.get("outputs", [])
             for output in outputs:
-                (result_type, result) = self.__check_output(output, filepath)
-                if result is not None and result_type is not None:
-                    return {"type": result_type, "data": result}
+                (result_type, filename, result) = self.__check_output(output, filepath)
+                if result is not None and filename is not None:
+                    return {"type": result_type, "filename": filename, "data": result}
         return None
 
     def __keep_out_history(self, file_filepath_out):
@@ -177,7 +218,7 @@ class Notebooks:
             try:
                 out_finename = os.path.basename(file_filepath_out)
                 out_dir = os.path.dirname(file_filepath_out)
-                history_filename = f'{datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")}_{out_finename}'
+                history_filename = f'{datetime.datetime.now(tz=pytz.timezone(n_env.tz)).strftime("%Y%m%d%H%M%S%f")}___{out_finename}'
                 history_path = os.path.join(out_dir, history_filename)
                 shutil.copy(file_filepath_out, history_path)
             except:  # noqa: E722
@@ -203,7 +244,7 @@ class Notebooks:
                 parameters=params,
             )
         if not res:
-            res = {"error": "Unknow error", "duration": 0}
+            res = {"uid": uid, "error": "Unknow error", "duration": 0}
         self.__keep_out_history(file_filepath_out)
         return res
 
@@ -230,7 +271,7 @@ class Notebooks:
     def __get_output_path(self, file_filepath):
         file_dirpath = os.path.dirname(file_filepath)
         file_filename = os.path.basename(file_filepath)
-        file_filepath_out = os.path.join(file_dirpath, f"out_{file_filename}")
+        file_filepath_out = os.path.join(file_dirpath, f"{t_output}__{file_filename}")
         return file_filepath_out
 
     async def exec(self, uid, job):
@@ -252,7 +293,11 @@ class Notebooks:
         file_dirpath = os.path.dirname(file_filepath)
         file_filepath_out = self.__get_output_path(file_filepath)
         params = job.get("params", dict())
-        params["run_uid"] = uid
+        params["naas_uid"] = uid
+        params["naas_runtime"] = datetime.datetime.now(
+            tz=pytz.timezone(n_env.tz)
+        ).strftime("%Y%m%d%H%M%S%f")
+        params["naas_env"] = "PRODUCTION"
         start_time = time.time()
         res = None
         try:

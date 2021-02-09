@@ -7,7 +7,7 @@ import uuid
 class SecretController(HTTPMethodView):
     __secrets = None
     __logger = None
-    __min_keys = sorted(list(["path", "type", "params", "value", "status"]))
+    __min_keys = sorted(list(["name", "secret", "status"]))
 
     def __init__(self, logger, secrets, *args, **kwargs):
         super(SecretController, self).__init__(*args, **kwargs)

@@ -8,6 +8,7 @@ import asyncio
 import aiohttp
 import pycron
 import time
+import pytz
 import uuid
 
 
@@ -36,7 +37,7 @@ class Scheduler:
         elif self.__scheduler.state == apscheduler.schedulers.base.STATE_PAUSED:
             return "paused"
 
-    async def stop(self):
+    def stop(self):
         if self.__scheduler is not None:
             self.__scheduler.pause()
             self.__scheduler.remove_job(n_env.scheduler_job_name)
@@ -109,7 +110,7 @@ class Scheduler:
                 await self.__jobs.update(
                     uid, file_filepath, t_scheduler, value, params, t_start
                 )
-                res = await self.__nb.exec(uid, task)
+                res = await self.__nb.exec(uid, task.copy())
                 if res.get("error"):
                     self.__logger.error(
                         {
@@ -224,10 +225,10 @@ class Scheduler:
         all_start_time = time.time()
         try:
             if n_env.scheduler_interval == 60:
-                current_time = datetime.datetime.now()
+                current_time = datetime.datetime.now(tz=pytz.timezone(n_env.tz))
             elif n_env.scheduler_interval == 1:
                 # for speed test in ci
-                current_time = datetime.datetime.now()
+                current_time = datetime.datetime.now(tz=pytz.timezone(n_env.tz))
                 current_sec = current_time.second
                 current_time = current_time.replace(minute=current_sec)
             else:
@@ -248,7 +249,8 @@ class Scheduler:
                 *[
                     self.__scheduler_greenlet(main_uid, current_time, job)
                     for job in jobs
-                ]
+                ],
+                return_exceptions=False,
             )
             duration_total = time.time() - all_start_time
             self.__logger.info(

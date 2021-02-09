@@ -12,10 +12,10 @@ class Dependency:
         self.path = self.manager.path
 
     def list(self, path=None):
-        return self.manager.list_prod(None, path)
+        return self.manager.list_prod("list_history", path)
 
-    def get(self, path=None):
-        return self.manager.get_file(path)
+    def get(self, path=None, histo=None):
+        return self.manager.get_file(path, histo=histo)
 
     def clear(self, path=None, histo=None):
         return self.manager.clear_file(path, None, histo)
@@ -23,9 +23,12 @@ class Dependency:
     def currents(self, raw=False):
         json_data = self.manager.get_naas()
         if raw:
+            json_filtered = []
             for item in json_data:
                 if item["type"] == self.role:
                     print(item)
+                    json_filtered.append(item)
+                return json_filtered
         else:
             for item in json_data:
                 if item["type"] == self.role:
@@ -33,8 +36,8 @@ class Dependency:
 
     def add(self, path=None, debug=False):
         if self.manager.is_production():
-            print("No add done you are in production\n")
-            return self.get_prod_path(path)
+            print("No add done, you are in production\n")
+            return self.manager.get_path(path)
         current_file = self.manager.get_path(path)
         self.manager.add_prod(
             {
@@ -47,11 +50,11 @@ class Dependency:
         )
         print("👌 Well done! Your Dependency has been sent to production. \n")
         print('PS: to remove the "Dependency" feature, just replace .add by .delete')
-        return self.get_prod_path(current_file)
+        return self.manager.get_path(current_file)
 
     def delete(self, path=None, all=False, debug=False):
         if self.manager.is_production():
-            print("No delete done you are in production\n")
+            print("No delete done, you are in production\n")
             return
         current_file = self.manager.get_path(path)
         self.manager.del_prod({"type": self.role, "path": current_file}, debug)

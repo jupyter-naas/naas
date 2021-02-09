@@ -4,9 +4,8 @@
 <head>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vue-good-table@2.21.1/dist/vue-good-table.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@1.9.5/dist/tailwind.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <link rel="icon" href="asset/naas_fav.svg" />
-    <title>Naas | Automation Manager</title>
+    <title>Naas | Manager</title>
     <style>
         #cs_loader_wrap {
             display: flex;
@@ -57,11 +56,18 @@
     <script type="module">
         import Vue from 'https://cdn.jsdelivr.net/npm/vue@2.6.11/dist/vue.esm.browser.js';
         import axios from 'https://cdn.jsdelivr.net/npm/@bundled-es-modules/axios@0.18.1/axios.js';
-        import VueGoodTablePlugin from 'https://cdn.jsdelivr.net/npm/vue-good-table@2.19.3/dist/vue-good-table.esm.js';
+        import VueGoodTablePlugin from 'https://cdn.jsdelivr.net/npm/vue-good-table@2.21.1/dist/vue-good-table.esm.js';
+        import * as VModal from 'https://cdn.jsdelivr.net/npm/vue-js-modal@2.0.0-rc.6/dist/index.min.js';
+        import VueCodeHighlight from 'https://cdn.jsdelivr.net/npm/vue-code-highlight@0.7.6/dist/vue-code-highlight.esm.min.js';
 
+        Vue.use(window['vue-js-modal'].default);
+        Vue.use(VueCodeHighlight);
         Vue.use(VueGoodTablePlugin);
         const app = new Vue({
             el: '#app',
+            components:{
+                VueCodeHighlight,
+            },
             data: {
                 filter: '',
                 loading: true,
@@ -71,60 +77,57 @@
                         field: 'asctime',
                     },
                     {
-                        label: 'Uuid',
+                        label: 'ID',
                         field: 'id',
                     },
                     {
                         label: 'Type',
                         field: 'type',
-                    },
-                    {
-                        label: 'Status',
-                        field: 'status',
                     },
                     {
                         label: 'File',
                         field: 'filepath',
                     },
                     {
+                        label: 'Status',
+                        field: 'status',
+                    },
+                    {
                         label: 'Error',
                         field: 'error',
+                        hidden: true,
                     },
                 ],
                 columns_tasks: [
                     {
-                        label: 'Date',
-                        field: 'lastUpdate',
-                    },
-                    {
-                        label: 'Last uuid',
+                        label: 'ID',
                         field: 'id',
-                    },
-                    {
-                        label: 'Job',
-                        field: 'path',
                     },
                     {
                         label: 'Type',
                         field: 'type',
                     },
                     {
+                        label: 'File',
+                        field: 'path',
+                    },
+                    {
                         label: 'Status',
                         field: 'status',
                     },
-                    {
-                        label: 'Last duration',
-                        field: 'lastRun',
-                    },
-                    {
-                        label: 'Total duration',
-                        field: 'totalRun',
-                    },
+
                     {
                         label: 'Value',
                         field: 'value',
                     },
-
+                    {
+                        label: 'Last update',
+                        field: 'lastUpdate',
+                    },
+                    {
+                        label: 'Last duration (s)',
+                        field: 'lastRun',
+                    },
                 ],
                 env: {},
                 logs: [],
@@ -143,6 +146,35 @@
                 },
             },
             methods: {
+                openError(error) {
+                    this.$modal.show(  {
+                        template: `
+                        <div class="w-full bg-white rounded-lg shadow-lg">
+                            <div class="flex justify-between px-5 py-4 border-b border-gray-100">
+                                <div>
+                                    <span class="text-lg font-bold text-gray-700">Error</span>
+                                </div>
+                                <div>
+                                    <button><i class="text-red-500 transition duration-150 fa fa-times-circle hover:text-red-600"></i></button>
+                                </div>
+                            </div>
+                        
+                            <div class="px-10 text-gray-600">
+                                <pre class="-my-12 break-words whitespace-pre-wrap">
+                                    <code>
+                                        {{ text }}
+                                    </code>
+                                </pre>
+                            </div>
+                        
+                            <div class="flex justify-end px-5 py-4">
+                            <button @click="$emit('close')" class="px-3 py-2 text-sm text-gray-500 transition duration-150 hover:text-gray-600">Close</button>
+                            </div>
+                        </div>
+                        `,
+                        props: ['text']
+                    }, { text: error },{ width: "70%", scrollable: true, height: 'auto' });
+                },
                 updateLogParams(newProps) {
                     this.serverLogParams = Object.assign({}, this.serverLogParams, newProps);
                 },
@@ -176,6 +208,7 @@
                     if (this.serverLogParams.sort.length > 0) {
                         query['sort'] = JSON.stringify(this.serverLogParams.sort);
                     }
+                    query['filters'] = JSON.stringify(['scheduler', 'asset', 'api'])
                     console.log('query', query);
                     return query
                 },
@@ -192,6 +225,9 @@
                     }).catch((err) => {
                         console.error(err);
                     })
+                },
+                stripNaasPath(path) {
+                    return path.replace(this.env.NAAS_BASE_PATH, '').replace(`${this.env.JUPYTER_SERVER_ROOT}/`, '')
                 },
                 getUrl(value, type) {
                     let urlList = window.location.href.split('/');
@@ -242,7 +278,8 @@
                 },
                 linkTojup(link) {
                     const partial = link.replace(this.env.JUPYTER_SERVER_ROOT, '');
-                    return `${this.env.JUPYTERHUB_URL}/user/${this.env.JUPYTERHUB_USER}/tree/${partial}`;
+                    const fileUrl = `${this.env.JUPYTERHUB_URL}/user/${this.env.JUPYTERHUB_USER}/tree/${partial}`;
+                    window.open(fileUrl, '_blank');
                 },
                 go_bob() {
                     window.open(this.env.PUBLIC_BOB, '_blank');
@@ -274,34 +311,33 @@
             }
         });
     </script>
+    <script type="text/javascript">window.$crisp=[];window.CRISP_WEBSITE_ID="a64b999e-e44c-44ee-928f-5cd0233f9586";(function(){d=document;s=d.createElement("script");s.src="https://client.crisp.chat/l.js";s.async=1;d.getElementsByTagName("head")[0].appendChild(s);})();</script>
 </head>
 
 <body>
-    <div id="app" class="w-full">
+    <div id="app" class="w-full bg-black">
         <div id="cs_loader_wrap" v-if="loading">
             <div id="cs_logo_wrap">
                 <img id="cs_logo_loading" alt="Naas logo" src="asset/naas_logo.svg" />
                 <div id="cs_spinner_loading"></div>
             </div>
         </div>
-        <nav class="bg-white shadow-lg">
-            <div class="md:flex items-center justify-between py-2 px-8 md:px-12">
-                <div class="flex justify-between items-center">
-                    <div class="mb-2 sm:mb-0 flex flex-row
-                    ">
-                        <div class="h-50 w-50 self-center mr-2">
-                            <img alt="Naas logo" src="asset/naas_logo.svg" width="50" height="50" />
+        <nav class="bg-black shadow-lg">
+            <div class="items-center justify-between px-8 py-2 md:flex md:px-12">
+                <div class="flex items-center justify-between">
+                    <div class="flex flex-row mb-2 sm:mb-0 ">
+                        <div class="self-center mr-2 h-50 w-50">
+                            <img alt="Naas logo" src="asset/naas_fav.svg" width="50" height="50" />
                         </div>
-                        <div>
+                        <div class="my-auto">
                             <a :href="linkToHome()"
-                                class="text-2xl no-underline text-grey-darkest hover:text-blue-dark font-sans font-bold">Naas</a><br>
-                            <span class="text-xs text-grey-dark">Automation manager</span>
+                                class="font-sans text-2xl font-bold text-gray-100 no-underline hover:text-#4299e1-dark">Manager</a>
                         </div>
                     </div>
                     <div class="md:hidden">
                         <button type="button"
                             class="block text-gray-800 hover:text-gray-700 focus:text-gray-700 focus:outline-none">
-                            <svg class="h-6 w-6 fill-current" viewBox="0 0 24 24">
+                            <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24">
                                 <path class="hidden"
                                     d="M16.24 14.83a1 1 0 0 1-1.41 1.41L12 13.41l-2.83 2.83a1 1 0 0 1-1.41-1.41L10.59 12 7.76 9.17a1 1 0 0 1 1.41-1.41L12 10.59l2.83-2.83a1 1 0 0 1 1.41 1.41L13.41 12l2.83 2.83z" />
                                 <path
@@ -310,36 +346,36 @@
                         </button>
                     </div>
                 </div>
-                <div class="flex flex-col md:flex-row hidden md:block -mx-2">
+                <div class="flex items-center justify-center w-full">
+                    <div class="relative w-1/4 text-gray-900">
+                        <input type="text" name="search" v-model="filter" placeholder="Search"
+                            class="w-full h-10 px-5 pr-10 text-sm text-gray-900 bg-gray-100 rounded-full focus:outline-none">
+                        <button type="submit" class="absolute top-0 right-0 mt-3 mr-4">
+                            <svg v-if="filter == ''" class="w-4 h-4 fill-current" xmlns="http://www.w3.org/2000/svg"
+                                xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px" y="0px"
+                                viewBox="0 0 56.966 56.966" style="enable-background:new 0 0 56.966 56.966;"
+                                xml:space="preserve" width="512px" height="512px">
+                                <path
+                                    d="M55.146,51.887L41.588,37.786c3.486-4.144,5.396-9.358,5.396-14.786c0-12.682-10.318-23-23-23s-23,10.318-23,23  s10.318,23,23,23c4.761,0,9.298-1.436,13.177-4.162l13.661,14.208c0.571,0.593,1.339,0.92,2.162,0.92  c0.779,0,1.518-0.297,2.079-0.837C56.255,54.982,56.293,53.08,55.146,51.887z M23.984,6c9.374,0,17,7.626,17,17s-7.626,17-17,17  s-17-7.626-17-17S14.61,6,23.984,6z" />
+                            </svg>
+                            <svg v-if="filter != ''" @click="filter= ''" class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                                <path
+                                    d="M10.185,1.417c-4.741,0-8.583,3.842-8.583,8.583c0,4.74,3.842,8.582,8.583,8.582S18.768,14.74,18.768,10C18.768,5.259,14.926,1.417,10.185,1.417 M10.185,17.68c-4.235,0-7.679-3.445-7.679-7.68c0-4.235,3.444-7.679,7.679-7.679S17.864,5.765,17.864,10C17.864,14.234,14.42,17.68,10.185,17.68 M10.824,10l2.842-2.844c0.178-0.176,0.178-0.46,0-0.637c-0.177-0.178-0.461-0.178-0.637,0l-2.844,2.841L7.341,6.52c-0.176-0.178-0.46-0.178-0.637,0c-0.178,0.176-0.178,0.461,0,0.637L9.546,10l-2.841,2.844c-0.178,0.176-0.178,0.461,0,0.637c0.178,0.178,0.459,0.178,0.637,0l2.844-2.841l2.844,2.841c0.178,0.178,0.459,0.178,0.637,0c0.178-0.176,0.178-0.461,0-0.637L10.824,10z">
+                                </path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="flex flex-col hidden -mx-2 md:flex-row md:block">
                     <a href="#" v-on:click="reload_data()"
-                        class="text-gray-800 rounded hover:bg-gray-900 hover:text-gray-100 hover:font-medium py-2 px-2 md:mx-2">Reload</a>
+                        class="px-2 py-2 text-gray-900 bg-gray-100 rounded hover:bg-gray-900 hover:text-gray-100 hover:font-medium md:mx-2">Reload</a>
                 </div>
             </div>
         </nav>
-        <div class="md:px-32 py-8 w-full">
-            <div class="flex items-center justify-center w-100">
-                <div class="relative text-gray-600 w-1/4">
-                    <input type="text" name="search" v-model="filter" placeholder="Search"
-                        class="bg-gray-700 w-full text-white h-10 px-5 pr-10 rounded-full text-sm focus:outline-none">
-                    <button type="submit" class="absolute right-0 top-0 mt-3 mr-4">
-                        <svg v-if="filter == ''" class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg"
-                            xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px" y="0px"
-                            viewBox="0 0 56.966 56.966" style="enable-background:new 0 0 56.966 56.966;"
-                            xml:space="preserve" width="512px" height="512px">
-                            <path
-                                d="M55.146,51.887L41.588,37.786c3.486-4.144,5.396-9.358,5.396-14.786c0-12.682-10.318-23-23-23s-23,10.318-23,23  s10.318,23,23,23c4.761,0,9.298-1.436,13.177-4.162l13.661,14.208c0.571,0.593,1.339,0.92,2.162,0.92  c0.779,0,1.518-0.297,2.079-0.837C56.255,54.982,56.293,53.08,55.146,51.887z M23.984,6c9.374,0,17,7.626,17,17s-7.626,17-17,17  s-17-7.626-17-17S14.61,6,23.984,6z" />
-                        </svg>
-                        <svg v-if="filter != ''" @click="filter= ''" class="h-4 w-4 fill-current" viewBox="0 0 20 20">
-                            <path
-                                d="M10.185,1.417c-4.741,0-8.583,3.842-8.583,8.583c0,4.74,3.842,8.582,8.583,8.582S18.768,14.74,18.768,10C18.768,5.259,14.926,1.417,10.185,1.417 M10.185,17.68c-4.235,0-7.679-3.445-7.679-7.68c0-4.235,3.444-7.679,7.679-7.679S17.864,5.765,17.864,10C17.864,14.234,14.42,17.68,10.185,17.68 M10.824,10l2.842-2.844c0.178-0.176,0.178-0.46,0-0.637c-0.177-0.178-0.461-0.178-0.637,0l-2.844,2.841L7.341,6.52c-0.176-0.178-0.46-0.178-0.637,0c-0.178,0.176-0.178,0.461,0,0.637L9.546,10l-2.841,2.844c-0.178,0.176-0.178,0.461,0,0.637c0.178,0.178,0.459,0.178,0.637,0l2.844-2.841l2.844,2.841c0.178,0.178,0.459,0.178,0.637,0c0.178-0.176,0.178-0.461,0-0.637L10.824,10z">
-                            </path>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-            <h2 class="text-3xl font-semibold text-gray-800 md:text-4xl">Your current <span
-                    class="text-indigo-600">Jobs</span></h2>
-            <vue-good-table :columns="columns_tasks" :rows="tasks" theme="black-rhino" :search-options="{
+        <div class="w-full py-8 md:px-12">
+            <h2 class="text-2xl font-semibold text-gray-800"><span
+                    class="text-white">Tasks</span></h2>
+            <vue-good-table :columns="columns_tasks" :rows="tasks" :search-options="{
                     enabled: true,
                     externalQuery: filter
                 }" :pagination-options="{
@@ -359,36 +395,36 @@
                 <template slot="table-row" slot-scope="props">
                     <span v-if="props.column.field == 'status'">
                         <span v-if="props.row.status === 'healthy'"
-                            style="font-weight: bold; color: green;">{{props.row.status}}</span>
+                            style="font-weight: bold; color: #22BC66;">{{props.row.status}}</span>
                         <span
                             v-else-if="props.row.status === 'error' || props.row.status === 'exception' || props.row.status === 'not_found'"
-                            style="font-weight: bold; color: red;">{{props.row.status}}</span>
-                        <span v-else style="font-weight: bold; color: orange;">{{props.row.status}}</span>
+                            style="font-weight: bold; color: #f56565;">{{props.row.status}}</span>
+                        <span v-else style="font-weight: bold; color: #ed8936;">{{props.row.status}}</span>
                     </span>
                     <span v-else-if="props.column.field == 'value'">
-                        <a style="font-weight: bold; color: blue;"
+                        <a style="font-weight: bold; color: #4299e1;"
                             v-if="props.row.type == 'asset' || props.row.type == 'notebook'"
-                            :href="getUrl(props.row.value,props.row.type)">{{props.formattedRow[props.column.field]}}</a>
+                            :href="getUrl(props.row.value,props.row.type)">{{props.formattedRow[props.column.field].substring(0, 6)}} </a>
                         <span v-else>{{props.formattedRow[props.column.field]}}</span>
                     </span>
                     <span v-else-if="props.column.field == 'id'">
-                        <a href="#" style="font-weight: bold; color: blue;"
-                            v-on:click="setFilter(props.formattedRow[props.column.field])">{{props.formattedRow[props.column.field]}}</a>
+                        <a href="#" style="font-weight: bold; color: #4299e1;"
+                            v-on:click="setFilter(props.formattedRow[props.column.field])">{{props.formattedRow[props.column.field].substring(0, 6)}}</a>
                     </span>
                     <span v-else-if="props.column.field == 'path'">
-                        <a :href="linkTojup(props.formattedRow[props.column.field])" style="font-weight: bold; color: green;"
-                            >{{props.formattedRow[props.column.field]}}</a>
+                        <a v-on:click="linkTojup(props.formattedRow[props.column.field])" style="font-weight: bold; color: #22BC66;"
+                            >{{stripNaasPath(props.formattedRow[props.column.field])}}</a>
                     </span>
                     <span v-else>
                         {{props.formattedRow[props.column.field]}}
                     </span>
                 </template>
             </vue-good-table>
-            <h2 class="text-3xl pt-4 font-semibold text-gray-800 md:text-4xl">Discover what <span
-                    class="text-indigo-600">happened</span></h2>
+            <h2 class="pt-8 text-2xl font-semibold text-gray-800"><span
+                    class="text-white">History</span></h2>
             <vue-good-table mode="remote" :columns="columns_logs" @on-page-change="onPageLogChange"
                 @on-sort-change="onSortLogChange" @on-column-filter="onColumnLogFilter"
-                @on-per-page-change="onPerPageLogChange" :total-rows="totalLogRecords" :rows="logs" theme="black-rhino"
+                @on-per-page-change="onPerPageLogChange" :total-rows="totalLogRecords" :rows="logs" 
                 :search-options="{
                 enabled: true,
                 externalQuery: filter
@@ -410,23 +446,27 @@
             }">
                 <template slot="table-row" slot-scope="props">
                     <span v-if="props.column.field == 'id'">
-                        <a href="#" style="font-weight: bold; color: blue;"
-                            v-on:click="setFilter(props.formattedRow[props.column.field])">{{props.formattedRow[props.column.field]}}</a>
+                        <a href="#" style="font-weight: bold; color: #4299e1;"
+                            v-on:click="setFilter(props.formattedRow[props.column.field])">{{props.formattedRow[props.column.field].substring(0, 4)}}</a>
+                    </span>
+                    <span v-else-if="props.column.field == 'filepath'">
+                        {{stripNaasPath(props.formattedRow[props.column.field])}}
+                    </span>
+                    <span v-else-if="props.column.field == 'status'">
+                        <a href="#" v-if="props.formattedRow['error']" style="font-weight: bold; color: #f56565;"
+                        v-on:click="openError(props.formattedRow['error'])">error</a>
+                        <p v-else>{{props.formattedRow[props.column.field]}}</p>
                     </span>
                     <span v-else>
                         {{props.formattedRow[props.column.field]}}
                     </span>
                 </template>
             </vue-good-table>
-        </div>
-        <div class="grid grid-cols-4 gap-4">
-            <div class="col-start-2 px-6 py-4" v-if="env && env.version">
-                <h4 class="text-3xl font-semibold text-gray-800 md:text-4xl">Bob current <span
-                        class="text-indigo-600">Version</span></h4>
+            <div class="col-start-2 py-4 pt-8" v-if="env && env.version">
+                <h4 class="text-2xl font-semibold text-gray-800"><span
+                        class="text-white">Version</span></h4>
                 <span
-                    class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2">{{env.version.version}}</span>
-                <span
-                    class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2">{{env.version.versionName}}</span>
+                    class="inline-block px-3 py-1 mr-2 text-sm font-semibold text-gray-700 bg-gray-200 rounded-full">{{env.version}}</span>
             </div>
         </div>
     </div>

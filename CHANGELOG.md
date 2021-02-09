@@ -1,3 +1,247 @@
+## 0.30.0 (2021-01-28)
+
+### Feat
+
+- add callback autodelete
+
+## 0.29.0 (2021-01-28)
+
+### Feat
+
+- add full callback integration
+
+## 0.28.0 (2021-01-27)
+
+### Feat
+
+- add new callback feature
+
+## 0.27.10 (2021-01-27)
+
+### Fix
+
+- coverage config
+
+## 0.27.9 (2021-01-27)
+
+### Fix
+
+- use newest nest_asyncio thanks for the quick fix
+
+## 0.27.8 (2021-01-27)
+
+### Fix
+
+- nest_asyncio issue revert to 1.4.3
+
+## 0.27.7 (2021-01-27)
+
+### Fix
+
+- Trigger ci
+
+## 0.27.6 (2021-01-27)
+
+### Fix
+
+- readme codecov target
+
+## 0.27.5 (2021-01-27)
+
+### Fix
+
+- coverage script
+
+## 0.27.4 (2021-01-26)
+
+### Fix
+
+- loggin error when update assets
+
+## 0.27.3 (2021-01-25)
+
+### Fix
+
+- use tz a lot
+
+## 0.27.2 (2021-01-25)
+
+### Fix
+
+- logger
+
+## 0.27.1 (2021-01-25)
+
+### Fix
+
+- scheduler test
+
+## 0.27.0 (2021-01-25)
+
+### Feat
+
+- add timezone switcher + crips help
+
+## 0.26.2 (2021-01-25)
+
+### Fix
+
+- content-type responses
+
+## 0.26.1 (2021-01-25)
+
+### Fix
+
+- deploy to githib docker registry
+- response file name
+
+## 0.26.0 (2021-01-25)
+
+### Feat
+
+- add to github docker registry
+
+## 0.25.0 (2021-01-24)
+
+### Feat
+
+- support respond_file for notebook
+
+## 0.24.0 (2021-01-24)
+
+### Feat
+
+- test update notebook version
+
+## 0.23.20 (2021-01-24)
+
+### Fix
+
+- is production method
+
+## 0.23.19 (2021-01-24)
+
+### Fix
+
+- inline image response
+
+## 0.23.18 (2021-01-24)
+
+### Fix
+
+- dependency
+
+## 0.23.17 (2021-01-24)
+
+### Fix
+
+- image test
+- readme
+
+## 0.23.16 (2021-01-23)
+
+### Fix
+
+- error in import
+
+## 0.23.15 (2021-01-23)
+
+### Fix
+
+- test error in import
+
+## 0.23.14 (2021-01-23)
+
+### Fix
+
+- response in webhook
+
+## 0.23.13 (2021-01-23)
+
+### Fix
+
+- get output functions
+
+## 0.23.12 (2021-01-22)
+
+### Fix
+
+- test runner with good papermill version
+
+## 0.23.11 (2021-01-21)
+
+### Fix
+
+- test in list
+
+## 0.23.10 (2021-01-21)
+
+### Fix
+
+- notification return df
+
+## 0.23.9 (2021-01-21)
+
+### Fix
+
+- test
+
+## 0.23.8 (2021-01-21)
+
+### Fix
+
+- error in tests
+
+## 0.23.7 (2021-01-19)
+
+### Fix
+
+- urllib issue
+
+## 0.23.6 (2021-01-19)
+
+### Fix
+
+- test version lowercase
+
+## 0.23.5 (2021-01-19)
+
+### Fix
+
+- test missing version in env
+
+## 0.23.4 (2021-01-19)
+
+### Fix
+
+- urllib issue
+
+## 0.23.3 (2021-01-19)
+
+### Fix
+
+- notification list feature
+
+## 0.23.2 (2021-01-19)
+
+### Fix
+
+- request issue
+
+## 0.23.1 (2021-01-18)
+
+### Fix
+
+- error in test
+
+## 0.23.0 (2021-01-18)
+
+### Fix
+
+- error in release version
+- secret feature and add test
+- error message missing
+- deploy for current prod
 
 ## 0.22.2b3 (2021-01-18)
 
@@ -15,41 +259,11 @@
 
 ## 0.22.2b0 (2021-01-18)
 
-## 0.21.0b4 (2021-01-13)
-
-## 0.22.2b2 (2021-01-18)
-
-## 0.22.2b1 (2021-01-18)
-
-### Fix
-
-- timeout system
-
-## 0.22.2b0 (2021-01-18)
-
-## 0.21.0b4 (2021-01-13)
-
-## 0.22.2b1 (2021-01-18)
-
-### Fix
-
-- timeout system
-
-## 0.22.2b0 (2021-01-18)
-
-## 0.21.0b4 (2021-01-13)
-
-## 0.22.2b0 (2021-01-18)
-
 ## 0.22.2 (2021-01-18)
-
 
 ### Fix
 
 - remove deprecated warking for now
-
-## 0.21.0b4 (2021-01-13)
-
 
 ## 0.22.1 (2021-01-18)
 
@@ -65,6 +279,8 @@
 - remove changelog for now
 - log search error
 - log search error
+
+## 0.21.0b4 (2021-01-13)
 
 ## 0.21.0b3 (2021-01-13)
 

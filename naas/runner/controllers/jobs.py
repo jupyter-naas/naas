@@ -1,10 +1,13 @@
-from naas.types import t_job, t_error, t_send, t_delete
+from naas.types import t_job, t_error, t_send, t_delete, t_production
 from sanic.views import HTTPMethodView
+from naas.runner.env_var import n_env
 from sanic import response
 import base64
 import errno
 import uuid
 import os
+import datetime
+import pytz
 
 endpoint = "jobs"
 
@@ -19,13 +22,27 @@ class JobsController(HTTPMethodView):
         self.__jobs = jobs
         self.__logger = logger
 
-    def __open_file(self, path):
+    def __open_file(self, path, mode=None):
         filename = os.path.basename(path)
+        if mode:
+            filename = f"{mode}_{filename}"
         if not os.path.exists(path):
-            raise FileNotFoundError(f"file doesn't exist {path}")
+            data = bytes(f"File not found at path {path}", "utf-8")
+            encoded = base64.b64encode(data)
+            return {"filename": "Not_found.txt", "data": encoded.decode("ascii")}
         data = open(path, "rb").read()
         encoded = base64.b64encode(data)
         return {"filename": filename, "data": encoded.decode("ascii")}
+
+    def __get_prod_path(self, path, filetype):
+        # filename = os.path.basename(path)
+        # dirname = os.path.dirname(path)
+        # filename = f"{filetype}_{filename}"
+        # path = os.path.join(dirname, filename)
+        seps = os.sep + os.altsep if os.altsep else os.sep
+        strip_path = os.path.splitdrive(path)[1].lstrip(seps)
+        new_path = os.path.join(n_env.path_naas_folder, strip_path)
+        return new_path
 
     def __save_file(self, path, data=None):
         if not data:
@@ -41,30 +58,48 @@ class JobsController(HTTPMethodView):
         f.write(decoded)
         f.close()
 
-    def __filename_to_filetype(self, path, filetype):
-        return path
-        # filename = os.path.basename(path)
-        # dirname = os.path.dirname(path)
-        # filename = f"{filetype}_{filename}"
-        # return os.path.join(dirname, filename)
+    def __save_history(self, path, data=None):
+        dt_string = datetime.datetime.now(tz=pytz.timezone(n_env.tz)).strftime(
+            "%Y%m%d%H%M%S%f"
+        )
+        dirname = os.path.dirname(path)
+        filename = os.path.basename(path)
+        filename = f"{dt_string}___{filename}"
+        new_path = os.path.join(dirname, filename)
+        self.__save_file(new_path, data)
 
     async def get(self, request):
         uid = str(uuid.uuid4())
         job = None
-        data = request.json
-        if not data:
+        cur_path = request.args.get("path", None)
+        cur_type = request.args.get("type", None)
+        cur_mode = request.args.get("mode", None)
+        histo = request.args.get("histo", None)
+        cur_light = request.args.get("light", False)
+        if not cur_path or not cur_type:
             return response.json(await self.__jobs.list(uid))
-        else:
-            job = await self.__jobs.find_by_path(uid, data["path"], data["type"])
-        mode = data.get("mode", None)
-        if mode and mode == "list_history":
-            job["files"] = self.__jobs.list_files(uid, data["path"], data["type"])
-        elif mode and mode == "list_output":
-            job["files"] = self.__jobs.list_files(uid, data["path"], data["type"], True)
-        elif not mode:
-            job["file"] = self.__open_file(
-                self.__filename_to_filetype(job["path"], data["type"])
-            )
+        path = self.__get_prod_path(cur_path, cur_type)
+        job = await self.__jobs.find_by_path(uid, path, cur_type)
+        if not job:
+            return response.json({"error": "job not found"}, status=500)
+        if cur_mode and cur_mode == "list_history":
+            job["files"] = self.__jobs.list_files(uid, path, cur_type)
+        elif cur_mode and cur_mode == "list_output":
+            job["files"] = self.__jobs.list_files(uid, path, cur_type, True)
+        elif not cur_mode and not cur_light and not histo:
+            job["file"] = self.__open_file(path, t_production)
+        elif cur_mode or histo:
+            new_path = "" + path
+            dirname = os.path.dirname(new_path)
+            filename = os.path.basename(new_path)
+            if cur_mode and histo:
+                filename = f"{histo}___{cur_mode}__{filename}"
+            elif cur_mode:
+                filename = f"{cur_mode}__{filename}"
+            else:
+                filename = f"{histo}___{filename}"
+            new_path = os.path.join(dirname, filename)
+            job["file"] = self.__open_file(new_path)
         self.__logger.info(
             {"id": uid, "type": t_job, "status": t_send, "filepath": endpoint}
         )
@@ -73,10 +108,10 @@ class JobsController(HTTPMethodView):
     async def delete(self, request):
         uid = str(uuid.uuid4())
         data = request.json
-        path = data.get("path", None)
         histo = data.get("histo", None)
-        path = self.__filename_to_filetype(path, data["type"])
-        removed = self.__jobs.clear_file(uid, path, histo)
+        cur_mode = request.args.get("mode", None)
+        path = self.__get_prod_path(data.get("path", None), data["type"])
+        removed = self.__jobs.clear_file(uid, path, histo, cur_mode)
         if not histo:
             updated = await self.__jobs.update(
                 uid,
@@ -108,9 +143,10 @@ class JobsController(HTTPMethodView):
                 {"id": uid, "status": "error", "error": "missing keys", "data": [data]},
                 status=400,
             )
-        path = self.__filename_to_filetype(data["path"], data["type"])
+        path = self.__get_prod_path(data["path"], data["type"])
         if data.get("file"):
             self.__save_file(path, data["file"]["data"])
+            self.__save_history(path, data["file"]["data"])
         updated = await self.__jobs.update(
             uid,
             path,

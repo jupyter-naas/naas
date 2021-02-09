@@ -1,8 +1,10 @@
-from naas.types import t_main, t_notebook, t_scheduler, t_asset, t_job
+from naas.types import t_main, t_notebook, t_scheduler, t_asset, t_job, t_secret, t_tz
 from sentry_sdk.integrations.sanic import SanicIntegration
 from .controllers.scheduler import SchedulerController
 from .controllers.assets import AssetsController
+from .controllers.secret import SecretController
 from .controllers.notebooks import NbController
+from .controllers.timezone import TimezoneController
 from .controllers.jobs import JobsController
 from .controllers.logs import LogsController
 from sanic_openapi import swagger_blueprint
@@ -14,6 +16,7 @@ from .notebooks import Notebooks
 from .env_var import n_env
 from .logger import Logger
 from .jobs import Jobs
+from .secret import Secret
 from sanic import Sanic
 import sentry_sdk
 import asyncio
@@ -24,15 +27,14 @@ import sys
 import errno
 import nest_asyncio
 
-# TODO remove this fix when papermill support uvloop of Sanic support option to don't use uvloop
+# TODO remove this fix when papermill and nest_asyncio support uvloop
 asyncio.set_event_loop_policy(None)
 nest_asyncio.apply()
 
-__version__ = "0.22.2b3"
+__version__ = "0.30.0"
 
 
 class Runner:
-    __naas_folder = ".naas"
     # Declare path variable
     __path_lib_files = os.path.dirname(os.path.abspath(__file__))
     __html_files = "html"
@@ -45,7 +47,6 @@ class Runner:
     __logger = None
 
     def __init__(self):
-        self.__path_naas_files = os.path.join(n_env.server_root, self.__naas_folder)
         self.__path_html_files = os.path.join(self.__path_lib_files, self.__html_files)
         self.__path_manager_index = os.path.join(
             self.__path_html_files, self.__manager_index
@@ -64,6 +65,7 @@ class Runner:
     async def initialize_before_start(self, app, loop):
         if self.__jobs is None:
             self.__jobs = Jobs(self.__logger)
+            self.__secret = Secret(self.__logger)
             self.__nb = Notebooks(self.__logger, self.__notif)
             self.__app.add_route(
                 NbController.as_view(self.__logger, self.__jobs, self.__nb),
@@ -86,25 +88,29 @@ class Runner:
             self.__app.add_route(
                 JobsController.as_view(self.__logger, self.__jobs), f"/{t_job}"
             )
+            self.__app.add_route(TimezoneController.as_view(self.__logger), f"/{t_tz}")
+            self.__app.add_route(
+                SecretController.as_view(self.__logger, self.__secret), f"/{t_secret}"
+            )
             if n_env.scheduler:
                 await self.__scheduler.start()
 
-    async def initialize_before_stop(self, app, loop):
+    def initialize_before_stop(self, app, loop):
         if self.__nb is not None:
             self.__nb = None
         if n_env.scheduler and self.__scheduler is not None:
-            await self.__scheduler.stop()
+            self.__scheduler.stop()
             self.__scheduler = None
         if self.__jobs is not None:
             self.__jobs = None
 
     def init_app(self):
-        if not os.path.exists(self.__path_naas_files):
+        if not os.path.exists(n_env.path_naas_folder):
             try:
                 print("Init Naas folder Jobs")
-                os.makedirs(self.__path_naas_files)
+                os.makedirs(n_env.path_naas_folder)
             except OSError as exc:  # Guard against race condition
-                print("__path_naas_files", self.__path_naas_files)
+                print("__path_naas_files", n_env.path_naas_folder)
                 if exc.errno != errno.EEXIST:
                     raise
             except Exception as e:
@@ -137,8 +143,8 @@ class Runner:
         )
         return self.__app
 
-    def kill(self):
-        self.__app.stop()
+    async def kill(self):
+        await self.__app.stop()
 
     def start(self, port=None, debug=False):
         user = getpass.getuser()

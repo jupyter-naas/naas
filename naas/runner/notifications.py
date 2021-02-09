@@ -2,6 +2,7 @@ from naas.types import t_notebook, t_scheduler, t_asset
 from .proxy import encode_proxy_url
 from .env_var import n_env
 from bs4 import BeautifulSoup
+import pandas as pd
 import pretty_cron
 import requests
 import base64
@@ -41,14 +42,14 @@ class Notifications:
                     except Exception as err:
                         print(err)
                 req = requests.post(
-                    url=f"{n_env.notif_api}/send",
+                    url=f"{n_env.notif_api}/",
                     files=files_list,
                     headers=self.headers,
                     data=data,
                 )
             else:
                 req = requests.post(
-                    url=f"{n_env.notif_api}/send", headers=self.headers, json=data
+                    url=f"{n_env.notif_api}/", headers=self.headers, json=data
                 )
             req.raise_for_status()
             print("👌 💌 Email has been sent successfully !")
@@ -121,14 +122,14 @@ class Notifications:
                     except Exception as err:
                         print(err)
                 req = requests.post(
-                    url=f"{n_env.notif_api}/send_status",
+                    url=f"{n_env.notif_api}/status",
                     headers=self.headers,
                     files=files,
                     json=data,
                 )
             else:
                 req = requests.post(
-                    url=f"{n_env.notif_api}/send_status",
+                    url=f"{n_env.notif_api}/status",
                     headers=self.headers,
                     json=data,
                 )
@@ -152,17 +153,17 @@ class Notifications:
         return jsn
 
     def list(self):
-        req = requests.post(
-            url=f"{self.base_notif_url}/list",
+        req = requests.get(
+            url=f"{n_env.notif_api}/",
             headers=self.headers,
         )
         jsn = req.json()
-        return jsn
+        return pd.DataFrame(data=jsn.get("emails"))
 
     def list_all(self):
-        req = requests.post(
-            url=f"{self.base_notif_url}/list_all",
+        req = requests.get(
+            url=f"{n_env.notif_api}/admin",
             headers=self.headers,
         )
         jsn = req.json()
-        return jsn
+        return pd.DataFrame(data=jsn.get("emails"))
