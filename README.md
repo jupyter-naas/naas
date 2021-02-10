@@ -26,10 +26,15 @@ Whenever you need it (even when you sleep).
 
 <p>
   <a href="https://naas.gitbook.io/naas/" title="Redirect to Documentation">
-    <img width="200px" src="https://raw.githubusercontent.com/jupyter-naas/naas/main/images/gitbook.svg" alt="Gitbooks naas" />
+    <img width="200px" style="background-color: white;" src="https://raw.githubusercontent.com/jupyter-naas/naas/main/images/gitbook.svg" alt="Gitbooks naas" />
   </a>
  </p>
- 
+
+# Issue
+
+If you found a bug or need a new feature go there :
+https://naas.canny.io/
+
 ## Try Naas
 Using Binder
 You can try out some of Naas features using the My Binder service.
@@ -78,10 +83,10 @@ this auto publish by github action on main branch
     <img width="200px" src="https://raw.githubusercontent.com/jupyter-naas/naas/main/images/sentry.svg" alt="Sentry" />
   </a>
   <a href="https://gitbook.com" title="Redirect to Gitbook">
-    <img width="200px" src="https://raw.githubusercontent.com/jupyter-naas/naas/main/images/gitbook.svg" alt="Gitbooks" />
+    <img width="200px" style="background-color: white;" src="https://raw.githubusercontent.com/jupyter-naas/naas/main/images/gitbook.svg" alt="Gitbooks" />
   </a>
   <a href="https://canny.io" title="Redirect to Canny">
-    <img width="200px" src="https://raw.githubusercontent.com/jupyter-naas/naas/main/images/canny.svg" alt="Canny" />
+    <img width="200px" style="background-color: white;" src="https://raw.githubusercontent.com/jupyter-naas/naas/main/images/canny.svg" alt="Canny" />
   </a>
 </p>
 
