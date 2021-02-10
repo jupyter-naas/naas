@@ -80,7 +80,10 @@ class Notifications:
                 print(jsn)
             return jsn
         content = ""
-        file_link = f"{n_env.hub_api}/user/{n_env.user}/tree/{file_path}"
+        if n_env.user and n_env.user != "":
+            file_link = f"{n_env.hub_api}/user/{n_env.user}/lab/tree/{file_path}"
+        else:
+            file_link = f"{n_env.hub_api}/lab/tree/{file_path}"
         if current_type == t_asset or current_type == t_notebook:
             content = f'The file <a href="{file_link}">{file_path}</a> <br/>'
             content += f"Accesible at this url:<br/> {encode_proxy_url(current_type)}/{current_value}<br/>"
@@ -94,7 +97,12 @@ class Notifications:
         message_bytes = file_path.encode("ascii")
         base64_bytes = base64.b64encode(message_bytes)
         file_path_base64 = base64_bytes.decode("ascii")
-        link_url = f"{n_env.hub_api}/user/{n_env.user}/naas/?filter={file_path_base64}"
+        if n_env.user and n_env.user != "":
+            link_url = (
+                f"{n_env.hub_api}/user/{n_env.user}/naas/?filter={file_path_base64}"
+            )
+        else:
+            link_url = f"{n_env.hub_api}/naas/?filter={file_path_base64}"
         logo_url = f"{encode_proxy_url(t_asset)}/naas_logo.png"
         try:
             data = {

@@ -146,8 +146,9 @@
                 },
             },
             methods: {
-                openError(error) {
-                    this.$modal.show(  {
+                openError(error, path) {
+                    const url = this.linkTojupOutput(path);
+                    this.$modal.show({
                         template: `
                         <div class="w-full bg-white rounded-lg shadow-lg">
                             <div class="flex justify-between px-5 py-4 border-b border-gray-100">
@@ -162,18 +163,19 @@
                             <div class="px-10 text-gray-600">
                                 <pre class="-my-12 break-words whitespace-pre-wrap">
                                     <code>
-                                        {{ text }}
+                                        {{ error }}
                                     </code>
                                 </pre>
                             </div>
                         
                             <div class="flex justify-end px-5 py-4">
                             <button @click="$emit('close')" class="px-3 py-2 text-sm text-gray-500 transition duration-150 hover:text-gray-600">Close</button>
+                            <button @click="this.window.open(url, '_blank'); $emit('close')" class="px-3 py-2 text-sm text-gray-500 transition duration-150 hover:text-gray-600">Open output</button>
                             </div>
                         </div>
                         `,
-                        props: ['text']
-                    }, { text: error },{ width: "70%", scrollable: true, height: 'auto' });
+                        props: ['error', 'url']
+                    }, { error, url },{ width: "70%", scrollable: true, height: 'auto' });
                 },
                 updateLogParams(newProps) {
                     this.serverLogParams = Object.assign({}, this.serverLogParams, newProps);
@@ -273,20 +275,31 @@
                         this.loading = false;
                     });
                 },
-                linkToHome(path) {
-                    return `${this.env.JUPYTERHUB_URL}/user/${this.env.JUPYTERHUB_USER}/lab`
+                linkToLab() {
+                    return `${this.linkToJup()}/lab`
+                },
+                linkToJup() {
+                    if (this.env.JUPYTERHUB_USER && this.env.JUPYTERHUB_USER !== '') {
+                        return `${this.env.JUPYTERHUB_URL}/user/${this.env.JUPYTERHUB_USER}`
+                    } else {
+                        return `${this.env.JUPYTERHUB_URL}`
+                    }
+                },
+                linkTojupOutput(link) {
+                    const partial = link.replace(this.env.JUPYTER_SERVER_ROOT, '');
+                    const partialList = partial.split('/');
+                    partialList[partialList.length-1] = `output__${partialList[partialList.length-1]}`
+                    const partialOutput= partialList.join('/');
+                    const fileUrl = `${window.location.protocol}//${this.linkToJup()}/lab/tree${partialOutput}`;
+                    console.log(fileUrl);
+                    return fileUrl
                 },
                 linkTojup(link) {
                     const partial = link.replace(this.env.JUPYTER_SERVER_ROOT, '');
-                    const fileUrl = `${this.env.JUPYTERHUB_URL}/user/${this.env.JUPYTERHUB_USER}/tree/${partial}`;
+                    const fileUrl = `${window.location.protocol}//${this.linkToJup()}/lab/tree${partial}`;
+                    console.log(fileUrl);
                     window.open(fileUrl, '_blank');
                 },
-                go_bob() {
-                    window.open(this.env.PUBLIC_BOB, '_blank');
-                },
-                go_jup() {
-                    window.open(this.env.JUPYTERHUB_URL, '_blank');
-                }
             },
             created: function () {
                 const uri = window.location.href.split('?');
@@ -326,11 +339,11 @@
             <div class="items-center justify-between px-8 py-2 md:flex md:px-12">
                 <div class="flex items-center justify-between">
                     <div class="flex flex-row mb-2 sm:mb-0 ">
-                        <div class="self-center mr-2 h-50 w-50">
-                            <img alt="Naas logo" src="asset/naas_fav.svg" width="50" height="50" />
+                        <div class="self-center mr-2 h-70 w-70">
+                            <img alt="Naas logo" src="asset/naas_fav.svg" width="70" height="70" />
                         </div>
                         <div class="my-auto">
-                            <a :href="linkToHome()"
+                            <a :href="linkToLab()"
                                 class="font-sans text-2xl font-bold text-gray-100 no-underline hover:text-#4299e1-dark">Manager</a>
                         </div>
                     </div>
@@ -454,7 +467,7 @@
                     </span>
                     <span v-else-if="props.column.field == 'status'">
                         <a href="#" v-if="props.formattedRow['error']" style="font-weight: bold; color: #f56565;"
-                        v-on:click="openError(props.formattedRow['error'])">error</a>
+                        v-on:click="openError(props.formattedRow['error'], props.formattedRow['filepath'])">error</a>
                         <p v-else>{{props.formattedRow[props.column.field]}}</p>
                     </span>
                     <span v-else>
