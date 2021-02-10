@@ -8,6 +8,7 @@ class n_env:
     _version = None
     _remote_mode = False
     _api_port = None
+    _env_mode = None
     _notif_api = None
     _callback_api = None
     _proxy_api = None
@@ -35,6 +36,14 @@ class n_env:
     @api_port.setter
     def api_port(self, api_port: int):
         self._api_port = api_port
+
+    @property
+    def env_mode(self):
+        return self._env_mode or os.environ.get("NAAS_ENV")
+
+    @env_mode.setter
+    def env_mode(self, env_mode: str):
+        self._env_mode = env_mode
 
     @property
     def version(self):

@@ -49,7 +49,6 @@ class Notebooks:
         self.__notif = notif
         self.__html_exporter = HTMLExporter()
         self.__html_exporter.template_name = "lab"
-        os.environ["naas_env"] = "PRODUCTION"
 
     def response(self, uid, filepath, res, duration, params):
         next_url = params.get("next_url", None)
@@ -226,6 +225,7 @@ class Notebooks:
 
     def __pm_exec(self, uid, file_dirpath, file_filepath, file_filepath_out, params):
         res = None
+        os.environ["NAAS_ENV"] = "PRODUCTION"
         if kern_manager:
             res = pm.execute_notebook(
                 input_path=file_filepath,
@@ -293,11 +293,11 @@ class Notebooks:
         file_dirpath = os.path.dirname(file_filepath)
         file_filepath_out = self.__get_output_path(file_filepath)
         params = job.get("params", dict())
-        params["naas_uid"] = uid
-        params["naas_runtime"] = datetime.datetime.now(
+        params["NAAS_UID"] = uid
+        params["NAAS_RUNTIME"] = datetime.datetime.now(
             tz=pytz.timezone(n_env.tz)
         ).strftime("%Y%m%d%H%M%S%f")
-        params["naas_env"] = "PRODUCTION"
+        params["NAAS_ENV"] = "PRODUCTION"
         start_time = time.time()
         res = None
         try:

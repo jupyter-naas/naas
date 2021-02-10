@@ -30,7 +30,7 @@ class Manager:
         self.set_runner_mode()
 
     def is_production(self):
-        return True if os.environ.get("naas_env") == "PRODUCTION" else False
+        return True if n_env.env_mode == "PRODUCTION" else False
 
     def set_runner_mode(self):
         try:
@@ -103,7 +103,10 @@ class Manager:
 
     def running_notebooks(self):
         try:
-            base_url = f"{n_env.hub_api}/user/{n_env.user}/api/sessions"
+            if n_env.user and n_env.user != "":
+                base_url = f"{n_env.hub_api}/user/{n_env.user}/api/sessions"
+            else:
+                base_url = f"{n_env.hub_api}/api/sessions"
             req = requests.get(url=base_url, headers=self.headers)
             req.raise_for_status()
             sessions = req.json()

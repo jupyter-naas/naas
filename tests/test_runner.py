@@ -28,6 +28,7 @@ import io
 
 user = getpass.getuser()
 seps = os.sep + os.altsep if os.altsep else os.sep
+n_env.env_mode = "TEST"
 
 
 def getUserb64():
