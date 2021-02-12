@@ -1,7 +1,7 @@
 # Copyright (c) Naas Team.
 # Distributed under the terms of the GNU AGPL License.
 from IPython.core.display import display, Javascript, HTML
-from .types import t_tz, error_busy, error_reject
+from .types import t_tz, error_busy, error_reject, copy_button
 from .runner.notifications import Notifications
 from .runner.callback import Callback
 from .dependency import Dependency
@@ -166,6 +166,13 @@ def auto_update():
         update()
     else:
         print("You are aready up to date")
+
+
+def get_download_url(url):
+    dl_url = f"{n_env.hub_api}/user-redirect/naas/downloader?url={url}"
+    print("❤️ Copy this url and spread it to the world\n")
+    copy_button(dl_url)
+    return dl_url
 
 
 def is_production():
