@@ -1,4 +1,5 @@
 from .types import t_dependency, t_add, t_update
+from .runner.env_var import n_env
 from .manager import Manager
 
 
@@ -32,7 +33,12 @@ class Dependency:
         else:
             for item in json_data:
                 if item["type"] == self.role:
-                    print(f"File ==> {item['path']}")
+                    path = (
+                        item["path"]
+                        .replace(n_env.path_naas_folder, "")
+                        .replace(n_env.server_root, "")
+                    )
+                    print(f"File ==> {path}")
 
     def add(self, path=None, debug=False):
         if self.manager.is_production():
