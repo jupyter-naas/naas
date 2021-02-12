@@ -11,12 +11,7 @@ import uuid
 class DownloaderController(HTTPMethodView):
     __logger = None
 
-    def __init__(
-        self,
-        logger,
-        *args,
-        **kwargs
-    ):
+    def __init__(self, logger, *args, **kwargs):
         super(DownloaderController, self).__init__(*args, **kwargs)
         self.__logger = logger
 
@@ -25,15 +20,17 @@ class DownloaderController(HTTPMethodView):
         target = str(request.args.get("url", ""))
         try:
             raw_target = target
-            if 'github.com' in raw_target:
-                raw_target = raw_target.replace("https://github.com/", "https://raw.githubusercontent.com/")
+            if "github.com" in raw_target:
+                raw_target = raw_target.replace(
+                    "https://github.com/", "https://raw.githubusercontent.com/"
+                )
                 raw_target = raw_target.replace("/blob/", "/")
             r = requests.get(raw_target)
 
-            file_name = raw_target.split('/')[-1]
+            file_name = raw_target.split("/")[-1]
             file_name = urllib.parse.unquote(file_name)
 
-            with open(file_name, 'wb') as f:
+            with open(file_name, "wb") as f:
                 f.write(r.content)
             self.__logger.info(
                 {"id": uid, "type": t_downloader, "status": "send", "filepath": target}
@@ -46,4 +43,3 @@ class DownloaderController(HTTPMethodView):
                 {"id": uid, "type": t_downloader, "status": "send", "filepath": target}
             )
             return text(e, tb)
-

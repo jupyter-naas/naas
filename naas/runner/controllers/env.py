@@ -1,19 +1,11 @@
 from sanic.views import HTTPMethodView
 from sanic.response import json
-from naas.types import t_health, t_asset
+from naas.types import t_health
 from naas.runner.env_var import n_env
-import uuid
-
-endpoint = "env"
 
 
 class EnvController(HTTPMethodView):
-
-    def __init__(
-        self,
-        *args,
-        **kwargs
-    ):
+    def __init__(self, *args, **kwargs):
         super(EnvController, self).__init__(*args, **kwargs)
 
     async def get(self, request):

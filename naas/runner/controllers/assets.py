@@ -26,7 +26,7 @@ class AssetsController(HTTPMethodView):
         else:
             uid = str(uuid.uuid4())
             job = await self.__jobs.find_by_value(uid, token, t_asset)
-            if job and job.get('status') != t_delete:
+            if job and job.get("status") != t_delete:
                 file_filepath = job.get("path")
                 file_name = os.path.basename(file_filepath)
                 params = job.get("params", dict())

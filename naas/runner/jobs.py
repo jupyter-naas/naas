@@ -99,19 +99,21 @@ class Jobs:
     def __migrate_oldPath(self):
         cur_jobs = self.__df.to_dict("records")
         for job in cur_jobs:
-            path = job['path']
-            tmp_path = path.replace(n_env.path_naas_folder, '')
+            path = job["path"]
+            tmp_path = path.replace(n_env.path_naas_folder, "")
             if not tmp_path.startswith(n_env.server_root) and os.path.exists(path):
-                new_path = os.path.join(n_env.path_naas_folder, n_env.server_root, tmp_path)
+                new_path = os.path.join(
+                    n_env.path_naas_folder, n_env.server_root, tmp_path
+                )
                 os.makedirs(os.path.basename(new_path))
                 os.rename(path, new_path)
-                job['path'] = new_path
+                job["path"] = new_path
             # previous path /home/ftp/.naas/toto/tata.py
             # new path /home/ftp/.naas/home/ftp/toto/tata.py
             # tmp_path = tmp_path.replace(n_env.path_naas_folder, '').replace(f"{n_env.server_root}/", '')
         self.__df = pd.DataFrame(cur_jobs)
-        self.__df = self.__df.reset_index(drop=True)    
-            
+        self.__df = self.__df.reset_index(drop=True)
+
     def __dedup_jobs(self):
         new_df = self.__df[
             (self.__df.type != t_notebook) & (self.__df.type != t_asset)
@@ -264,7 +266,9 @@ class Jobs:
                 split_list = ffile.split("___")
                 histo = split_list[0]
                 tmp_path = os.path.join(dirname, ffile)
-                tmp_path = tmp_path.replace(n_env.path_naas_folder, '').replace(f"{n_env.server_root}/", '')
+                tmp_path = tmp_path.replace(n_env.path_naas_folder, "").replace(
+                    f"{n_env.server_root}/", ""
+                )
                 d.append({"timestamp": histo, "filepath": tmp_path})
         self.__logger.info(
             {
@@ -287,7 +291,7 @@ class Jobs:
                     data = self.__df.to_dict("records")
                     try:
                         for d in data:
-                            d['runs'] = json.loads(d.get('runs'))
+                            d["runs"] = json.loads(d.get("runs"))
                     except Exception:
                         pass
         except Exception as e:
@@ -296,7 +300,9 @@ class Jobs:
 
     def __delete(self, cur_elem, uid, path, target_type, value, params):
         try:
-            dt_string = datetime.datetime.now(tz=pytz.timezone(n_env.tz)).strftime("%Y-%m-%d %H:%M:%S")
+            dt_string = datetime.datetime.now(tz=pytz.timezone(n_env.tz)).strftime(
+                "%Y-%m-%d %H:%M:%S"
+            )
             self.__logger.info(
                 {
                     "id": uid,
@@ -328,7 +334,9 @@ class Jobs:
 
     def __add(self, uid, path, target_type, value, params, run_time):
         try:
-            dt_string = datetime.datetime.now(tz=pytz.timezone(n_env.tz)).strftime("%Y-%m-%d %H:%M:%S")
+            dt_string = datetime.datetime.now(tz=pytz.timezone(n_env.tz)).strftime(
+                "%Y-%m-%d %H:%M:%S"
+            )
             self.__logger.info(
                 {
                     "id": uid,

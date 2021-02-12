@@ -82,12 +82,16 @@ class Notifications:
         content = ""
         file_link = f"{n_env.user_url}/lab/tree/{file_path}"
         if current_type == t_asset or current_type == t_notebook:
-            tmp_path = file_path.replace(n_env.path_naas_folder, '').replace(f"{n_env.server_root}/", '')
+            tmp_path = file_path.replace(n_env.path_naas_folder, "").replace(
+                f"{n_env.server_root}/", ""
+            )
             content = f'The file <a href="{file_link}">{tmp_path}</a> <br/>'
             content += f"Accesible at this url:<br/> {encode_proxy_url(current_type)}/{current_value}<br/>"
         elif current_type == t_scheduler:
             cron_string = pretty_cron.prettify_cron(current_value)
-            tmp_path = file_path.replace(n_env.path_naas_folder, '').replace(f"{n_env.server_root}/", '')
+            tmp_path = file_path.replace(n_env.path_naas_folder, "").replace(
+                f"{n_env.server_root}/", ""
+            )
             content = f'The file <a href="{file_link}">{tmp_path}</a><br/>'
             content += f"who run {cron_string}<br/>"
         content += f"Is {status}.<br/><br/>"

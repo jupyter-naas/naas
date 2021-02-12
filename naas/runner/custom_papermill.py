@@ -5,11 +5,24 @@ import nbformat
 from pathlib import Path
 
 from papermill.log import logger
-from papermill.iorw import get_pretty_path, local_file_io_cwd, load_notebook_node, write_ipynb
+from papermill.iorw import (
+    get_pretty_path,
+    local_file_io_cwd,
+    load_notebook_node,
+    write_ipynb,
+)
 from papermill.engines import papermill_engines
-from papermill.execute import prepare_notebook_metadata, remove_error_markers, raise_for_execution_errors
+from papermill.execute import (
+    prepare_notebook_metadata,
+    remove_error_markers,
+    raise_for_execution_errors,
+)
 from papermill.utils import chdir
-from papermill.parameterize import add_builtin_parameters, parameterize_notebook, parameterize_path
+from papermill.parameterize import (
+    add_builtin_parameters,
+    parameterize_notebook,
+    parameterize_path,
+)
 import json
 
 
@@ -30,7 +43,7 @@ def execute_notebook(
     start_timeout=60,
     report_mode=False,
     cwd=None,
-    **engine_kwargs
+    **engine_kwargs,
 ):
     """Executes a single notebook locally.
     Parameters
@@ -114,7 +127,7 @@ def execute_notebook(
                     start_timeout=start_timeout,
                     stdout_file=stdout_file,
                     stderr_file=stderr_file,
-                    **engine_kwargs
+                    **engine_kwargs,
                 )
 
             # Check for errors first (it saves on error before raising)
@@ -140,10 +153,17 @@ def prepare_notebook_naas(nb, input_path, uid, runtime):
     # Copy the nb object to avoid polluting the input
     nb = copy.deepcopy(nb)
     language = nb.metadata.kernelspec.language
-    if language == 'python':
-        current_data = {"uid": uid, "path": input_path, "env": "RUNNER", "runtime": runtime}
-        param_content = f"import naas\nnaas.n_env.current = {json.dumps(current_data, indent=4)}"
+    if language == "python":
+        current_data = {
+            "uid": uid,
+            "path": input_path,
+            "env": "RUNNER",
+            "runtime": runtime,
+        }
+        param_content = (
+            f"import naas\nnaas.n_env.current = {json.dumps(current_data, indent=4)}"
+        )
         newcell = nbformat.v4.new_code_cell(source=param_content)
-        newcell.metadata['tags'] = ['naas-injected']
+        newcell.metadata["tags"] = ["naas-injected"]
         nb.cells = [newcell] + nb.cells
     return nb

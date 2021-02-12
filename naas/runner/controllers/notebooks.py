@@ -42,7 +42,7 @@ class NbController(HTTPMethodView):
     async def _get(self, data, token):
         uid = str(uuid.uuid4())
         job = await self.__jobs.find_by_value(uid, token, t_notebook)
-        if job and job.get('status') != t_delete:
+        if job and job.get("status") != t_delete:
             value = job.get("value", None)
             file_filepath = job.get("path")
             cur_job = job.copy()

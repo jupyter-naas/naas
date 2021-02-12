@@ -55,7 +55,13 @@ class Assets:
             return url
         # "path", "type", "params", "value", "status"
         self.manager.add_prod(
-            {"type": self.role, "status": status, "path": current_file, "params": params, "value": token},
+            {
+                "type": self.role,
+                "status": status,
+                "path": current_file,
+                "params": params,
+                "value": token,
+            },
             debug,
         )
         print("👌 Well done! Your Assets has been sent to production.\n")

@@ -226,9 +226,9 @@ class Notebooks:
 
     def __pm_exec(self, uid, file_dirpath, file_filepath, file_filepath_out, params):
         res = None
-        runtime = datetime.datetime.now(
-            tz=pytz.timezone(n_env.tz)
-        ).strftime("%Y%m%d%H%M%S%f")
+        runtime = datetime.datetime.now(tz=pytz.timezone(n_env.tz)).strftime(
+            "%Y%m%d%H%M%S%f"
+        )
         if kern_manager:
             res = execute_notebook(
                 uid=uid,

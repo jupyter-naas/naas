@@ -30,7 +30,7 @@ class Manager:
         self.set_runner_mode()
 
     def is_production(self):
-        return True if n_env.current.get('env') == "RUNNER" else False
+        return True if n_env.current.get("env") == "RUNNER" else False
 
     def set_runner_mode(self):
         try:

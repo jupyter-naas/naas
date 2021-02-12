@@ -1,4 +1,13 @@
-from naas.types import t_main, t_notebook, t_scheduler, t_asset, t_job, t_secret, t_tz, t_downloader
+from naas.types import (
+    t_main,
+    t_notebook,
+    t_scheduler,
+    t_asset,
+    t_job,
+    t_secret,
+    t_tz,
+    t_downloader,
+)
 from .controllers.downloader import DownloaderController
 from sentry_sdk.integrations.sanic import SanicIntegration
 from .controllers.scheduler import SchedulerController

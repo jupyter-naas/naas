@@ -119,7 +119,6 @@ class n_env:
             base_url = self.hub_api
         return base_url
 
-
     @property
     def naas_folder(self):
         return self._naas_folder or os.environ.get("NAAS_FOLDER", ".naas")

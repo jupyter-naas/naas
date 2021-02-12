@@ -84,7 +84,13 @@ class Api:
             print("No add done, you are in production\n")
             return url
         self.manager.add_prod(
-            {"type": self.role, "status": status, "path": current_file, "params": params, "value": token},
+            {
+                "type": self.role,
+                "status": status,
+                "path": current_file,
+                "params": params,
+                "value": token,
+            },
             debug,
         )
         print("👌 Well done! Your Notebook has been sent to production.\n")
