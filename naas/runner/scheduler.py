@@ -86,7 +86,7 @@ class Scheduler:
         current_type = job.get("type")
         file_filepath = job.get("path")
         last_update = job.get("lastUpdate")
-        status = job.get("lastUpdate")
+        status = job.get("status")
         params = job.get("params", dict())
         uid = str(uuid.uuid4())
         try:

@@ -1,5 +1,6 @@
-from IPython.core.display import display, HTML, JSON, Image, SVG, Markdown
 from .types import t_notebook, t_output, guess_type, copy_button, t_add, t_update
+from IPython.core.display import display, HTML, JSON, Image, SVG, Markdown
+from .runner.env_var import n_env
 from .manager import Manager
 import pandas as pd
 import markdown2
@@ -64,7 +65,12 @@ class Api:
                 kind = None
                 if item["type"] == self.role:
                     kind = f"callable with this url {self.manager.proxy_url('notebooks', item['value'])}"
-                    print(f"File ==> {item['path']} is {kind}")
+                    path = (
+                        item["path"]
+                        .replace(n_env.path_naas_folder, "")
+                        .replace(n_env.server_root, "")
+                    )
+                    print(f"File ==> {path} is {kind}")
 
     def add(self, path=None, params={}, debug=False):
         self.deprecatedPrint()

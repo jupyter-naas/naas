@@ -1,4 +1,5 @@
 from .types import t_asset, copy_button, t_add, t_update
+from .runner.env_var import n_env
 from .manager import Manager
 import os
 
@@ -35,7 +36,12 @@ class Assets:
                 kind = None
                 if item["type"] == self.role:
                     kind = f"gettable with this url {self.manager.proxy_url('assets', item['value'])}"
-                    print(f"File ==> {item['path']} is {kind}")
+                    path = (
+                        item["path"]
+                        .replace(n_env.path_naas_folder, "")
+                        .replace(n_env.server_root, "")
+                    )
+                    print(f"File ==> {path} is {kind}")
 
     def add(self, path=None, params={}, debug=False):
         current_file = self.manager.get_path(path)

@@ -1,4 +1,5 @@
 from .types import t_scheduler, t_output, t_add, t_update
+from .runner.env_var import n_env
 from .manager import Manager
 import pretty_cron
 import requests
@@ -68,7 +69,12 @@ class Scheduler:
                 if item["type"] == self.role:
                     cron_string = pretty_cron.prettify_cron(item["value"])
                     kind = f"scheduler {cron_string}"
-                    print(f"File ==> {item['path']} is {kind}")
+                    path = (
+                        item["path"]
+                        .replace(n_env.path_naas_folder, "")
+                        .replace(n_env.server_root, "")
+                    )
+                    print(f"File ==> {path} is {kind}")
 
     def __check_cron(self, text):
         res = False
