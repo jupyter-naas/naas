@@ -4,6 +4,7 @@ from naas.types import (
     t_add,
     t_skip,
     t_update,
+    t_job,
     t_error,
     t_start,
     t_notebook,
@@ -378,15 +379,13 @@ class Jobs:
             )
             return t_error
 
-    def __update(
-        self, cur_elem, uid, path, target_type, value, params, status, run_time
-    ):
+    def __update(self, cur_elem, uid, path, value, params, status, run_time):
         now = datetime.datetime.now(tz=pytz.timezone(n_env.tz))
         dt_string = now.strftime("%Y-%m-%d %H:%M:%S")
         self.__logger.info(
             {
                 "id": uid,
-                "type": target_type,
+                "type": t_job,
                 "value": value,
                 "status": t_update,
                 "filepath": path,
@@ -425,7 +424,6 @@ class Jobs:
                         cur_elem,
                         uid,
                         path,
-                        target_type,
                         value,
                         params,
                         status,
