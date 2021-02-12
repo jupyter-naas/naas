@@ -1,5 +1,5 @@
 from IPython.core.display import display, HTML, JSON, Image, SVG, Markdown
-from .types import t_notebook, t_output, guess_type, copy_button
+from .types import t_notebook, t_output, guess_type, copy_button, t_add, t_update
 from .manager import Manager
 import pandas as pd
 import markdown2
@@ -66,24 +66,31 @@ class Api:
                     kind = f"callable with this url {self.manager.proxy_url('notebooks', item['value'])}"
                     print(f"File ==> {item['path']} is {kind}")
 
-    def add(self, path=None, params={}, debug=False, force=False):
+    def add(self, path=None, params={}, debug=False):
         self.deprecatedPrint()
         current_file = self.manager.get_path(path)
         if current_file is None:
             print("Missing file path in prod mode")
             return
         token = os.urandom(30).hex()
-        if not force:
-            try:
-                token = self.manager.get_value(current_file, False)
-            except:  # noqa: E722
-                pass
+        status = t_add
+        try:
+            token = self.manager.get_value(current_file, False)
+            status = t_update
+        except:  # noqa: E722
+            pass
         url = self.manager.proxy_url(self.role, token)
         if self.manager.is_production():
-            print("No add done you are in production\n")
+            print("No add done, you are in production\n")
             return url
         self.manager.add_prod(
-            {"type": self.role, "path": current_file, "params": params, "value": token},
+            {
+                "type": self.role,
+                "status": status,
+                "path": current_file,
+                "params": params,
+                "value": token,
+            },
             debug,
         )
         print("👌 Well done! Your Notebook has been sent to production.\n")
@@ -153,7 +160,7 @@ class Api:
     def delete(self, path=None, all=False, debug=False):
         self.deprecatedPrint()
         if self.manager.is_production():
-            print("No delete done you are in production\n")
+            print("No delete done, you are in production\n")
             return
         current_file = self.manager.get_path(path)
         self.manager.del_prod({"type": self.role, "path": current_file}, debug)

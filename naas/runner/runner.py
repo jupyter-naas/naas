@@ -1,4 +1,14 @@
-from naas.types import t_main, t_notebook, t_scheduler, t_asset, t_job, t_secret, t_tz
+from naas.types import (
+    t_main,
+    t_notebook,
+    t_scheduler,
+    t_asset,
+    t_job,
+    t_secret,
+    t_tz,
+    t_downloader,
+)
+from .controllers.downloader import DownloaderController
 from sentry_sdk.integrations.sanic import SanicIntegration
 from .controllers.scheduler import SchedulerController
 from .controllers.assets import AssetsController
@@ -35,7 +45,6 @@ __version__ = "0.30.2"
 
 
 class Runner:
-    __naas_folder = ".naas"
     # Declare path variable
     __path_lib_files = os.path.dirname(os.path.abspath(__file__))
     __html_files = "html"
@@ -48,7 +57,6 @@ class Runner:
     __logger = None
 
     def __init__(self):
-        self.__path_naas_files = os.path.join(n_env.server_root, self.__naas_folder)
         self.__path_html_files = os.path.join(self.__path_lib_files, self.__html_files)
         self.__path_manager_index = os.path.join(
             self.__path_html_files, self.__manager_index
@@ -82,6 +90,10 @@ class Runner:
                 f"/{t_scheduler}/<mode>",
             )
             self.__app.add_route(
+                DownloaderController.as_view(self.__logger),
+                f"/{t_downloader}",
+            )
+            self.__app.add_route(
                 AssetsController.as_view(
                     self.__logger, self.__jobs, self.__path_lib_files
                 ),
@@ -107,12 +119,12 @@ class Runner:
             self.__jobs = None
 
     def init_app(self):
-        if not os.path.exists(self.__path_naas_files):
+        if not os.path.exists(n_env.path_naas_folder):
             try:
                 print("Init Naas folder Jobs")
-                os.makedirs(self.__path_naas_files)
+                os.makedirs(n_env.path_naas_folder)
             except OSError as exc:  # Guard against race condition
-                print("__path_naas_files", self.__path_naas_files)
+                print("__path_naas_files", n_env.path_naas_folder)
                 if exc.errno != errno.EEXIST:
                     raise
             except Exception as e:
@@ -125,15 +137,7 @@ class Runner:
         )
         self.__app.register_listener(self.initialize_before_stop, "before_server_stop")
         self.__app.add_route(
-            EnvController.as_view(
-                self.__logger,
-                n_env.user,
-                n_env.hub_api,
-                n_env.proxy_api,
-                n_env.notif_api,
-                n_env.tz,
-                n_env.server_root,
-            ),
+            EnvController.as_view(),
             "/env",
         )
         self.__app.add_route(LogsController.as_view(self.__logger), "/log")

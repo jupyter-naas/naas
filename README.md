@@ -53,18 +53,23 @@ Test it in binder (WIP)
 
 ## Install
 
-`pip install -e '.[dev]'`
-`pre-commit install`
+`./build_runner_dev.sh`
+
 
 ## Run test 
 
+run it in the shell of jupyter
 `pytest -x`  
 
 ## Test local server
 
-`./test_runner.sh`
+`./test_runner_dev.sh`
 
-open manager :
+Then copy url logged and connect to jupyter
+it should start like:
+`localhost:8888/`
+
+open manager outsite of jupyter (to livereload) :
 
 `localhost:5000/`
 

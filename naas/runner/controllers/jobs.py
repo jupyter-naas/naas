@@ -15,7 +15,6 @@ endpoint = "jobs"
 class JobsController(HTTPMethodView):
     __jobs = None
     __logger = None
-    __folder_name = ".naas"
     __min_keys = sorted(list(["path", "type", "params", "value", "status", "file"]))
 
     def __init__(self, logger, jobs, *args, **kwargs):
@@ -40,10 +39,9 @@ class JobsController(HTTPMethodView):
         # dirname = os.path.dirname(path)
         # filename = f"{filetype}_{filename}"
         # path = os.path.join(dirname, filename)
-        naas_path = os.path.join(n_env.server_root, self.__folder_name)
         seps = os.sep + os.altsep if os.altsep else os.sep
         strip_path = os.path.splitdrive(path)[1].lstrip(seps)
-        new_path = os.path.join(naas_path, strip_path)
+        new_path = os.path.join(n_env.path_naas_folder, strip_path)
         return new_path
 
     def __save_file(self, path, data=None):
@@ -69,6 +67,14 @@ class JobsController(HTTPMethodView):
         filename = f"{dt_string}___{filename}"
         new_path = os.path.join(dirname, filename)
         self.__save_file(new_path, data)
+
+    async def put(self, request):
+        reload_jobs = request.args.get("reload_jobs", False)
+        if reload_jobs:
+            self.__jobs.reload_jobs()
+            return response.json({"status": "Reloaded"})
+        else:
+            return response.json({"status": "None"})
 
     async def get(self, request):
         uid = str(uuid.uuid4())

@@ -1,4 +1,4 @@
-from .types import t_dependency
+from .types import t_dependency, t_add, t_update
 from .manager import Manager
 
 
@@ -36,12 +36,19 @@ class Dependency:
 
     def add(self, path=None, debug=False):
         if self.manager.is_production():
-            print("No add done you are in production\n")
+            print("No add done, you are in production\n")
             return self.manager.get_path(path)
         current_file = self.manager.get_path(path)
+        status = t_add
+        try:
+            self.manager.get_value(current_file, False)
+            status = t_update
+        except:  # noqa: E722
+            pass
         self.manager.add_prod(
             {
                 "type": self.role,
+                "status": status,
                 "path": current_file,
                 "params": {},
                 "value": "Only internal",
@@ -54,7 +61,7 @@ class Dependency:
 
     def delete(self, path=None, all=False, debug=False):
         if self.manager.is_production():
-            print("No delete done you are in production\n")
+            print("No delete done, you are in production\n")
             return
         current_file = self.manager.get_path(path)
         self.manager.del_prod({"type": self.role, "path": current_file}, debug)

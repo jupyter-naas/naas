@@ -1,5 +1,5 @@
-from pathlib import Path
 from tzlocal import get_localzone
+from pathlib import Path
 import os
 
 
@@ -12,6 +12,10 @@ class n_env:
     _callback_api = None
     _proxy_api = None
     _hub_api = None
+
+    _naas_folder = None
+
+    _current = {}
 
     _server_root = None
     _shell_user = None
@@ -33,6 +37,14 @@ class n_env:
     @api_port.setter
     def api_port(self, api_port: int):
         self._api_port = api_port
+
+    @property
+    def current(self):
+        return self._current
+
+    @current.setter
+    def current(self, current):
+        self._current = current
 
     @property
     def version(self):
@@ -100,10 +112,30 @@ class n_env:
         self._hub_api = hub_api
 
     @property
+    def user_url(self):
+        if self.user and self.user != "":
+            base_url = f"{self.hub_api}/user/{self.user}"
+        else:
+            base_url = self.hub_api
+        return base_url
+
+    @property
+    def naas_folder(self):
+        return self._naas_folder or os.environ.get("NAAS_FOLDER", ".naas")
+
+    @naas_folder.setter
+    def naas_folder(self, naas_folder):
+        self._naas_folder = naas_folder
+
+    @property
     def server_root(self):
         return self._server_root or os.environ.get(
             "JUPYTER_SERVER_ROOT", str(Path.home())
         )
+
+    @property
+    def path_naas_folder(self):
+        return os.path.join(self.server_root, self.naas_folder)
 
     @server_root.setter
     def server_root(self, server_root):

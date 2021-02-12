@@ -5,8 +5,10 @@ import uuid
 
 t_notebook = "notebook"
 t_asset = "asset"
+t_downloader = "downloader"
 t_dependency = "dependency"
 t_scheduler = "scheduler"
+
 t_secret = "secret"
 
 t_tz = "timezone"
@@ -21,6 +23,8 @@ t_production = "prod"
 t_histo = "history"
 t_list = "list"
 t_send = "send"
+t_main = "main"
+
 t_add = "installed"
 t_delete = "delete"
 t_update = "edited"
@@ -29,7 +33,6 @@ t_busy = "busy"
 t_skip = "skiped"
 t_error = "error"
 t_health = "healthy"
-t_main = "main"
 
 mime_html = "text/html"
 mime_csv = "text/csv"

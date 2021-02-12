@@ -1,0 +1,1 @@
+docker build -f Dockerfile.test -t naas_test .
