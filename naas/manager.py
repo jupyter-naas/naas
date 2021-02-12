@@ -1,4 +1,4 @@
-from .types import t_delete, t_job, t_add, t_env, error_busy, error_reject
+from .types import t_delete, t_job, t_env, error_busy, error_reject
 from IPython.core.display import display, HTML
 from .runner.proxy import encode_proxy_url
 from .runner.env_var import n_env
@@ -30,7 +30,7 @@ class Manager:
         self.set_runner_mode()
 
     def is_production(self):
-        return True if n_env.env_mode == "PRODUCTION" else False
+        return True if n_env.current.get('env') == "RUNNER" else False
 
     def set_runner_mode(self):
         try:
@@ -103,10 +103,7 @@ class Manager:
 
     def running_notebooks(self):
         try:
-            if n_env.user and n_env.user != "":
-                base_url = f"{n_env.hub_api}/user/{n_env.user}/api/sessions"
-            else:
-                base_url = f"{n_env.hub_api}/api/sessions"
+            base_url = f"{n_env.user_url}/api/sessions"
             req = requests.get(url=base_url, headers=self.headers)
             req.raise_for_status()
             sessions = req.json()
@@ -260,7 +257,7 @@ class Manager:
             dev_path = obj.get("path")
             new_obj["path"] = self.get_path(dev_path)
             new_obj["file"] = self.__open_file(dev_path)
-            new_obj["status"] = t_add
+            # new_obj["status"] = t_add
             try:
                 if debug:
                     print(f'{new_obj["status"]} ==> {new_obj}')

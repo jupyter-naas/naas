@@ -17,6 +17,7 @@ from nbconvert import HTMLExporter
 from sanic import response
 from .env_var import n_env
 import papermill as pm
+from .custom_papermill import execute_notebook
 import traceback
 import datetime
 import shutil
@@ -225,9 +226,13 @@ class Notebooks:
 
     def __pm_exec(self, uid, file_dirpath, file_filepath, file_filepath_out, params):
         res = None
-        os.environ["NAAS_ENV"] = "PRODUCTION"
+        runtime = datetime.datetime.now(
+            tz=pytz.timezone(n_env.tz)
+        ).strftime("%Y%m%d%H%M%S%f")
         if kern_manager:
-            res = pm.execute_notebook(
+            res = execute_notebook(
+                uid=uid,
+                runtime=runtime,
                 input_path=file_filepath,
                 output_path=file_filepath_out,
                 progress_bar=False,
@@ -236,7 +241,9 @@ class Notebooks:
                 kernel_manager_class=kern_manager,
             )
         else:
-            res = pm.execute_notebook(
+            res = execute_notebook(
+                uid=uid,
+                runtime=runtime,
                 input_path=file_filepath,
                 output_path=file_filepath_out,
                 progress_bar=False,
@@ -293,11 +300,6 @@ class Notebooks:
         file_dirpath = os.path.dirname(file_filepath)
         file_filepath_out = self.__get_output_path(file_filepath)
         params = job.get("params", dict())
-        params["NAAS_UID"] = uid
-        params["NAAS_RUNTIME"] = datetime.datetime.now(
-            tz=pytz.timezone(n_env.tz)
-        ).strftime("%Y%m%d%H%M%S%f")
-        params["NAAS_ENV"] = "PRODUCTION"
         start_time = time.time()
         res = None
         try:

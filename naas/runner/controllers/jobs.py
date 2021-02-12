@@ -68,6 +68,14 @@ class JobsController(HTTPMethodView):
         new_path = os.path.join(dirname, filename)
         self.__save_file(new_path, data)
 
+    async def put(self, request):
+        reload_jobs = request.args.get("reload_jobs", False)
+        if reload_jobs:
+            self.__jobs.reload_jobs()
+            return response.json({"status": "Reloaded"})
+        else:
+            return response.json({"status": "None"})
+
     async def get(self, request):
         uid = str(uuid.uuid4())
         job = None

@@ -2,6 +2,7 @@ from base64 import b64encode
 from naas.runner.proxy import escape_kubernet
 from naas.types import (
     t_add,
+    t_delete,
     t_notebook,
     t_job,
     t_dependency,
@@ -28,7 +29,6 @@ import io
 
 user = getpass.getuser()
 seps = os.sep + os.altsep if os.altsep else os.sep
-n_env.env_mode = "TEST"
 
 
 def getUserb64():
@@ -202,7 +202,8 @@ async def test_dependency(mocker, requests_mock, test_runner, tmp_path):
     response = await test_runner.get(f"/{t_job}")
     assert response.status == 200
     resp_json = await response.json()
-    assert len(resp_json) == 0
+    assert len(resp_json) == 1
+    resp_json[0].get("status") == t_delete
 
 
 async def test_asset(mocker, requests_mock, test_runner, tmp_path):
@@ -265,7 +266,8 @@ async def test_asset(mocker, requests_mock, test_runner, tmp_path):
     response = await test_runner.get(f"/{t_job}")
     assert response.status == 200
     resp_json = await response.json()
-    assert len(resp_json) == 0
+    assert len(resp_json) == 1
+    resp_json[0].get("status") == t_delete
     response = await test_runner.get(f"/{t_asset}/{token}")
     assert response.status == 404
 
@@ -330,7 +332,8 @@ async def test_notebooks(mocker, requests_mock, test_runner, tmp_path):
     response = await test_runner.get(f"/{t_job}")
     assert response.status == 200
     resp_json = await response.json()
-    assert len(resp_json) == 0
+    assert len(resp_json) == 1
+    resp_json[0].get("status") == t_delete
     response = await test_runner.get(f"/{t_notebook}/{token}")
     assert response.status == 404
 

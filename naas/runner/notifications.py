@@ -80,16 +80,15 @@ class Notifications:
                 print(jsn)
             return jsn
         content = ""
-        if n_env.user and n_env.user != "":
-            file_link = f"{n_env.hub_api}/user/{n_env.user}/lab/tree/{file_path}"
-        else:
-            file_link = f"{n_env.hub_api}/lab/tree/{file_path}"
+        file_link = f"{n_env.user_url}/lab/tree/{file_path}"
         if current_type == t_asset or current_type == t_notebook:
-            content = f'The file <a href="{file_link}">{file_path}</a> <br/>'
+            tmp_path = file_path.replace(n_env.path_naas_folder, '').replace(f"{n_env.server_root}/", '')
+            content = f'The file <a href="{file_link}">{tmp_path}</a> <br/>'
             content += f"Accesible at this url:<br/> {encode_proxy_url(current_type)}/{current_value}<br/>"
         elif current_type == t_scheduler:
             cron_string = pretty_cron.prettify_cron(current_value)
-            content = f'The file <a href="{file_link}">{file_path}</a><br/>'
+            tmp_path = file_path.replace(n_env.path_naas_folder, '').replace(f"{n_env.server_root}/", '')
+            content = f'The file <a href="{file_link}">{tmp_path}</a><br/>'
             content += f"who run {cron_string}<br/>"
         content += f"Is {status}.<br/><br/>"
         content += "Check the Logs on your manager below :<br/>"
@@ -97,12 +96,7 @@ class Notifications:
         message_bytes = file_path.encode("ascii")
         base64_bytes = base64.b64encode(message_bytes)
         file_path_base64 = base64_bytes.decode("ascii")
-        if n_env.user and n_env.user != "":
-            link_url = (
-                f"{n_env.hub_api}/user/{n_env.user}/naas/?filter={file_path_base64}"
-            )
-        else:
-            link_url = f"{n_env.hub_api}/naas/?filter={file_path_base64}"
+        link_url = f"{n_env.user_url}/naas/?filter={file_path_base64}"
         logo_url = f"{encode_proxy_url(t_asset)}/naas_logo.png"
         try:
             data = {

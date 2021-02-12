@@ -17,8 +17,8 @@ LABEL org.label-schema.build-date=$BUILD_DATE \
     org.label-schema.schema-version="1.0"
 
 
-RUN git config --global credential.helper store #Auto save git credentials
+
 RUN python3 -m pip install --upgrade pip
 RUN python3 -m pip install --no-cache naas_drivers naas==$VERSION
-RUN cp /etc/jupyter/naas_logo_n.ico /opt/conda/lib/python3.8/site-packages/notebook/static/base/images/favicon.ico
+RUN cp /etc/naas/naas_logo_n.ico /opt/conda/lib/python3.8/site-packages/notebook/static/base/images/favicon.ico
 RUN (echo ""; echo "os.system('python -m naas.runner &')"; echo "") >> /etc/jupyter/jupyter_notebook_config.py

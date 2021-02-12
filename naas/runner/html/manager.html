@@ -5,8 +5,17 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vue-good-table@2.21.1/dist/vue-good-table.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@1.9.5/dist/tailwind.min.css">
     <link rel="icon" href="asset/naas_fav.svg" />
+    <meta charset="utf-8">
+    <meta name="theme-color" content="#000000">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="apple-mobile-web-app-title" content="Naas | Manager">
+    <meta name="mobile-web-app-capable" content="yes">
     <title>Naas | Manager</title>
     <style>
+        html {
+            height: 100vh;
+            width: 100vw;
+        }
         #cs_loader_wrap {
             display: flex;
             justify-content: center;
@@ -327,8 +336,8 @@
     <script type="text/javascript">window.$crisp=[];window.CRISP_WEBSITE_ID="a64b999e-e44c-44ee-928f-5cd0233f9586";(function(){d=document;s=d.createElement("script");s.src="https://client.crisp.chat/l.js";s.async=1;d.getElementsByTagName("head")[0].appendChild(s);})();</script>
 </head>
 
-<body>
-    <div id="app" class="w-full bg-black">
+<body class="h-full">
+    <div id="app" class="w-full bg-black h-full">
         <div id="cs_loader_wrap" v-if="loading">
             <div id="cs_logo_wrap">
                 <img id="cs_logo_loading" alt="Naas logo" src="asset/naas_logo.svg" />

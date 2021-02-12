@@ -1,4 +1,4 @@
-from .types import t_scheduler, t_output
+from .types import t_scheduler, t_output, t_add, t_update
 from .manager import Manager
 import pretty_cron
 import requests
@@ -90,10 +90,17 @@ class Scheduler:
             print(f"WARNING : Recurrence wrong format {recurrence}")
             return
         current_file = self.manager.get_path(path)
+        status = t_add
+        try:
+            self.manager.get_value(current_file, False)
+            status = t_update
+        except:  # noqa: E722
+            pass
         self.manager.add_prod(
             {
                 "type": self.role,
                 "path": current_file,
+                "status": status,
                 "params": params,
                 "value": recurrence,
             },

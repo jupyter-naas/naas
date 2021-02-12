@@ -8,13 +8,14 @@ class n_env:
     _version = None
     _remote_mode = False
     _api_port = None
-    _env_mode = None
     _notif_api = None
     _callback_api = None
     _proxy_api = None
     _hub_api = None
 
     _naas_folder = None
+
+    _current = {}
 
     _server_root = None
     _shell_user = None
@@ -38,12 +39,12 @@ class n_env:
         self._api_port = api_port
 
     @property
-    def env_mode(self):
-        return self._env_mode or os.environ.get("NAAS_ENV")
+    def current(self):
+        return self._current
 
-    @env_mode.setter
-    def env_mode(self, env_mode: str):
-        self._env_mode = env_mode
+    @current.setter
+    def current(self, current):
+        self._current = current
 
     @property
     def version(self):
@@ -109,6 +110,15 @@ class n_env:
     @hub_api.setter
     def hub_api(self, hub_api):
         self._hub_api = hub_api
+
+    @property
+    def user_url(self):
+        if self.user and self.user != "":
+            base_url = f"{self.hub_api}/user/{self.user}"
+        else:
+            base_url = self.hub_api
+        return base_url
+
 
     @property
     def naas_folder(self):

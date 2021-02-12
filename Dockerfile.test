@@ -14,8 +14,7 @@ LABEL org.label-schema.build-date=$BUILD_DATE \
     org.label-schema.vendor="Cashstory, Inc." \
     org.label-schema.schema-version="1.0"
 
-RUN git config --global credential.helper store #Auto save git credentials
-RUN cp /etc/jupyter/naas_logo_n.ico /opt/conda/lib/python3.8/site-packages/notebook/static/base/images/favicon.ico
+RUN cp /etc/naas/naas_logo_n.ico /opt/conda/lib/python3.8/site-packages/notebook/static/base/images/favicon.ico
 COPY naas /home/$NB_USER/naas
 COPY setup.cfg /home/$NB_USER/naas/setup.cfg
 COPY setup.py /home/$NB_USER/naas/setup.py

@@ -61,7 +61,8 @@ async def test_delete(tmp_path):
     assert len(list_job) == 1
     await jobs.update(uid, path, target_type, value, params, t_delete, run_time)
     list_job = await jobs.list(uid)
-    assert len(list_job) == 0
+    assert len(list_job) == 1
+    assert list_job[0].get("status") == t_delete
 
 
 async def test_keep(tmp_path):
@@ -80,7 +81,10 @@ async def test_keep(tmp_path):
     assert len(await jobs_two.list(uid)) == 1
     await jobs.update(uid, path, target_type, value, params, t_delete, run_time)
     jobs_tree = Jobs(logger, False, [])
-    assert len(await jobs_tree.list(uid)) == 0
+    list_job = await jobs.list(uid)
+    assert len(list_job) == 1
+    assert list_job[0].get("status") == t_delete
+    
 
 
 async def test_clean(tmp_path):
@@ -119,6 +123,8 @@ async def test_update(tmp_path):
     assert len(list_job) == 1
     data = await jobs.find_by_path(uid, path, target_type)
     assert data["value"] == new_value
+    assert data["status"] == t_update
     await jobs.update(uid, path, target_type, value, params, t_delete, run_time)
     list_job = await jobs.list(uid)
-    assert len(list_job) == 0
+    assert len(list_job) == 1
+    assert list_job[0].get("status") == t_delete
