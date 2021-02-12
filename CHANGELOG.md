@@ -1,3 +1,22 @@
+## 0.31.0 (2021-02-12)
+
+### Fix
+
+- lint
+- renamed github downloader into downloader
+- use more code from papermill
+- open output for healthy
+- error in test + fix manager
+- binder
+- binder
+- manager usage
+
+### Feat
+
+- add runs in jobs
+- add githubdownlaod
+- add docker env for test
+
 ## 0.30.2 (2021-02-10)
 
 ### Fix
