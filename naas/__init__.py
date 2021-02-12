@@ -16,7 +16,7 @@ from .api import Api
 import requests
 import os
 
-__version__ = "0.30.0"
+__version__ = "0.30.2"
 __github_repo = "jupyter-naas/naas"
 __doc_url = "https://naas.gitbook.io/naas/"
 __canny_js = '<script>!function(w,d,i,s){function l(){if(!d.getElementById(i)){var f=d.getElementsByTagName(s)[0],e=d.createElement(s);e.type="text/javascript",e.async=!0,e.src="https://canny.io/sdk.js",f.parentNode.insertBefore(e,f)}}if("function"!=typeof w.Canny){var c=function(){c.q.push(arguments)};c.q=[],w.Canny=c,"complete"===d.readyState?l():w.attachEvent?w.attachEvent("onload",l):w.addEventListener("load",l,!1)}}(window,document,"canny-jssdk","script");</script>'  # noqa: E501
@@ -81,7 +81,7 @@ def bug_report():
     data = __canny_js
     data += "<div data-canny />"
     data += """
-    <>
+    <script>
         Canny('identify', {
             appID: '5f81748112b5d73b2faf4b15',
             user: {
@@ -93,7 +93,7 @@ def bug_report():
         Canny('render', {
             boardToken: "{BOARD}",
         });
-    </>
+    </script>
     """
 
     data = data.replace("{EMAIL}", str(n_env.user))
@@ -111,7 +111,7 @@ def feature_request():
     data = __canny_js
     data += "<div data-canny />"
     data += """
-    <>
+    <script>
         Canny('identify', {
             appID: '5f81748112b5d73b2faf4b15',
             user: {
@@ -123,7 +123,7 @@ def feature_request():
         Canny('render', {
             boardToken: "{BOARD}",
         });
-    </>
+    </script>
     """
 
     data = data.replace("{EMAIL}", str(n_env.user))

@@ -29,7 +29,12 @@ Whenever you need it (even when you sleep).
     <img width="200px" src="https://raw.githubusercontent.com/jupyter-naas/naas/main/images/gitbook.svg" alt="Gitbooks naas" />
   </a>
  </p>
- 
+
+# Issue
+
+If you found a bug or need a new feature go there :
+https://naas.canny.io/
+
 ## Try Naas
 Using Binder
 You can try out some of Naas features using the My Binder service.
