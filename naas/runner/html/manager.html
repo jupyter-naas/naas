@@ -155,9 +155,23 @@
                 },
             },
             methods: {
+                openOutput(path) {
+                    const url = this.linkTojupOutput(path);
+                    if (url.includes('.ipynb')) {
+                        window.open(url, '_blank');
+                    }
+                },
                 openError(error, path) {
                     const url = this.linkTojupOutput(path);
                     this.$modal.show({
+                        methods: {
+                            openOutput(url) {
+                                if (url.includes('.ipynb')) {
+                                    window.open(url, '_blank');
+                                }
+                                this.$emit('close');
+                            },
+                        },
                         template: `
                         <div class="w-full bg-white rounded-lg shadow-lg">
                             <div class="flex justify-between px-5 py-4 border-b border-gray-100">
@@ -179,7 +193,7 @@
                         
                             <div class="flex justify-end px-5 py-4">
                             <button @click="$emit('close')" class="px-3 py-2 text-sm text-gray-500 transition duration-150 hover:text-gray-600">Close</button>
-                            <button @click="this.window.open(url, '_blank'); $emit('close')" class="px-3 py-2 text-sm text-gray-500 transition duration-150 hover:text-gray-600">Open output</button>
+                            <button @click="openOutput(url)" class="px-3 py-2 text-sm text-gray-500 transition duration-150 hover:text-gray-600">Open output</button>
                             </div>
                         </div>
                         `,
@@ -300,13 +314,11 @@
                     partialList[partialList.length-1] = `output__${partialList[partialList.length-1]}`
                     const partialOutput= partialList.join('/');
                     const fileUrl = `${window.location.protocol}//${this.linkToJup()}/lab/tree${partialOutput}`;
-                    console.log(fileUrl);
                     return fileUrl
                 },
                 linkTojup(link) {
                     const partial = link.replace(this.env.JUPYTER_SERVER_ROOT, '');
                     const fileUrl = `${window.location.protocol}//${this.linkToJup()}/lab/tree${partial}`;
-                    console.log(fileUrl);
                     window.open(fileUrl, '_blank');
                 },
             },
@@ -477,6 +489,8 @@
                     <span v-else-if="props.column.field == 'status'">
                         <a href="#" v-if="props.formattedRow['error']" style="font-weight: bold; color: #f56565;"
                         v-on:click="openError(props.formattedRow['error'], props.formattedRow['filepath'])">error</a>
+                        <a href="#" v-else-if="props.formattedRow[props.column.field] == 'healthy'" style="font-weight: bold; color: #22BC66;"
+                        v-on:click="openOutput(props.formattedRow['filepath'])">healthy</a>
                         <p v-else>{{props.formattedRow[props.column.field]}}</p>
                     </span>
                     <span v-else>

@@ -208,7 +208,7 @@ class Manager:
             raise
 
     def get_file(self, path=None, mode=None, histo=None):
-        if not path and self.is_production():
+        if self.is_production():
             print("No get_prod done you are in production\n")
             return
         current_file = self.get_path(path)
