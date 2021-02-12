@@ -41,7 +41,7 @@ class Jobs:
         "params",
         "lastUpdate",
         "lastRun",
-        "nbRun",
+        "runs",
         "totalRun",
     ]
 
@@ -285,6 +285,11 @@ class Jobs:
                     data = self.__df
                 else:
                     data = self.__df.to_dict("records")
+                    try:
+                        for d in data:
+                            d['runs'] = json.loads(d.get('runs'))
+                    except Exception:
+                        pass
         except Exception as e:
             print("list", e)
         return data
@@ -341,9 +346,8 @@ class Jobs:
                 "status": t_add,
                 "path": path,
                 "params": params,
-                "nbRun": 1 if run_time > 0 else 0,
                 "lastRun": run_time,
-                "totalRun": run_time,
+                "runs": json.dumps([]),
                 "lastUpdate": dt_string,
             }
             cur_df = self.__df.to_dict("records")
@@ -388,10 +392,10 @@ class Jobs:
         self.__df.at[index, "params"] = params
         self.__df.at[index, "lastUpdate"] = dt_string
         if run_time > 0:
-            self.__df.at[index, "nbRun"] = self.__df.at[index, "nbRun"] + 1
+            runs = json.loads(self.__df.at[index, "runs"])
+            runs.append({"duration": run_time, "date": dt_string, "status": status})
+            self.__df.at[index, "runs"] = json.dumps(runs)
             self.__df.at[index, "lastRun"] = run_time
-            total_run = float(self.__df.at[index, "totalRun"])
-            self.__df.at[index, "totalRun"] = run_time + total_run
             return t_update
         else:
             return t_skip

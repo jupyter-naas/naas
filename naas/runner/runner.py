@@ -128,9 +128,7 @@ class Runner:
         )
         self.__app.register_listener(self.initialize_before_stop, "before_server_stop")
         self.__app.add_route(
-            EnvController.as_view(
-                self.__logger,
-            ),
+            EnvController.as_view(),
             "/env",
         )
         self.__app.add_route(LogsController.as_view(self.__logger), "/log")

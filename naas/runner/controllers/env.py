@@ -8,19 +8,15 @@ endpoint = "env"
 
 
 class EnvController(HTTPMethodView):
-    __logger = None
 
     def __init__(
         self,
-        logger,
         *args,
         **kwargs
     ):
         super(EnvController, self).__init__(*args, **kwargs)
-        self.__logger = logger
 
     async def get(self, request):
-        uid = str(uuid.uuid4())
         env = {
             "status": t_health,
             "version": n_env.version,
@@ -32,7 +28,4 @@ class EnvController(HTTPMethodView):
             "PUBLIC_PROXY_API": n_env.proxy_api,
             "TZ": n_env.tz,
         }
-        self.__logger.info(
-            {"id": uid, "type": t_asset, "status": "send", "filepath": endpoint}
-        )
         return json(env)

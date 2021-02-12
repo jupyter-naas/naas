@@ -141,7 +141,7 @@ def prepare_notebook_naas(nb, input_path, uid, runtime):
     language = nb.metadata.kernelspec.language
     if language == 'python':
         current_data = {"uid": uid, "path": input_path, "env": "RUNNER", "runtime": runtime}
-        param_content = f"import naas\nnaas.n_env.current = {json.dumps(current_data)}"
+        param_content = f"import naas\nnaas.n_env.current = {json.dumps(current_data, indent=4)}"
         newcell = nbformat.v4.new_code_cell(source=param_content)
         newcell.metadata['tags'] = ['naas-injected']
         nb.cells = [newcell] + nb.cells
