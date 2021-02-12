@@ -169,7 +169,7 @@ def auto_update():
 
 
 def get_download_url(url):
-    dl_url = f"{n_env.hub_api}/user-redirect/naas/downloader?url={url}"
+    dl_url = f"{n_env.any_user_url}/naas/downloader?url={url}"
     print("❤️ Copy this url and spread it to the world\n")
     copy_button(dl_url)
     return dl_url
