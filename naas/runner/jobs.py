@@ -401,7 +401,9 @@ class Jobs:
         self.__df.at[index, "lastUpdate"] = dt_string
         if run_time > 0:
             runs = json.loads(self.__df.at[index, "runs"])
-            runs.append({"duration": run_time, "date": dt_string, "status": status})
+            runs.append(
+                {"id": uid, "duration": run_time, "date": dt_string, "status": status}
+            )
             self.__df.at[index, "runs"] = json.dumps(runs)
             self.__df.at[index, "lastRun"] = run_time
             return t_update
