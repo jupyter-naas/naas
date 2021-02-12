@@ -1,3 +1,15 @@
+## 0.32.0 (2021-02-12)
+
+### Feat
+
+- add get_download_url
+
+### Fix
+
+- downloader url when htp already inside
+- logging
+- logging
+
 ## 0.31.2 (2021-02-12)
 
 ### Fix
