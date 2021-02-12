@@ -5,9 +5,9 @@ import nbformat
 from pathlib import Path
 
 from papermill.log import logger
-from papermill.exceptions import PapermillExecutionError
 from papermill.iorw import get_pretty_path, local_file_io_cwd, load_notebook_node, write_ipynb
 from papermill.engines import papermill_engines
+from papermill.execute import prepare_notebook_metadata, remove_error_markers, raise_for_execution_errors
 from papermill.utils import chdir
 from papermill.parameterize import add_builtin_parameters, parameterize_notebook, parameterize_path
 import json
@@ -94,6 +94,7 @@ def execute_notebook(
         nb = prepare_notebook_metadata(nb, input_path, output_path, report_mode)
         # clear out any existing error markers from previous papermill runs
         nb = remove_error_markers(nb)
+        # add naas code to make naas feature act differently in production
         nb = prepare_notebook_naas(nb, input_path, uid, runtime)
 
         if not prepare_only:
@@ -146,108 +147,3 @@ def prepare_notebook_naas(nb, input_path, uid, runtime):
         newcell.metadata['tags'] = ['naas-injected']
         nb.cells = [newcell] + nb.cells
     return nb
-
-
-def prepare_notebook_metadata(nb, input_path, output_path, report_mode=False):
-    """Prepare metadata associated with a notebook and its cells
-    Parameters
-    ----------
-    nb : NotebookNode
-       Executable notebook object
-    input_path : str
-        Path to input notebook
-    output_path : str
-       Path to write executed notebook
-    report_mode : bool, optional
-       Flag to set report mode
-    """
-    # Copy the nb object to avoid polluting the input
-    nb = copy.deepcopy(nb)
-
-    # Hide input if report-mode is set to True.
-    if report_mode:
-        for cell in nb.cells:
-            if cell.cell_type == 'code':
-                cell.metadata['jupyter'] = cell.get('jupyter', {})
-                cell.metadata['jupyter']['source_hidden'] = True
-
-    # Record specified environment variable values.
-    nb.metadata.papermill['input_path'] = input_path
-    nb.metadata.papermill['output_path'] = output_path
-
-    return nb
-
-
-ERROR_MARKER_TAG = "papermill-error-cell-tag"
-
-ERROR_STYLE = (
-    'style="color:red; font-family:Helvetica Neue, Helvetica, Arial, sans-serif; font-size:2em;"'
-)
-
-ERROR_MESSAGE_TEMPLATE = (
-    '<span ' + ERROR_STYLE + '>'
-    "An Exception was encountered at '<a href=\"#papermill-error-cell\">In [%s]</a>'."
-    '</span>'
-)
-
-ERROR_ANCHOR_MSG = (
-    '<span id="papermill-error-cell" ' + ERROR_STYLE + '>'
-    'Execution using papermill encountered an exception here and stopped:'
-    '</span>'
-)
-
-
-def remove_error_markers(nb):
-    nb = copy.deepcopy(nb)
-    nb.cells = [
-        cell
-        for cell in nb.cells
-        if ERROR_MARKER_TAG not in cell.metadata.get("tags", [])
-    ]
-    return nb
-
-
-def raise_for_execution_errors(nb, output_path):
-    """Assigned parameters into the appropriate place in the input notebook
-    Parameters
-    ----------
-    nb : NotebookNode
-       Executable notebook object
-    output_path : str
-       Path to write executed notebook
-    """
-    error = None
-    for index, cell in enumerate(nb.cells):
-        if cell.get("outputs") is None:
-            continue
-
-        for output in cell.outputs:
-            if output.output_type == "error":
-                if output.ename == "SystemExit" and (output.evalue == "" or output.evalue == "0"):
-                    continue
-                error = PapermillExecutionError(
-                    cell_index=index,
-                    exec_count=cell.execution_count,
-                    source=cell.source,
-                    ename=output.ename,
-                    evalue=output.evalue,
-                    traceback=output.traceback,
-                )
-                break
-
-    if error:
-        # Write notebook back out with the Error Message at the top of the Notebook, and a link to
-        # the relevant cell (by adding a note just before the failure with an HTML anchor)
-        error_msg = ERROR_MESSAGE_TEMPLATE % str(error.exec_count)
-        error_msg_cell = nbformat.v4.new_markdown_cell(error_msg)
-        error_msg_cell.metadata['tags'] = [ERROR_MARKER_TAG]
-        error_anchor_cell = nbformat.v4.new_markdown_cell(ERROR_ANCHOR_MSG)
-        error_anchor_cell.metadata['tags'] = [ERROR_MARKER_TAG]
-
-        # put the anchor before the cell with the error, before all the indices change due to the
-        # heading-prepending
-        nb.cells.insert(error.cell_index, error_anchor_cell)
-        nb.cells.insert(0, error_msg_cell)
-
-        write_ipynb(nb, output_path)
-        raise error
