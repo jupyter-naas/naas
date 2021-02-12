@@ -5,7 +5,7 @@ import uuid
 
 t_notebook = "notebook"
 t_asset = "asset"
-t_github_download = "github_download"
+t_downloader = "downloader"
 t_dependency = "dependency"
 t_scheduler = "scheduler"
 

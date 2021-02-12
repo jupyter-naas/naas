@@ -1,5 +1,5 @@
-from naas.types import t_main, t_notebook, t_scheduler, t_asset, t_job, t_secret, t_tz, t_github_download
-from .controllers.github_download import GithubDownloadController
+from naas.types import t_main, t_notebook, t_scheduler, t_asset, t_job, t_secret, t_tz, t_downloader
+from .controllers.downloader import DownloaderController
 from sentry_sdk.integrations.sanic import SanicIntegration
 from .controllers.scheduler import SchedulerController
 from .controllers.assets import AssetsController
@@ -81,8 +81,8 @@ class Runner:
                 f"/{t_scheduler}/<mode>",
             )
             self.__app.add_route(
-                GithubDownloadController.as_view(self.__logger),
-                f"/{t_github_download}",
+                DownloaderController.as_view(self.__logger),
+                f"/{t_downloader}",
             )
             self.__app.add_route(
                 AssetsController.as_view(
