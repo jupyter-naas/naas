@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml" class="bg-black">
 
 <head>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vue-good-table@2.21.1/dist/vue-good-table.min.css">
@@ -12,10 +12,6 @@
     <meta name="mobile-web-app-capable" content="yes">
     <title>Naas | Manager</title>
     <style>
-        html {
-            height: 100vh;
-            width: 100vw;
-        }
         #cs_loader_wrap {
             display: flex;
             justify-content: center;
@@ -109,10 +105,6 @@
                 ],
                 columns_tasks: [
                     {
-                        label: 'ID',
-                        field: 'id',
-                    },
-                    {
                         label: 'Type',
                         field: 'type',
                     },
@@ -121,17 +113,20 @@
                         field: 'path',
                     },
                     {
-                        label: 'Status',
-                        field: 'status',
-                    },
-
-                    {
                         label: 'Value',
                         field: 'value',
                     },
                     {
-                        label: 'Last update',
+                        label: 'Status',
+                        field: 'status',
+                    },
+                    {
+                        label: 'Last date',
                         field: 'lastUpdate',
+                    },
+                    {
+                        label: 'Last ID',
+                        field: 'id',
                     },
                     {
                         label: 'Last duration (s)',
@@ -254,7 +249,7 @@
                 stripNaasPath(path) {
                     return path.replace(this.env.NAAS_BASE_PATH, '').replace(`${this.env.JUPYTER_SERVER_ROOT}/`, '')
                 },
-                getUrl(value, type) {
+                openUrl(value, type) {
                     let urlList = window.location.href.split('/');
                     urlList.pop()
                     let newUrl = `${urlList.join('/')}`
@@ -263,7 +258,7 @@
                     } else {
                         newUrl = `${newUrl}/asset/${value}`
                     }
-                    return newUrl
+                    window.open(newUrl, '_blank');
                 },
                 load_data() {
                     const all_loads = [];
@@ -364,7 +359,7 @@
                             <img alt="Naas logo" src="asset/naas_fav.svg" width="70" height="70" />
                         </div>
                         <div class="my-auto">
-                            <a :href="linkToLab()"
+                            <a href="#" :href="linkToLab()"
                                 class="font-sans text-2xl font-bold text-gray-100 no-underline hover:text-#4299e1-dark">Manager</a>
                         </div>
                     </div>
@@ -436,9 +431,9 @@
                         <span v-else style="font-weight: bold; color: #ed8936;">{{props.row.status}}</span>
                     </span>
                     <span v-else-if="props.column.field == 'value'">
-                        <a style="font-weight: bold; color: #4299e1;"
+                        <a href="#" style="font-weight: bold; color: #4299e1;"
                             v-if="props.row.type == 'asset' || props.row.type == 'notebook'"
-                            :href="getUrl(props.row.value,props.row.type)">{{props.formattedRow[props.column.field].substring(0, 6)}} </a>
+                            v-on:click="openUrl(props.formattedRow[props.column.field])">{{props.formattedRow[props.column.field].substring(0, 6)}} </a>
                         <span v-else>{{props.formattedRow[props.column.field]}}</span>
                     </span>
                     <span v-else-if="props.column.field == 'id'">
@@ -446,7 +441,7 @@
                             v-on:click="setFilter(props.formattedRow[props.column.field])">{{props.formattedRow[props.column.field].substring(0, 6)}}</a>
                     </span>
                     <span v-else-if="props.column.field == 'path'">
-                        <a v-on:click="linkTojup(props.formattedRow[props.column.field])" style="font-weight: bold; color: #22BC66;"
+                        <a href="#" v-on:click="linkTojup(props.formattedRow[props.column.field])" style="font-weight: bold; color: #22BC66;"
                             >{{stripNaasPath(props.formattedRow[props.column.field])}}</a>
                     </span>
                     <span v-else>

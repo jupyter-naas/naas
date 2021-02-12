@@ -183,7 +183,7 @@ async def test_dependency(mocker, requests_mock, test_runner, tmp_path):
     assert res_job.get("type") == t_dependency
     assert res_job.get("path") == real_path
     assert res_job.get("status") == t_add
-    assert res_job.get("nbRun") == 0
+    assert len(res_job.get("runs")) == 0
     assert os.path.isfile(real_path)
     dependency.get(new_path)
     filename = os.path.basename(new_path)
@@ -241,7 +241,7 @@ async def test_asset(mocker, requests_mock, test_runner, tmp_path):
     token = url.split("/")[-1]
     assert res_job.get("value") == token
     assert res_job.get("status") == t_add
-    assert res_job.get("nbRun") == 0
+    assert len(res_job.get("runs")) == 0
     response = await test_runner.get(f"/{t_asset}/{token}")
     assert response.status == 200
     resp_json = await response.json()
@@ -296,7 +296,7 @@ async def test_notebooks(mocker, requests_mock, test_runner, tmp_path):
     token = url.split("/")[-1]
     assert res_job.get("value") == token
     assert res_job.get("status") == t_add
-    assert res_job.get("nbRun") == 0
+    assert len(res_job.get("runs")) == 0
     list_in_prod = webhook.list(new_path)
     assert len(list_in_prod) == 1
     response = await test_runner.get(f"/{t_notebook}/{token}")
@@ -323,7 +323,7 @@ async def test_notebooks(mocker, requests_mock, test_runner, tmp_path):
     assert res_job.get("path") == real_path
     assert res_job.get("value") == token
     assert res_job.get("status") == t_health
-    assert res_job.get("nbRun") == 1
+    assert len(res_job.get("runs")) == 1
     response = await test_runner.post(f"/{t_notebook}/{token}", json={"foo": "bar"})
     assert response.status == 200
     resp_json = await response.json()
