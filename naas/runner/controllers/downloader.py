@@ -35,7 +35,12 @@ class DownloaderController(HTTPMethodView):
             self.__logger.info(
                 {"id": uid, "type": t_downloader, "status": "send", "filepath": target}
             )
-            redirect_to = f"{request.scheme}://{n_env.user_url}/lab/tree/{file_name}"
+            if "http" not in n_env.user_url:
+                redirect_to = (
+                    f"{request.scheme}://{n_env.user_url}/lab/tree/{file_name}"
+                )
+            else:
+                redirect_to = f"{n_env.user_url}/lab/tree/{file_name}"
             return redirect(redirect_to)
         except Exception as e:
             tb = traceback.format_exc()

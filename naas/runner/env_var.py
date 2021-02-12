@@ -112,6 +112,14 @@ class n_env:
         self._hub_api = hub_api
 
     @property
+    def any_user_url(self):
+        if self.user and self.user != "":
+            base_url = f"{self.hub_api}/user-redirect"
+        else:
+            base_url = self.hub_api
+        return base_url
+
+    @property
     def user_url(self):
         if self.user and self.user != "":
             base_url = f"{self.hub_api}/user/{self.user}"
