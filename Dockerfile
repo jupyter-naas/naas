@@ -17,6 +17,7 @@ LABEL org.label-schema.build-date=$BUILD_DATE \
     org.label-schema.schema-version="1.0"
 
 
+# https://app.naas.ai/user-redirect/naas => redirect to naas
 
 RUN python3 -m pip install --upgrade pip
 RUN python3 -m pip install --no-cache naas_drivers naas==$VERSION
