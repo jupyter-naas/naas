@@ -446,11 +446,11 @@
                 <template slot="table-row" slot-scope="props">
                     <span v-if="props.column.field == 'status'">
                         <span v-if="props.row.status === 'healthy'"
-                            style="font-weight: bold; color: #22BC66;">OK</span>
+                            style="font-weight: bold; color: #22BC66;">{{props.formattedRow[props.column.field]}}</span>
                         <span
                             v-else-if="props.row.status === 'error' || props.row.status === 'exception' || props.row.status === 'not_found'"
-                            style="font-weight: bold; color: #f56565;">KO</span>
-                        <span v-else style="font-weight: bold; color: #ed8936;">{{props.row.status}}</span>
+                            style="font-weight: bold; color: #f56565;">{{props.formattedRow[props.column.field]}}</span>
+                        <span v-else style="font-weight: bold; color: #ed8936;">{{{{props.formattedRow[props.column.field]}}}}</span>
                     </span>
                     <span v-else-if="props.column.field == 'value'">
                         <a href="#" style="font-weight: bold; color: #4299e1;"
