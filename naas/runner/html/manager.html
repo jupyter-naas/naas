@@ -330,12 +330,12 @@
                     const partialList = partial.split('/');
                     partialList[partialList.length-1] = `output__${partialList[partialList.length-1]}`
                     const partialOutput= partialList.join('/');
-                    const fileUrl = `${window.location.protocol}//${this.linkToJup()}/lab/tree${partialOutput}`;
+                    const fileUrl = `${window.location.protocol}://${this.linkToJup()}/lab/tree${partialOutput}`;
                     return fileUrl
                 },
                 linkTojup(link) {
                     const partial = link.replace(this.env.JUPYTER_SERVER_ROOT, '');
-                    const fileUrl = `${window.location.protocol}//${this.linkToJup()}/lab/tree${partial}`;
+                    const fileUrl = `${window.location.protocol}://${this.linkToJup()}/lab/tree${partial}`;
                     window.open(fileUrl, '_blank');
                 },
             },
