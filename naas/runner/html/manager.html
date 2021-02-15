@@ -103,7 +103,7 @@
                         hidden: true,
                     },
                 ],
-                columns_tasks: [
+                columns_jobs: [
                     {
                         label: 'Type',
                         field: 'type',
@@ -142,7 +142,7 @@
                     page: 1,
                     perPage: 15
                 },
-                tasks: []
+                jobs: []
             },
             watch: {
                 filter(val) {
@@ -275,7 +275,12 @@
                     all_loads.push(axios.get('job').then((response) => {
                         if (response && !response.error) {
                             try {
-                                this.tasks = response.data;
+                                this.jobs = [];
+                                response.data.forEach((job) => {
+                                    if (job.status !== 'delete') {
+                                        this.jobs.push(job)
+                                    }
+                                })
                             } catch (err) {
                                 console.error(err);
                             }
@@ -404,7 +409,7 @@
         <div class="w-full py-8 md:px-12">
             <h2 class="text-2xl font-semibold text-gray-800"><span
                     class="text-white">Tasks</span></h2>
-            <vue-good-table :columns="columns_tasks" :rows="tasks" :search-options="{
+            <vue-good-table :columns="columns_jobs" :rows="jobs" :search-options="{
                     enabled: true,
                     externalQuery: filter
                 }" :pagination-options="{
