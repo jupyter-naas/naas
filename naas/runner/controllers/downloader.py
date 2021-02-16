@@ -23,7 +23,7 @@ class DownloaderController(HTTPMethodView):
         redirect_to = None
         if create:
             try:
-                notebook_fname = f'{create}.ipynb'
+                notebook_fname = f"{create}.ipynb"
                 FCM().new(path=notebook_fname)
                 redirect_to = f"{n_env.user_url}/lab/tree/{notebook_fname}"
             except Exception as e:

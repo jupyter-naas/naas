@@ -1,4 +1,12 @@
-from .types import t_notebook, t_output, guess_type, copy_button, t_add, t_update, t_delete
+from .types import (
+    t_notebook,
+    t_output,
+    guess_type,
+    copy_button,
+    t_add,
+    t_update,
+    t_delete,
+)
 from IPython.core.display import display, HTML, JSON, Image, SVG, Markdown
 from .runner.env_var import n_env
 from .manager import Manager

@@ -30,10 +30,12 @@ def download_file(url):
 def __wp_set_for_open(url):
     try:
         filename_full = url.split("/")[-1]
-        filename = filename_full.split('.')[0]
-        new_wp = os.path.join(n_env.path_naas_folder, f'{filename}_workspace.json')
+        filename_num = filename_full.split(".")[0]
+        filename = filename_num.split("__")[1]
+        new_wp = os.path.join(n_env.path_naas_folder, f"{filename}_workspace.json")
         if not os.path.exists(new_wp):
-            filename_full = download_file(url)
+            old_filename = download_file(url)
+            os.system(f"mv {old_filename} {filename}.ipynb")
             with open(__jup_def_set_workspace, "r") as fh:
                 content_wp = fh.read()
                 new_content_wp = content_wp.replace("{NB_NAME}", filename)
@@ -50,9 +52,9 @@ def __get_onboarding_list():
     try:
         r = requests.get(url)
         data = r.json()
-        for ff in data.get('tree'):
-            path = ff.get('path')
-            if not path.startswith('.') and path.endswith('.ipynb'):
+        for ff in data.get("tree"):
+            path = ff.get("path")
+            if not path.startswith(".") and path.endswith(".ipynb"):
                 base = __github_base_url.replace("{REPO}", __github_starter_repo)
                 good_url = f"{base}{path}"
                 url_list.append(good_url)
@@ -68,6 +70,9 @@ def init_onborading():
             print("In Naas Docker machine")
             file_list = __get_onboarding_list()
             for url in file_list:
-                __wp_set_for_open(url)
+                try:
+                    __wp_set_for_open(url)
+                except Exception as e:
+                    print("error for", url, e)
     except Exception as e:
         print("Cannot config jupyter", e)
