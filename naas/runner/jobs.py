@@ -90,12 +90,15 @@ class Jobs:
         self.__cleanup_jobs()
 
     def __cleanup_jobs(self):
-        if self.__df is None or len(self.__df) == 0:
-            self.__df = pd.DataFrame(columns=self.__colums)
-        if len(self.__df) > 0:
-            self.__df = self.__df[self.__df.type.isin(filters)]
-            self.__dedup_jobs()
-            self.__migrate_oldPath()
+        try:
+            if self.__df is None or len(self.__df) == 0:
+                self.__df = pd.DataFrame(columns=self.__colums)
+            if len(self.__df) > 0:
+                self.__df = self.__df[self.__df.type.isin(filters)]
+                self.__dedup_jobs()
+                self.__migrate_oldPath()
+        except Exception as err:
+            print("Cannot cleanup", err)
 
     def __migrate_oldPath(self):
         cur_jobs = self.__df.to_dict("records")
