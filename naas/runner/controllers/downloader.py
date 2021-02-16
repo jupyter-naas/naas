@@ -25,7 +25,7 @@ class DownloaderController(HTTPMethodView):
             try:
                 notebook_fname = f"{create}.ipynb"
                 FCM().new(path=notebook_fname)
-                redirect_to = f"{n_env.user_url}/lab/tree/{notebook_fname}"
+                redirect_to = f"{request.scheme}://{n_env.user_url}/lab/tree/{notebook_fname}"
             except Exception as e:
                 tb = traceback.format_exc()
                 self.__logger.error(
