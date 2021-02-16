@@ -3,8 +3,6 @@ FROM jupyternaas/singleuser:latest
 ARG NB_USER
 ARG NB_UID
 
-RUN cp /etc/naas/naas_logo_n.ico /opt/conda/lib/python3.8/site-packages/notebook/static/base/images/favicon.ico
-RUN git clone https://github.com/jupyter-naas/starters.git /home/$NB_USER/starters
 COPY naas /home/$NB_USER/naas
 COPY setup.cfg /home/$NB_USER/naas/setup.cfg
 COPY setup.py /home/$NB_USER/naas/setup.py
