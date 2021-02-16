@@ -1,0 +1,35 @@
+{
+    "data": {
+      "layout-restorer:data": {
+        "main": {
+          "dock": {
+            "type": "tab-area",
+            "currentIndex": 0,
+            "widgets": ["notebook:{NB_NAME}.ipynb"]
+          },
+          "mode": "multiple-document",
+          "current": "notebook:{NB_NAME}.ipynb"
+        },
+        "left": {
+          "collapsed": false,
+          "current": "@jupyterlab/toc:plugin",
+          "widgets": [
+            "filebrowser",
+            "running-sessions",
+            "git-sessions",
+            "command-palette",
+            "jp-property-inspector",
+            "tab-manager",
+            "@jupyterlab/toc:plugin",
+            "extensionmanager.main-view"
+          ]
+        },
+        "right": { "collapsed": true, "widgets": [] }
+      },
+      "notebook:{NB_NAME}.ipynb": {
+        "data": { "path": "{NB_NAME}.ipynb", "factory": "Notebook" }
+      }
+    },
+    "metadata": { "id": "/lab" }
+  }
+  

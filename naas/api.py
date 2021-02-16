@@ -1,4 +1,12 @@
-from .types import t_notebook, t_output, guess_type, copy_button, t_add, t_update
+from .types import (
+    t_notebook,
+    t_output,
+    guess_type,
+    copy_button,
+    t_add,
+    t_update,
+    t_delete,
+)
 from IPython.core.display import display, HTML, JSON, Image, SVG, Markdown
 from .runner.env_var import n_env
 from .manager import Manager
@@ -56,14 +64,14 @@ class Api:
         if raw:
             json_filtered = []
             for item in json_data:
-                if item["type"] == self.role:
+                if item["type"] == self.role and item["status"] != t_delete:
                     print(item)
                     json_filtered.append(item)
                 return json_filtered
         else:
             for item in json_data:
                 kind = None
-                if item["type"] == self.role:
+                if item["type"] == self.role and item["status"] != t_delete:
                     kind = f"callable with this url {self.manager.proxy_url('notebooks', item['value'])}"
                     path = (
                         item["path"]
