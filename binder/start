@@ -1,5 +1,12 @@
-#!/bin/bash
+#!/usr/bin/env python3
+import sys
+import shutil
+import os
 
-nohup python -m naas.runner &
+argv = sys.argv[1:] + ['--config', 'binder/jupyter_notebook_config.py']
+print(argv)
 
-exec "$@"
+with open('startup_args.txt', 'w') as fid:
+    fid.write(str(argv))
+
+os.execv(shutil.which(argv[0]), argv)
