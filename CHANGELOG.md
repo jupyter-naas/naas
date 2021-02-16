@@ -1,3 +1,18 @@
+## 0.33.0 (2021-02-16)
+
+### Fix
+
+- error in html manager
+- onboarding
+- output of naas
+- protocole
+
+### Feat
+
+- add onboarding system
+- add duration in hhmmss
+- filter job deleted
+
 ## 0.32.1 (2021-02-12)
 
 ### Fix
