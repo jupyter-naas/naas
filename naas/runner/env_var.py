@@ -17,6 +17,7 @@ class n_env:
 
     _current = {}
 
+    _custom_path = None
     _server_root = None
     _shell_user = None
 
@@ -141,13 +142,21 @@ class n_env:
             "JUPYTER_SERVER_ROOT", str(Path.home())
         )
 
-    @property
-    def path_naas_folder(self):
-        return os.path.join(self.server_root, self.naas_folder)
-
     @server_root.setter
     def server_root(self, server_root):
         self._server_root = server_root
+
+    @property
+    def custom_path(self):
+        return self._custom_path or os.environ.get("NAAS_CUSTOM_FOLDER", "/etc/naas")
+
+    @custom_path.setter
+    def custom_path(self, custom_path):
+        self._custom_path = custom_path
+
+    @property
+    def path_naas_folder(self):
+        return os.path.join(self.server_root, self.naas_folder)
 
     @property
     def shell_user(self):

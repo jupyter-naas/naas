@@ -1,10 +1,10 @@
-from sanic.response import redirect, text
+from notebook.services.contents.filemanager import FileContentsManager as FCM
+from naas.onboarding import download_file
+from sanic.response import redirect, json
 from sanic.views import HTTPMethodView
 from naas.runner.env_var import n_env
 from naas.types import t_downloader
-import urllib.parse
 import traceback
-import requests
 import uuid
 
 
@@ -17,23 +17,25 @@ class DownloaderController(HTTPMethodView):
 
     async def get(self, request):
         uid = str(uuid.uuid4())
-        target = str(request.args.get("url", ""))
-        try:
-            raw_target = target
-            if "github.com" in raw_target:
-                raw_target = raw_target.replace(
-                    "https://github.com/", "https://raw.githubusercontent.com/"
+        url = str(request.args.get("url", ""))
+        mode_api = bool(request.args.get("api", None))
+        create = str(request.args.get("create", None))
+        redirect_to = None
+        if create:
+            try:
+                notebook_fname = f'{create}.ipynb'
+                FCM().new(path=notebook_fname)
+                redirect_to = f"{n_env.user_url}/lab/tree/{notebook_fname}"
+            except Exception as e:
+                tb = traceback.format_exc()
+                self.__logger.error(
+                    {"id": uid, "type": t_downloader, "status": "send", "filepath": url}
                 )
-                raw_target = raw_target.replace("/blob/", "/")
-            r = requests.get(raw_target)
-
-            file_name = raw_target.split("/")[-1]
-            file_name = urllib.parse.unquote(file_name)
-
-            with open(file_name, "wb") as f:
-                f.write(r.content)
+                return json({"status": e, "tb": str(tb)})
+        try:
+            file_name = download_file(url)
             self.__logger.info(
-                {"id": uid, "type": t_downloader, "status": "send", "filepath": target}
+                {"id": uid, "type": t_downloader, "status": "send", "filepath": url}
             )
             if "http" not in n_env.user_url:
                 redirect_to = (
@@ -41,10 +43,13 @@ class DownloaderController(HTTPMethodView):
                 )
             else:
                 redirect_to = f"{n_env.user_url}/lab/tree/{file_name}"
-            return redirect(redirect_to)
         except Exception as e:
             tb = traceback.format_exc()
             self.__logger.error(
-                {"id": uid, "type": t_downloader, "status": "send", "filepath": target}
+                {"id": uid, "type": t_downloader, "status": "send", "filepath": url}
             )
-            return text(e, tb)
+            return json({"status": e, "tb": str(tb)})
+        if mode_api is None:
+            return redirect(redirect_to)
+        else:
+            return json({"status": "ok"})

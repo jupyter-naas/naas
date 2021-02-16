@@ -63,7 +63,6 @@ def guess_ext(cur_type):
         result_ext = ".ipynb"
     return result_ext
 
-
 def copy_clipboard(text):
     uid = uuid.uuid4().hex
     js = """<script>

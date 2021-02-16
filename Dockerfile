@@ -21,5 +21,17 @@ LABEL org.label-schema.build-date=$BUILD_DATE \
 
 RUN python3 -m pip install --upgrade pip
 RUN python3 -m pip install --no-cache naas_drivers naas==$VERSION
-RUN cp /etc/naas/naas_logo_n.ico /opt/conda/lib/python3.8/site-packages/notebook/static/base/images/favicon.ico
-RUN (echo ""; echo "os.system('python -m naas.runner &')"; echo "") >> /etc/jupyter/jupyter_notebook_config.py
+
+RUN mkdir /etc/naas
+COPY binder/jupyter_notebook_config.py /etc/naas/jupyter_notebook_config.py
+COPY binder/jupyter_notebook_config.py /etc/jupyter/jupyter_notebook_config.py
+COPY custom/set_workspace.json /etc/naas/set_workspace.json
+COPY custom/naas_logo.svg /etc/naas/naas_logo.svg
+COPY custom/naas_logo_n.ico /etc/naas/naas_logo_n.ico
+COPY custom/naas_fav.svg /etc/naas/naas_fav.svg
+COPY custom/custom.css /etc/naas/custom.css
+COPY custom/overrides.json /opt/conda/share/jupyter/lab/settings/overrides.json
+# https://github.com/jupyterlab/jupyterlab/issues/5502 for the custom sidebar order
+COPY custom/naas_logo_n.ico /opt/conda/lib/python3.8/site-packages/notebook/static/favicon.ico
+COPY custom/naas_logo_n.ico /opt/conda/lib/python3.8/site-packages/notebook/static/base/images/favicon.ico
+RUN cat /etc/naas/custom.css >> /opt/conda/share/jupyter/lab/themes/@jupyterlab/theme-light-extension/index.css

@@ -1,0 +1,75 @@
+{
+    "@jupyterlab/notebook-extension:tracker": {
+        "recordTiming": true,
+        "kernelShutdown": true,
+        "codeCellConfig": {
+            "lineNumbers": true
+        }
+    },
+    "@wallneradam/custom_css:plugin": {
+        "rules": [
+            {
+                "selector": ".p-TabBar-tab",
+                "styles": [
+                    "order: 50"
+                ]
+            },
+            {
+                "selector": ".p-TabBar-tab[data-id='table-of-contents']",
+                "styles": [
+                    "order: 1"
+                ]
+            },
+            {
+                "selector": ".p-TabBar-tab[data-id='filebrowser']",
+                "styles": [
+                    "order: 2"
+                ]
+            },
+            {
+                "selector": ".p-TabBar-tab[data-id='jp-git-sessions']",
+                "styles": [
+                    "order: 4"
+                ]
+            },
+            {
+                "selector": ".p-TabBar-tab[data-id='jupyterlab-quickopen']",
+                "styles": [
+                    "order: 3"
+                ]
+            },
+            {
+                "selector": ".p-TabBar-tab[data-id='jp-property-inspector']",
+                "styles": [
+                    "order: 100",
+                     "margin-right: calc(100vh - (15 * var(--jp-private-sidebar-tab-width)))"
+                    
+                ]
+            },
+            {
+                "selector": ".p-TabBar-tab[data-id='command-palette']",
+                "styles": [
+                    "order: 101"
+                ]
+            },
+            {
+                "selector": ".p-TabBar-tab[data-id='extensionmanager.main-view']",
+                "styles": [
+                    "order: 102"
+                ]
+            },
+             {
+                "selector": ".p-TabBar-tab[data-id='tab-manager']",
+                "styles": [
+                    "display: none"
+                ]
+            },
+             {
+                "selector": ".p-TabBar-tab[data-id='jp-running-sessions']",
+                "styles": [
+                    "order: 103"
+                ]
+            }
+        ]
+    }
+}
