@@ -18,7 +18,7 @@ class DownloaderController(HTTPMethodView):
     async def get(self, request):
         uid = str(uuid.uuid4())
         url = str(request.args.get("url", ""))
-        mode_api = bool(request.args.get("api", None))
+        mode_api = request.args.get("api", None)
         create = str(request.args.get("create", None))
         redirect_to = None
         if create:
