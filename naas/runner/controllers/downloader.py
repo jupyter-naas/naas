@@ -18,14 +18,14 @@ class DownloaderController(HTTPMethodView):
     async def get(self, request):
         uid = str(uuid.uuid4())
         url = str(request.args.get("url", ""))
-        mode_api = bool(request.args.get("api", None))
+        mode_api = request.args.get("api", None)
         create = str(request.args.get("create", None))
         redirect_to = None
         if create:
             try:
                 notebook_fname = f"{create}.ipynb"
                 FCM().new(path=notebook_fname)
-                redirect_to = f"{n_env.user_url}/lab/tree/{notebook_fname}"
+                redirect_to = f"{request.scheme}://{n_env.user_url}/lab/tree/{notebook_fname}"
             except Exception as e:
                 tb = traceback.format_exc()
                 self.__logger.error(

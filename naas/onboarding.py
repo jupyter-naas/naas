@@ -5,9 +5,10 @@ import os
 
 __jup_def_set_workspace = "/etc/naas/set_workspace.json"
 __jup_load_workspace = "jupyter lab workspaces import "
-__github_starter_repo = "jupyter-naas/starters"
-__github_api_url = "https://api.github.com/repos/{REPO}/git/trees/main"
-__github_base_url = "https://github.com/{REPO}/blob/main/"
+__github_repo = "jupyter-naas/starters"
+__github_brach = "main"
+__github_api_url = "https://api.github.com/repos/{REPO}/git/trees/{BRANCH}?recursive=1"
+__github_base_url = "https://github.com/{REPO}/blob/{BRANCH}/"
 
 
 def download_file(url):
@@ -47,7 +48,7 @@ def __wp_set_for_open(url):
 
 
 def __get_onboarding_list():
-    url = __github_api_url.replace("{REPO}", __github_starter_repo)
+    url = __github_api_url.replace("{REPO}", __github_repo).replace("{BRANCH}", __github_brach)
     url_list = []
     try:
         r = requests.get(url)
@@ -55,7 +56,7 @@ def __get_onboarding_list():
         for ff in data.get("tree"):
             path = ff.get("path")
             if not path.startswith(".") and path.endswith(".ipynb"):
-                base = __github_base_url.replace("{REPO}", __github_starter_repo)
+                base = __github_base_url.replace("{REPO}", __github_repo).replace("{BRANCH}", __github_brach)
                 good_url = f"{base}{path}"
                 url_list.append(good_url)
     except Exception as e:
