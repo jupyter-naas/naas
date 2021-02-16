@@ -1,3 +1,11 @@
+## 0.33.2 (2021-02-16)
+
+### Fix
+
+- error in get onboarding files
+- change name of manager type
+- mode_api error
+
 ## 0.33.1 (2021-02-16)
 
 ## 0.33.0 (2021-02-16)
