@@ -1,4 +1,4 @@
-from .types import t_dependency, t_add, t_update
+from .types import t_dependency, t_add, t_update, t_delete
 from .runner.env_var import n_env
 from .manager import Manager
 
@@ -26,13 +26,13 @@ class Dependency:
         if raw:
             json_filtered = []
             for item in json_data:
-                if item["type"] == self.role:
+                if item["type"] == self.role and item["status"] != t_delete:
                     print(item)
                     json_filtered.append(item)
                 return json_filtered
         else:
             for item in json_data:
-                if item["type"] == self.role:
+                if item["type"] == self.role and item["status"] != t_delete:
                     path = (
                         item["path"]
                         .replace(n_env.path_naas_folder, "")
