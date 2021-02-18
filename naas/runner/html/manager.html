@@ -121,16 +121,20 @@
                         field: 'status',
                     },
                     {
-                        label: 'Last date',
+                        label: 'Date',
                         field: 'lastUpdate',
                     },
                     {
-                        label: 'Last ID',
+                        label: 'ID',
                         field: 'id',
                     },
                     {
-                        label: 'Last duration (s)',
+                        label: 'Quantity',
                         field: 'lastRun',
+                    },
+                    {
+                        label: 'Credit',
+                        field: 'lastCredit',
                     },
                 ],
                 env: {},
@@ -277,6 +281,11 @@
                             try {
                                 this.jobs = [];
                                 response.data.forEach((job) => {
+                                    if (job.type == 'scheduler' || job.type == 'scheduler') {
+                                        job['lastCredit'] = (job['lastRun'] / 60).toFixed(2); 
+                                    } else {
+                                        job['lastCredit'] = job['lastRun'];
+                                    }
                                     if (job.status !== 'delete') {
                                         this.jobs.push(job)
                                     }
@@ -298,32 +307,28 @@
                         this.loading = false;
                     });
                 },
-                toHHMMSS(naasType, sec_str) {
+                toMMSS(naasType, sec_str) {
                     if (naasType != 'notebook' && naasType != 'scheduler') {
-                        return sec_str;
+                        return `${sec_str} call`;
                     }
                     const sec_num = parseInt(sec_str, 10);
-                    let hours = Math.floor(sec_num / 3600);
-                    let minutes = Math.floor((sec_num - (hours * 3600)) / 60);
-                    let seconds = sec_num - (hours * 3600) - (minutes * 60);
+                    let minutes = Math.floor((sec_num) / 60);
+                    let seconds = sec_num - (minutes * 60);
 
-                    if (hours < 10) {
-                        hours = `0${hours}`;
-                    }
                     if (minutes < 10) {
                         minutes = `0${minutes}`;
                     }
                     if (seconds < 10) {
                         seconds = `0${seconds}`;
                     }
-                    return `${hours}:${minutes}:${seconds}`;
+                    return `${minutes}:${seconds}`;
                 },
                 linkToJup() {
                     let base = `${this.env.JUPYTERHUB_URL}`
                     if (this.env.JUPYTERHUB_USER && this.env.JUPYTERHUB_USER !== '') {
                         return `${this.env.JUPYTERHUB_URL}/user/${this.env.JUPYTERHUB_USER}`
                     }
-                    if (base.find('://') === -1) {
+                    if (base.search('://') === -1) {
                         base = `${window.location.protocol}://${base}`
                     }
                     return base
@@ -341,7 +346,7 @@
                 },
                 linkTojup(link) {
                     const partial = link.replace(this.env.JUPYTER_SERVER_ROOT, '');
-                    const fileUrl = `${window.location.protocol}://${this.linkToJup()}/lab/tree${partial}`;
+                    const fileUrl = `${this.linkToJup()}/lab/tree${partial}`;
                     window.open(fileUrl, '_blank');
                 },
             },
@@ -483,7 +488,7 @@
                             style="font-weight: bold; color: #22BC66;">{{stripNaasPath(props.formattedRow[props.column.field])}}</a>
                     </span>
                     <span v-else-if="props.column.field == 'lastRun'">
-                        {{toHHMMSS(props.row.type, props.formattedRow[props.column.field])}}
+                        {{toMMSS(props.row.type, props.formattedRow[props.column.field])}}
                     </span>
                     <span v-else>
                         {{props.formattedRow[props.column.field]}}
