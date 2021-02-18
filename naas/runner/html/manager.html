@@ -315,22 +315,25 @@
                     }
                     return `${hours}:${minutes}:${seconds}`;
                 },
-                linkToLab() {
-                    return `${this.linkToJup()}/lab`
-                },
                 linkToJup() {
+                    let base = `${this.env.JUPYTERHUB_URL}`
                     if (this.env.JUPYTERHUB_USER && this.env.JUPYTERHUB_USER !== '') {
                         return `${this.env.JUPYTERHUB_URL}/user/${this.env.JUPYTERHUB_USER}`
-                    } else {
-                        return `${this.env.JUPYTERHUB_URL}`
                     }
+                    if (base.find('://') === -1) {
+                        base = `${window.location.protocol}://${base}`
+                    }
+                    return base
+                },
+                linkToLab() {
+                    return `${this.linkToJup()}/lab`
                 },
                 linkTojupOutput(link) {
                     const partial = link.replace(this.env.JUPYTER_SERVER_ROOT, '');
                     const partialList = partial.split('/');
                     partialList[partialList.length - 1] = `output__${partialList[partialList.length - 1]}`
                     const partialOutput = partialList.join('/');
-                    const fileUrl = `${window.location.protocol}://${this.linkToJup()}/lab/tree${partialOutput}`;
+                    const fileUrl = `${this.linkToJup()}/lab/tree${partialOutput}`;
                     return fileUrl
                 },
                 linkTojup(link) {

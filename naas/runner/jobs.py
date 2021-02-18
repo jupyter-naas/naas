@@ -43,7 +43,6 @@ class Jobs:
         "lastUpdate",
         "lastRun",
         "runs",
-        "totalRun",
     ]
 
     def __init__(self, logger, clean=False, init_data=[]):
@@ -133,7 +132,24 @@ class Jobs:
         data = []
         try:
             with open(self.__json_secrets_path, "r") as f:
-                data = json.load(f)
+                data_l = json.load(f)
+                dt_string = datetime.datetime.now(tz=pytz.timezone(n_env.tz)).strftime(
+                    "%Y-%m-%d %H:%M:%S"
+                )
+                for d in data_l:
+                    # Fix formating of old jobs
+                    d = {
+                        "id": d.get("id", uid),
+                        "type": d.get("type", ""),
+                        "value": d.get("value", ""),
+                        "path": d.get("path", ""),
+                        "status": d.get("status", t_update),
+                        "params": d.get("params", {}),
+                        "lastUpdate": d.get("lastUpdate", dt_string),
+                        "lastRun": d.get("lastRun", 0),
+                        "runs": d.get("runs", []),
+                    }
+                    data.append(d)
                 f.close()
         except Exception as err:
             self.__logger.error(
