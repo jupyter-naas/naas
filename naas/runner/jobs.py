@@ -131,26 +131,27 @@ class Jobs:
     def __get_save_from_file(self, uid):
         data = []
         try:
-            with open(self.__json_secrets_path, "r") as f:
-                data_l = json.load(f)
-                dt_string = datetime.datetime.now(tz=pytz.timezone(n_env.tz)).strftime(
-                    "%Y-%m-%d %H:%M:%S"
-                )
-                for d in data_l:
-                    # Fix formating of old jobs
-                    d = {
-                        "id": d.get("id", uid),
-                        "type": d.get("type", ""),
-                        "value": d.get("value", ""),
-                        "path": d.get("path", ""),
-                        "status": d.get("status", t_update),
-                        "params": d.get("params", {}),
-                        "lastUpdate": d.get("lastUpdate", dt_string),
-                        "lastRun": d.get("lastRun", 0),
-                        "runs": d.get("runs", []),
-                    }
-                    data.append(d)
-                f.close()
+            f = open(self.__json_secrets_path, "r")
+            data_l = json.load(f)
+            f.close()
+            # data = data_l
+            dt_string = datetime.datetime.now(tz=pytz.timezone(n_env.tz)).strftime(
+                "%Y-%m-%d %H:%M:%S"
+            )
+            for d in data_l:
+                # Fix formating of old jobs
+                c = {
+                    "id": d.get("id", uid),
+                    "type": d.get("type", ""),
+                    "value": d.get("value", ""),
+                    "path": d.get("path", ""),
+                    "status": d.get("status", t_update),
+                    "params": d.get("params", {}),
+                    "lastUpdate": d.get("lastUpdate", dt_string),
+                    "lastRun": d.get("lastRun", 0),
+                    "runs": [] if d.get("runs") is None else d.get("runs"),
+                }
+                data.append(c)
         except Exception as err:
             self.__logger.error(
                 {
