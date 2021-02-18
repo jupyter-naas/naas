@@ -298,7 +298,10 @@
                         this.loading = false;
                     });
                 },
-                toHHMMSS(sec_str) {
+                toHHMMSS(naasType, sec_str) {
+                    if (naasType != 'notebook' && naasType != 'scheduler') {
+                        return sec_str;
+                    }
                     const sec_num = parseInt(sec_str, 10);
                     let hours = Math.floor(sec_num / 3600);
                     let minutes = Math.floor((sec_num - (hours * 3600)) / 60);
@@ -480,7 +483,7 @@
                             style="font-weight: bold; color: #22BC66;">{{stripNaasPath(props.formattedRow[props.column.field])}}</a>
                     </span>
                     <span v-else-if="props.column.field == 'lastRun'">
-                        {{toHHMMSS(props.formattedRow[props.column.field])}}
+                        {{toHHMMSS(props.row.type, props.formattedRow[props.column.field])}}
                     </span>
                     <span v-else>
                         {{props.formattedRow[props.column.field]}}
