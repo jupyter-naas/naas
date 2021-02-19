@@ -480,8 +480,7 @@
                         </a>
                     </span>
                     <span v-else-if="props.column.field == 'path'">
-                        <a href="#" v-on:click="linkTojup(props.formattedRow[props.column.field])"
-                            style="font-weight: bold; color: #22BC66;">{{stripNaasPath(props.formattedRow[props.column.field])}}</a>
+                        {{stripNaasPath(props.formattedRow[props.column.field])}}
                     </span>
                     <span v-else-if="props.column.field == 'path'">
                         <a href="#" v-on:click="linkTojup(props.formattedRow[props.column.field])"

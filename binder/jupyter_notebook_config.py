@@ -25,9 +25,9 @@ c.NotebookApp.tornado_settings = {
 
 # c.LauncherShortcuts.shortcuts = {
 #     'naas_manager': {
-#         'title': 'Naas Manager',
+#         'title': 'Naas Manager2',
 #         'target': '{base_url}naas/',
-#         'icon_path': '/etc/jupyter/naas_logo.svg',
+#         'icon_path': '/etc/naas/naas_logo.svg',
 #     }
 # }
 
