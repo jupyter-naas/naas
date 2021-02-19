@@ -1,3 +1,13 @@
+## 0.34.0 (2021-02-19)
+
+### Fix
+
+- cache error in manager
+
+### Feat
+
+- add credit in manager
+
 ## 0.33.7 (2021-02-18)
 
 ### Fix
