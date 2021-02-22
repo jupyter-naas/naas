@@ -140,6 +140,13 @@ class Jobs:
             )
             for d in data_l:
                 # Fix formating of old jobs
+                runs = d.get("runs", [])
+                if type(runs) != list:
+                    try:
+                        runs = json.loads(runs)
+                    except Exception:
+                        runs = []
+                        pass
                 c = {
                     "id": d.get("id", uid),
                     "type": d.get("type", ""),
@@ -149,7 +156,7 @@ class Jobs:
                     "params": d.get("params", {}),
                     "lastUpdate": d.get("lastUpdate", dt_string),
                     "lastRun": d.get("lastRun", 0),
-                    "runs": [] if d.get("runs") is None else d.get("runs"),
+                    "runs": runs,
                 }
                 data.append(c)
         except Exception as err:
