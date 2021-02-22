@@ -310,11 +310,12 @@ class Jobs:
                     data = self.__df
                 else:
                     data = self.__df.to_dict("records")
-                    try:
-                        for d in data:
-                            d["runs"] = json.loads(d.get("runs"))
-                    except Exception:
-                        pass
+                    for d in data:
+                        try:
+                            d["runs"] = json.loads(d.get("runs", "[]"))
+                        except Exception:
+                            d["runs"] = []
+                            pass
         except Exception as e:
             print("list", e)
         return data
@@ -419,7 +420,11 @@ class Jobs:
         self.__df.at[index, "params"] = params
         self.__df.at[index, "lastUpdate"] = dt_string
         if run_time > 0:
-            runs = json.loads(self.__df.at[index, "runs"])
+            try:
+                runs = json.loads(self.__df.at[index, "runs"])
+            except Exception:
+                runs = []
+                pass
             runs.append(
                 {"id": uid, "duration": run_time, "date": dt_string, "status": status}
             )
