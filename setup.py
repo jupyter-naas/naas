@@ -16,7 +16,7 @@ setup(
     url="https://github.com/cashstory/naas",
     packages=find_packages(exclude=["tests"]),
     package_data={
-        "naas": ["runner/html/*.html", "runner/assets/*.png", "runner/assets/*.svg"],
+        "naas": ["runner/assets/*.html", "runner/assets/*.png", "runner/assets/*.svg"],
     },
     setup_requires=["wheel"],
     extras_require={
