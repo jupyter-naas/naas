@@ -35,7 +35,7 @@ c.ServerProxy.servers = {
     'naas': {
         'launcher_entry': {
             'enabled': True,
-            'icon_path': '/etc/naas/naas_logo.svg',
+            'icon_path': '/etc/naas/naas_fav.svg',
             'title': 'Naas manager',
         },
         'new_browser_tab': False,

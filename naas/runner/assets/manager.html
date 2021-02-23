@@ -373,6 +373,8 @@
             }
         });
     </script>
+    <script>!function(w,d,i,s){function l(){if(!d.getElementById(i)){var f=d.getElementsByTagName(s)[0],e=d.createElement(s);e.type="text/javascript",e.async=!0,e.src="https://canny.io/sdk.js",f.parentNode.insertBefore(e,f)}}if("function"!=typeof w.Canny){var c=function(){c.q.push(arguments)};c.q=[],w.Canny=c,"complete"===d.readyState?l():w.attachEvent?w.attachEvent("onload",l):w.addEventListener("load",l,!1)}}(window,document,"canny-jssdk","script");</script>
+    <script> Canny('initChangelog', {appID: '5f81748112b5d73b2faf4b15', position: 'top', align: 'left'});</script>
     <script
         type="text/javascript">window.$crisp = []; window.CRISP_WEBSITE_ID = "a64b999e-e44c-44ee-928f-5cd0233f9586"; (function () { d = document; s = d.createElement("script"); s.src = "https://client.crisp.chat/l.js"; s.async = 1; d.getElementsByTagName("head")[0].appendChild(s); })();</script>
 </head>
@@ -381,7 +383,7 @@
     <div id="app" class="w-full bg-black h-full">
         <div id="cs_loader_wrap" v-if="loading">
             <div id="cs_logo_wrap">
-                <img id="cs_logo_loading" alt="Naas logo" src="asset/naas_logo.svg" />
+                <img id="cs_logo_loading" alt="Naas logo" src="asset/naas_fav.svg" />
                 <div id="cs_spinner_loading"></div>
             </div>
         </div>
@@ -542,6 +544,9 @@
                 <h4 class="text-2xl font-semibold text-gray-800"><span class="text-white">Version</span></h4>
                 <span
                     class="inline-block px-3 py-1 mr-2 text-sm font-semibold text-gray-700 bg-gray-200 rounded-full">{{env.version}}</span>
+                <button class="px-2 py-2 text-gray-900 bg-gray-100 rounded hover:bg-gray-900 hover:text-gray-100 hover:font-medium md:mx-2" data-canny-changelog>
+                        What's new !
+                </button>
             </div>
         </div>
     </div>
