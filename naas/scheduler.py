@@ -85,12 +85,15 @@ class Scheduler:
             pass
         return res
 
-    def add(self, path=None, recurrence=None, params={}, debug=False):
+    def add(self, path=None, recurrence=None, cron=None, params={}, debug=False):
         if self.manager.is_production():
             print("No add done, you are in production\n")
             return
-        if not recurrence:
-            print("No recurrence provided\n")
+        if recurrence:
+            print("recurrence is deprecated use cron arg instead")
+        cron = recurrence if recurrence else cron
+        if not cron:
+            print("No cron provided\n")
             return
         if not self.__check_cron(recurrence):
             print(f"WARNING : Recurrence wrong format {recurrence}")

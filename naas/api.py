@@ -12,6 +12,7 @@ from .runner.env_var import n_env
 from .manager import Manager
 import pandas as pd
 import markdown2
+import requests
 import warnings
 import os
 
@@ -80,11 +81,48 @@ class Api:
                     )
                     print(f"File ==> {path} is {kind}")
 
+    def run(self, path=None, debug=False):
+        self.deprecatedPrint()
+        current_file = self.manager.get_path(path)
+        if current_file is None:
+            print("Missing file path")
+            return
+        token = os.urandom(30).hex()
+        status = t_add
+        try:
+            token = self.manager.get_value(current_file, False)
+            status = t_update
+        except:  # noqa: E722
+            pass
+        url = self.manager.proxy_url(self.role, token)
+        if self.manager.is_production():
+            print("No add done, you are in production\n")
+            return url
+        self.manager.add_prod(
+            {
+                "type": self.role,
+                "status": status,
+                "path": current_file,
+                "params": {},
+                "value": token,
+            },
+            debug,
+        )
+        try:
+            r = requests.get(url)
+            r.raise_for_status()
+            print("👌 Well done! Your Notebook runned in production.\n")
+        except Exception:
+            print("😢 Your Notebook failed in production.\n")
+        self.get_output(path)
+        self.manager.del_prod({"type": self.role, "path": current_file}, debug)
+        return url
+
     def add(self, path=None, params={}, debug=False):
         self.deprecatedPrint()
         current_file = self.manager.get_path(path)
         if current_file is None:
-            print("Missing file path in prod mode")
+            print("Missing file path")
             return
         token = os.urandom(30).hex()
         status = t_add

@@ -46,7 +46,7 @@ class Assets:
     def add(self, path=None, params={}, debug=False):
         current_file = self.manager.get_path(path)
         if current_file is None:
-            print("Missing file path in prod mode")
+            print("Missing file path")
             return
         token = os.urandom(30).hex()
         status = t_add
