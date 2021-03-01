@@ -1,3 +1,13 @@
+## 0.36.0 (2021-03-01)
+
+### Feat
+
+- add webhook run
+
+### Fix
+
+- task to job names
+
 ## 0.35.0 (2021-02-23)
 
 ### Feat
