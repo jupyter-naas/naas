@@ -20,7 +20,7 @@ LABEL org.label-schema.build-date=$BUILD_DATE \
 # https://app.naas.ai/user-redirect/naas => redirect to naas
 
 RUN python3 -m pip install --upgrade pip
-RUN python3 -m pip install --no-cache naas_drivers naas==$VERSION
+RUN python3 -m pip install --use-deprecated=legacy-resolver --no-cache naas_drivers naas==$VERSION
 
 RUN mkdir /etc/naas
 COPY binder/jupyter_notebook_config.py /etc/naas/jupyter_notebook_config.py

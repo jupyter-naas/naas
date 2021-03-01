@@ -8,7 +8,7 @@ COPY setup.cfg /home/$NB_USER/naas/setup.cfg
 COPY setup.py /home/$NB_USER/naas/setup.py
 COPY scripts /home/$NB_USER/naas/scripts
 COPY README.md /home/$NB_USER/naas/README.md
-RUN cd /home/$NB_USER/naas && pip install -e '.[dev]'
+RUN cd /home/$NB_USER/naas && pip install --use-deprecated=legacy-resolver -e '.[dev]'
 
 RUN mkdir /etc/naas
 COPY custom/set_workspace.json /etc/naas/set_workspace.json
