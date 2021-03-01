@@ -26,7 +26,7 @@ def parse_data(request):
     args = dict(
         urllib.parse.parse_qsl(request.query_string)
     )  # fix to don't have array for each args
-    data = {**(args), **(req_data)}
+    data = {"params": args, "body": req_data, "headers": request.headers}
     return data
 
 
