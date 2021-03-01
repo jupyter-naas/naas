@@ -21,7 +21,7 @@ jobs:
           ${{ runner.os }}-pip-
     - name: Install dependencies
       run: |
-        python -m pip install -U pip
+        python3 -m pip install -U pip
         pip3 install --use-deprecated=legacy-resolver -e '.[dev]'
     - name: Run tests and linters
       run: |
