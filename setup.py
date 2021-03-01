@@ -46,6 +46,7 @@ setup(
         "pretty-cron>=1,<2",
         "APScheduler>=3,<4",
         "pycron>=3,<4",
+        "aiohttp>=3,<4",
         "html5lib>=1,<2",
         "Pillow>=8,<9",
         "markdown2>=2,<3",
