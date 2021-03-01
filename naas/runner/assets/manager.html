@@ -58,6 +58,9 @@
             }
         }
     </style>
+    
+    <script src="https://cdn.jsdelivr.net/npm/vue-loading-overlay@3"></script>
+    <link href="https://cdn.jsdelivr.net/npm/vue-loading-overlay@3/dist/vue-loading.css" rel="stylesheet">
     <script type="module">
         import Vue from 'https://cdn.jsdelivr.net/npm/vue@2.6.11/dist/vue.esm.browser.js';
         import axios from 'https://cdn.jsdelivr.net/npm/@bundled-es-modules/axios@0.18.1/axios.js';
@@ -65,7 +68,10 @@
         import * as VModal from 'https://cdn.jsdelivr.net/npm/vue-js-modal@2.0.0-rc.6/dist/index.min.js';
         import VueCodeHighlight from 'https://cdn.jsdelivr.net/npm/vue-code-highlight@0.7.6/dist/vue-code-highlight.esm.min.js';
 
+        const debouceTime = 800;
         Vue.use(window['vue-js-modal'].default);
+        Vue.use(VueLoading);
+        Vue.component('loading', VueLoading)
         Vue.use(VueCodeHighlight);
         Vue.use(VueGoodTablePlugin);
         const app = new Vue({
@@ -76,6 +82,8 @@
             data: {
                 filter: '',
                 loading: true,
+                loadingLog: true,
+                loadingFull: false,
                 columns_logs: [
                     {
                         label: 'Date',
@@ -140,6 +148,7 @@
                 env: {},
                 logs: [],
                 totalLogRecords: 0,
+                debouceFilter: null,
                 serverLogParams: {
                     columnFilters: "",
                     sort: [{ field: 'asctime', type: 'desc' }],
@@ -150,7 +159,13 @@
             },
             watch: {
                 filter(val) {
-                    this.onColumnLogFilter({ "columnFilters": val });
+                    if (this.debouceFilter) {
+                        clearTimeout(this.debouceFilter);
+                    }
+                    this.debouceFilter = setTimeout(() => {
+                        this.onColumnLogFilter({ "columnFilters": val });
+                        this.debouceFilter = null;
+                    }, debouceTime);
                 },
             },
             methods: {
@@ -237,6 +252,7 @@
                     return query
                 },
                 loadLogItems() {
+                    this.loadingLog = !this.loading;
                     return axios.get('log', { params: this.convertApiArgs() }).then((response) => {
                         if (response && !response.error) {
                             try {
@@ -246,6 +262,8 @@
                                 console.error(err);
                             }
                         }
+                    }).then(() => {
+                        this.loadingLog = false;
                     }).catch((err) => {
                         console.error(err);
                     })
@@ -265,6 +283,7 @@
                     window.open(newUrl, '_blank');
                 },
                 load_data() {
+                    this.loading = true;
                     const all_loads = [];
 
                     all_loads.push(axios.get('env').then((response) => {
@@ -296,16 +315,12 @@
                         }
                     }));
                     all_loads.push(this.loadLogItems());
-                    return Promise.all(all_loads);
+                    return Promise.all(all_loads).then(()=> {
+                        this.loading = false;
+                    });
                 },
                 setFilter(filter) {
                     this.filter = filter;
-                },
-                reload_data() {
-                    this.loading = true;
-                    this.load_data().then(() => {
-                        this.loading = false;
-                    });
                 },
                 toMMSS(naasType, sec_str) {
                     if (naasType != 'notebook' && naasType != 'scheduler') {
@@ -367,9 +382,7 @@
                         this.filter = getVars["filter"]
                     }
                 }
-                this.load_data().then(() => {
-                    this.loading = false;
-                });
+                this.load_data();
             }
         });
     </script>
@@ -433,7 +446,7 @@
                     </div>
                 </div>
                 <div class="flex flex-col hidden -mx-2 md:flex-row md:block">
-                    <a href="#" v-on:click="reload_data()"
+                    <a href="#" v-on:click="load_data()"
                         class="px-2 py-2 text-gray-900 bg-gray-100 rounded hover:bg-gray-900 hover:text-gray-100 hover:font-medium md:mx-2">Reload</a>
                 </div>
             </div>
@@ -497,49 +510,55 @@
                 </template>
             </vue-good-table>
             <h2 class="pt-8 text-2xl font-semibold text-gray-800"><span class="text-white">History</span></h2>
-            <vue-good-table mode="remote" :columns="columns_logs" @on-page-change="onPageLogChange"
-                @on-sort-change="onSortLogChange" @on-column-filter="onColumnLogFilter"
-                @on-per-page-change="onPerPageLogChange" :total-rows="totalLogRecords" :rows="logs" :search-options="{
-                enabled: true,
-                externalQuery: filter
-            }" :sort-options="{
-                enabled: true,
-            }" :pagination-options="{
-                enabled: true,
-                mode: 'records',
-                perPage: 15,
-                position: 'top',
-                perPageDropdown: [5, 10, 20],
-                dropdownAllowAll: true,
-                nextLabel: 'next',
-                prevLabel: 'prev',
-                rowsPerPageLabel: 'Rows per page',
-                ofLabel: 'of',
-                pageLabel: 'page', // for 'pages' mode
-                allLabel: 'All',
-            }">
-                <template slot="table-row" slot-scope="props">
-                    <span v-if="props.column.field == 'id'">
-                        <a href="#" style="font-weight: bold; color: #4299e1;"
-                            v-on:click="setFilter(props.formattedRow[props.column.field])">{{props.formattedRow[props.column.field].substring(0,
-                            4)}}</a>
-                    </span>
-                    <span v-else-if="props.column.field == 'filepath'">
-                        {{stripNaasPath(props.formattedRow[props.column.field])}}
-                    </span>
-                    <span v-else-if="props.column.field == 'status'">
-                        <a href="#" v-if="props.formattedRow['error']" style="font-weight: bold; color: #f56565;"
-                            v-on:click="openError(props.formattedRow['error'], props.formattedRow['filepath'])">error</a>
-                        <a href="#" v-else-if="props.formattedRow[props.column.field] == 'healthy'"
-                            style="font-weight: bold; color: #22BC66;"
-                            v-on:click="openOutput(props.formattedRow['filepath'])">healthy</a>
-                        <p v-else>{{props.formattedRow[props.column.field]}}</p>
-                    </span>
-                    <span v-else>
-                        {{props.formattedRow[props.column.field]}}
-                    </span>
-                </template>
-            </vue-good-table>
+            <!-- <vue-loaders-line-scale v-if="loadingLog"/> -->
+            <div class="vld-parent">
+                <loading :active.sync="loadingLog" 
+                :is-full-page="loadingFull"></loading>
+                <vue-good-table mode="remote" :columns="columns_logs" @on-page-change="onPageLogChange"
+                    @on-sort-change="onSortLogChange" @on-column-filter="onColumnLogFilter"
+                    @on-per-page-change="onPerPageLogChange" :total-rows="totalLogRecords" :rows="logs" :search-options="{
+                    enabled: true,
+                    externalQuery: filter
+                }" :sort-options="{
+                    enabled: true,
+                }" :pagination-options="{
+                    enabled: true,
+                    mode: 'records',
+                    perPage: 15,
+                    position: 'top',
+                    perPageDropdown: [5, 10, 20],
+                    dropdownAllowAll: true,
+                    nextLabel: 'next',
+                    prevLabel: 'prev',
+                    rowsPerPageLabel: 'Rows per page',
+                    ofLabel: 'of',
+                    pageLabel: 'page', // for 'pages' mode
+                    allLabel: 'All',
+                }">
+                    <template slot="table-row" slot-scope="props">
+                        <span v-if="props.column.field == 'id'">
+                            <a href="#" style="font-weight: bold; color: #4299e1;"
+                                v-on:click="setFilter(props.formattedRow[props.column.field])">{{props.formattedRow[props.column.field].substring(0,
+                                4)}}</a>
+                        </span>
+                        <span v-else-if="props.column.field == 'filepath'">
+                            {{stripNaasPath(props.formattedRow[props.column.field])}}
+                        </span>
+                        <span v-else-if="props.column.field == 'status'">
+                            <a href="#" v-if="props.formattedRow['error']" style="font-weight: bold; color: #f56565;"
+                                v-on:click="openError(props.formattedRow['error'], props.formattedRow['filepath'])">error</a>
+                            <a href="#" v-else-if="props.formattedRow[props.column.field] == 'healthy'"
+                                style="font-weight: bold; color: #22BC66;"
+                                v-on:click="openOutput(props.formattedRow['filepath'])">healthy</a>
+                            <p v-else>{{props.formattedRow[props.column.field]}}</p>
+                        </span>
+                        <span v-else>
+                            {{props.formattedRow[props.column.field]}}
+                        </span>
+                    </template>
+                </vue-good-table>
+            </div>
+
             <div class="col-start-2 py-4 pt-8" v-if="env && env.version">
                 <h4 class="text-2xl font-semibold text-gray-800"><span class="text-white">Version</span></h4>
                 <span
