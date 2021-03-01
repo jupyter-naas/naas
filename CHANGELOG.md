@@ -1,3 +1,9 @@
+## 0.37.0 (2021-03-01)
+
+### Feat
+
+- add log loader and debounce
+
 ## 0.36.0 (2021-03-01)
 
 ### Feat
