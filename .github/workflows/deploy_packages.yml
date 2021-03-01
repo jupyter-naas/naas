@@ -29,7 +29,7 @@ jobs:
         run: |
           python3 -m pip install -U pip
           python3 -m pip install --upgrade pip
-          pip3 install --use-feature=2020-resolver -e '.[dev]'
+          pip3 install -e '.[dev]'
       - name: Run tests and linters
         run: |
           git config --global user.email "action@github.com"
