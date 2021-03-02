@@ -1,3 +1,9 @@
+## 0.38.5 (2021-03-02)
+
+### Fix
+
+- tests error with pytest-sanic upgrade
+
 ## 0.38.4 (2021-03-01)
 
 ### Fix
