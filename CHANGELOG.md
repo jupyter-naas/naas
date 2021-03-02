@@ -1,3 +1,9 @@
+## 0.38.7 (2021-03-02)
+
+### Fix
+
+- **manager**: :boom: Inprove doc and introduce breaking change on webhook
+
 ## 0.38.6 (2021-03-02)
 
 ### Fix
