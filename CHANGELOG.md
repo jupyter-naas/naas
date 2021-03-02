@@ -1,3 +1,9 @@
+## 1.0.1 (2021-03-02)
+
+### Fix
+
+- use downloader in manager
+
 ## 1.0.0 (2021-03-02)
 
 ### BREAKING CHANGE
