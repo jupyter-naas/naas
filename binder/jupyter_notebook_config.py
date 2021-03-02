@@ -15,6 +15,7 @@ c.NotebookApp.default_url = '/lab'
 # c.LabBuildApp.minimize = False
 # c.LabBuildApp.dev_build = False
 
+c.NotebookApp.open_browserBool = False
 c.NotebookApp.webbrowser_open_new = 0
 
 c.NotebookApp.tornado_settings = {

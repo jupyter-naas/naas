@@ -2,6 +2,8 @@ docker rm $(docker ps -aq --filter name=naas_test)
 docker run \
     --name naas_test \
     -e ALLOWED_IFRAME='' \
+    -e JUPYTER_ENABLE_LAB='yes' \
+    -e JUPYTER_TOKEN='testnaas' \
     -e JUPYTERHUB_URL='http://127.0.0.1:8888' \
     -p 8888:8888 \
     -p 5000:5000 \
