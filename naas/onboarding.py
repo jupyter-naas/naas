@@ -4,6 +4,7 @@ import requests
 import os
 
 __jup_def_set_workspace = "/etc/naas/set_workspace.json"
+__jup_def_set_workspace_browser = "/etc/naas/set_workspace_browser.json"
 __jup_load_workspace = "jupyter lab workspaces import "
 __github_repo = "jupyter-naas/starters"
 __github_brach = "main"
@@ -38,6 +39,21 @@ def download_file(url):
         f.write(content)
         f.close()
     return file_name
+
+
+def wp_set_for_open_filebrowser(url):
+    try:
+        filename = url.split("/")[-1]
+        filename = filename.split(".")[0]
+        new_wp = os.path.join(n_env.path_naas_folder, f"{filename}_workspace.json")
+        with open(__jup_def_set_workspace_browser, "r") as fh:
+            content_wp = fh.read()
+            new_content_wp = content_wp.replace("{NB_NAME}", filename)
+            with open(new_wp, "w+") as f:
+                f.write(new_content_wp)
+        os.system(f"{__jup_load_workspace} {new_wp}")
+    except Exception as e:
+        print("Cannot config jupyter workspace", e)
 
 
 def __wp_set_for_open(url):

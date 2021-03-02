@@ -109,7 +109,11 @@ class n_env:
 
     @property
     def hub_api(self):
-        return self._hub_api or os.environ.get("JUPYTERHUB_URL", "https://app.naas.ai")
+        res = self._hub_api or os.environ.get("JUPYTERHUB_URL", "https://app.naas.ai")
+        if "://" not in res:
+            return f"http://{res}"
+        else:
+            return res
 
     @hub_api.setter
     def hub_api(self, hub_api):
