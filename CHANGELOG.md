@@ -1,3 +1,9 @@
+## 1.0.2 (2021-03-02)
+
+### Fix
+
+- in downloader dont erase file with downloader
+
 ## 1.0.1 (2021-03-02)
 
 ### Fix
