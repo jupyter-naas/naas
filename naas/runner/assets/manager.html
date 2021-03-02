@@ -271,7 +271,7 @@
                 stripNaasPath(path) {
                     return path.replace(this.env.NAAS_BASE_PATH, '').replace(`${this.env.JUPYTER_SERVER_ROOT}/`, '')
                 },
-                openUrl(value, type) {
+                openUrl(value, type, autoOpen=false) {
                     let urlList = window.location.href.split('/');
                     urlList.pop()
                     let newUrl = `${urlList.join('/')}`
@@ -280,7 +280,11 @@
                     } else {
                         newUrl = `${newUrl}/asset/${value}`
                     }
-                    window.open(newUrl, '_blank');
+                    if (!autoOpen) {
+                        return newUrl
+                    } else {
+                        window.open(newUrl, '_blank');
+                    }
                 },
                 load_data() {
                     this.loading = true;
@@ -355,13 +359,13 @@
                     const partial = link.replace(this.env.JUPYTER_SERVER_ROOT, '');
                     const partialList = partial.split('/');
                     partialList[partialList.length - 1] = `output__${partialList[partialList.length - 1]}`
-                    const partialOutput = partialList.join('/');
-                    const fileUrl = `${this.linkToJup()}/lab/tree${partialOutput}`;
+                    const partialOutput = partialList.join('/').substring(1);
+                    const fileUrl = `${this.linkToJup()}/naas/downloader?url=${partialOutput}`;
                     return fileUrl
                 },
                 linkTojup(link) {
-                    const partial = link.replace(this.env.JUPYTER_SERVER_ROOT, '');
-                    const fileUrl = `${this.linkToJup()}/lab/tree${partial}`;
+                    const partial = link.replace(this.env.JUPYTER_SERVER_ROOT, '').substring(1);
+                    const fileUrl = `${this.linkToJup()}/naas/downloader?url=${partial}`;
                     window.open(fileUrl, '_blank');
                 },
             },
@@ -481,9 +485,9 @@
                             style="font-weight: bold; color: #ed8936;">{{props.formattedRow[props.column.field]}}</span>
                     </span>
                     <span v-else-if="props.column.field == 'value'">
-                        <a href="#" style="font-weight: bold; color: #4299e1;"
+                        <a :href="openUrl(props.formattedRow[props.column.field], props.row.type)" target="_blank" style="font-weight: bold; color: #4299e1;"
                             v-if="props.row.type == 'asset' || props.row.type == 'notebook'"
-                            v-on:click="openUrl(props.formattedRow[props.column.field])">
+                            >
                             {{props.formattedRow[props.column.field].substring(0,6)}}
                         </a>
                         <span v-else>{{props.formattedRow[props.column.field]}}</span>
@@ -495,11 +499,8 @@
                         </a>
                     </span>
                     <span v-else-if="props.column.field == 'path'">
-                        {{stripNaasPath(props.formattedRow[props.column.field])}}
-                    </span>
-                    <span v-else-if="props.column.field == 'path'">
-                        <a href="#" v-on:click="linkTojup(props.formattedRow[props.column.field])"
-                            style="font-weight: bold; color: #22BC66;">{{stripNaasPath(props.formattedRow[props.column.field])}}</a>
+                        <a href="#" v-on:click="linkTojup(props.formattedRow[props.column.field])" target="_blank"
+                            style="font-weight: bold; color: gray;">{{stripNaasPath(props.formattedRow[props.column.field])}}</a>
                     </span>
                     <span v-else-if="props.column.field == 'lastRun'">
                         {{toMMSS(props.row.type, props.formattedRow[props.column.field])}}

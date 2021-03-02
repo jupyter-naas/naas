@@ -18,13 +18,24 @@ def download_file(url):
             "https://github.com/", "https://raw.githubusercontent.com/"
         )
         raw_target = raw_target.replace("/blob/", "/")
-    r = requests.get(raw_target)
+    content = b"ERROR"
+    if "://" not in raw_target and raw_target.startswith(".naas"):
+        try:
+            cur_path = os.path.join(n_env.server_root, raw_target)
+            f = open(cur_path, "rb")
+            content = f.read()
+            f.close()
+        except Exception as e:
+            print("Cannot open local file", e)
+    else:
+        r = requests.get(raw_target)
+        content = r.content
 
     file_name = raw_target.split("/")[-1]
     file_name = urllib.parse.unquote(file_name)
 
     with open(file_name, "wb") as f:
-        f.write(r.content)
+        f.write(content)
     return file_name
 
 
