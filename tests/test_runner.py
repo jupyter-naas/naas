@@ -24,6 +24,7 @@ import markdown2
 from tzlocal import get_localzone
 import imgcompare
 from PIL import Image
+import nbformat
 import io
 
 user = getpass.getuser()
@@ -298,21 +299,43 @@ async def test_notebooks(mocker, requests_mock, test_runner, tmp_path):
     assert len(res_job.get("runs")) == 0
     list_in_prod = webhook.list(new_path)
     assert len(list_in_prod) == 1
-    response = await test_runner.get(f"/{t_notebook}/{token}")
+    response = await test_runner.post(f"/{t_notebook}/{token}?b=yoyo", json={"test": "aa"})
     assert response.status_code == 200
     resp_json = response.json()
     assert response.headers.get("Content-Disposition") is not None
     assert resp_json == {"foo": "bar"}
+    list_in_prod = webhook.currents(True)
     list_out_in_prod = webhook.list_output(new_path)
     assert len(list_out_in_prod) == 1
     histo = list_out_in_prod.to_dict("records")[0]
     webhook.get_output(new_path, histo.get("timestamp"))
     filename = os.path.basename(new_path)
+    out_filename = f"{histo.get('timestamp')}___{t_output}__{filename}"
     dirname = os.path.dirname(new_path)
     new_path_out_histo = os.path.join(
-        dirname, f"{histo.get('timestamp')}___{t_output}__{filename}"
+        dirname, out_filename
     )
     assert os.path.isfile(new_path_out_histo)
+    nb = nbformat.read(new_path_out_histo, as_version=4)
+    assert len(nb.cells) == 3
+    naas_cell = nb.cells[0]
+    assert naas_cell.metadata.tags == ['naas-injected']
+    naas_cell_source = ''.join(naas_cell.source)
+    uid = list_in_prod[0].get('id')
+    assert naas_cell_source.startswith('import naas')
+    assert 'naas.n_env.current' in naas_cell_source
+    assert '"path"' in naas_cell_source
+    assert f'"uid": "{uid}"' in naas_cell_source
+    assert '"env": "RUNNER"' in naas_cell_source
+    assert '"runtime"' in naas_cell_source
+    papermill_cell = nb.cells[1]
+    assert papermill_cell.metadata.tags == ['injected-parameters']
+    papermill_cell_source = ''.join(papermill_cell.source)
+    assert papermill_cell_source.startswith('# Parameters')
+    assert 'params = {"b": "yoyo"}' in papermill_cell_source
+    assert 'body = {"test": "aa"}' in papermill_cell_source
+    assert 'headers = {' in papermill_cell_source
+    assert '"user-agent": "python-httpx/0.15.4",' in papermill_cell_source
     response = await test_runner.get(f"/{t_job}")
     assert response.status_code == 200
     resp_json = response.json()
