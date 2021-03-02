@@ -6,7 +6,6 @@ docker run \
     -e JUPYTER_TOKEN='testnaas' \
     -e JUPYTERHUB_URL='http://127.0.0.1:8888' \
     -p 8888:8888 \
-    -p 5000:5000 \
     -v `pwd`:/home/ftp/naas \
     -v ~/.ssh:/home/ftp/.ssh \
     naas_test

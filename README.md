@@ -65,13 +65,14 @@ run it in the shell of jupyter
 
 `./test_runner_dev.sh`
 
-Then copy url logged and connect to jupyter
-it should start like:
-`localhost:8888/`
+Then open your browser at the url:
+`http://localhost:8888`
 
-open manager outsite of jupyter (to livereload) :
+enter `testnaas` as password
 
-`localhost:5000/`
+open manager outsite of jupyter :
+
+`http://localhost:8888/naas`
 
 ## Publish
 
