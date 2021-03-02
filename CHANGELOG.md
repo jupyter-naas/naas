@@ -1,3 +1,9 @@
+## 1.0.0 (2021-03-02)
+
+### BREAKING CHANGE
+
+- add test for params injections in notebook result
+
 ## 0.38.8 (2021-03-02)
 
 ### Fix
