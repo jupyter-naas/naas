@@ -13,6 +13,9 @@ __github_base_url = "https://github.com/{REPO}/blob/{BRANCH}/"
 
 def download_file(url):
     raw_target = url
+    file_name = raw_target.split("/")[-1]
+    file_name = urllib.parse.unquote(file_name)
+    file_name = f"dl_{file_name}"
     if "github.com" in raw_target:
         raw_target = raw_target.replace(
             "https://github.com/", "https://raw.githubusercontent.com/"
@@ -22,20 +25,18 @@ def download_file(url):
     if "://" not in raw_target and raw_target.startswith(".naas"):
         try:
             cur_path = os.path.join(n_env.server_root, raw_target)
-            f = open(cur_path, "rb")
-            content = f.read()
-            f.close()
+            ff = open(cur_path, "rb")
+            content = ff.read()
+            ff.close()
         except Exception as e:
             print("Cannot open local file", e)
     else:
         r = requests.get(raw_target)
         content = r.content
 
-    file_name = raw_target.split("/")[-1]
-    file_name = urllib.parse.unquote(file_name)
-
     with open(file_name, "wb") as f:
         f.write(content)
+        f.close()
     return file_name
 
 
