@@ -49,15 +49,15 @@ def mock_job(requests_mock, test_runner):
     def post_json(request, context):
         data = request.json()
         res = sync(test_runner.post(f"/{t_job}", json=data))
-        data_res = sync(res.json())
-        context.status_code = res.status
+        data_res = res.json()
+        context.status_code = res.status_code
         return data_res
 
     def get_json(request, context):
         data = request.qs
         res = sync(test_runner.get(f"/{t_job}", params=data))
-        data_res = sync(res.json())
-        context.status_code = res.status
+        data_res = res.json()
+        context.status_code = res.status_code
         return data_res
 
     requests_mock.register_uri("GET", url_api, json=get_json, status_code=200)
@@ -66,8 +66,8 @@ def mock_job(requests_mock, test_runner):
 
 async def test_scheduler_status(test_scheduler):
     response = await test_scheduler.get("/scheduler/status")
-    assert response.status == 200
-    resp_json = await response.json()
+    assert response.status_code == 200
+    resp_json = response.json()
     assert resp_json == status_data
 
 
@@ -129,8 +129,8 @@ async def test_scheduler_runner(mocker, requests_mock, test_scheduler, tmp_path)
     recur = f"{sec} * * * *"
     scheduler.add(new_path, recur)
     response = await test_scheduler.get(f"/{t_job}")
-    assert response.status == 200
-    resp_json = await response.json()
+    assert response.status_code == 200
+    resp_json = response.json()
     assert len(resp_json) == 1
     res_job = resp_json[0]
     strip_path = os.path.splitdrive(new_path)[1].lstrip(seps)
