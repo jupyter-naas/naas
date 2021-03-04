@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml" class="bg-black">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml" class="bg-naas">
 
 <head>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vue-good-table@2.21.1/dist/vue-good-table.min.css">
@@ -12,6 +12,9 @@
     <meta name="mobile-web-app-capable" content="yes">
     <title>Naas | Manager</title>
     <style>
+        .bg-naas {
+            background-color: #191b1d;
+        }
         #cs_loader_wrap {
             display: flex;
             justify-content: center;
@@ -397,14 +400,14 @@
 </head>
 
 <body class="h-full">
-    <div id="app" class="w-full bg-black h-full">
+    <div id="app" class="w-full bg-naas h-full">
         <div id="cs_loader_wrap" v-if="loading">
             <div id="cs_logo_wrap">
                 <img id="cs_logo_loading" alt="Naas logo" src="asset/naas_fav.svg" />
                 <div id="cs_spinner_loading"></div>
             </div>
         </div>
-        <nav class="bg-black shadow-lg">
+        <nav class="bg-naas shadow-lg">
             <div class="items-center justify-between px-8 py-2 md:flex md:px-12">
                 <div class="flex items-center justify-between">
                     <div class="flex flex-row mb-2 sm:mb-0 ">
