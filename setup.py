@@ -56,7 +56,7 @@ setup(
         "ipython>=7,<8",
         "ipykernel>=5,<6",
         "requests>=2,<3",
-        "sentry-sdk>=0,<1",
+        "sentry-sdk>=0,<2",
         "sanic>=20,<21",
         "sanic-openapi>=0,<1",
         "argparse>=1,<2",
