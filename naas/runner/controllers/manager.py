@@ -14,6 +14,8 @@ class ManagerController(HTTPMethodView):
 
     async def get(self, request):
         return await response.file(
-            os.path.join(self.__path_lib_files, self.__assets_folder, self.__manager_html),
-            headers={'Cache-Control': 'no-cache'}
+            os.path.join(
+                self.__path_lib_files, self.__assets_folder, self.__manager_html
+            ),
+            headers={"Cache-Control": "no-cache"},
         )

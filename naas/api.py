@@ -128,7 +128,7 @@ class Api:
             return self.manager.proxy_url(self.role, token)
         except:  # noqa: E722
             return None
-        
+
     def add(self, path=None, params={}, debug=False):
         self.deprecatedPrint()
         current_file = self.manager.get_path(path)

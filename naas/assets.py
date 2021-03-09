@@ -53,7 +53,7 @@ class Assets:
             return self.manager.proxy_url(self.role, token)
         except:  # noqa: E722
             return None
-                    
+
     def add(self, path=None, params={}, debug=False):
         current_file = self.manager.get_path(path)
         if current_file is None:

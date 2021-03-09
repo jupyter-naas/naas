@@ -99,7 +99,9 @@ class n_env:
     @property
     def proxy_api(self):
         if self.user and self.user != "":
-            return self._proxy_api or os.environ.get("PROXY_API", "https://public.naas.ai")
+            return self._proxy_api or os.environ.get(
+                "PROXY_API", "https://public.naas.ai"
+            )
         else:
             return f"{self.hub_api}/naas"
 
@@ -179,7 +181,11 @@ class n_env:
 
     @property
     def token(self):
-        return self._token or os.environ.get("JUPYTERHUB_API_TOKEN", None) or os.environ.get("JUPYTER_TOKEN", "")
+        return (
+            self._token
+            or os.environ.get("JUPYTERHUB_API_TOKEN", None)
+            or os.environ.get("JUPYTER_TOKEN", "")
+        )
 
     @token.setter
     def token(self, token):
