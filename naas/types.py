@@ -12,6 +12,7 @@ t_scheduler = "scheduler"
 t_secret = "secret"
 
 t_tz = "timezone"
+t_size = "size"
 t_job = "job"
 t_env = "env"
 t_log = "log"

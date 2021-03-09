@@ -1,7 +1,7 @@
 # Copyright (c) Naas Team.
 # Distributed under the terms of the GNU AGPL License.
+from .types import t_tz, t_size, error_busy, error_reject, copy_button
 from IPython.core.display import display, Javascript, HTML
-from .types import t_tz, error_busy, error_reject, copy_button
 from .runner.notifications import Notifications
 from .runner.callback import Callback
 from .dependency import Dependency
@@ -46,6 +46,11 @@ def get_last_version():
     url = f"https://api.github.com/repos/{__github_repo}/tags"
     response = requests.get(url, headers={"Accept": "application/vnd.github.v3+json"})
     return response.json()[0]["name"]
+
+
+def get_size():
+    response = requests.get(f"{n_env.api}/{t_size}")
+    return response.json()
 
 
 def changelog():
