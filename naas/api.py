@@ -118,6 +118,17 @@ class Api:
         self.manager.del_prod({"type": self.role, "path": current_file}, debug)
         return url
 
+    def find(self, path=None):
+        current_file = self.manager.get_path(path)
+        if current_file is None:
+            print("Missing file path")
+            return
+        try:
+            token = self.manager.get_value(current_file, False)
+            return self.manager.proxy_url(self.role, token)
+        except:  # noqa: E722
+            return None
+        
     def add(self, path=None, params={}, debug=False):
         self.deprecatedPrint()
         current_file = self.manager.get_path(path)
