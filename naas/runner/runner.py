@@ -43,7 +43,7 @@ from naas.types import (
 asyncio.set_event_loop_policy(None)
 nest_asyncio.apply()
 
-__version__ = "1.0.6"
+__version__ = "1.1.0"
 
 
 class Runner:
