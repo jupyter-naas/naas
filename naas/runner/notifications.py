@@ -80,7 +80,7 @@ class Notifications:
                 print(jsn)
             return jsn
         content = ""
-        file_link = f"{n_env.user_url}/lab/tree/{file_path}"
+        file_link = f"{n_env.user_url}/naas/downloader?url={file_path}"
         if current_type == t_asset or current_type == t_notebook:
             tmp_path = file_path.replace(n_env.path_naas_folder, "").replace(
                 f"{n_env.server_root}/", ""
