@@ -1,5 +1,4 @@
 from .types import t_dependency, t_add, t_update, t_delete
-from .runner.env_var import n_env
 from .manager import Manager
 
 

@@ -8,7 +8,6 @@ from .types import (
     t_delete,
 )
 from IPython.core.display import display, HTML, JSON, Image, SVG, Markdown
-from .runner.env_var import n_env
 from .manager import Manager
 import pandas as pd
 import markdown2
