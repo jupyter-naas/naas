@@ -74,12 +74,7 @@ class Api:
                 kind = None
                 if item["type"] == self.role and item["status"] != t_delete:
                     kind = f"callable with this url {self.manager.proxy_url('notebooks', item['value'])}"
-                    path = (
-                        item["path"]
-                        .replace(n_env.path_naas_folder, "")
-                        .replace(n_env.server_root, "")
-                    )
-                    print(f"File ==> {path} is {kind}")
+                    print(f'File ==> {item["path"]} is {kind}')
 
     def run(self, path=None, debug=False):
         self.deprecatedPrint()

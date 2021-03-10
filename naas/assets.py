@@ -36,12 +36,7 @@ class Assets:
                 kind = None
                 if item["type"] == self.role and item["status"] != t_delete:
                     kind = f"gettable with this url {self.manager.proxy_url('assets', item['value'])}"
-                    path = (
-                        item["path"]
-                        .replace(n_env.path_naas_folder, "")
-                        .replace(n_env.server_root, "")
-                    )
-                    print(f"File ==> {path} is {kind}")
+                    print(f'File ==> {item["path"]} is {kind}')
 
     def find(self, path=None):
         current_file = self.manager.get_path(path)

@@ -250,7 +250,7 @@
                     if (this.serverLogParams.sort.length > 0) {
                         query['sort'] = JSON.stringify(this.serverLogParams.sort);
                     }
-                    query['filters'] = JSON.stringify(['scheduler', 'asset', 'api'])
+                    query['filters'] = JSON.stringify(['scheduler', 'asset', 'notebook'])
                     console.log('query', query);
                     return query
                 },
@@ -362,12 +362,12 @@
                     const partial = link.replace(this.env.JUPYTER_SERVER_ROOT, '');
                     const partialList = partial.split('/');
                     partialList[partialList.length - 1] = `output__${partialList[partialList.length - 1]}`
-                    const partialOutput = partialList.join('/').substring(1);
+                    const partialOutput = partialList.join('/');
                     const fileUrl = `${this.linkToJup()}/naas/downloader?url=${partialOutput}`;
                     return fileUrl
                 },
                 linkTojup(link) {
-                    const partial = link.replace(this.env.JUPYTER_SERVER_ROOT, '').substring(1);
+                    const partial = link.replace(this.env.JUPYTER_SERVER_ROOT, '');
                     const fileUrl = `${this.linkToJup()}/naas/downloader?url=${partial}`;
                     window.open(fileUrl, '_blank');
                 },

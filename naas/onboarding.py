@@ -23,7 +23,7 @@ def download_file(url):
         )
         raw_target = raw_target.replace("/blob/", "/")
     content = b"ERROR"
-    if "://" not in raw_target and raw_target.startswith(".naas"):
+    if "://" not in raw_target:
         try:
             cur_path = os.path.join(n_env.server_root, raw_target)
             ff = open(cur_path, "rb")

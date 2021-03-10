@@ -69,12 +69,7 @@ class Scheduler:
                 if item["type"] == self.role and item["status"] != t_delete:
                     cron_string = pretty_cron.prettify_cron(item["value"])
                     kind = f"scheduler {cron_string}"
-                    path = (
-                        item["path"]
-                        .replace(n_env.path_naas_folder, "")
-                        .replace(n_env.server_root, "")
-                    )
-                    print(f"File ==> {path} is {kind}")
+                    print(f'File ==> {item["path"]} is {kind}')
 
     def __check_cron(self, text):
         res = False
