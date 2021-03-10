@@ -1,0 +1,32 @@
+FROM jupyternaas/singleuser:latest
+
+# Build-time metadata as defined at http://label-schema.org
+ARG BUILD_DATE
+ARG VCS_REF
+ARG INSTALL_SUPP
+
+
+LABEL org.label-schema.build-date=$BUILD_DATE \
+    org.label-schema.name="Naas machine" \
+    org.label-schema.description="prod jupyter machine with naas" \
+    org.label-schema.url="https://naas.ai" \
+    org.label-schema.vcs-ref=$VCS_REF \
+    org.label-schema.vcs-url="https://github.com/jupyter-naas/naas" \
+    org.label-schema.vendor="Cashstory, Inc." \
+    org.label-schema.schema-version="1.0"
+
+COPY naas /home/$NB_USER/naas
+COPY setup.cfg /home/$NB_USER/naas/setup.cfg
+COPY setup.py /home/$NB_USER/naas/setup.py
+COPY scripts /home/$NB_USER/naas/scripts
+COPY README.md /home/$NB_USER/naas/README.md
+RUN /home/$NB_USER/naas/scripts/install_supp
+
+RUN mkdir /etc/naas
+COPY binder/jupyter_notebook_config.py /etc/naas/jupyter_notebook_config.py
+COPY binder/jupyter_notebook_config.py /etc/jupyter/jupyter_notebook_config.py
+COPY custom/* /etc/naas/
+COPY custom/overrides.json /opt/conda/share/jupyter/lab/settings/overrides.json
+COPY custom/naas_logo_n.ico /opt/conda/lib/python3.8/site-packages/notebook/static/favicon.ico
+COPY custom/naas_logo_n.ico /opt/conda/lib/python3.8/site-packages/notebook/static/base/images/favicon.ico
+RUN cat /etc/naas/custom.css >> /opt/conda/share/jupyter/lab/themes/@jupyterlab/theme-light-extension/index.css

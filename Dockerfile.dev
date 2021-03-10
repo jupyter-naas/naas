@@ -3,6 +3,7 @@ FROM jupyternaas/singleuser:latest
 # Build-time metadata as defined at http://label-schema.org
 ARG BUILD_DATE
 ARG VCS_REF
+ARG INSTALL_SUPP
 
 
 LABEL org.label-schema.build-date=$BUILD_DATE \
@@ -19,7 +20,7 @@ COPY setup.cfg /home/$NB_USER/naas/setup.cfg
 COPY setup.py /home/$NB_USER/naas/setup.py
 COPY scripts /home/$NB_USER/naas/scripts
 COPY README.md /home/$NB_USER/naas/README.md
-RUN cd /home/$NB_USER/naas && pip install --use-deprecated=legacy-resolver -e '.[dev]'
+RUN /home/$NB_USER/naas/scripts/install_supp
 
 RUN mkdir /etc/naas
 COPY binder/jupyter_notebook_config.py /etc/naas/jupyter_notebook_config.py
