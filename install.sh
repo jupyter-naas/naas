@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
-BUILD="NO"
+BUILD="YES"
 SUPP="NO"
-CLEAN="NO"
 N_ENV="dev"
-RUN="YES"
+RUN="NO"
 TOKEN="test"
 for i in "$@"
 do
 
 case $i in
-    -b|--build)
-    BUILD="YES"
+    -ro|--run-only)
+    BUILD="NO"
+    RUN="YES"
     shift # past argument=value
     ;;
     -s|--supp)

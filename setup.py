@@ -62,6 +62,7 @@ setup(
         "argparse>=1,<2",
         "nbclient>=0,<1",
         "beautifulsoup4>=4,<5",
+        "tzdata"
     ],
     classifiers=[
         "Programming Language :: Python :: 3.9",

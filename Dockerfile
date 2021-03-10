@@ -23,11 +23,12 @@ RUN python3 -m pip install --upgrade pip
 RUN python3 -m pip install --use-deprecated=legacy-resolver --no-cache naas_drivers naas==$VERSION
 
 RUN mkdir /etc/naas
-COPY binder/jupyter_notebook_config.py /etc/naas/jupyter_notebook_config.py
-COPY binder/jupyter_notebook_config.py /etc/jupyter/jupyter_notebook_config.py
 COPY custom/* /etc/naas/
 COPY custom/overrides.json /opt/conda/share/jupyter/lab/settings/overrides.json
+COPY custom/jupyter_server_config.py /etc/jupyter/jupyter_server_config.py
 # https://github.com/jupyterlab/jupyterlab/issues/5502 for the custom sidebar order
 COPY custom/naas_logo_n.ico /opt/conda/lib/python3.8/site-packages/notebook/static/favicon.ico
 COPY custom/naas_logo_n.ico /opt/conda/lib/python3.8/site-packages/notebook/static/base/images/favicon.ico
+
+RUN sed -i 's/JupyterLab/Naas/g' /opt/conda/share/jupyter/lab/static/index.html
 RUN cat /etc/naas/custom.css >> /opt/conda/share/jupyter/lab/themes/@jupyterlab/theme-light-extension/index.css

@@ -21,12 +21,13 @@ COPY setup.py /home/$NB_USER/naas/setup.py
 COPY scripts /home/$NB_USER/naas/scripts
 COPY README.md /home/$NB_USER/naas/README.md
 RUN /home/$NB_USER/naas/scripts/install_supp
+RUN cd /home/$NB_USER/naas && pip install --use-deprecated=legacy-resolver -e '.[dev]'
 
 RUN mkdir /etc/naas
-COPY binder/jupyter_notebook_config.py /etc/naas/jupyter_notebook_config.py
-COPY binder/jupyter_notebook_config.py /etc/jupyter/jupyter_notebook_config.py
 COPY custom/* /etc/naas/
 COPY custom/overrides.json /opt/conda/share/jupyter/lab/settings/overrides.json
 COPY custom/naas_logo_n.ico /opt/conda/lib/python3.8/site-packages/notebook/static/favicon.ico
 COPY custom/naas_logo_n.ico /opt/conda/lib/python3.8/site-packages/notebook/static/base/images/favicon.ico
+COPY binder/jupyter_notebook_config.py /etc/jupyter/jupyter_notebook_config.py
+RUN sed -i 's/JupyterLab/Naas/g' /opt/conda/share/jupyter/lab/static/index.html
 RUN cat /etc/naas/custom.css >> /opt/conda/share/jupyter/lab/themes/@jupyterlab/theme-light-extension/index.css

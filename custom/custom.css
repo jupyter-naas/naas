@@ -18,3 +18,35 @@ div#jp-MainLogo > * {
   --jp-brand-color3: #5de191;
   --jp-brand-color4: #73e5a0;
 }
+
+.p-TabBar-tab {
+  order: 50;
+}
+.p-TabBar-tab[data-id='table-of-contents'] {
+  order: 1;
+}
+.p-TabBar-tab[data-id='filebrowser'] {
+  order: 2;
+}
+.p-TabBar-tab[data-id='jupyterlab-quickopen'] {
+  order: 3;
+}
+.p-TabBar-tab[data-id='jp-git-sessions'] {
+  order: 4;
+}
+.p-TabBar-tab[data-id='jp-property-inspector'] {
+  order: 100;
+  margin-right: calc(100vh - (15 * var(--jp-private-sidebar-tab-width)));
+}
+.p-TabBar-tab[data-id='command-palette'] {
+  order: 101;
+}
+.p-TabBar-tab[data-id='extensionmanager.main-view'] {
+  order: 102;
+}
+.p-TabBar-tab[data-id='jp-running-sessions'] {
+  order: 103;
+}
+.p-TabBar-tab[data-id='tab-manager'] {
+  display: none;
+}
