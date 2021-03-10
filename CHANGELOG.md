@@ -1,3 +1,13 @@
+## 1.3.0 (2021-03-10)
+
+### Feat
+
+- use jupyter3
+
+### Fix
+
+- build scripts
+
 ## 1.2.1 (2021-03-10)
 
 ### Fix
