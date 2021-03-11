@@ -16,8 +16,8 @@ ENV NB_GROUP=21
 #     --gecos "Naas user" \
 #     --uid ${NB_UID} \
 #     ${NB_USER}
-# RUN mkdir /home/$NB_USER && \
-#     fix-permissions /home/$NB_USER
+RUN mkdir /home/$NB_USER && \
+    fix-permissions /home/$NB_USER
 
 LABEL org.label-schema.build-date=$BUILD_DATE \
     org.label-schema.name="Naas machine" \

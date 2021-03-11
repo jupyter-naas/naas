@@ -10,6 +10,7 @@ c.ServerApp.port = 8888
 
 c.ServerApp.open_browser = False
 c.ServerApp.webbrowser_open_new = 0
+c.ServerApp.default_url = '/lab'
 
 c.ServerApp.tornado_settings = {
     'headers': {
