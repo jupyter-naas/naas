@@ -50,9 +50,9 @@ def scheduler(caplog, tmp_path):
 
 @pytest.fixture
 def test_runner(loop, runner, sanic_client):
-    return loop.run_until_complete(sanic_client(runner))
+    return loop.run_until_complete(sanic_client(runner, timeout=None))
 
 
 @pytest.fixture
 def test_scheduler(loop, scheduler, sanic_client):
-    return loop.run_until_complete(sanic_client(scheduler))
+    return loop.run_until_complete(sanic_client(scheduler, timeout=None))
