@@ -3,7 +3,7 @@ FROM jupyternaas/singleuser:latest
 # Build-time metadata as defined at http://label-schema.org
 ARG BUILD_DATE
 ARG VCS_REF
-ENV VERSION 1.3.2
+ENV VERSION 1.3.3
 
 
 LABEL org.label-schema.build-date=$BUILD_DATE \
