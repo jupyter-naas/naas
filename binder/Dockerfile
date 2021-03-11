@@ -1,16 +1,17 @@
 FROM jupyternaas/singleuser:latest
 
 ARG NB_USER
-# ARG NB_UID
+ARG NB_UID
 
 ENV USER ${NB_USER}
 ENV HOME /home/${NB_USER}
+ENV JUPYTER_ENABLE_LAB 'yes'
 
 # RUN adduser --disabled-password \
 #     --gecos "Default user" \
 #     --uid ${NB_UID} \
 #     ${NB_USER}
-WORKDIR ${HOME}
+# WORKDIR ${HOME}
 
 COPY naas ${HOME}/naas
 COPY setup.cfg ${HOME}/naas/setup.cfg

@@ -4,6 +4,7 @@ FROM jupyternaas/singleuser:latest
 ARG BUILD_DATE
 ARG VCS_REF
 ARG INSTALL_SUPP
+ENV JUPYTER_ENABLE_LAB 'yes'
 
 
 LABEL org.label-schema.build-date=$BUILD_DATE \
@@ -27,6 +28,8 @@ RUN mkdir /etc/naas
 COPY custom/* /etc/naas/
 COPY custom/overrides.json /opt/conda/share/jupyter/lab/settings/overrides.json
 COPY custom/jupyter_server_config.py /etc/jupyter/jupyter_server_config.py
+
 RUN sed -i 's/JupyterLab/Naas/g' /opt/conda/share/jupyter/lab/static/index.html
 COPY custom/naas_logo_n.ico /opt/conda/lib/python3.8/site-packages/jupyter_server/static/favicons/favicon.ico
+
 RUN cat /etc/naas/custom.css >> /opt/conda/share/jupyter/lab/themes/@jupyterlab/theme-light-extension/index.css

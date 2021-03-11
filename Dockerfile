@@ -4,7 +4,7 @@ FROM jupyternaas/singleuser:latest
 ARG BUILD_DATE
 ARG VCS_REF
 ENV VERSION 1.3.8
-
+ENV JUPYTER_ENABLE_LAB 'yes'
 
 LABEL org.label-schema.build-date=$BUILD_DATE \
     org.label-schema.name="Naas machine" \
