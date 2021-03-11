@@ -6,6 +6,15 @@ ARG VCS_REF
 ENV VERSION 1.3.10
 ENV JUPYTER_ENABLE_LAB 'yes'
 
+ENV NB_UMASK=022
+ENV NB_USER=ftp
+ENV NB_UID=21
+ENV NB_GID=21
+ENV NB_GROUP=21
+
+RUN mkdir /home/$NB_USER && \
+    fix-permissions /home/$NB_USER
+
 LABEL org.label-schema.build-date=$BUILD_DATE \
     org.label-schema.name="Naas machine" \
     org.label-schema.description="jupyter machine with naas" \
@@ -20,12 +29,12 @@ LABEL org.label-schema.build-date=$BUILD_DATE \
 # https://app.naas.ai/user-redirect/naas => redirect to naas
 
 RUN python3 -m pip install --upgrade pip
-RUN python3 -m pip install --use-deprecated=legacy-resolver --no-cache naas_drivers naas==$VERSION
+RUN python3 -m pip install --use-feature=fast-deps --no-cache naas_drivers naas==$VERSION
 
 RUN mkdir /etc/naas
 COPY custom/* /etc/naas/
 COPY custom/overrides.json /opt/conda/share/jupyter/lab/settings/overrides.json
-COPY custom/jupyter_server_config.py /etc/jupyter/jupyter_server_config.py
+COPY custom/jupyter_server_config.py /etc/jupyter/jupyter_notebook_config.py
 
 RUN sed -i 's/JupyterLab/Naas/g' /opt/conda/share/jupyter/lab/static/index.html
 COPY custom/naas_logo_n.ico /opt/conda/lib/python3.8/site-packages/jupyter_server/static/favicons/favicon.ico

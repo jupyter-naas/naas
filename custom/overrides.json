@@ -21,6 +21,9 @@
   "@jupyterlab/apputils-extension:palette": {
     "modal": false
   },
+  "@jupyterlab/terminal-extension:plugin": {
+    "shutdownOnClose": true
+  },
   "@krassowski/jupyterlab-lsp:plugin": {
     "language_servers": {
       "pyls": {
