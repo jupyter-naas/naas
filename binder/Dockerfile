@@ -1,23 +1,23 @@
 FROM jupyternaas/singleuser:latest
 
-# ARG NB_USER
+ARG NB_USER
 # ARG NB_UID
 
-# ENV USER ${NB_USER}
-# ENV HOME /home/${NB_USER}
+ENV USER ${NB_USER}
+ENV HOME /home/${NB_USER}
 
 # RUN adduser --disabled-password \
 #     --gecos "Default user" \
 #     --uid ${NB_UID} \
 #     ${NB_USER}
-# WORKDIR ${HOME}
+WORKDIR ${HOME}
 
-COPY naas /home/$NB_USER/naas
-COPY setup.cfg /home/$NB_USER/naas/setup.cfg
-COPY setup.py /home/$NB_USER/naas/setup.py
-COPY scripts /home/$NB_USER/naas/scripts
-COPY README.md /home/$NB_USER/naas/README.md
-RUN cd /home/$NB_USER/naas && pip install --use-deprecated=legacy-resolver -e '.[dev]'
+COPY naas $HOME/naas
+COPY setup.cfg $HOME/naas/setup.cfg
+COPY setup.py $HOME/naas/setup.py
+COPY scripts $HOME/naas/scripts
+COPY README.md $HOME/naas/README.md
+RUN cd $HOME/naas && pip install --use-deprecated=legacy-resolver -e '.[dev]'
 
 RUN mkdir /etc/naas
 COPY custom/* /etc/naas/
