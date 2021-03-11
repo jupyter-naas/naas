@@ -181,7 +181,7 @@ async def test_dependency(mocker, requests_mock, test_runner, tmp_path):
     assert len(resp_json) == 1
     res_job = resp_json[0]
     assert res_job.get("type") == t_dependency
-    assert res_job.get("path") == real_path
+    assert res_job.get("path") == new_path
     assert res_job.get("status") == t_add
     assert len(res_job.get("runs")) == 0
     assert os.path.isfile(real_path)
@@ -237,7 +237,7 @@ async def test_asset(mocker, requests_mock, test_runner, tmp_path):
     assert len(resp_json) == 1
     res_job = resp_json[0]
     assert res_job.get("type") == t_asset
-    assert res_job.get("path") == real_path
+    assert res_job.get("path") == new_path
     token = url.split("/")[-1]
     assert res_job.get("value") == token
     assert res_job.get("status") == t_add
@@ -292,7 +292,7 @@ async def test_notebooks(mocker, requests_mock, test_runner, tmp_path):
     assert len(resp_json) == 1
     res_job = resp_json[0]
     assert res_job.get("type") == t_notebook
-    assert res_job.get("path") == real_path
+    assert res_job.get("path") == new_path
     token = url.split("/")[-1]
     assert res_job.get("value") == token
     assert res_job.get("status") == t_add
@@ -342,7 +342,7 @@ async def test_notebooks(mocker, requests_mock, test_runner, tmp_path):
     assert len(resp_json) == 1
     res_job = resp_json[0]
     assert res_job.get("type") == t_notebook
-    assert res_job.get("path") == real_path
+    assert res_job.get("path") == new_path
     assert res_job.get("value") == token
     assert res_job.get("status") == t_health
     assert len(res_job.get("runs")) == 1

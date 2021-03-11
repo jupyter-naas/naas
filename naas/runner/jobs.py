@@ -319,8 +319,10 @@ class Jobs:
                     data = self.__df.to_dict("records")
                     for d in data:
                         try:
-                            d["path"] = d["path"].replace(n_env.path_naas_folder, "").replace(
-                                f"{n_env.server_root}/", ""
+                            d["path"] = (
+                                d["path"]
+                                .replace(n_env.path_naas_folder, "")
+                                .replace(f"{n_env.server_root}/", "")
                             )
                             d["runs"] = json.loads(d.get("runs", "[]"))
                         except Exception:
