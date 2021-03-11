@@ -12,12 +12,12 @@ ENV HOME /home/${NB_USER}
 #     ${NB_USER}
 WORKDIR ${HOME}
 
-COPY naas $HOME/naas
-COPY setup.cfg $HOME/naas/setup.cfg
-COPY setup.py $HOME/naas/setup.py
-COPY scripts $HOME/naas/scripts
-COPY README.md $HOME/naas/README.md
-RUN cd $HOME/naas && pip install --use-deprecated=legacy-resolver -e '.[dev]'
+COPY naas ${HOME}/naas
+COPY setup.cfg ${HOME}/naas/setup.cfg
+COPY setup.py ${HOME}/naas/setup.py
+COPY scripts ${HOME}/naas/scripts
+COPY README.md ${HOME}/naas/README.md
+RUN cd ${HOME}/naas && pip install --use-deprecated=legacy-resolver -e '.[dev]'
 
 RUN mkdir /etc/naas
 COPY custom/* /etc/naas/
