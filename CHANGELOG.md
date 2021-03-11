@@ -1,3 +1,10 @@
+## 1.3.14 (2021-03-11)
+
+### Fix
+
+- favicon
+- remove useless config
+
 ## 1.3.13 (2021-03-11)
 
 ### Fix
