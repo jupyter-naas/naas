@@ -89,8 +89,8 @@ class Scheduler:
         if not cron:
             print("No cron provided\n")
             return
-        if not self.__check_cron(recurrence):
-            print(f"WARNING : Recurrence wrong format {recurrence}")
+        if not self.__check_cron(cron):
+            print(f"WARNING : Recurrence wrong format {cron}")
             return
         current_file = self.manager.get_path(path)
         status = t_add
@@ -105,11 +105,11 @@ class Scheduler:
                 "path": current_file,
                 "status": status,
                 "params": params,
-                "value": recurrence,
+                "value": cron,
             },
             debug,
         )
-        cron_string = pretty_cron.prettify_cron(recurrence)
+        cron_string = pretty_cron.prettify_cron(cron)
         print("👌 Well done! Your Notebook has been sent to production. \n")
         print(
             f'⏰ It will be scheduled "{cron_string}" (more on the syntax on https://crontab.guru/).\n'
