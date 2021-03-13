@@ -214,7 +214,7 @@ class Api:
             raise TypeError("data shoud be a dataframe")
         display(HTML(data.to_html(), metadata={"naas_api": True, "naas_type": "csv"}))
 
-    def delete(self, path=None, all=False, debug=False):
+    def delete(self, path=None, all=True, debug=False):
         self.deprecatedPrint()
         if self.manager.is_production():
             print("No delete done, you are in production\n")

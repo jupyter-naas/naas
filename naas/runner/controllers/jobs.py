@@ -69,10 +69,19 @@ class JobsController(HTTPMethodView):
         self.__save_file(new_path, data)
 
     async def put(self, request):
+        uid = str(uuid.uuid4())
         reload_jobs = request.args.get("reload_jobs", False)
+        move_job = request.args.get("move", False)
+        old_path = request.args.get("old_path", None)
+        new_path = request.args.get("new_path", None)
         if reload_jobs:
             self.__jobs.reload_jobs()
             return response.json({"status": "Reloaded"})
+        elif move_job and old_path and new_path:
+            old_path = self.__get_prod_path(old_path, None)
+            new_path = self.__get_prod_path(new_path, None)
+            data = await self.__jobs.move_job(uid, old_path, new_path)
+            return response.json(data)
         else:
             return response.json({"status": "None"})
 
@@ -115,17 +124,18 @@ class JobsController(HTTPMethodView):
 
     async def delete(self, request):
         uid = str(uuid.uuid4())
-        data = request.json
-        histo = data.get("histo", None)
+        histo = request.args.get("histo", None)
         cur_mode = request.args.get("mode", None)
-        path = self.__get_prod_path(data.get("path", None), data["type"])
+        cur_path = request.args.get("path", None)
+        cur_type = request.args.get("type", None)
+        path = self.__get_prod_path(cur_path, cur_type)
         removed = self.__jobs.clear_file(uid, path, histo, cur_mode)
         if not histo:
             updated = await self.__jobs.update(
                 uid,
                 path,
-                data["type"],
-                data["value"],
+                cur_type,
+                "",
                 {},
                 t_delete,
             )

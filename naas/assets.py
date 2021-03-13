@@ -80,7 +80,7 @@ class Assets:
         print('PS: to remove the "Assets" feature, just replace .add by .delete')
         return url
 
-    def delete(self, path=None, all=False, debug=False):
+    def delete(self, path=None, all=True, debug=False):
         if self.manager.is_production():
             print("No delete done, you are in production\n")
             return
@@ -88,4 +88,4 @@ class Assets:
         self.manager.del_prod({"type": self.role, "path": current_file}, debug)
         print("🗑 Done! Your Assets has been remove from production.\n")
         if all is True:
-            self.clear(path)
+            self.clear(current_file, 'all')

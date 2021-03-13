@@ -116,7 +116,7 @@ class Scheduler:
         )
         print('Ps: to remove the "Scheduler", just replace .add by .delete')
 
-    def delete(self, path=None, all=False, debug=False):
+    def delete(self, path=None, all=True, debug=False):
         if self.manager.is_production():
             print("No delete done, you are in production\n")
             return

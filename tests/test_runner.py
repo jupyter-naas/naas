@@ -16,7 +16,7 @@ import pytest  # noqa: F401
 import os
 from shutil import copy2
 from naas.runner import n_env
-from naas import assets, webhook, secret, dependency
+from naas import assets, move_job, webhook, secret, dependency
 from nbconvert import HTMLExporter
 from syncer import sync
 from .generate_df_csv import csv_text
@@ -105,6 +105,20 @@ def mock_job(requests_mock, test_runner):
         context.status_code = res.status_code
         return data_res
 
+    def put_json(request, context):
+        data = request.qs
+        res = sync(test_runner.put(f"/{t_job}", params=data))
+        data_res = res.json()
+        context.status_code = res.status_code
+        return data_res
+
+    def del_json(request, context):
+        data = request.qs
+        res = sync(test_runner.delete(f"/{t_job}", params=data))
+        data_res = res.json()
+        context.status_code = res.status_code
+        return data_res
+
     def get_json(request, context):
         data = request.qs
         res = sync(test_runner.get(f"/{t_job}", params=data))
@@ -114,6 +128,8 @@ def mock_job(requests_mock, test_runner):
 
     requests_mock.register_uri("GET", url_api, json=get_json, status_code=200)
     requests_mock.register_uri("POST", url_api, json=post_json, status_code=200)
+    requests_mock.register_uri("PUT", url_api, json=put_json, status_code=200)
+    requests_mock.register_uri("DELETE", url_api, json=del_json, status_code=200)
 
 
 # https://public.naas.ai/runner/runner/job
@@ -218,16 +234,21 @@ async def test_asset(mocker, requests_mock, test_runner, tmp_path):
     response = await test_runner.get("/asset/naas_logo.png")
     assert response.status_code == 200
     path_test_asset = "tests/demo/demo.json"
+    new_path_test_asset = "tests/demo/demo1.json"
     cur_path = os.path.join(os.getcwd(), path_test_asset)
     new_path = os.path.join(tmp_path, path_test_asset)
+    new_new_path = os.path.join(tmp_path, new_path_test_asset)
     strip_path = os.path.splitdrive(new_path)[1].lstrip(seps)
+    new_strip_path = os.path.splitdrive(new_new_path)[1].lstrip(seps)
     real_path = os.path.join(tmp_path, "pytest_tmp", ".naas", strip_path)
+    new_real_path = os.path.join(tmp_path, "pytest_tmp", ".naas", new_strip_path)
     os.makedirs(os.path.dirname(new_path))
     copy2(cur_path, new_path)
     assert os.path.isfile(new_path)
     mock_session(mocker, requests_mock, cur_path)
     mock_job(requests_mock, test_runner)
     url = assets.add(new_path)
+    assert os.path.isfile(real_path)
     assert url.startswith(f"http://localhost:5001/{getUserb64()}/asset/")
     response = await test_runner.get(f"/{t_job}")
     assert response.status_code == 200
@@ -246,7 +267,6 @@ async def test_asset(mocker, requests_mock, test_runner, tmp_path):
     assert response.status_code == 200
     resp_json = response.json()
     assert resp_json == {"foo": "bar2"}
-    assert os.path.isfile(real_path)
     assets.get(new_path)
     filename = os.path.basename(new_path)
     dirname = os.path.dirname(new_path)
@@ -262,7 +282,9 @@ async def test_asset(mocker, requests_mock, test_runner, tmp_path):
     assert os.path.isfile(new_path_histo)
     url_new = assets.add(new_path)
     assert url == url_new
-    assets.delete(new_path)
+    move_job(new_path, new_new_path)
+    assert os.path.isfile(new_real_path)
+    assets.delete(new_new_path)
     response = await test_runner.get(f"/{t_job}")
     assert response.status_code == 200
     resp_json = response.json()
@@ -270,6 +292,7 @@ async def test_asset(mocker, requests_mock, test_runner, tmp_path):
     resp_json[0].get("status") == t_delete
     response = await test_runner.get(f"/{t_asset}/{token}")
     assert response.status_code == 404
+    assert os.path.isfile(new_real_path) is False
 
 
 async def test_notebooks(mocker, requests_mock, test_runner, tmp_path):
@@ -280,8 +303,6 @@ async def test_notebooks(mocker, requests_mock, test_runner, tmp_path):
     copy2(cur_path, new_path)
     mock_session(mocker, requests_mock, new_path)
     mock_job(requests_mock, test_runner)
-    strip_path = os.path.splitdrive(new_path)[1].lstrip(seps)
-    real_path = os.path.join(tmp_path, "pytest_tmp", ".naas", strip_path)
     url = webhook.add(new_path)
     assert url.startswith(f"http://localhost:5001/{getUserb64()}/notebook/")
     response = await test_runner.get(f"/{t_job}")

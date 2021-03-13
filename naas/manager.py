@@ -171,11 +171,13 @@ class Manager:
         try:
             r = requests.delete(
                 f"{n_env.api}/{t_job}",
-                params={"path": prod_path, "histo": histo, "mode": mode},
+                params={"path": prod_path, "type": self.__filetype, "histo": histo, "mode": mode},
             )
             r.raise_for_status()
             res = r.json()
-            for ff in res:
+            if res.get("status") == 'error' or res.get("status") == 'skiped':
+                raise ValueError("❌ Cannot clean your file", path)
+            for ff in res.get('data'):
                 print(f"🕣 Your file {ff} has been remove from production.\n")
             return pd.DataFrame(data=res.get("files", []))
         except requests.exceptions.ConnectionError as err:
@@ -197,6 +199,8 @@ class Manager:
             )
             r.raise_for_status()
             res = r.json()
+            if res.get("status") == 'error' or res.get("status") == 'skiped':
+                raise ValueError("❌ Cannot list your file", path)
             if res.get("files", None) and len(res.get("files", [])) > 0:
                 return pd.DataFrame(data=res.get("files", []))
             else:
@@ -227,6 +231,8 @@ class Manager:
             )
             r.raise_for_status()
             res = r.json()
+            if res.get("status") == 'error' or res.get("status") == 'skiped':
+                raise ValueError("❌ Cannot get your file", path)
             self.__save_file(self.safe_filepath(current_file), res.get("file"))
             print(
                 f"🕣 Your Notebook {mode or ''} {filename}, has been copied into your local folder.\n"
@@ -266,6 +272,8 @@ class Manager:
                 r = requests.post(f"{n_env.api}/{t_job}", json=new_obj)
                 r.raise_for_status()
                 res = r.json()
+                if res.get("status") == 'error' or res.get("status") == 'skiped':
+                    raise ValueError("❌ Cannot add your file", obj.get("path"))
                 if debug:
                     print(f'{res["status"]} ==> {res}')
             except requests.exceptions.ConnectionError as err:
@@ -294,6 +302,8 @@ class Manager:
                 r = requests.post(f"{n_env.api}/{t_job}", json=new_obj)
                 r.raise_for_status()
                 res = r.json()
+                if res.get("status") == 'error' or res.get("status") == 'skiped':
+                    raise ValueError("❌ Cannot delete your file", obj.get("path"))
                 if debug:
                     print(f'{res["status"]} ==> {res}')
             except requests.exceptions.ConnectionError as err:

@@ -6,6 +6,7 @@ from naas.types import (
     t_update,
     t_job,
     t_error,
+    t_health,
     t_start,
     t_notebook,
     t_asset,
@@ -95,27 +96,29 @@ class Jobs:
             if len(self.__df) > 0:
                 self.__df = self.__df[self.__df.type.isin(filters)]
                 self.__dedup_jobs()
-                self.__migrate_oldPath()
         except Exception as err:
             print("Cannot cleanup", err)
 
-    def __migrate_oldPath(self):
-        cur_jobs = self.__df.to_dict("records")
-        for job in cur_jobs:
-            path = job["path"]
-            tmp_path = path.replace(n_env.path_naas_folder, "")
-            if not tmp_path.startswith(n_env.server_root) and os.path.exists(path):
-                new_path = os.path.join(
-                    n_env.path_naas_folder, n_env.server_root, tmp_path
-                )
-                os.makedirs(os.path.basename(new_path))
-                os.rename(path, new_path)
-                job["path"] = new_path
-            # previous path /home/ftp/.naas/toto/tata.py
-            # new path /home/ftp/.naas/home/ftp/toto/tata.py
-            # tmp_path = tmp_path.replace(n_env.path_naas_folder, '').replace(f"{n_env.server_root}/", '')
-        self.__df = pd.DataFrame(cur_jobs)
-        self.__df = self.__df.reset_index(drop=True)
+    async def move_job(self, uid, old_path, new_path):
+        async with self.__storage_sem:
+            try:
+                if len(self.__df) > 0:
+                    cur_elem = self.__df.query(
+                        f'path == "{old_path}"'
+                    )
+                    index = cur_elem.index[0]
+                    self.__df.at[index, "path"] = new_path
+                    data = self.__df.to_dict("records")
+                    try:
+                        os.makedirs(os.path.dirname(new_path))
+                    except OSError:
+                        pass
+                    os.rename(old_path, new_path)
+                    self.__save_to_file(uid, data)
+                    return {"status": "ok"}
+            except Exception as e:
+                print("move_job", e)
+                return {"status": "ko", "error": str(e)}
 
     def __dedup_jobs(self):
         new_df = self.__df[
@@ -237,9 +240,7 @@ class Jobs:
         return res
 
     def __match_clear(self, cur_filename, filename, clear_all):
-        if clear_all and cur_filename.endwith(filename):
-            return True
-        elif not clear_all and cur_filename == filename:
+        if clear_all and cur_filename.endswith(f'__{filename}') or cur_filename == filename:
             return True
         else:
             return False
@@ -249,33 +250,40 @@ class Jobs:
         # histo_filename
         # out_filename
         # histo_out_filename
-        filename = os.path.basename(path)
-        clear_all = False
-        if mode:
-            filename = f"{mode}_{filename}"
-        if histo and histo == "all":
-            clear_all = True
-        elif histo:
-            filename = f"{histo}_{filename}"
-        removed = []
-        dirname = os.path.dirname(path)
-        if os.path.exists(path):
-            for ffile in os.listdir(dirname):
-                if self.__match_clear(ffile, filename, clear_all):
-                    tmp_path = os.path.join(dirname, ffile)
-                    removed.append(tmp_path)
-                    self.__logger.info(
-                        {
-                            "id": uid,
-                            "filename": filename,
-                            "histo": histo,
-                            "type": "clear_file",
-                            "status": t_delete,
-                            "filepath": path,
-                        }
-                    )
-                    os.remove(tmp_path)
-        return removed
+        try:
+            filename = os.path.basename(path)
+            clear_all = False
+            if mode:
+                filename = f"{mode}_{filename}"
+            if histo and histo == "all":
+                clear_all = True
+            elif histo:
+                filename = f"{histo}_{filename}"
+            removed = []
+            dirname = os.path.dirname(path)
+            if os.path.exists(path):
+                for ffile in os.listdir(dirname):
+                    if self.__match_clear(ffile, filename, clear_all):
+                        tmp_path = os.path.join(dirname, ffile)
+                        os.remove(tmp_path)
+                        tmp_path = tmp_path.replace(n_env.path_naas_folder, "").replace(
+                            f"{n_env.server_root}/", ""
+                        )
+                        removed.append(tmp_path)
+                        self.__logger.info(
+                            {
+                                "id": uid,
+                                "filename": filename,
+                                "histo": histo,
+                                "type": "clear_file",
+                                "status": t_delete,
+                                "filepath": path,
+                            }
+                        )
+            return {"id": uid, "status": t_health, "data": removed}
+        except Exception as e:
+            print("clear_file", e)
+            return {"id": uid, "status": t_error, "error": str(e)}
 
     def list_files(self, uid, path, filetype, output=False):
         d = []
@@ -301,7 +309,7 @@ class Jobs:
         self.__logger.info(
             {
                 "id": uid,
-                "type": "clear_file",
+                "type": "list_files",
                 "filename": filename,
                 "status": t_list,
                 "filepath": path,
@@ -442,9 +450,7 @@ class Jobs:
             )
             self.__df.at[index, "runs"] = json.dumps(runs)
             self.__df.at[index, "lastRun"] = run_time
-            return t_update
-        else:
-            return t_skip
+        return t_update
 
     async def update(self, uid, path, target_type, value, params, status, run_time=0):
         data = None

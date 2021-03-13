@@ -1,6 +1,6 @@
 # Copyright (c) Naas Team.
 # Distributed under the terms of the GNU AGPL License.
-from .types import t_tz, t_size, error_busy, error_reject, copy_button
+from .types import t_tz, t_size, t_job, error_busy, error_reject, copy_button
 from IPython.core.display import display, Javascript, HTML
 from .runner.notifications import Notifications
 from .runner.callback import Callback
@@ -51,6 +51,17 @@ def get_last_version():
 def get_size():
     response = requests.get(f"{n_env.api}/{t_size}")
     return response.json()
+
+
+def move_job(old_path, new_path):
+    old_path = os.path.abspath(os.path.join(os.getcwd(), old_path))
+    new_path = os.path.abspath(os.path.join(os.getcwd(), new_path))
+    response = requests.put(f"{n_env.api}/{t_job}?move=yes&old_path={old_path}&new_path={new_path}")
+    data = response.json()
+    if data and data.get('status') == 'ok':
+        print(f'✅ File moved to {new_path}')
+    else:
+        print(f'😢 File cannot be moved to {new_path}', data)
 
 
 def changelog():

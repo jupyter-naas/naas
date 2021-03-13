@@ -17,16 +17,16 @@ class DownloaderController(HTTPMethodView):
 
     async def get(self, request):
         uid = str(uuid.uuid4())
-        url = str(request.args.get("url", ""))
+        url = str(request.args.get("url", None))
         mode_api = request.args.get("api", None)
-        create = str(request.args.get("create", ""))
-        redirect_to = None
-        if create and create != "":
+        file_name = str(request.args.get("name", None))
+        redirect_to = f"{n_env.user_url}/lab"
+        if url is None and file_name is None:
+            return json({"status": "fail"})
+        if url is None:
             try:
-                notebook_fname = f"{create}.ipynb"
-                FCM().new(path=notebook_fname)
-                wp_set_for_open_filebrowser(notebook_fname)
-                redirect_to = f"{n_env.user_url}/lab"
+                file_name = f"{file_name}.ipynb"
+                FCM().new(path=file_name)
             except Exception as e:
                 tb = traceback.format_exc()
                 self.__logger.error(
@@ -35,18 +35,17 @@ class DownloaderController(HTTPMethodView):
                 return json({"status": e, "tb": str(tb)})
         else:
             try:
-                file_name = download_file(url)
-                wp_set_for_open_filebrowser(file_name)
+                file_name = download_file(url, file_name)
                 self.__logger.info(
                     {"id": uid, "type": t_downloader, "status": "send", "filepath": url}
                 )
-                redirect_to = f"{n_env.user_url}/lab"
             except Exception as e:
                 tb = traceback.format_exc()
                 self.__logger.error(
                     {"id": uid, "type": t_downloader, "status": "send", "filepath": url}
                 )
                 return json({"status": e, "tb": str(tb)})
+        wp_set_for_open_filebrowser(file_name)
         if mode_api is None:
             return redirect(redirect_to)
         else:

@@ -12,10 +12,14 @@ __github_api_url = "https://api.github.com/repos/{REPO}/git/trees/{BRANCH}?recur
 __github_base_url = "https://github.com/{REPO}/blob/{BRANCH}/"
 
 
-def download_file(url):
+def download_file(url, file_name=None):
     raw_target = url
-    file_name = raw_target.split("/")[-1]
-    file_name = urllib.parse.unquote(file_name)
+    if not file_name:
+        file_name = raw_target.split("/")[-1]
+        file_name = urllib.parse.unquote(file_name) 
+    elif file_name not in '.':
+        file_name = f"{file_name}.ipynb"
+
     file_name = f"dl_{file_name}"
     if "github.com" in raw_target:
         raw_target = raw_target.replace(
