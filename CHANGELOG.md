@@ -1,3 +1,9 @@
+## 1.4.1 (2021-03-13)
+
+### Fix
+
+- move feature make all history move too
+
 ## 1.4.0 (2021-03-13)
 
 ### Feat
