@@ -16,7 +16,7 @@ import pytest  # noqa: F401
 import os
 from shutil import copy2
 from naas.runner import n_env
-from naas import assets, move_job, webhook, secret, dependency
+from naas import assets, webhook, secret, dependency
 from nbconvert import HTMLExporter
 from syncer import sync
 from .generate_df_csv import csv_text
@@ -282,7 +282,7 @@ async def test_asset(mocker, requests_mock, test_runner, tmp_path):
     assert os.path.isfile(new_path_histo)
     url_new = assets.add(new_path)
     assert url == url_new
-    move_job(new_path, new_new_path)
+    assets.manager.move_job(new_path, new_new_path)
     assert os.path.isfile(new_real_path)
     assets.delete(new_new_path)
     response = await test_runner.get(f"/{t_job}")

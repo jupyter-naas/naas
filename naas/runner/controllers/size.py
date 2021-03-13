@@ -66,7 +66,7 @@ class SizeController(HTTPMethodView):
         super(SizeController, self).__init__(*args, **kwargs)
 
     async def get(self, request):
-        env = {
-            "size": get_folder_size(n_env.server_root),
+        data = {
+            "size": str(get_folder_size(n_env.server_root)),
         }
-        return json(env)
+        return json(data)

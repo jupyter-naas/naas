@@ -265,3 +265,9 @@ class n_env:
 
 
 n_env = n_env()
+
+
+def cpath(path):
+    return path.replace(n_env.path_naas_folder, "").replace(
+                            f"{n_env.server_root}/", ""
+                        )

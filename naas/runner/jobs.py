@@ -14,8 +14,9 @@ from naas.types import (
     t_dependency,
     t_scheduler,
     t_list,
+    t_send,
 )
-from .env_var import n_env
+from .env_var import cpath, n_env
 import pandas as pd
 import datetime
 import errno
@@ -75,7 +76,7 @@ class Jobs:
                         "id": uid,
                         "type": "init_job_storage",
                         "filepath": self.__json_secrets_path,
-                        "status": "error",
+                        "status": t_error,
                         "error": str(e),
                     }
                 )
@@ -103,22 +104,40 @@ class Jobs:
         async with self.__storage_sem:
             try:
                 if len(self.__df) > 0:
-                    cur_elem = self.__df.query(
+                    cur_elems = self.__df.query(
                         f'path == "{old_path}"'
                     )
-                    index = cur_elem.index[0]
+                    new_elems = self.__df.query(
+                        f'path == "{new_path}"'
+                    )
+                    if len(cur_elems.index) == 0:
+                        return {"status": t_skip, "error": "job not found"}
+                    elif len(new_elems.index) != 0:
+                        return {"status": t_skip, "error": "new job path exist"}
+                    index = cur_elems.index[0]
                     self.__df.at[index, "path"] = new_path
                     data = self.__df.to_dict("records")
                     try:
                         os.makedirs(os.path.dirname(new_path))
                     except OSError:
                         pass
+                    filename = os.path.basename(old_path)
+                    dirname = os.path.dirname(old_path)
+                    new_filename = os.path.basename(new_path)
                     os.rename(old_path, new_path)
+                    moved = [{"from": cpath(old_path), "to": cpath(new_path)}]
+                    for ffile in os.listdir(dirname):
+                        if ffile.endswith(f'__{filename}'):
+                            tmp_path = os.path.join(dirname, ffile)
+                            start = ffile.replace(filename, "")
+                            new_tmp_path = new_path.replace(new_filename, f"{start}{new_filename}")
+                            moved.append({"from": cpath(tmp_path), "to": cpath(new_tmp_path)})
+                            os.rename(tmp_path, new_tmp_path)
                     self.__save_to_file(uid, data)
-                    return {"status": "ok"}
+                    return {"status": t_send, "data": moved}
             except Exception as e:
                 print("move_job", e)
-                return {"status": "ko", "error": str(e)}
+                return {"status": t_error, "error": str(e)}
 
     def __dedup_jobs(self):
         new_df = self.__df[
@@ -167,7 +186,7 @@ class Jobs:
                 {
                     "id": str(uid),
                     "type": "__get_save_from_file",
-                    "status": "exception",
+                    "status": t_error,
                     "filepath": self.__json_secrets_path,
                     "error": str(err),
                 }
@@ -187,7 +206,7 @@ class Jobs:
                 {
                     "id": str(uid),
                     "type": "__save_to_file",
-                    "status": "exception",
+                    "status": t_error,
                     "filepath": self.__json_secrets_path,
                     "error": str(err),
                 }
@@ -247,18 +266,18 @@ class Jobs:
 
     def clear_file(self, uid, path, histo, mode=None):
         # possible format
-        # histo_filename
-        # out_filename
-        # histo_out_filename
+        # histo___filename
+        # output__filename
+        # histo___output__filename
         try:
             filename = os.path.basename(path)
             clear_all = False
             if mode:
-                filename = f"{mode}_{filename}"
+                filename = f"{mode}__{filename}"
             if histo and histo == "all":
                 clear_all = True
             elif histo:
-                filename = f"{histo}_{filename}"
+                filename = f"{histo}___{filename}"
             removed = []
             dirname = os.path.dirname(path)
             if os.path.exists(path):
@@ -266,9 +285,7 @@ class Jobs:
                     if self.__match_clear(ffile, filename, clear_all):
                         tmp_path = os.path.join(dirname, ffile)
                         os.remove(tmp_path)
-                        tmp_path = tmp_path.replace(n_env.path_naas_folder, "").replace(
-                            f"{n_env.server_root}/", ""
-                        )
+                        tmp_path = cpath(tmp_path)
                         removed.append(tmp_path)
                         self.__logger.info(
                             {
@@ -302,9 +319,7 @@ class Jobs:
                 split_list = ffile.split("___")
                 histo = split_list[0]
                 tmp_path = os.path.join(dirname, ffile)
-                tmp_path = tmp_path.replace(n_env.path_naas_folder, "").replace(
-                    f"{n_env.server_root}/", ""
-                )
+                tmp_path = cpath(tmp_path)
                 d.append({"timestamp": histo, "filepath": tmp_path})
         self.__logger.info(
             {
@@ -327,11 +342,7 @@ class Jobs:
                     data = self.__df.to_dict("records")
                     for d in data:
                         try:
-                            d["path"] = (
-                                d["path"]
-                                .replace(n_env.path_naas_folder, "")
-                                .replace(f"{n_env.server_root}/", "")
-                            )
+                            d["path"] = cpath(d["path"])
                             d["runs"] = json.loads(d.get("runs", "[]"))
                         except Exception:
                             d["runs"] = []
@@ -479,7 +490,7 @@ class Jobs:
                 if res == t_error:
                     raise ServerError(
                         {
-                            "status": "error",
+                            "status": t_error,
                             "id": uid,
                             "data": [],
                             "error": "unknow error",
@@ -502,6 +513,6 @@ class Jobs:
                     }
                 )
                 raise ServerError(
-                    {"status": "error", "id": uid, "data": [], "error": str(e)},
+                    {"status": t_error, "id": uid, "data": [], "error": str(e)},
                     status_code=500,
                 )

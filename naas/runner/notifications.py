@@ -1,6 +1,6 @@
 from naas.types import t_notebook, t_scheduler, t_asset
 from .proxy import encode_proxy_url
-from .env_var import n_env
+from .env_var import cpath, n_env
 from bs4 import BeautifulSoup
 import pandas as pd
 import pretty_cron
@@ -81,9 +81,7 @@ class Notifications:
             return jsn
         content = ""
         file_link = f"{n_env.user_url}/naas/downloader?url={file_path}"
-        tmp_path = file_path.replace(n_env.path_naas_folder, "").replace(
-            f"{n_env.server_root}/", ""
-        )
+        tmp_path = cpath(file_path)
         if current_type == t_asset or current_type == t_notebook:
             content = f'The file <a href="{file_link}">{tmp_path}</a> <br/>'
             content += f"Accesible at this url:<br/> {encode_proxy_url(current_type)}/{current_value}<br/>"

@@ -124,5 +124,5 @@ class Scheduler:
         self.manager.del_prod({"type": self.role, "path": current_file}, debug)
         print("🗑 Done! Your Scheduler has been remove from production.\n")
         if all is True:
-            self.clear(path)
-            self.clear_output(path)
+            self.clear(current_file, 'all')
+            self.clear_output(current_file, 'all')

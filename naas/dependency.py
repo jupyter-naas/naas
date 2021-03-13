@@ -67,4 +67,4 @@ class Dependency:
         self.manager.del_prod({"type": self.role, "path": current_file}, debug)
         print("🗑 Done! Your Dependency has been remove from production.\n")
         if all is True:
-            self.clear(path)
+            self.clear(current_file, 'all')

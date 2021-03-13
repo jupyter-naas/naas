@@ -57,7 +57,6 @@ def guess_type(filepath):
         result_type = mime_nb
     return result_type
 
-
 def guess_ext(cur_type):
     result_ext = mimetypes.guess_extension(cur_type, strict=False)
     if result_ext is None and cur_type == mime_nb:

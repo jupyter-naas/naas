@@ -1,4 +1,4 @@
-from naas.types import t_job, t_error, t_send, t_delete, t_production
+from naas.types import t_job, t_error, t_send, t_production
 from sanic.views import HTTPMethodView
 from naas.runner.env_var import n_env
 from sanic import response
@@ -72,18 +72,19 @@ class JobsController(HTTPMethodView):
         uid = str(uuid.uuid4())
         reload_jobs = request.args.get("reload_jobs", False)
         move_job = request.args.get("move", False)
+        cur_type = request.args.get("type", None)
         old_path = request.args.get("old_path", None)
         new_path = request.args.get("new_path", None)
         if reload_jobs:
             self.__jobs.reload_jobs()
-            return response.json({"status": "Reloaded"})
+            return response.json({"status": t_send})
         elif move_job and old_path and new_path:
-            old_path = self.__get_prod_path(old_path, None)
-            new_path = self.__get_prod_path(new_path, None)
+            old_path = self.__get_prod_path(old_path, cur_type)
+            new_path = self.__get_prod_path(new_path, cur_type)
             data = await self.__jobs.move_job(uid, old_path, new_path)
             return response.json(data)
         else:
-            return response.json({"status": "None"})
+            return response.json({"status": t_error})
 
     async def get(self, request):
         uid = str(uuid.uuid4())
@@ -98,7 +99,7 @@ class JobsController(HTTPMethodView):
         path = self.__get_prod_path(cur_path, cur_type)
         job = await self.__jobs.find_by_path(uid, path, cur_type)
         if not job:
-            return response.json({"error": "job not found"}, status=500)
+            return response.json({"status": t_error, "error": "job not found"}, status=500)
         if cur_mode and cur_mode == "list_history":
             job["files"] = self.__jobs.list_files(uid, path, cur_type)
         elif cur_mode and cur_mode == "list_output":
@@ -130,16 +131,6 @@ class JobsController(HTTPMethodView):
         cur_type = request.args.get("type", None)
         path = self.__get_prod_path(cur_path, cur_type)
         removed = self.__jobs.clear_file(uid, path, histo, cur_mode)
-        if not histo:
-            updated = await self.__jobs.update(
-                uid,
-                path,
-                cur_type,
-                "",
-                {},
-                t_delete,
-            )
-            return response.json(updated)
         return response.json(removed)
 
     async def post(self, request):
@@ -158,7 +149,7 @@ class JobsController(HTTPMethodView):
                 }
             )
             return response.json(
-                {"id": uid, "status": "error", "error": "missing keys", "data": [data]},
+                {"id": uid, "status": t_error, "error": "missing keys", "data": [data]},
                 status=400,
             )
         path = self.__get_prod_path(data["path"], data["type"])
