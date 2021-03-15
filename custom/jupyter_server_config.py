@@ -8,6 +8,8 @@ c = get_config()
 c.ServerApp.ip = '0.0.0.0'
 c.ServerApp.port = 8888
 
+naas_port = 5000
+
 c.ServerApp.open_browser = False
 c.ServerApp.webbrowser_open_new = 0
 
@@ -26,7 +28,7 @@ c.ServerProxy.servers = {
         },
         'new_browser_tab': False,
         'timeout': 30,
-        'command': ["redir", "--lport={port}", "--cport=5000"],
+        'command': ["redir", ":{port}", f":{naas_port}"],
     }
 }
 
@@ -35,4 +37,4 @@ c.ServerProxy.servers = {
 if 'NB_UMASK' in os.environ:
     os.umask(int(os.environ['NB_UMASK'], 8))
 
-subprocess.Popen(['python', '-m', 'naas.runner'])
+subprocess.Popen(['python', '-m', 'naas.runner', '-p', f'{naas_port}'])
