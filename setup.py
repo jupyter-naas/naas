@@ -29,7 +29,7 @@ setup(
             "pytest-sanic==1.7.0",
             "pytest-asyncio==0.14.0",
             "requests-mock==1.8.0",
-            "twine==3.3.0",
+            "twine==3.4.0",
             "flake8==3.8.4",
             "pre-commit==2.11.1",
             "black==20.8b1",
