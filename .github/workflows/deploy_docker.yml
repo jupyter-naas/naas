@@ -39,14 +39,19 @@ jobs:
         with:
           push: true
           tags: ${{ steps.prepare.outputs.tag }}
-      # - name: Push to GitHub Packages
-      #   uses: docker/build-push-action@v1
-      #   with:
-      #     username: ${{ github.actor }}
-      #     password: ${{ secrets.GITHUB_TOKEN }}
-      #     registry: docker.pkg.github.com
-      #     repository: naas
-      #     tags: ${{ steps.prepare.outputs.tag }}
+      - uses: actions-ecosystem/action-get-latest-tag@v1
+        id: get-latest-tag
+      - name: Update Image Version in the related HelmChart values.yaml
+        uses: fjogeleit/yaml-update-action@master
+        with:
+          valueFile: 'galaxy/tools/jupyter/values.yaml'
+          propertyPath: 'jupyter.dockerNotebookImage'
+          value: 'jupyternaas/naas:${{ steps.get-latest-tag.outputs.tag }}'
+          repository: 'CashStory/cs_confs'
+          branch: main
+          createPR: 'false'
+          message: 'Bump: Naas Version to ${{ steps.get-latest-tag.outputs.tag }}'
+          token: '${{ secrets.PERSONAL_ACCESS_TOKEN }}'
       - name: Image digest
         run: echo ${{ steps.prepare.outputs.tag }}
       - name: Slack notification
