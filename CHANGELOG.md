@@ -1,3 +1,9 @@
+## 1.5.6 (2021-03-16)
+
+### Fix
+
+- add action to auto update cs_conf
+
 ## 1.5.5 (2021-03-16)
 
 ### Fix
