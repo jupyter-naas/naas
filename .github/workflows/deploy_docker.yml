@@ -49,3 +49,12 @@ jobs:
       #     tags: ${{ steps.prepare.outputs.tag }}
       - name: Image digest
         run: echo ${{ steps.prepare.outputs.tag }}
+      - name: Slack notification
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_USERNAME: Naas # Optional. (defaults to webhook app)
+          SLACK_CHANNEL: naas-ci # Optional. (defaults to webhook)
+          SLACK_AVATAR: repository 
+        uses: Ilshidur/action-slack@2.0.2
+        with:
+          args: 'A new commit has been pushed.' # Optional
