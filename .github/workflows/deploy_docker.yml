@@ -55,5 +55,5 @@ jobs:
           SLACK_USERNAME: Naas # Optional. (defaults to webhook app)
           SLACK_CHANNEL: naas-ci # Optional. (defaults to webhook)
           SLACK_AVATAR: repository
-          SLACK_CUSTOM_PAYLOAD: '{"attachments":[{"color":"#47dd82","blocks":[{"type":"section","block_id":"section567","text":{"type":"mrkdwn","text":"<https://github.com/jupyter-naas/naas|Naas> \n Doors had too many axe holes, guest in room 237 was far too rowdy, whole place felt stuck in the 1920s."},"accessory":{"type":"image","image_url":"https://github.com/jupyter-naas/naas/raw/main/custom/naas-fav.png","alt_text":"Naas logo"}},{"type":"section","block_id":"section789","fields":[{"type":"mrkdwn","text":"*Average Rating*\n${{ github.event.client_payload.ref }}"}]}]}]}'
+          SLACK_CUSTOM_PAYLOAD: '{"attachments":[{"color":"#47dd82","blocks":[{"type":"section","block_id":"section567","text":{"type":"mrkdwn","text":"<https://github.com/{{ GITHUB_REPOSITORY }}|{{ GITHUB_REPOSITORY }}>\nAvailable to pip and docker hub.\n*Version*\n${{ github.event.client_payload.ref }}"},"accessory":{"type":"image","image_url":"https://github.com/jupyter-naas/naas/raw/main/custom/naas-fav.png","alt_text":"Naas logo"}}]}]}'
         uses: Ilshidur/action-slack@2.0.2
