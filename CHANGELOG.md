@@ -1,3 +1,9 @@
+## 1.5.10 (2021-03-17)
+
+### Fix
+
+- setup system for naas_drivers fixed version
+
 ## 1.5.9 (2021-03-17)
 
 ### Fix
