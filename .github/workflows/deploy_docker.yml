@@ -45,7 +45,7 @@ jobs:
         id: regex-match
         with:
           text: ${{ steps.get-latest-tag.outputs.tag }}
-          regex: '^\d\.\d\.\d$'
+          regex: '^\d*\.\d*\.\d*$'
       - name: Checkout Target Repository
         if: ${{ steps.regex-match.outputs.match != '' }}
         uses: actions/checkout@v2
