@@ -60,7 +60,9 @@ it will create and install all dependency in docker machine
 ## Test local server
 
 `./install.sh -ro`
-it will run your docker machine only if you want to rebuild docker too `./install.sh -r`
+it will run your docker machine only.
+
+if you want to rebuild docker too `./install.sh -r`
 
 
 Then open your browser at the url:
