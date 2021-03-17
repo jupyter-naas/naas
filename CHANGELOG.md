@@ -1,3 +1,9 @@
+## 1.5.8 (2021-03-17)
+
+### Fix
+
+- don't update build when beta
+
 ## 1.5.7 (2021-03-17)
 
 ### Fix
