@@ -41,13 +41,20 @@ jobs:
           tags: ${{ steps.prepare.outputs.tag }}
       - uses: actions-ecosystem/action-get-latest-tag@v1
         id: get-latest-tag
+      - uses: actions-ecosystem/action-regex-match@v2
+        id: regex-match
+        with:
+          text: ${{ steps.get-latest-tag.outputs.tag }}
+          regex: '^\d\.\d\.\d$'
       - name: Checkout Target Repository
+        if: ${{ steps.regex-match.outputs.match != '' }}
         uses: actions/checkout@v2
         with:
           repository: CashStory/cs_confs
           path: cs_confs
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }} 
       - name: Update Image Version in the related HelmChart values.yaml
+        if: ${{ steps.regex-match.outputs.match != '' }}
         uses: fjogeleit/yaml-update-action@master
         with:
           valueFile: 'galaxy/tools/jupyter/values.yaml'
