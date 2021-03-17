@@ -246,7 +246,7 @@ class Scheduler:
                     "status": t_start,
                 }
             )
-            jobs = await self.__jobs.list(main_uid)
+            jobs = await self.__jobs.list(main_uid, prodPath=True)
             await asyncio.gather(
                 *[
                     self.__scheduler_greenlet(main_uid, current_time, job)

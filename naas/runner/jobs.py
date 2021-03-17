@@ -332,7 +332,7 @@ class Jobs:
         )
         return d
 
-    async def list(self, uid, as_df=False):
+    async def list(self, uid, as_df=False, prodPath=False):
         data = []
         try:
             async with self.__storage_sem:
@@ -342,7 +342,7 @@ class Jobs:
                     data = self.__df.to_dict("records")
                     for d in data:
                         try:
-                            d["path"] = cpath(d["path"])
+                            d["path"] = d["path"] if prodPath else cpath(d["path"])
                             d["runs"] = json.loads(d.get("runs", "[]"))
                         except Exception:
                             d["runs"] = []
