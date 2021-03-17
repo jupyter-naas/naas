@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="naas",
-    version="1.5.6",
+    version="1.5.7",
     scripts=["scripts/naas"],
     author="Martin Donadieu",
     author_email="martindonadieu@gmail.com",
