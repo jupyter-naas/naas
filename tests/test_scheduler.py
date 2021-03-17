@@ -1,4 +1,4 @@
-from naas.types import t_add, t_health, t_scheduler, t_job
+from naas.types import t_add, t_health, t_scheduler, t_job, t_output
 from naas.runner.scheduler import Scheduler
 from naas.runner.notebooks import Notebooks
 from datetime import datetime, timedelta
@@ -113,7 +113,17 @@ async def test_scheduler(tmp_path, event_loop):
     assert res_job.get("path") == new_path
     assert res_job.get("value") == recur
     assert res_job.get("status") == t_health
-
+    list_out_in_prod = scheduler.list_output(new_path)
+    assert len(list_out_in_prod) == 1
+    histo = list_out_in_prod.to_dict("records")[0]
+    scheduler.get_output(new_path, histo.get("timestamp"))
+    filename = os.path.basename(new_path)
+    out_filename = f"{histo.get('timestamp')}___{t_output}__{filename}"
+    dirname = os.path.dirname(new_path)
+    new_path_out_histo = os.path.join(
+        dirname, out_filename
+    )
+    assert os.path.isfile(new_path_out_histo)
 
 async def test_scheduler_runner(mocker, requests_mock, test_scheduler, tmp_path):
     test_notebook = "tests/demo/demo_scheduler.ipynb"

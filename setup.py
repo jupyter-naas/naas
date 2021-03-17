@@ -3,6 +3,26 @@ from setuptools import setup, find_packages
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
+NDV = "0.51.3"
+
+driver_dep = [f'naas_drivers=={NDV}']
+dev_dep = [
+    "syncer==1.3.0",
+    "backports.zoneinfo==0.2.1",
+    "pytest==6.2.1",
+    "pytest-tornasync==0.6.0.post2",
+    "pytest-mock==3.5.1",
+    "pytest-sanic==1.7.0",
+    "pytest-asyncio==0.14.0",
+    "requests-mock==1.8.0",
+    "twine==3.3.0",
+    "flake8==3.8.4",
+    "pre-commit==2.11.1",
+    "black==20.8b1",
+    "imgcompare==2.0.1",
+    "commitizen==2.16.0",
+    "pytest-cov==2.11.1",
+]
 setup(
     name="naas",
     version="1.5.8",
@@ -20,23 +40,9 @@ setup(
     },
     setup_requires=["wheel"],
     extras_require={
-        "dev": [
-            "syncer==1.3.0",
-            "backports.zoneinfo==0.2.1",
-            "pytest==6.2.1",
-            "pytest-tornasync==0.6.0.post2",
-            "pytest-mock==3.5.1",
-            "pytest-sanic==1.7.0",
-            "pytest-asyncio==0.14.0",
-            "requests-mock==1.8.0",
-            "twine==3.3.0",
-            "flake8==3.8.4",
-            "pre-commit==2.11.1",
-            "black==20.8b1",
-            "imgcompare==2.0.1",
-            "commitizen==2.16.0",
-            "pytest-cov==2.11.1",
-        ]
+        "dev": dev_dep,
+        'full': driver_dep,
+        "fulldev": dev_dep + driver_dep
     },
     install_requires=[
         "nbconvert==6.0.7",
