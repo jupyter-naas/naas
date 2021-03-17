@@ -3,7 +3,7 @@ FROM jupyternaas/singleuser:latest
 # Build-time metadata as defined at http://label-schema.org
 ARG BUILD_DATE
 ARG VCS_REF
-ENV VERSION 1.5.12
+ENV NAAS_VERSION 1.5.12
 ENV JUPYTER_ENABLE_LAB 'yes'
 
 ENV NB_UMASK=022
@@ -29,7 +29,7 @@ LABEL org.label-schema.build-date=$BUILD_DATE \
 # https://app.naas.ai/user-redirect/naas => redirect to naas
 
 RUN python3 -m pip install --upgrade pip
-RUN python3 -m pip install --no-cache 'naas[full]==$VERSION'
+RUN python3 -m pip install --no-cache 'naas[full]==${VERSION}'
 
 RUN mkdir /etc/naas
 COPY custom/* /etc/naas/

@@ -7,5 +7,5 @@ version_files = [
     "naas/runner/runner.py",
     ".cz.toml",
     "setup.py:version",
-    "Dockerfile"
+    "Dockerfile:NAAS_VERSION"
 ]
