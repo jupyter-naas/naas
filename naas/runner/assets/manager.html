@@ -359,7 +359,7 @@
                     return `${this.linkToHub()}/lab`
                 },
                 linkToJupOutput(link) {
-                    const partial = this.stripNaasPath(link;
+                    const partial = this.stripNaasPath(link);
                     const partialList = partial.split('/');
                     partialList[partialList.length - 1] = `output__${partialList[partialList.length - 1]}`
                     const partialOutput = partialList.join('/');
