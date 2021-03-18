@@ -1,4 +1,4 @@
-FROM jupyternaas/singleuser:2.6.8
+FROM jupyternaas/singleuser:2.6.9
 
 # Build-time metadata as defined at http://label-schema.org
 ARG BUILD_DATE
