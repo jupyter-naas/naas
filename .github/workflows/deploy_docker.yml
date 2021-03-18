@@ -24,15 +24,13 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - id: get_version
-        uses: battila7/get-version-action@v2
-      - run: echo ${{ steps.get_version.outputs.version }}
       - name: Get smart tag
         id: prepare
         uses: jupyter-naas/docker-smart-tag-action@1.0.0
         with:
           ref: ${{ github.event.client_payload.ref }}
           docker_image: jupyternaas/naas
+      - run: echo ${{ steps.prepare.outputs.tag }}
       - name: Build and push
         id: docker_build
         uses: docker/build-push-action@v2
@@ -74,5 +72,5 @@ jobs:
           SLACK_USERNAME: Naas # Optional. (defaults to webhook app)
           SLACK_CHANNEL: naas-ci # Optional. (defaults to webhook)
           SLACK_AVATAR: repository
-          SLACK_CUSTOM_PAYLOAD: '{"attachments":[{"color":"#47dd82","blocks":[{"type":"section","block_id":"section567","text":{"type":"mrkdwn","text":"<https://github.com/{{ GITHUB_REPOSITORY }}|{{ GITHUB_REPOSITORY }}>\nAvailable to pip and docker hub.\n*Version*\n${{ github.event.client_payload.ref }}"},"accessory":{"type":"image","image_url":"https://github.com/jupyter-naas/naas/raw/main/custom/naas-fav.png","alt_text":"Naas logo"}}]}]}'
+          SLACK_CUSTOM_PAYLOAD: '{"attachments":[{"color":"#47dd82","blocks":[{"type":"section","block_id":"section567","text":{"type":"mrkdwn","text":"<https://github.com/{{ GITHUB_REPOSITORY }}|{{ GITHUB_REPOSITORY }}>\nAvailable to pip and docker hub.\n*Version*\n$${{ steps.prepare.outputs.tag }}"},"accessory":{"type":"image","image_url":"https://github.com/jupyter-naas/naas/raw/main/custom/naas-fav.png","alt_text":"Naas logo"}}]}]}'
         uses: Ilshidur/action-slack@2.0.2
