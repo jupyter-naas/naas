@@ -1,3 +1,9 @@
+## 1.5.18 (2021-03-18)
+
+### Fix
+
+- open output in manager and notif
+
 ## 1.5.17 (2021-03-18)
 
 ### Fix
