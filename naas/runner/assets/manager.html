@@ -173,13 +173,13 @@
             },
             methods: {
                 openOutput(path) {
-                    const url = this.linkTojupOutput(path);
+                    const url = this.linkToJupOutput(path);
                     if (url.includes('.ipynb')) {
                         window.open(url, '_blank');
                     }
                 },
                 openError(error, path) {
-                    const url = this.linkTojupOutput(path);
+                    const url = this.linkToJupOutput(path);
                     this.$modal.show({
                         methods: {
                             openOutput(url) {
@@ -345,7 +345,7 @@
                     }
                     return `${minutes}:${seconds}`;
                 },
-                linkToJup() {
+                linkToHub() {
                     let base = `${this.env.JUPYTERHUB_URL}`
                     if (this.env.JUPYTERHUB_USER && this.env.JUPYTERHUB_USER !== '') {
                         return `${this.env.JUPYTERHUB_URL}/user/${this.env.JUPYTERHUB_USER}`
@@ -356,19 +356,19 @@
                     return base
                 },
                 linkToLab() {
-                    return `${this.linkToJup()}/lab`
+                    return `${this.linkToHub()}/lab`
                 },
-                linkTojupOutput(link) {
-                    const partial = link.replace(this.env.JUPYTER_SERVER_ROOT, '');
+                linkToJupOutput(link) {
+                    const partial = this.stripNaasPath(link;
                     const partialList = partial.split('/');
                     partialList[partialList.length - 1] = `output__${partialList[partialList.length - 1]}`
                     const partialOutput = partialList.join('/');
-                    const fileUrl = `${this.linkToJup()}/naas/downloader?url=${partialOutput}`;
+                    const fileUrl = `${this.linkToHub()}/naas/downloader?url=${partialOutput}`;
                     return fileUrl
                 },
-                linkTojup(link) {
-                    const partial = link.replace(this.env.JUPYTER_SERVER_ROOT, '');
-                    const fileUrl = `${this.linkToJup()}/naas/downloader?url=${partial}`;
+                linkToJup(link) {
+                    const partial = this.stripNaasPath(link);
+                    const fileUrl = `${this.linkToHub()}/naas/downloader?url=${partial}`;
                     window.open(fileUrl, '_blank');
                 },
             },
@@ -502,7 +502,7 @@
                         </a>
                     </span>
                     <span v-else-if="props.column.field == 'path'">
-                        <a href="#" v-on:click="linkTojup(props.formattedRow[props.column.field])" target="_blank"
+                        <a href="#" v-on:click="linkToJup(props.formattedRow[props.column.field])" target="_blank"
                             style="font-weight: bold; color: gray;">{{stripNaasPath(props.formattedRow[props.column.field])}}</a>
                     </span>
                     <span v-else-if="props.column.field == 'lastRun'">

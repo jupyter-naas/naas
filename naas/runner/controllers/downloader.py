@@ -17,9 +17,9 @@ class DownloaderController(HTTPMethodView):
 
     async def get(self, request):
         uid = str(uuid.uuid4())
-        url = str(request.args.get("url", None))
+        url = request.args.get("url", None)
         mode_api = request.args.get("api", None)
-        file_name = str(request.args.get("name", None))
+        file_name = request.args.get("name", None)
         redirect_to = f"{n_env.user_url}/lab"
         if url is None and file_name is None:
             return json({"status": t_error})

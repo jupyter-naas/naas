@@ -15,7 +15,7 @@ from naas.types import (
 )
 from nbconvert import HTMLExporter
 from sanic import response
-from .env_var import n_env
+from .env_var import cpath, n_env
 import papermill as pm
 from .custom_papermill import execute_notebook
 import traceback
@@ -258,7 +258,7 @@ class Notebooks:
     def __send_notification(self, uid, res, file_filepath, current_type, value, params):
         notif_down = params.get("notif_down", None)
         notif_up = params.get("notif_up", None)
-        small_path = file_filepath.replace(n_env.server_root, "")
+        small_path = cpath(file_filepath)
         if res.get("error"):
             if n_env.user is not None:
                 self.__notif.send_status(
