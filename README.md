@@ -29,7 +29,12 @@ Whenever you need it (even when you sleep).
     <img width="200px" src="https://raw.githubusercontent.com/jupyter-naas/naas/main/images/gitbook.svg" alt="Gitbooks naas" />
   </a>
  </p>
- 
+
+# Issue
+
+If you found a bug or need a new feature go there :
+https://naas.canny.io/
+
 ## Try Naas
 Using Binder
 You can try out some of Naas features using the My Binder service.
@@ -48,34 +53,51 @@ Test it in binder (WIP)
 
 ## Install
 
-`./build_runner_dev.sh`
+it will create and install all dependency in docker machine
 
+`./install.sh`
+
+## Test local server
+
+`./install.sh -ro`
+it will run your docker machine only.
+
+if you want to rebuild docker too `./install.sh -r`
+
+
+Then open your browser at the url:
+`http://localhost:8888`
+
+enter `test` as password
+
+if you want other password `./install.sh -t=mypassword`
+
+### Livereload 
+
+If you do change in naas code, the server will live reload.
+
+If you use naas in a notebook restart the kernel to get the changes.
+
+### isolated Manager
+open manager outsite of jupyter context :
+
+`http://localhost:8888/naas`
 
 ## Run test 
 
 run it in the shell of jupyter
 `pytest -x`  
 
-## Test local server
-
-`./test_runner_dev.sh`
-
-Then copy url logged and connect to jupyter
-it should start like:
-`localhost:8888/`
-
-open manager outsite of jupyter (to livereload) :
-
-`localhost:5000/`
-
-## Publish
-
-this auto publish by github action on main branch
-
 ## Check lint
 
 `python -m black naas` format better
 `python -m flake8 naas` check if any left error
+
+## Publish
+
+You can commit from jupyter or from your local IDE, code of Naas is sync between docker machine and your computer
+
+this auto publish by github action on main branch
 
 # Supporters: 
 <p>

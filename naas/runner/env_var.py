@@ -8,7 +8,6 @@ class n_env:
     _version = None
     _remote_mode = False
     _api_port = None
-    _env_mode = None
     _notif_api = None
     _callback_api = None
     _proxy_api = None
@@ -16,6 +15,9 @@ class n_env:
 
     _naas_folder = None
 
+    _current = {}
+
+    _custom_path = None
     _server_root = None
     _shell_user = None
 
@@ -38,12 +40,12 @@ class n_env:
         self._api_port = api_port
 
     @property
-    def env_mode(self):
-        return self._env_mode or os.environ.get("NAAS_ENV")
+    def current(self):
+        return self._current
 
-    @env_mode.setter
-    def env_mode(self, env_mode: str):
-        self._env_mode = env_mode
+    @current.setter
+    def current(self, current):
+        self._current = current
 
     @property
     def version(self):
@@ -96,7 +98,12 @@ class n_env:
 
     @property
     def proxy_api(self):
-        return self._proxy_api or os.environ.get("PROXY_API", "https://public.naas.ai")
+        if self.user and self.user != "":
+            return self._proxy_api or os.environ.get(
+                "PROXY_API", "https://public.naas.ai"
+            )
+        else:
+            return f"{self.hub_api}/naas"
 
     @proxy_api.setter
     def proxy_api(self, proxy_api):
@@ -104,11 +111,31 @@ class n_env:
 
     @property
     def hub_api(self):
-        return self._hub_api or os.environ.get("JUPYTERHUB_URL", "https://app.naas.ai")
+        res = self._hub_api or os.environ.get("JUPYTERHUB_URL", "https://app.naas.ai")
+        if "://" not in res:
+            return f"http://{res}"
+        else:
+            return res
 
     @hub_api.setter
     def hub_api(self, hub_api):
         self._hub_api = hub_api
+
+    @property
+    def any_user_url(self):
+        if self.user and self.user != "":
+            base_url = f"{self.hub_api}/user-redirect"
+        else:
+            base_url = self.hub_api
+        return base_url
+
+    @property
+    def user_url(self):
+        if self.user and self.user != "":
+            base_url = f"{self.hub_api}/user/{self.user}"
+        else:
+            base_url = self.hub_api
+        return base_url
 
     @property
     def naas_folder(self):
@@ -124,13 +151,21 @@ class n_env:
             "JUPYTER_SERVER_ROOT", str(Path.home())
         )
 
-    @property
-    def path_naas_folder(self):
-        return os.path.join(self.server_root, self.naas_folder)
-
     @server_root.setter
     def server_root(self, server_root):
         self._server_root = server_root
+
+    @property
+    def custom_path(self):
+        return self._custom_path or os.environ.get("NAAS_CUSTOM_FOLDER", "/etc/naas")
+
+    @custom_path.setter
+    def custom_path(self, custom_path):
+        self._custom_path = custom_path
+
+    @property
+    def path_naas_folder(self):
+        return os.path.join(self.server_root, self.naas_folder)
 
     @property
     def shell_user(self):
@@ -146,7 +181,11 @@ class n_env:
 
     @property
     def token(self):
-        return self._token or os.environ.get("JUPYTERHUB_API_TOKEN", "")
+        return (
+            self._token
+            or os.environ.get("JUPYTERHUB_API_TOKEN", None)
+            or os.environ.get("JUPYTER_TOKEN", "")
+        )
 
     @token.setter
     def token(self, token):
@@ -226,3 +265,9 @@ class n_env:
 
 
 n_env = n_env()
+
+
+def cpath(path):
+    return path.replace(n_env.path_naas_folder, "").replace(
+                            f"{n_env.server_root}/", ""
+                        )

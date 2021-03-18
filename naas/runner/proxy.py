@@ -28,11 +28,14 @@ def escape_docker(s):
 
 
 def encode_proxy_url(token=""):
-    client_encoded = escape_kubernet(n_env.user)
-    message_bytes = client_encoded.encode("ascii")
-    base64_bytes = b64encode(message_bytes)
-    username_base64 = base64_bytes.decode("ascii")
-    return f"{n_env.proxy_api}/{username_base64}/{token}"
+    if n_env.user and n_env.user != "":
+        client_encoded = escape_kubernet(n_env.user)
+        message_bytes = client_encoded.encode("ascii")
+        base64_bytes = b64encode(message_bytes)
+        username_base64 = base64_bytes.decode("ascii")
+        return f"{n_env.proxy_api}/{username_base64}/{token}"
+    else:
+        return f"{n_env.proxy_api}/{token}"
 
 
 class Domain:

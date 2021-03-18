@@ -1,4 +1,4 @@
-from naas.types import t_scheduler, t_start, t_main, t_health, t_error, t_busy
+from naas.types import t_scheduler, t_start, t_main, t_health, t_error, t_busy, t_delete
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 import apscheduler.schedulers.base
 from .env_var import n_env
@@ -81,12 +81,13 @@ class Scheduler:
                 pass
         return running
 
-    async def __scheduler_greenlet(self, main_uid, current_time, task):
-        value = task.get("value", None)
-        current_type = task.get("type", None)
-        file_filepath = task.get("path", None)
-        last_update = task.get("lastUpdate", None)
-        params = task.get("params", dict())
+    async def __scheduler_greenlet(self, main_uid, current_time, job):
+        value = job.get("value")
+        current_type = job.get("type")
+        file_filepath = job.get("path")
+        last_update = job.get("lastUpdate")
+        status = job.get("status")
+        params = job.get("params", dict())
         uid = str(uuid.uuid4())
         try:
             running = await self.__check_run(
@@ -96,6 +97,7 @@ class Scheduler:
                 current_type == t_scheduler
                 and value is not None
                 and pycron.is_now(value, current_time)
+                and status != t_delete
                 and not running
             ):
                 self.__logger.info(
@@ -110,7 +112,7 @@ class Scheduler:
                 await self.__jobs.update(
                     uid, file_filepath, t_scheduler, value, params, t_start
                 )
-                res = await self.__nb.exec(uid, task.copy())
+                res = await self.__nb.exec(uid, job.copy())
                 if res.get("error"):
                     self.__logger.error(
                         {
@@ -244,7 +246,7 @@ class Scheduler:
                     "status": t_start,
                 }
             )
-            jobs = await self.__jobs.list(main_uid)
+            jobs = await self.__jobs.list(main_uid, prodPath=True)
             await asyncio.gather(
                 *[
                     self.__scheduler_greenlet(main_uid, current_time, job)

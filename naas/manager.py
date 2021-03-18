@@ -1,4 +1,14 @@
-from .types import t_delete, t_job, t_add, t_env, error_busy, error_reject
+from .types import (
+    t_delete,
+    t_size,
+    t_job,
+    t_env,
+    t_skip,
+    t_send,
+    t_error,
+    error_busy,
+    error_reject,
+)
 from IPython.core.display import display, HTML
 from .runner.proxy import encode_proxy_url
 from .runner.env_var import n_env
@@ -22,21 +32,60 @@ except ImportError:
 
 class Manager:
     __filetype = None
-    headers = None
+    headers = {"Authorization": f"token {n_env.token}"}
 
-    def __init__(self, filetype):
+    def __init__(self, filetype=None):
         self.headers = {"Authorization": f"token {n_env.token}"}
         self.__filetype = filetype
         self.set_runner_mode()
 
+    def get_size(self):
+        response = requests.get(f"{n_env.api}/{t_size}", headers=self.headers)
+        data = response.json()
+        if data and data.get("size"):
+            print("📝 Memory used", data.get("size"))
+        else:
+            print("😢 Cannot get Memory usage", data.get(t_error))
+
+    def reload_jobs(self):
+        response = requests.put(
+            f"{n_env.api}/{t_job}", headers=self.headers, params={"reload_jobs": "yes"}
+        )
+        data = response.json()
+        if data and data.get("status") == t_send:
+            print("✅ Jobs reloaded from save")
+        else:
+            print("😢 Jobs cannot be reloaded", data.get(t_error))
+
+    def move_job(self, old_path, new_path):
+        if self.is_production():
+            print("No move_job done you are in production\n")
+            return
+        old_path = os.path.abspath(os.path.join(os.getcwd(), old_path))
+        new_path = os.path.abspath(os.path.join(os.getcwd(), new_path))
+        response = requests.put(
+            f"{n_env.api}/{t_job}",
+            headers=self.headers,
+            params={
+                "move": "yes",
+                "type": self.__filetype,
+                "old_path": old_path,
+                "new_path": new_path,
+            },
+        )
+        res = response.json()
+        if res and res.get("status") == t_send:
+            for ff in res.get("data"):
+                print(f"✅ Job {ff.get('from')} moved to {ff.get('to')}\n")
+        else:
+            print(f"😢 Job cannot be moved to {new_path}", res.get(t_error))
+
     def is_production(self):
-        return True if n_env.env_mode == "PRODUCTION" else False
+        return True if n_env.current.get("env") == "RUNNER" else False
 
     def set_runner_mode(self):
         try:
-            r = requests.get(
-                f"{n_env.api}/{t_env}",
-            )
+            r = requests.get(f"{n_env.api}/{t_env}", headers=self.headers)
             r.raise_for_status()
         except Exception:
             n_env.remote_mode = not n_env.remote_mode
@@ -47,7 +96,7 @@ class Manager:
         display(HTML(f'<a href="{public_url}"">Manager</a>'))
 
     def get_logs(self):
-        req = requests.get(url=f"{n_env.api}/logs")
+        req = requests.get(url=f"{n_env.api}/logs", headers=self.headers)
         req.raise_for_status()
         jsn = req.json()
         return jsn
@@ -55,7 +104,7 @@ class Manager:
     def get_naas(self):
         naas_data = []
         try:
-            r = requests.get(f"{n_env.api}/{t_job}")
+            r = requests.get(f"{n_env.api}/{t_job}", headers=self.headers)
             r.raise_for_status()
             naas_data = r.json()
         except requests.exceptions.ConnectionError:
@@ -73,6 +122,7 @@ class Manager:
                     "type": self.__filetype,
                     "light": True,
                 },
+                headers=self.headers,
             )
             r.raise_for_status()
             data = r.json()
@@ -87,6 +137,8 @@ class Manager:
             raise
 
     def notebook_path(self):
+        if self.is_production():
+            return n_env.current.get("path")
         try:
             connection_file = os.path.basename(ipykernel.get_connection_file())
             kernel_id = connection_file.split("-", 1)[1].split(".")[0]
@@ -103,10 +155,7 @@ class Manager:
 
     def running_notebooks(self):
         try:
-            if n_env.user and n_env.user != "":
-                base_url = f"{n_env.hub_api}/user/{n_env.user}/api/sessions"
-            else:
-                base_url = f"{n_env.hub_api}/api/sessions"
+            base_url = f"{n_env.user_url}/api/sessions"
             req = requests.get(url=base_url, headers=self.headers)
             req.raise_for_status()
             sessions = req.json()
@@ -172,11 +221,19 @@ class Manager:
         try:
             r = requests.delete(
                 f"{n_env.api}/{t_job}",
-                params={"path": prod_path, "histo": histo, "mode": mode},
+                headers=self.headers,
+                params={
+                    "path": prod_path,
+                    "type": self.__filetype,
+                    "histo": histo,
+                    "mode": mode,
+                },
             )
             r.raise_for_status()
             res = r.json()
-            for ff in res:
+            if res.get("status") == t_error or res.get("status") == t_skip:
+                raise ValueError(f"❌ Cannot clean your file {path}")
+            for ff in res.get("data"):
                 print(f"🕣 Your file {ff} has been remove from production.\n")
             return pd.DataFrame(data=res.get("files", []))
         except requests.exceptions.ConnectionError as err:
@@ -194,10 +251,13 @@ class Manager:
         try:
             r = requests.get(
                 f"{n_env.api}/{t_job}",
+                headers=self.headers,
                 params={"path": current_file, "type": self.__filetype, "mode": mode},
             )
             r.raise_for_status()
             res = r.json()
+            if res.get("status") == t_error or res.get("status") == t_skip:
+                raise ValueError(f"❌ Cannot list your file {path}")
             if res.get("files", None) and len(res.get("files", [])) > 0:
                 return pd.DataFrame(data=res.get("files", []))
             else:
@@ -211,7 +271,7 @@ class Manager:
             raise
 
     def get_file(self, path=None, mode=None, histo=None):
-        if not path and self.is_production():
+        if self.is_production():
             print("No get_prod done you are in production\n")
             return
         current_file = self.get_path(path)
@@ -219,6 +279,7 @@ class Manager:
         try:
             r = requests.get(
                 f"{n_env.api}/{t_job}",
+                headers=self.headers,
                 params={
                     "path": current_file,
                     "type": self.__filetype,
@@ -228,6 +289,8 @@ class Manager:
             )
             r.raise_for_status()
             res = r.json()
+            if res.get("status") == t_error or res.get("status") == t_skip:
+                raise ValueError(f"❌ Cannot get your file {path}")
             self.__save_file(self.safe_filepath(current_file), res.get("file"))
             print(
                 f"🕣 Your Notebook {mode or ''} {filename}, has been copied into your local folder.\n"
@@ -260,13 +323,17 @@ class Manager:
             dev_path = obj.get("path")
             new_obj["path"] = self.get_path(dev_path)
             new_obj["file"] = self.__open_file(dev_path)
-            new_obj["status"] = t_add
+            # new_obj["status"] = t_add
             try:
                 if debug:
                     print(f'{new_obj["status"]} ==> {new_obj}')
-                r = requests.post(f"{n_env.api}/{t_job}", json=new_obj)
+                r = requests.post(
+                    f"{n_env.api}/{t_job}", json=new_obj, headers=self.headers
+                )
                 r.raise_for_status()
                 res = r.json()
+                if res.get("status") == t_error or res.get("status") == t_skip:
+                    raise ValueError(f"❌ Cannot add your file {obj.get('path')}")
                 if debug:
                     print(f'{res["status"]} ==> {res}')
             except requests.exceptions.ConnectionError as err:
@@ -292,11 +359,15 @@ class Manager:
             try:
                 if debug:
                     print(f'{new_obj["status"]} ==> {new_obj}')
-                r = requests.post(f"{n_env.api}/{t_job}", json=new_obj)
+                r = requests.post(
+                    f"{n_env.api}/{t_job}", json=new_obj, headers=self.headers
+                )
                 r.raise_for_status()
                 res = r.json()
+                if res.get("status") == t_error or res.get("status") == t_skip:
+                    raise ValueError(f"❌ Cannot delete your file {obj.get('path')}")
                 if debug:
-                    print(f'{res["status"]} ==> {res}')
+                    print(f'{res.get("status")} ==> {res}')
             except requests.exceptions.ConnectionError as err:
                 print(error_busy, err)
                 raise

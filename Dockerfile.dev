@@ -1,16 +1,10 @@
 FROM jupyternaas/singleuser:latest
 
+# Build-time metadata as defined at http://label-schema.org
+ARG BUILD_DATE
+ARG VCS_REF
+ARG INSTALL_SUPP
 ENV JUPYTER_ENABLE_LAB 'yes'
-
-# ENV HOME /home/${NB_USER}
-
-# ARG NB_USER=jovyan
-# ARG NB_UID=1000
-# ENV USER ${NB_USER}
-# ENV NB_UID ${NB_UID}
-
-
-# USER $NB_USER
 
 ENV NB_UMASK=022
 ENV NB_USER=ftp
@@ -19,12 +13,20 @@ ENV NB_GID=21
 ENV NB_GROUP=21
 
 # RUN adduser --disabled-password \
-#     --gecos "Default user" \
+#     --gecos "Naas user" \
 #     --uid ${NB_UID} \
 #     ${NB_USER}
-
 RUN mkdir /home/$NB_USER && \
     fix-permissions /home/$NB_USER
+
+LABEL org.label-schema.build-date=$BUILD_DATE \
+    org.label-schema.name="Naas machine" \
+    org.label-schema.description="test jupyter machine with naas" \
+    org.label-schema.url="https://naas.ai" \
+    org.label-schema.vcs-ref=$VCS_REF \
+    org.label-schema.vcs-url="https://github.com/jupyter-naas/naas" \
+    org.label-schema.vendor="Cashstory, Inc." \
+    org.label-schema.schema-version="1.0"
 
 COPY naas /home/$NB_USER/naas
 COPY setup.cfg /home/$NB_USER/naas/setup.cfg

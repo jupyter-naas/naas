@@ -24,28 +24,53 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - id: get_version
-        uses: battila7/get-version-action@v2
-      - run: echo ${{ steps.get_version.outputs.version }}
       - name: Get smart tag
         id: prepare
         uses: jupyter-naas/docker-smart-tag-action@1.0.0
         with:
           ref: ${{ github.event.client_payload.ref }}
           docker_image: jupyternaas/naas
+      - run: echo ${{ steps.prepare.outputs.tag }}
       - name: Build and push
         id: docker_build
         uses: docker/build-push-action@v2
         with:
           push: true
           tags: ${{ steps.prepare.outputs.tag }}
-      # - name: Push to GitHub Packages
-      #   uses: docker/build-push-action@v1
-      #   with:
-      #     username: ${{ github.actor }}
-      #     password: ${{ secrets.GITHUB_TOKEN }}
-      #     registry: docker.pkg.github.com
-      #     repository: naas
-      #     tags: ${{ steps.prepare.outputs.tag }}
+      - uses: actions-ecosystem/action-get-latest-tag@v1
+        id: get-latest-tag
+      - uses: actions-ecosystem/action-regex-match@v2
+        id: regex-match
+        with:
+          text: ${{ steps.get-latest-tag.outputs.tag }}
+          regex: '^\d*\.\d*\.\d*$'
+      - name: Checkout Target Repository
+        if: ${{ steps.regex-match.outputs.match != '' }}
+        uses: actions/checkout@v2
+        with:
+          repository: CashStory/cs_confs
+          path: cs_confs
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }} 
+      - name: Update Image Version in the related HelmChart values.yaml
+        if: ${{ steps.regex-match.outputs.match != '' }}
+        uses: fjogeleit/yaml-update-action@master
+        with:
+          valueFile: 'galaxy/tools/jupyter/values.yaml'
+          propertyPath: 'jupyter.dockerNotebookImage'
+          value: 'jupyternaas/naas:${{ steps.get-latest-tag.outputs.tag }}'
+          repository: 'CashStory/cs_confs'
+          branch: main
+          createPR: 'false'
+          message: 'Bump: Naas Version to ${{ steps.get-latest-tag.outputs.tag }}'
+          token: '${{ secrets.PERSONAL_ACCESS_TOKEN }}'
+          workDir: cs_confs
       - name: Image digest
         run: echo ${{ steps.prepare.outputs.tag }}
+      - name: Slack notification
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_USERNAME: Naas # Optional. (defaults to webhook app)
+          SLACK_CHANNEL: naas-ci # Optional. (defaults to webhook)
+          SLACK_AVATAR: repository
+          SLACK_CUSTOM_PAYLOAD: '{"attachments":[{"color":"#47dd82","blocks":[{"type":"section","block_id":"section567","text":{"type":"mrkdwn","text":"<https://github.com/{{ GITHUB_REPOSITORY }}|{{ GITHUB_REPOSITORY }}>\nAvailable to pip and docker hub.\n*Version*\n${{ steps.get-latest-tag.outputs.tag }}"},"accessory":{"type":"image","image_url":"https://github.com/jupyter-naas/naas/raw/main/custom/naas-fav.png","alt_text":"Naas logo"}}]}]}'
+        uses: Ilshidur/action-slack@2.0.2

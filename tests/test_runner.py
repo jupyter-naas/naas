@@ -2,6 +2,7 @@ from base64 import b64encode
 from naas.runner.proxy import escape_kubernet
 from naas.types import (
     t_add,
+    t_delete,
     t_notebook,
     t_job,
     t_dependency,
@@ -18,17 +19,16 @@ from naas.runner import n_env
 from naas import assets, webhook, secret, dependency
 from nbconvert import HTMLExporter
 from syncer import sync
-import pandas as pd
-import csv
+from .generate_df_csv import csv_text
 import markdown2
 from tzlocal import get_localzone
 import imgcompare
 from PIL import Image
+import nbformat
 import io
 
 user = getpass.getuser()
 seps = os.sep + os.altsep if os.altsep else os.sep
-n_env.env_mode = "TEST"
 
 
 def getUserb64():
@@ -80,15 +80,15 @@ def mock_secret(requests_mock, test_runner):
     def post_json(request, context):
         data = request.json()
         res = sync(test_runner.post(f"/{t_secret}", json=data))
-        data_res = sync(res.json())
-        context.status_code = res.status
+        data_res = res.json()
+        context.status_code = res.status_code
         return data_res
 
     def get_json(request, context):
         data = {}
         res = sync(test_runner.get(f"/{t_secret}", json=data))
-        data_res = sync(res.json())
-        context.status_code = res.status
+        data_res = res.json()
+        context.status_code = res.status_code
         return data_res
 
     requests_mock.register_uri("GET", url_api, json=get_json, status_code=200)
@@ -101,19 +101,35 @@ def mock_job(requests_mock, test_runner):
     def post_json(request, context):
         data = request.json()
         res = sync(test_runner.post(f"/{t_job}", json=data))
-        data_res = sync(res.json())
-        context.status_code = res.status
+        data_res = res.json()
+        context.status_code = res.status_code
+        return data_res
+
+    def put_json(request, context):
+        data = request.qs
+        res = sync(test_runner.put(f"/{t_job}", params=data))
+        data_res = res.json()
+        context.status_code = res.status_code
+        return data_res
+
+    def del_json(request, context):
+        data = request.qs
+        res = sync(test_runner.delete(f"/{t_job}", params=data))
+        data_res = res.json()
+        context.status_code = res.status_code
         return data_res
 
     def get_json(request, context):
         data = request.qs
         res = sync(test_runner.get(f"/{t_job}", params=data))
-        data_res = sync(res.json())
-        context.status_code = res.status
+        data_res = res.json()
+        context.status_code = res.status_code
         return data_res
 
     requests_mock.register_uri("GET", url_api, json=get_json, status_code=200)
     requests_mock.register_uri("POST", url_api, json=post_json, status_code=200)
+    requests_mock.register_uri("PUT", url_api, json=put_json, status_code=200)
+    requests_mock.register_uri("DELETE", url_api, json=del_json, status_code=200)
 
 
 # https://public.naas.ai/runner/runner/job
@@ -122,16 +138,16 @@ def mock_job(requests_mock, test_runner):
 
 async def test_init(test_runner):
     response = await test_runner.get("/env")
-    assert response.status == 200
-    resp_json = await response.json()
+    assert response.status_code == 200
+    resp_json = response.json()
     assert resp_json == get_env()
     response = await test_runner.get("/timezone")
-    assert response.status == 200
-    resp_json = await response.json()
+    assert response.status_code == 200
+    resp_json = response.json()
     assert resp_json == get_tz()
     response = await test_runner.post("/timezone", json={"tz": "Africa/Asmera"})
-    assert response.status == 200
-    resp_json = await response.json()
+    assert response.status_code == 200
+    resp_json = response.json()
     assert resp_json is not get_tz()
     assert resp_json == {"tz": "Africa/Asmera"}
 
@@ -140,13 +156,13 @@ async def test_secret(mocker, requests_mock, test_runner, tmp_path):
     mock_session(mocker, requests_mock, tmp_path)
     mock_secret(requests_mock, test_runner)
     response = await test_runner.get("/secret")
-    assert response.status == 200
-    resp_json = await response.json()
+    assert response.status_code == 200
+    resp_json = response.json()
     assert len(resp_json) == 0
     secret.add("test_3", "yolo")
     response = await test_runner.get("/secret")
-    assert response.status == 200
-    resp_json = await response.json()
+    assert response.status_code == 200
+    resp_json = response.json()
     assert len(resp_json) == 1
     assert resp_json[0]["name"] == "test_3"
     assert resp_json[0]["secret"] == "yolo"
@@ -156,8 +172,8 @@ async def test_secret(mocker, requests_mock, test_runner, tmp_path):
     res = secret.get("test_3")
     assert res is None
     response = await test_runner.get("/secret")
-    assert response.status == 200
-    resp_json = await response.json()
+    assert response.status_code == 200
+    resp_json = response.json()
     assert len(resp_json) == 0
 
 
@@ -174,16 +190,16 @@ async def test_dependency(mocker, requests_mock, test_runner, tmp_path):
     mock_job(requests_mock, test_runner)
     dependency.add(new_path)
     response = await test_runner.get(f"/{t_job}")
-    assert response.status == 200
-    resp_json = await response.json()
+    assert response.status_code == 200
+    resp_json = response.json()
     assert len(resp_json) == 1
     resp_json = dependency.currents(True)
     assert len(resp_json) == 1
     res_job = resp_json[0]
     assert res_job.get("type") == t_dependency
-    assert res_job.get("path") == real_path
+    assert res_job.get("path") == new_path
     assert res_job.get("status") == t_add
-    assert res_job.get("nbRun") == 0
+    assert len(res_job.get("runs")) == 0
     assert os.path.isfile(real_path)
     dependency.get(new_path)
     filename = os.path.basename(new_path)
@@ -200,52 +216,57 @@ async def test_dependency(mocker, requests_mock, test_runner, tmp_path):
     assert os.path.isfile(new_path_histo)
     dependency.delete(new_path)
     response = await test_runner.get(f"/{t_job}")
-    assert response.status == 200
-    resp_json = await response.json()
-    assert len(resp_json) == 0
+    assert response.status_code == 200
+    resp_json = response.json()
+    assert len(resp_json) == 1
+    resp_json[0].get("status") == t_delete
 
 
 async def test_asset(mocker, requests_mock, test_runner, tmp_path):
     response = await test_runner.get("/asset/naas_up.png")
-    assert response.status == 200
+    assert response.status_code == 200
     response = await test_runner.get("/asset/naas_down.png")
-    assert response.status == 200
+    assert response.status_code == 200
     response = await test_runner.get("/asset/naas_fav.svg")
-    assert response.status == 200
+    assert response.status_code == 200
     response = await test_runner.get("/asset/naas_logo.svg")
-    assert response.status == 200
+    assert response.status_code == 200
     response = await test_runner.get("/asset/naas_logo.png")
-    assert response.status == 200
+    assert response.status_code == 200
     path_test_asset = "tests/demo/demo.json"
+    new_path_test_asset = "tests/demo/demo1.json"
     cur_path = os.path.join(os.getcwd(), path_test_asset)
     new_path = os.path.join(tmp_path, path_test_asset)
+    new_new_path = os.path.join(tmp_path, new_path_test_asset)
     strip_path = os.path.splitdrive(new_path)[1].lstrip(seps)
+    new_strip_path = os.path.splitdrive(new_new_path)[1].lstrip(seps)
     real_path = os.path.join(tmp_path, "pytest_tmp", ".naas", strip_path)
+    new_real_path = os.path.join(tmp_path, "pytest_tmp", ".naas", new_strip_path)
     os.makedirs(os.path.dirname(new_path))
     copy2(cur_path, new_path)
     assert os.path.isfile(new_path)
     mock_session(mocker, requests_mock, cur_path)
     mock_job(requests_mock, test_runner)
     url = assets.add(new_path)
+    assert os.path.isfile(real_path)
     assert url.startswith(f"http://localhost:5001/{getUserb64()}/asset/")
     response = await test_runner.get(f"/{t_job}")
-    assert response.status == 200
-    resp_json = await response.json()
+    assert response.status_code == 200
+    resp_json = response.json()
     assert len(resp_json) == 1
     resp_json = assets.currents(True)
     assert len(resp_json) == 1
     res_job = resp_json[0]
     assert res_job.get("type") == t_asset
-    assert res_job.get("path") == real_path
+    assert res_job.get("path") == new_path
     token = url.split("/")[-1]
     assert res_job.get("value") == token
     assert res_job.get("status") == t_add
-    assert res_job.get("nbRun") == 0
+    assert len(res_job.get("runs")) == 0
     response = await test_runner.get(f"/{t_asset}/{token}")
-    assert response.status == 200
-    resp_json = await response.json()
+    assert response.status_code == 200
+    resp_json = response.json()
     assert resp_json == {"foo": "bar2"}
-    assert os.path.isfile(real_path)
     assets.get(new_path)
     filename = os.path.basename(new_path)
     dirname = os.path.dirname(new_path)
@@ -261,13 +282,17 @@ async def test_asset(mocker, requests_mock, test_runner, tmp_path):
     assert os.path.isfile(new_path_histo)
     url_new = assets.add(new_path)
     assert url == url_new
-    assets.delete(new_path)
+    assets.manager.move_job(new_path, new_new_path)
+    assert os.path.isfile(new_real_path)
+    assets.delete(new_new_path)
     response = await test_runner.get(f"/{t_job}")
-    assert response.status == 200
-    resp_json = await response.json()
-    assert len(resp_json) == 0
+    assert response.status_code == 200
+    resp_json = response.json()
+    assert len(resp_json) == 1
+    resp_json[0].get("status") == t_delete
     response = await test_runner.get(f"/{t_asset}/{token}")
-    assert response.status == 404
+    assert response.status_code == 404
+    assert os.path.isfile(new_real_path) is False
 
 
 async def test_notebooks(mocker, requests_mock, test_runner, tmp_path):
@@ -278,61 +303,86 @@ async def test_notebooks(mocker, requests_mock, test_runner, tmp_path):
     copy2(cur_path, new_path)
     mock_session(mocker, requests_mock, new_path)
     mock_job(requests_mock, test_runner)
-    strip_path = os.path.splitdrive(new_path)[1].lstrip(seps)
-    real_path = os.path.join(tmp_path, "pytest_tmp", ".naas", strip_path)
     url = webhook.add(new_path)
     assert url.startswith(f"http://localhost:5001/{getUserb64()}/notebook/")
     response = await test_runner.get(f"/{t_job}")
-    assert response.status == 200
-    resp_json = await response.json()
+    assert response.status_code == 200
+    resp_json = response.json()
     assert len(resp_json) == 1
     resp_json = webhook.currents(True)
     assert len(resp_json) == 1
     res_job = resp_json[0]
     assert res_job.get("type") == t_notebook
-    assert res_job.get("path") == real_path
+    assert res_job.get("path") == new_path
     token = url.split("/")[-1]
     assert res_job.get("value") == token
     assert res_job.get("status") == t_add
-    assert res_job.get("nbRun") == 0
+    assert len(res_job.get("runs")) == 0
     list_in_prod = webhook.list(new_path)
     assert len(list_in_prod) == 1
-    response = await test_runner.get(f"/{t_notebook}/{token}")
-    assert response.status == 200
-    resp_json = await response.json()
+    response = await test_runner.post(f"/{t_notebook}/{token}?b=yoyo", json={"test": "aa"})
+    assert response.status_code == 200
+    resp_json = response.json()
     assert response.headers.get("Content-Disposition") is not None
     assert resp_json == {"foo": "bar"}
+    list_in_prod = webhook.currents(True)
     list_out_in_prod = webhook.list_output(new_path)
     assert len(list_out_in_prod) == 1
     histo = list_out_in_prod.to_dict("records")[0]
     webhook.get_output(new_path, histo.get("timestamp"))
     filename = os.path.basename(new_path)
+    out_filename = f"{histo.get('timestamp')}___{t_output}__{filename}"
     dirname = os.path.dirname(new_path)
     new_path_out_histo = os.path.join(
-        dirname, f"{histo.get('timestamp')}___{t_output}__{filename}"
+        dirname, out_filename
     )
     assert os.path.isfile(new_path_out_histo)
+    nb = nbformat.read(new_path_out_histo, as_version=4)
+    assert len(nb.cells) == 3
+    naas_cell = nb.cells[0]
+    assert naas_cell.metadata.tags == ['naas-injected']
+    naas_cell_source = ''.join(naas_cell.source)
+    uid = list_in_prod[0].get('id')
+    assert naas_cell_source.startswith('import naas')
+    assert 'naas.n_env.current' in naas_cell_source
+    assert '"path"' in naas_cell_source
+    assert f'"uid": "{uid}"' in naas_cell_source
+    assert '"env": "RUNNER"' in naas_cell_source
+    assert '"runtime"' in naas_cell_source
+    papermill_cell = nb.cells[1]
+    assert papermill_cell.metadata.tags == ['injected-parameters']
+    papermill_cell_source = ''.join(papermill_cell.source)
+    assert papermill_cell_source.startswith('# Parameters')
+    assert 'params = {"b": "yoyo"}' in papermill_cell_source
+    assert 'body = {"test": "aa"}' in papermill_cell_source
+    assert 'headers = {' in papermill_cell_source
+    assert '"user-agent": "python-httpx/0.15.4",' in papermill_cell_source
     response = await test_runner.get(f"/{t_job}")
-    assert response.status == 200
-    resp_json = await response.json()
+    assert response.status_code == 200
+    resp_json = response.json()
     assert len(resp_json) == 1
     res_job = resp_json[0]
     assert res_job.get("type") == t_notebook
-    assert res_job.get("path") == real_path
+    assert res_job.get("path") == new_path
     assert res_job.get("value") == token
     assert res_job.get("status") == t_health
-    assert res_job.get("nbRun") == 1
+    assert len(res_job.get("runs")) == 1
+    assert res_job.get("runs")[0].get("status") == t_health
+    assert res_job.get("runs")[0].get("id") == res_job.get("id")
+    assert res_job.get("runs")[0].get("date") == res_job.get("lastUpdate")
+    assert res_job.get("runs")[0].get("duration") > 0
     response = await test_runner.post(f"/{t_notebook}/{token}", json={"foo": "bar"})
-    assert response.status == 200
-    resp_json = await response.json()
+    assert response.status_code == 200
+    resp_json = response.json()
     assert resp_json == {"foo": "bar"}
     webhook.delete(new_path)
     response = await test_runner.get(f"/{t_job}")
-    assert response.status == 200
-    resp_json = await response.json()
-    assert len(resp_json) == 0
+    assert response.status_code == 200
+    resp_json = response.json()
+    assert len(resp_json) == 1
+    resp_json[0].get("status") == t_delete
     response = await test_runner.get(f"/{t_notebook}/{token}")
-    assert response.status == 404
+    assert response.status_code == 404
 
 
 async def test_notebooks_res(mocker, requests_mock, test_runner, tmp_path):
@@ -348,10 +398,10 @@ async def test_notebooks_res(mocker, requests_mock, test_runner, tmp_path):
     assert url.startswith(f"http://localhost:5001/{getUserb64()}/notebook/")
     token = url.split("/")[-1]
     response = await test_runner.get(f"/{t_notebook}/{token}")
-    assert response.status == 200
+    assert response.status_code == 200
     assert response.headers.get("Content-Type") == "application/json"
     assert response.headers.get("Content-Disposition") is None
-    resp_json = await response.json()
+    resp_json = response.json()
     assert resp_json == {"foo": "bar"}
     # test csv
     test_notebook = "tests/demo/demo_res_csv.ipynb"
@@ -364,249 +414,9 @@ async def test_notebooks_res(mocker, requests_mock, test_runner, tmp_path):
     assert url.startswith(f"http://localhost:5001/{getUserb64()}/notebook/")
     token = url.split("/")[-1]
     response = await test_runner.get(f"/{t_notebook}/{token}")
-    assert response.status == 200
+    assert response.status_code == 200
     assert response.headers.get("Content-Type") == "text/csv"
-    res_text = await response.content.read()
-    res_text = res_text.decode("utf-8")
-    empoyees = [
-        (
-            "jack",
-            34,
-            "Sydney",
-            5,
-            111,
-            112,
-            134,
-            122,
-            445,
-            122,
-            111,
-            15,
-            111,
-            112,
-            134,
-            122,
-            1445,
-            122,
-            111,
-            15,
-            111,
-            112,
-            134,
-            122,
-            445,
-            122,
-            111,
-        ),
-        (
-            "Riti",
-            31,
-            "Delhia",
-            27,
-            211,
-            212,
-            234,
-            222,
-            2445,
-            222,
-            211,
-            25,
-            211,
-            212,
-            234,
-            222,
-            2445,
-            222,
-            211,
-            25,
-            211,
-            212,
-            234,
-            222,
-            2445,
-            222,
-            211,
-        ),
-        (
-            "Aadi",
-            16,
-            "Tokyo",
-            39,
-            311,
-            312,
-            334,
-            322,
-            3445,
-            322,
-            311,
-            35,
-            311,
-            312,
-            334,
-            322,
-            3445,
-            322,
-            311,
-            35,
-            311,
-            312,
-            334,
-            322,
-            3445,
-            322,
-            311,
-        ),
-        (
-            "Sunil",
-            41,
-            "Delhi",
-            412,
-            411,
-            412,
-            434,
-            422,
-            4445,
-            422,
-            411,
-            45,
-            411,
-            412,
-            434,
-            422,
-            4445,
-            422,
-            411,
-            45,
-            411,
-            412,
-            434,
-            422,
-            4445,
-            422,
-            411,
-        ),
-        (
-            "Veena",
-            33,
-            "Delhi",
-            54,
-            511,
-            512,
-            534,
-            522,
-            5445,
-            522,
-            511,
-            55,
-            511,
-            512,
-            534,
-            522,
-            5445,
-            522,
-            511,
-            55,
-            511,
-            512,
-            534,
-            522,
-            5445,
-            522,
-            511,
-        ),
-        (
-            "Shaunak",
-            35,
-            "Mumbai",
-            665,
-            611,
-            612,
-            634,
-            622,
-            6445,
-            622,
-            611,
-            65,
-            611,
-            612,
-            634,
-            622,
-            6445,
-            622,
-            611,
-            65,
-            611,
-            612,
-            634,
-            622,
-            6445,
-            622,
-            611,
-        ),
-        (
-            "Shaun",
-            35,
-            "Colombo",
-            711,
-            711,
-            712,
-            734,
-            722,
-            7445,
-            722,
-            711,
-            75,
-            711,
-            712,
-            734,
-            722,
-            7445,
-            722,
-            711,
-            75,
-            711,
-            712,
-            734,
-            722,
-            7445,
-            722,
-            711,
-        ),
-    ]
-    empDfObj = pd.DataFrame(
-        empoyees,
-        columns=[
-            "A",
-            "B",
-            "C",
-            "D",
-            "E",
-            "F",
-            "G",
-            "H",
-            "I",
-            "J",
-            "K",
-            "L",
-            "M",
-            "N",
-            "O",
-            "P",
-            "Q",
-            "R",
-            "S",
-            "T",
-            "U",
-            "V",
-            "W",
-            "X",
-            "Y",
-            "Z",
-            "AA",
-        ],
-    )
-    empDfObj = empDfObj.append([empDfObj] * 8, ignore_index=True)
-    csv_text = empDfObj.to_csv(sep=";", quoting=csv.QUOTE_ALL)
+    res_text = response.text
     assert res_text == csv_text
     # test notebook
     test_notebook = "tests/demo/demo_res_nb.ipynb"
@@ -619,10 +429,9 @@ async def test_notebooks_res(mocker, requests_mock, test_runner, tmp_path):
     assert url.startswith(f"http://localhost:5001/{getUserb64()}/notebook/")
     token = url.split("/")[-1]
     response = await test_runner.get(f"/{t_notebook}/{token}")
-    assert response.status == 200
+    assert response.status_code == 200
     assert response.headers.get("Content-Type") == "text/html"
-    res_text = await response.content.read()
-    res_text = res_text.decode("utf-8")
+    res_text = response.text
     html_exporter = HTMLExporter()
     html_exporter.template_name = "lab"
     strip_path = os.path.splitdrive(new_path)[1].lstrip(seps)
@@ -643,10 +452,9 @@ async def test_notebooks_res(mocker, requests_mock, test_runner, tmp_path):
     assert url.startswith(f"http://localhost:5001/{getUserb64()}/notebook/")
     token = url.split("/")[-1]
     response = await test_runner.get(f"/{t_notebook}/{token}")
-    assert response.status == 200
+    assert response.status_code == 200
     assert response.headers.get("Content-Type") == "text/html"
-    res_text = await response.content.read()
-    res_text = res_text.decode("utf-8")
+    res_text = response.text
     demo_html = open("tests/demo/demo.html")
     html_text = demo_html.read()
     assert res_text == html_text
@@ -661,10 +469,9 @@ async def test_notebooks_res(mocker, requests_mock, test_runner, tmp_path):
     assert url.startswith(f"http://localhost:5001/{getUserb64()}/notebook/")
     token = url.split("/")[-1]
     response = await test_runner.get(f"/{t_notebook}/{token}")
-    assert response.status == 200
+    assert response.status_code == 200
     assert response.headers.get("Content-Type") == "text/html"
-    res_text = await response.content.read()
-    res_text = res_text.decode("utf-8")
+    res_text = response.text
     demo_html = open("tests/demo/demo.md")
     md_text = demo_html.read()
     html_text = markdown2.markdown(md_text)
@@ -680,10 +487,9 @@ async def test_notebooks_res(mocker, requests_mock, test_runner, tmp_path):
     assert url.startswith(f"http://localhost:5001/{getUserb64()}/notebook/")
     token = url.split("/")[-1]
     response = await test_runner.get(f"/{t_notebook}/{token}")
-    assert response.status == 200
+    assert response.status_code == 200
     assert response.headers.get("Content-Type") == "text/html"
-    res_text = await response.content.read()
-    res_text = res_text.decode("utf-8")
+    res_text = response.text
     demo_html = open("tests/demo/demo.md")
     md_text = demo_html.read()
     assert res_text == md_text
@@ -698,9 +504,9 @@ async def test_notebooks_res(mocker, requests_mock, test_runner, tmp_path):
     assert url.startswith(f"http://localhost:5001/{getUserb64()}/notebook/")
     token = url.split("/")[-1]
     response = await test_runner.get(f"/{t_notebook}/{token}")
-    assert response.status == 200
+    assert response.status_code == 200
     assert response.headers.get("Content-Type") == "text/csv"
-    res_text = await response.content.read()
+    res_text = response.content
     csv_val = open("tests/demo/demo.csv", "rb").read()
     assert res_text == csv_val
     # test SVG
@@ -714,11 +520,11 @@ async def test_notebooks_res(mocker, requests_mock, test_runner, tmp_path):
     assert url.startswith(f"http://localhost:5001/{getUserb64()}/notebook/")
     token = url.split("/")[-1]
     response = await test_runner.get(f"/{t_notebook}/{token}")
-    assert response.status == 200
+    assert response.status_code == 200
     assert response.headers.get("Content-Type") == "image/svg+xml"
-    res_text = await response.content.read()
+    res_svg = response.content
     csv_val = open("tests/demo/demo.svg", "rb").read()
-    assert res_text == csv_val
+    assert res_svg == csv_val
     # test image
     test_notebook = "tests/demo/demo_res_image.ipynb"
     cur_path = os.path.join(os.getcwd(), test_notebook)
@@ -729,20 +535,20 @@ async def test_notebooks_res(mocker, requests_mock, test_runner, tmp_path):
     url = webhook.add(new_path)
     assert url.startswith(f"http://localhost:5001/{getUserb64()}/notebook/")
     token = url.split("/")[-1]
-    response = await test_runner.get(f"/{t_notebook}/{token}")
-    assert response.status == 200
+    response = await test_runner.get(f"/{t_notebook}/{token}", timeout=10.0)
+    assert response.status_code == 200
     assert response.headers.get("Content-Type") == "image/jpeg"
-    res_text = await response.content.read()
+    res_img = response.content
     image_a = Image.open("tests/demo/dog.jpeg")
-    image_b = Image.open(io.BytesIO(res_text))
+    image_b = Image.open(io.BytesIO(res_img))
     percentage = imgcompare.image_diff_percent(image_a, image_b)
     assert percentage < 1
 
 
 async def test_logs(test_runner):
     response = await test_runner.get("/log")
-    assert response.status == 200
-    logs = await response.json()
+    assert response.status_code == 200
+    logs = response.json()
     assert logs.get("totalRecords") == 1
     status = logs.get("data")[0].get("status")
     assert status == "init API"

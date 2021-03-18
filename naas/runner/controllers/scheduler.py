@@ -1,5 +1,5 @@
 from sanic.views import HTTPMethodView
-from naas.types import t_scheduler
+from naas.types import t_scheduler, t_send
 from sanic.response import json
 import uuid
 
@@ -21,7 +21,7 @@ class SchedulerController(HTTPMethodView):
         elif mode == "resume":
             self.__scheduler.resume()
         self.__logger.info(
-            {"id": uid, "type": t_scheduler, "status": "send", "filepath": endpoint}
+            {"id": uid, "type": t_scheduler, "status": t_send, "filepath": endpoint}
         )
         return json({"status": self.__scheduler.status()})
 

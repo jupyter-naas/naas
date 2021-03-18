@@ -1,4 +1,4 @@
-from .types import t_scheduler, t_output
+from .types import t_scheduler, t_output, t_add, t_update, t_delete
 from .manager import Manager
 import pretty_cron
 import requests
@@ -58,17 +58,17 @@ class Scheduler:
         if raw:
             json_filtered = []
             for item in json_data:
-                if item["type"] == self.role:
+                if item["type"] == self.role and item["status"] != t_delete:
                     print(item)
                     json_filtered.append(item)
                 return json_filtered
         else:
             for item in json_data:
                 kind = None
-                if item["type"] == self.role:
+                if item["type"] == self.role and item["status"] != t_delete:
                     cron_string = pretty_cron.prettify_cron(item["value"])
                     kind = f"scheduler {cron_string}"
-                    print(f"File ==> {item['path']} is {kind}")
+                    print(f'File ==> {item["path"]} is {kind}')
 
     def __check_cron(self, text):
         res = False
@@ -79,34 +79,44 @@ class Scheduler:
             pass
         return res
 
-    def add(self, path=None, recurrence=None, params={}, debug=False):
+    def add(self, path=None, recurrence=None, cron=None, params={}, debug=False):
         if self.manager.is_production():
             print("No add done, you are in production\n")
             return
-        if not recurrence:
-            print("No recurrence provided\n")
+        if recurrence:
+            print("recurrence is deprecated use cron arg instead")
+        cron = recurrence if recurrence else cron
+        if not cron:
+            print("No cron provided\n")
             return
-        if not self.__check_cron(recurrence):
-            print(f"WARNING : Recurrence wrong format {recurrence}")
+        if not self.__check_cron(cron):
+            print(f"WARNING : Recurrence wrong format {cron}")
             return
         current_file = self.manager.get_path(path)
+        status = t_add
+        try:
+            self.manager.get_value(current_file, False)
+            status = t_update
+        except:  # noqa: E722
+            pass
         self.manager.add_prod(
             {
                 "type": self.role,
                 "path": current_file,
+                "status": status,
                 "params": params,
-                "value": recurrence,
+                "value": cron,
             },
             debug,
         )
-        cron_string = pretty_cron.prettify_cron(recurrence)
+        cron_string = pretty_cron.prettify_cron(cron)
         print("👌 Well done! Your Notebook has been sent to production. \n")
         print(
             f'⏰ It will be scheduled "{cron_string}" (more on the syntax on https://crontab.guru/).\n'
         )
         print('Ps: to remove the "Scheduler", just replace .add by .delete')
 
-    def delete(self, path=None, all=False, debug=False):
+    def delete(self, path=None, all=True, debug=False):
         if self.manager.is_production():
             print("No delete done, you are in production\n")
             return
@@ -114,5 +124,5 @@ class Scheduler:
         self.manager.del_prod({"type": self.role, "path": current_file}, debug)
         print("🗑 Done! Your Scheduler has been remove from production.\n")
         if all is True:
-            self.clear(path)
-            self.clear_output(path)
+            self.clear(current_file, 'all')
+            self.clear_output(current_file, 'all')

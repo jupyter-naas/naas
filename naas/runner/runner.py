@@ -1,6 +1,7 @@
-from naas.types import t_main, t_notebook, t_scheduler, t_asset, t_job, t_secret, t_tz
+from .controllers.downloader import DownloaderController
 from sentry_sdk.integrations.sanic import SanicIntegration
 from .controllers.scheduler import SchedulerController
+from .controllers.manager import ManagerController
 from .controllers.assets import AssetsController
 from .controllers.secret import SecretController
 from .controllers.notebooks import NbController
@@ -9,7 +10,9 @@ from .controllers.jobs import JobsController
 from .controllers.logs import LogsController
 from sanic_openapi import swagger_blueprint
 from .controllers.env import EnvController
+from .controllers.size import SizeController
 from .notifications import Notifications
+from naas.onboarding import init_onborading
 from .proxy import escape_kubernet
 from .scheduler import Scheduler
 from .notebooks import Notebooks
@@ -18,6 +21,7 @@ from .logger import Logger
 from .jobs import Jobs
 from .secret import Secret
 from sanic import Sanic
+import nest_asyncio
 import sentry_sdk
 import asyncio
 import getpass
@@ -25,32 +29,33 @@ import uuid
 import os
 import sys
 import errno
-import nest_asyncio
+from naas.types import (
+    t_main,
+    t_notebook,
+    t_scheduler,
+    t_asset,
+    t_job,
+    t_secret,
+    t_tz,
+    t_downloader,
+)
 
 # TODO remove this fix when papermill and nest_asyncio support uvloop
 asyncio.set_event_loop_policy(None)
 nest_asyncio.apply()
 
-__version__ = "0.31.0b1"
+__version__ = "1.5.21"
 
 
 class Runner:
     # Declare path variable
     __path_lib_files = os.path.dirname(os.path.abspath(__file__))
-    __html_files = "html"
-    __manager_index = "manager.html"
     __app = None
     __nb = None
     __notif = None
     __jobs = None
     __scheduler = None
     __logger = None
-
-    def __init__(self):
-        self.__path_html_files = os.path.join(self.__path_lib_files, self.__html_files)
-        self.__path_manager_index = os.path.join(
-            self.__path_html_files, self.__manager_index
-        )
 
     def __main(self, debug=True):
         self.init_app()
@@ -63,6 +68,7 @@ class Runner:
         )
 
     async def initialize_before_start(self, app, loop):
+        init_onborading()
         if self.__jobs is None:
             self.__jobs = Jobs(self.__logger)
             self.__secret = Secret(self.__logger)
@@ -80,10 +86,27 @@ class Runner:
                 f"/{t_scheduler}/<mode>",
             )
             self.__app.add_route(
+                DownloaderController.as_view(self.__logger),
+                f"/{t_downloader}",
+            )
+            self.__app.add_route(
                 AssetsController.as_view(
                     self.__logger, self.__jobs, self.__path_lib_files
                 ),
                 f"/{t_asset}/<token>",
+            )
+            self.__app.add_route(
+                EnvController.as_view(),
+                "/env",
+            )
+            self.__app.add_route(
+                SizeController.as_view(),
+                "/size",
+            )
+            self.__app.add_route(LogsController.as_view(self.__logger), "/log")
+            self.__app.add_route(
+                ManagerController.as_view(self.__path_lib_files),
+                "/",
             )
             self.__app.add_route(
                 JobsController.as_view(self.__logger, self.__jobs), f"/{t_job}"
@@ -122,20 +145,6 @@ class Runner:
             self.initialize_before_start, "before_server_start"
         )
         self.__app.register_listener(self.initialize_before_stop, "before_server_stop")
-        self.__app.add_route(
-            EnvController.as_view(
-                self.__logger,
-                n_env.user,
-                n_env.hub_api,
-                n_env.proxy_api,
-                n_env.notif_api,
-                n_env.tz,
-                n_env.server_root,
-            ),
-            "/env",
-        )
-        self.__app.add_route(LogsController.as_view(self.__logger), "/log")
-        self.__app.static("/", self.__path_manager_index, name="manager.html")
         self.__app.blueprint(swagger_blueprint)
         uid = str(uuid.uuid4())
         self.__logger.info(

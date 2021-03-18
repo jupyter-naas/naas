@@ -61,7 +61,7 @@ class Secret:
                         "id": uid,
                         "type": "init_secret_storage",
                         "filepath": self.__json_secrets_path,
-                        "status": "error",
+                        "status": t_error,
                         "error": str(e),
                     }
                 )
@@ -99,7 +99,7 @@ class Secret:
                 {
                     "id": str(uid),
                     "type": "__get_save_from_file",
-                    "status": "exception",
+                    "status": t_error,
                     "filepath": self.__json_secrets_path,
                     "error": str(err),
                 }
@@ -119,7 +119,7 @@ class Secret:
                 {
                     "id": str(uid),
                     "type": "__save_to_file",
-                    "status": "exception",
+                    "status": t_error,
                     "filepath": self.__json_secrets_path,
                     "error": str(err),
                 }
@@ -236,7 +236,7 @@ class Secret:
                         }
                     )
                     return {
-                        "status": "error",
+                        "status": t_error,
                         "id": uid,
                         "data": [],
                         "error": f"{name} already exist multiple time",

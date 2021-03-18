@@ -1,4 +1,4 @@
-from naas.types import t_add, t_health, t_scheduler, t_job
+from naas.types import t_add, t_health, t_scheduler, t_job, t_output
 from naas.runner.scheduler import Scheduler
 from naas.runner.notebooks import Notebooks
 from datetime import datetime, timedelta
@@ -49,15 +49,15 @@ def mock_job(requests_mock, test_runner):
     def post_json(request, context):
         data = request.json()
         res = sync(test_runner.post(f"/{t_job}", json=data))
-        data_res = sync(res.json())
-        context.status_code = res.status
+        data_res = res.json()
+        context.status_code = res.status_code
         return data_res
 
     def get_json(request, context):
         data = request.qs
         res = sync(test_runner.get(f"/{t_job}", params=data))
-        data_res = sync(res.json())
-        context.status_code = res.status
+        data_res = res.json()
+        context.status_code = res.status_code
         return data_res
 
     requests_mock.register_uri("GET", url_api, json=get_json, status_code=200)
@@ -66,8 +66,8 @@ def mock_job(requests_mock, test_runner):
 
 async def test_scheduler_status(test_scheduler):
     response = await test_scheduler.get("/scheduler/status")
-    assert response.status == 200
-    resp_json = await response.json()
+    assert response.status_code == 200
+    resp_json = response.json()
     assert resp_json == status_data
 
 
@@ -113,6 +113,17 @@ async def test_scheduler(tmp_path, event_loop):
     assert res_job.get("path") == new_path
     assert res_job.get("value") == recur
     assert res_job.get("status") == t_health
+    # list_out_in_prod = scheduler.list_output(new_path)
+    # assert len(list_out_in_prod) == 1
+    # histo = list_out_in_prod.to_dict("records")[0]
+    # scheduler.get_output(new_path, histo.get("timestamp"))
+    # filename = os.path.basename(new_path)
+    # out_filename = f"{histo.get('timestamp')}___{t_output}__{filename}"
+    # dirname = os.path.dirname(new_path)
+    # new_path_out_histo = os.path.join(
+    #     dirname, out_filename
+    # )
+    # assert os.path.isfile(new_path_out_histo)
 
 
 async def test_scheduler_runner(mocker, requests_mock, test_scheduler, tmp_path):
@@ -129,14 +140,12 @@ async def test_scheduler_runner(mocker, requests_mock, test_scheduler, tmp_path)
     recur = f"{sec} * * * *"
     scheduler.add(new_path, recur)
     response = await test_scheduler.get(f"/{t_job}")
-    assert response.status == 200
-    resp_json = await response.json()
+    assert response.status_code == 200
+    resp_json = response.json()
     assert len(resp_json) == 1
     res_job = resp_json[0]
-    strip_path = os.path.splitdrive(new_path)[1].lstrip(seps)
-    real_path = os.path.join(tmp_path, "pytest_tmp", ".naas", strip_path)
     assert res_job.get("type") == t_scheduler
-    assert res_job.get("path") == real_path
+    assert res_job.get("path") == new_path
     assert res_job.get("value") == recur
     assert res_job.get("status") == t_add
     # TODO fix

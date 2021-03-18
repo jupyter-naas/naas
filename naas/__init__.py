@@ -1,7 +1,7 @@
 # Copyright (c) Naas Team.
 # Distributed under the terms of the GNU AGPL License.
+from .types import t_tz, error_busy, error_reject, copy_button
 from IPython.core.display import display, Javascript, HTML
-from .types import t_tz, error_busy, error_reject
 from .runner.notifications import Notifications
 from .runner.callback import Callback
 from .dependency import Dependency
@@ -16,11 +16,11 @@ from .api import Api
 import requests
 import os
 
-__version__ = "0.31.0b1"
+__version__ = "1.5.21"
 __github_repo = "jupyter-naas/naas"
 __doc_url = "https://naas.gitbook.io/naas/"
 __canny_js = '<script>!function(w,d,i,s){function l(){if(!d.getElementById(i)){var f=d.getElementsByTagName(s)[0],e=d.createElement(s);e.type="text/javascript",e.async=!0,e.src="https://canny.io/sdk.js",f.parentNode.insertBefore(e,f)}}if("function"!=typeof w.Canny){var c=function(){c.q.push(arguments)};c.q=[],w.Canny=c,"complete"===d.readyState?l():w.attachEvent?w.attachEvent("onload",l):w.addEventListener("load",l,!1)}}(window,document,"canny-jssdk","script");</script>'  # noqa: E501
-__crisp = '<script type="text/javascript">window.$crisp=[];window.CRISP_WEBSITE_ID="34ee7d04-1056-4e11-aea7-1c02c0d2bef3";(function(){d=document;s=d.createElement("script");s.src="https://client.crisp.chat/l.js";s.async=1;d.getElementsByTagName("head")[0].appendChild(s);})();</script>'  # noqa: E501
+__crisp = '<script type="text/javascript">window.$crisp=[];window.CRISP_WEBSITE_ID="a64b999e-e44c-44ee-928f-5cd0233f9586";(function(){d=document;s=d.createElement("script");s.src="https://client.crisp.chat/l.js";s.async=1;d.getElementsByTagName("head")[0].appendChild(s);})();</script>'  # noqa: E501
 __location__ = os.getcwd()
 
 scheduler = Scheduler()
@@ -46,6 +46,18 @@ def get_last_version():
     url = f"https://api.github.com/repos/{__github_repo}/tags"
     response = requests.get(url, headers={"Accept": "application/vnd.github.v3+json"})
     return response.json()[0]["name"]
+
+
+def get_size():
+    webhook.manager.get_size()
+
+
+def reload_jobs():
+    webhook.manager.reload_jobs()
+
+
+def move_job(old_path, new_path):
+    webhook.manager.move_job(old_path, new_path)
 
 
 def changelog():
@@ -81,7 +93,7 @@ def bug_report():
     data = __canny_js
     data += "<div data-canny />"
     data += """
-    <>
+    <script>
         Canny('identify', {
             appID: '5f81748112b5d73b2faf4b15',
             user: {
@@ -93,7 +105,7 @@ def bug_report():
         Canny('render', {
             boardToken: "{BOARD}",
         });
-    </>
+    </script>
     """
 
     data = data.replace("{EMAIL}", str(n_env.user))
@@ -111,7 +123,7 @@ def feature_request():
     data = __canny_js
     data += "<div data-canny />"
     data += """
-    <>
+    <script>
         Canny('identify', {
             appID: '5f81748112b5d73b2faf4b15',
             user: {
@@ -123,7 +135,7 @@ def feature_request():
         Canny('render', {
             boardToken: "{BOARD}",
         });
-    </>
+    </script>
     """
 
     data = data.replace("{EMAIL}", str(n_env.user))
@@ -166,6 +178,13 @@ def auto_update():
         update()
     else:
         print("You are aready up to date")
+
+
+def get_download_url(url):
+    dl_url = f"{n_env.any_user_url}/naas/downloader?url={url}"
+    print("❤️ Copy this url and spread it to the world\n")
+    copy_button(dl_url)
+    return dl_url
 
 
 def is_production():

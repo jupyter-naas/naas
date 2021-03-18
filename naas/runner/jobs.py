@@ -4,7 +4,9 @@ from naas.types import (
     t_add,
     t_skip,
     t_update,
+    t_job,
     t_error,
+    t_health,
     t_start,
     t_notebook,
     t_asset,
@@ -12,8 +14,9 @@ from naas.types import (
     t_dependency,
     t_scheduler,
     t_list,
+    t_send,
 )
-from .env_var import n_env
+from .env_var import cpath, n_env
 import pandas as pd
 import datetime
 import errno
@@ -41,8 +44,7 @@ class Jobs:
         "params",
         "lastUpdate",
         "lastRun",
-        "nbRun",
-        "totalRun",
+        "runs",
     ]
 
     def __init__(self, logger, clean=False, init_data=[]):
@@ -74,21 +76,68 @@ class Jobs:
                         "id": uid,
                         "type": "init_job_storage",
                         "filepath": self.__json_secrets_path,
-                        "status": "error",
+                        "status": t_error,
                         "error": str(e),
                     }
                 )
         else:
             uid = str(uuid.uuid4())
             self.__df = self.__get_save_from_file(uid)
-            self.__cleanup_jobs()
-        if self.__df is None or len(self.__df) == 0:
-            self.__df = pd.DataFrame(columns=self.__colums)
+        self.__cleanup_jobs()
+
+    def reload_jobs(self):
+        uid = str(uuid.uuid4())
+        self.__df = self.__get_save_from_file(uid)
+        self.__cleanup_jobs()
 
     def __cleanup_jobs(self):
-        if len(self.__df) > 0:
-            self.__df = self.__df[self.__df.type.isin(filters)]
-            self.__dedup_jobs()
+        try:
+            if self.__df is None or len(self.__df) == 0:
+                self.__df = pd.DataFrame(columns=self.__colums)
+            if len(self.__df) > 0:
+                self.__df = self.__df[self.__df.type.isin(filters)]
+                self.__dedup_jobs()
+        except Exception as err:
+            print("Cannot cleanup", err)
+
+    async def move_job(self, uid, old_path, new_path):
+        async with self.__storage_sem:
+            try:
+                if len(self.__df) > 0:
+                    cur_elems = self.__df.query(
+                        f'path == "{old_path}"'
+                    )
+                    new_elems = self.__df.query(
+                        f'path == "{new_path}"'
+                    )
+                    if len(cur_elems.index) == 0:
+                        return {"status": t_skip, "error": "job not found"}
+                    elif len(new_elems.index) != 0:
+                        return {"status": t_skip, "error": "new job path exist"}
+                    index = cur_elems.index[0]
+                    self.__df.at[index, "path"] = new_path
+                    data = self.__df.to_dict("records")
+                    try:
+                        os.makedirs(os.path.dirname(new_path))
+                    except OSError:
+                        pass
+                    filename = os.path.basename(old_path)
+                    dirname = os.path.dirname(old_path)
+                    new_filename = os.path.basename(new_path)
+                    os.rename(old_path, new_path)
+                    moved = [{"from": cpath(old_path), "to": cpath(new_path)}]
+                    for ffile in os.listdir(dirname):
+                        if ffile.endswith(f'__{filename}'):
+                            tmp_path = os.path.join(dirname, ffile)
+                            start = ffile.replace(filename, "")
+                            new_tmp_path = new_path.replace(new_filename, f"{start}{new_filename}")
+                            moved.append({"from": cpath(tmp_path), "to": cpath(new_tmp_path)})
+                            os.rename(tmp_path, new_tmp_path)
+                    self.__save_to_file(uid, data)
+                    return {"status": t_send, "data": moved}
+            except Exception as e:
+                print("move_job", e)
+                return {"status": t_error, "error": str(e)}
 
     def __dedup_jobs(self):
         new_df = self.__df[
@@ -104,15 +153,40 @@ class Jobs:
     def __get_save_from_file(self, uid):
         data = []
         try:
-            with open(self.__json_secrets_path, "r") as f:
-                data = json.load(f)
-                f.close()
+            f = open(self.__json_secrets_path, "r")
+            data_l = json.load(f)
+            f.close()
+            # data = data_l
+            dt_string = datetime.datetime.now(tz=pytz.timezone(n_env.tz)).strftime(
+                "%Y-%m-%d %H:%M:%S"
+            )
+            for d in data_l:
+                # Fix formating of old jobs
+                runs = d.get("runs", [])
+                if type(runs) != list:
+                    try:
+                        runs = json.loads(runs)
+                    except Exception:
+                        runs = []
+                        pass
+                c = {
+                    "id": d.get("id", uid),
+                    "type": d.get("type", ""),
+                    "value": d.get("value", ""),
+                    "path": d.get("path", ""),
+                    "status": d.get("status", t_update),
+                    "params": d.get("params", {}),
+                    "lastUpdate": d.get("lastUpdate", dt_string),
+                    "lastRun": d.get("lastRun", 0),
+                    "runs": runs,
+                }
+                data.append(c)
         except Exception as err:
             self.__logger.error(
                 {
                     "id": str(uid),
                     "type": "__get_save_from_file",
-                    "status": "exception",
+                    "status": t_error,
                     "filepath": self.__json_secrets_path,
                     "error": str(err),
                 }
@@ -132,7 +206,7 @@ class Jobs:
                 {
                     "id": str(uid),
                     "type": "__save_to_file",
-                    "status": "exception",
+                    "status": t_error,
                     "filepath": self.__json_secrets_path,
                     "error": str(err),
                 }
@@ -185,45 +259,48 @@ class Jobs:
         return res
 
     def __match_clear(self, cur_filename, filename, clear_all):
-        if clear_all and cur_filename.endwith(filename):
-            return True
-        elif not clear_all and cur_filename == filename:
+        if clear_all and cur_filename.endswith(f'__{filename}') or cur_filename == filename:
             return True
         else:
             return False
 
     def clear_file(self, uid, path, histo, mode=None):
         # possible format
-        # histo_filename
-        # out_filename
-        # histo_out_filename
-        filename = os.path.basename(path)
-        clear_all = False
-        if mode:
-            filename = f"{mode}_{filename}"
-        if histo and histo == "all":
-            clear_all = True
-        elif histo:
-            filename = f"{histo}_{filename}"
-        removed = []
-        dirname = os.path.dirname(path)
-        if os.path.exists(path):
-            for ffile in os.listdir(dirname):
-                if self.__match_clear(ffile, filename, clear_all):
-                    tmp_path = os.path.join(dirname, ffile)
-                    removed.append(tmp_path)
-                    self.__logger.info(
-                        {
-                            "id": uid,
-                            "filename": filename,
-                            "histo": histo,
-                            "type": "clear_file",
-                            "status": t_delete,
-                            "filepath": path,
-                        }
-                    )
-                    os.remove(tmp_path)
-        return removed
+        # histo___filename
+        # output__filename
+        # histo___output__filename
+        try:
+            filename = os.path.basename(path)
+            clear_all = False
+            if mode:
+                filename = f"{mode}__{filename}"
+            if histo and histo == "all":
+                clear_all = True
+            elif histo:
+                filename = f"{histo}___{filename}"
+            removed = []
+            dirname = os.path.dirname(path)
+            if os.path.exists(path):
+                for ffile in os.listdir(dirname):
+                    if self.__match_clear(ffile, filename, clear_all):
+                        tmp_path = os.path.join(dirname, ffile)
+                        os.remove(tmp_path)
+                        tmp_path = cpath(tmp_path)
+                        removed.append(tmp_path)
+                        self.__logger.info(
+                            {
+                                "id": uid,
+                                "filename": filename,
+                                "histo": histo,
+                                "type": "clear_file",
+                                "status": t_delete,
+                                "filepath": path,
+                            }
+                        )
+            return {"id": uid, "status": t_health, "data": removed}
+        except Exception as e:
+            print("clear_file", e)
+            return {"id": uid, "status": t_error, "error": str(e)}
 
     def list_files(self, uid, path, filetype, output=False):
         d = []
@@ -242,11 +319,12 @@ class Jobs:
                 split_list = ffile.split("___")
                 histo = split_list[0]
                 tmp_path = os.path.join(dirname, ffile)
+                tmp_path = cpath(tmp_path)
                 d.append({"timestamp": histo, "filepath": tmp_path})
         self.__logger.info(
             {
                 "id": uid,
-                "type": "clear_file",
+                "type": "list_files",
                 "filename": filename,
                 "status": t_list,
                 "filepath": path,
@@ -254,7 +332,7 @@ class Jobs:
         )
         return d
 
-    async def list(self, uid, as_df=False):
+    async def list(self, uid, as_df=False, prodPath=False):
         data = []
         try:
             async with self.__storage_sem:
@@ -262,12 +340,22 @@ class Jobs:
                     data = self.__df
                 else:
                     data = self.__df.to_dict("records")
+                    for d in data:
+                        try:
+                            d["path"] = d["path"] if prodPath else cpath(d["path"])
+                            d["runs"] = json.loads(d.get("runs", "[]"))
+                        except Exception:
+                            d["runs"] = []
+                            pass
         except Exception as e:
             print("list", e)
         return data
 
     def __delete(self, cur_elem, uid, path, target_type, value, params):
         try:
+            dt_string = datetime.datetime.now(tz=pytz.timezone(n_env.tz)).strftime(
+                "%Y-%m-%d %H:%M:%S"
+            )
             self.__logger.info(
                 {
                     "id": uid,
@@ -278,17 +366,30 @@ class Jobs:
                     "params": params,
                 }
             )
-            print("drop ==> ", cur_elem.index)
-            self.__df = self.__df.drop(cur_elem.index)
+            index = cur_elem.index[0]
+            self.__df.at[index, "id"] = uid
+            self.__df.at[index, "status"] = t_delete
+            self.__df.at[index, "lastUpdate"] = dt_string
             return t_delete
         except Exception as e:
-            print("delete", e)
+            self.__logger.error(
+                {
+                    "id": uid,
+                    "type": target_type,
+                    "value": value,
+                    "status": t_error,
+                    "filepath": path,
+                    "params": params,
+                    "error": str(e),
+                }
+            )
             return t_error
 
     def __add(self, uid, path, target_type, value, params, run_time):
         try:
-            now = datetime.datetime.now(tz=pytz.timezone(n_env.tz))
-            dt_string = now.strftime("%Y-%m-%d %H:%M:%S")
+            dt_string = datetime.datetime.now(tz=pytz.timezone(n_env.tz)).strftime(
+                "%Y-%m-%d %H:%M:%S"
+            )
             self.__logger.info(
                 {
                     "id": uid,
@@ -306,9 +407,8 @@ class Jobs:
                 "status": t_add,
                 "path": path,
                 "params": params,
-                "nbRun": 1 if run_time > 0 else 0,
                 "lastRun": run_time,
-                "totalRun": run_time,
+                "runs": json.dumps([]),
                 "lastUpdate": dt_string,
             }
             cur_df = self.__df.to_dict("records")
@@ -318,18 +418,26 @@ class Jobs:
                 self.__df = pd.DataFrame([new_row])
             return t_add
         except Exception as e:
-            print("add", e)
+            self.__logger.error(
+                {
+                    "id": uid,
+                    "type": target_type,
+                    "value": value,
+                    "status": t_error,
+                    "filepath": path,
+                    "params": params,
+                    "error": str(e),
+                }
+            )
             return t_error
 
-    def __update(
-        self, cur_elem, uid, path, target_type, value, params, status, run_time
-    ):
+    def __update(self, cur_elem, uid, path, value, params, status, run_time):
         now = datetime.datetime.now(tz=pytz.timezone(n_env.tz))
         dt_string = now.strftime("%Y-%m-%d %H:%M:%S")
         self.__logger.info(
             {
                 "id": uid,
-                "type": target_type,
+                "type": t_job,
                 "value": value,
                 "status": t_update,
                 "filepath": path,
@@ -342,19 +450,18 @@ class Jobs:
         self.__df.at[index, "value"] = value
         self.__df.at[index, "params"] = params
         self.__df.at[index, "lastUpdate"] = dt_string
-        if run_time > 0 and status != t_add:
-            self.__df.at[index, "nbRun"] = self.__df.at[index, "nbRun"] + 1
+        if run_time > 0:
+            try:
+                runs = json.loads(self.__df.at[index, "runs"])
+            except Exception:
+                runs = []
+                pass
+            runs.append(
+                {"id": uid, "duration": run_time, "date": dt_string, "status": status}
+            )
+            self.__df.at[index, "runs"] = json.dumps(runs)
             self.__df.at[index, "lastRun"] = run_time
-            total_run = float(self.__df.at[index, "totalRun"])
-            self.__df.at[index, "totalRun"] = run_time + total_run
-            return t_update
-        elif status == t_add:
-            self.__df.at[index, "nbRun"] = 0
-            self.__df.at[index, "lastRun"] = 0
-            self.__df.at[index, "totalRun"] = 0
-            return t_add
-        else:
-            return t_skip
+        return t_update
 
     async def update(self, uid, path, target_type, value, params, status, run_time=0):
         data = None
@@ -365,15 +472,12 @@ class Jobs:
                     f'type == "{target_type}" and path == "{path}"'
                 )
                 if len(cur_elem) == 1 and status == t_delete:
-                    print("delete")
                     res = self.__delete(cur_elem, uid, path, target_type, value, params)
                 elif len(cur_elem) == 1:
-                    print("delete")
                     res = self.__update(
                         cur_elem,
                         uid,
                         path,
-                        target_type,
                         value,
                         params,
                         status,
@@ -386,7 +490,7 @@ class Jobs:
                 if res == t_error:
                     raise ServerError(
                         {
-                            "status": "error",
+                            "status": t_error,
                             "id": uid,
                             "data": [],
                             "error": "unknow error",
@@ -397,7 +501,6 @@ class Jobs:
                 self.__save_to_file(uid, data)
                 return {"id": uid, "status": res, "data": data}
             except Exception as e:
-                print("cannot update", e)
                 self.__logger.error(
                     {
                         "id": uid,
@@ -410,6 +513,6 @@ class Jobs:
                     }
                 )
                 raise ServerError(
-                    {"status": "error", "id": uid, "data": [], "error": str(e)},
+                    {"status": t_error, "id": uid, "data": [], "error": str(e)},
                     status_code=500,
                 )

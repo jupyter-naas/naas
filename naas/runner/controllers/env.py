@@ -1,53 +1,23 @@
 from sanic.views import HTTPMethodView
 from sanic.response import json
-from naas.types import t_health, t_asset
+from naas.types import t_health
 from naas.runner.env_var import n_env
-import uuid
-
-endpoint = "env"
 
 
 class EnvController(HTTPMethodView):
-    __notif_url = None
-    __user = None
-    __logger = None
-    server_root = None
-
-    def __init__(
-        self,
-        logger,
-        user,
-        public_url,
-        proxy_url,
-        notif_url,
-        tz,
-        server_root,
-        *args,
-        **kwargs
-    ):
+    def __init__(self, *args, **kwargs):
         super(EnvController, self).__init__(*args, **kwargs)
-        self.__logger = logger
-        self.__notif_url = notif_url
-        self.__user = user
-        self.__server_root = server_root
-        self.__public_url = public_url
-        self.__proxy_url = proxy_url
-        self.__tz = tz
 
     async def get(self, request):
-        uid = str(uuid.uuid4())
         env = {
             "status": t_health,
             "version": n_env.version,
             "NAAS_BASE_PATH": n_env.path_naas_folder,
-            "NOTIFICATIONS_API": self.__notif_url,
-            "JUPYTERHUB_USER": self.__user,
-            "JUPYTER_SERVER_ROOT": self.__server_root,
-            "JUPYTERHUB_URL": self.__public_url,
-            "PUBLIC_PROXY_API": self.__proxy_url,
-            "TZ": self.__tz,
+            "NOTIFICATIONS_API": n_env.notif_api,
+            "JUPYTERHUB_USER": n_env.user,
+            "JUPYTER_SERVER_ROOT": n_env.server_root,
+            "JUPYTERHUB_URL": n_env.hub_api,
+            "PUBLIC_PROXY_API": n_env.proxy_api,
+            "TZ": n_env.tz,
         }
-        self.__logger.info(
-            {"id": uid, "type": t_asset, "status": "send", "filepath": endpoint}
-        )
         return json(env)

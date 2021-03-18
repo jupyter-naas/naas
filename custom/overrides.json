@@ -1,0 +1,38 @@
+{
+  "@jupyterlab/notebook-extension:tracker": {
+    "recordTiming": true,
+    "kernelShutdown": true,
+    "codeCellConfig": {
+      "lineNumbers": true
+    }
+  },
+  "@jupyterlab/extensionmanager-extension:plugin": {
+    "disclaimed": true,
+    "enabled": true
+  },
+  "@jupyterlab/filebrowser-extension:browser": {
+    "navigateToCurrentDirectory": true
+  },
+  "@jupyterlab/application-extension:sidebar": {
+    "overrides": {
+      "jp-property-inspector": "left"
+    }
+  },
+  "@jupyterlab/apputils-extension:palette": {
+    "modal": false
+  },
+  "@jupyterlab/terminal-extension:plugin": {
+    "shutdownOnClose": true
+  },
+  "@krassowski/jupyterlab-lsp:plugin": {
+    "language_servers": {
+      "pyls": {
+        "serverSettings": {
+          "pyls.plugins.pydocstyle.enabled": false,
+          "pyls.plugins.pyflakes.enabled": false,
+          "pyls.plugins.flake8.enabled": true
+        }
+      }
+    }
+  }
+}

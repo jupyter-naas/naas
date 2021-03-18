@@ -1,8 +1,17 @@
+from .types import (
+    t_notebook,
+    t_output,
+    guess_type,
+    copy_button,
+    t_add,
+    t_update,
+    t_delete,
+)
 from IPython.core.display import display, HTML, JSON, Image, SVG, Markdown
-from .types import t_notebook, t_output, guess_type, copy_button
 from .manager import Manager
 import pandas as pd
 import markdown2
+import requests
 import warnings
 import os
 
@@ -55,35 +64,90 @@ class Api:
         if raw:
             json_filtered = []
             for item in json_data:
-                if item["type"] == self.role:
+                if item["type"] == self.role and item["status"] != t_delete:
                     print(item)
                     json_filtered.append(item)
                 return json_filtered
         else:
             for item in json_data:
                 kind = None
-                if item["type"] == self.role:
+                if item["type"] == self.role and item["status"] != t_delete:
                     kind = f"callable with this url {self.manager.proxy_url('notebooks', item['value'])}"
-                    print(f"File ==> {item['path']} is {kind}")
+                    print(f'File ==> {item["path"]} is {kind}')
 
-    def add(self, path=None, params={}, debug=False, force=False):
+    def run(self, path=None, debug=False):
         self.deprecatedPrint()
         current_file = self.manager.get_path(path)
         if current_file is None:
-            print("Missing file path in prod mode")
+            print("Missing file path")
             return
         token = os.urandom(30).hex()
-        if not force:
-            try:
-                token = self.manager.get_value(current_file, False)
-            except:  # noqa: E722
-                pass
+        status = t_add
+        try:
+            token = self.manager.get_value(current_file, False)
+            status = t_update
+        except:  # noqa: E722
+            pass
         url = self.manager.proxy_url(self.role, token)
         if self.manager.is_production():
             print("No add done, you are in production\n")
             return url
         self.manager.add_prod(
-            {"type": self.role, "path": current_file, "params": params, "value": token},
+            {
+                "type": self.role,
+                "status": status,
+                "path": current_file,
+                "params": {},
+                "value": token,
+            },
+            debug,
+        )
+        try:
+            r = requests.get(url)
+            r.raise_for_status()
+            print("👌 Well done! Your Notebook runned in production.\n")
+        except Exception:
+            print("😢 Your Notebook failed in production.\n")
+        self.get_output(path)
+        self.manager.del_prod({"type": self.role, "path": current_file}, debug)
+        return url
+
+    def find(self, path=None):
+        current_file = self.manager.get_path(path)
+        if current_file is None:
+            print("Missing file path")
+            return
+        try:
+            token = self.manager.get_value(current_file, False)
+            return self.manager.proxy_url(self.role, token)
+        except:  # noqa: E722
+            return None
+
+    def add(self, path=None, params={}, debug=False):
+        self.deprecatedPrint()
+        current_file = self.manager.get_path(path)
+        if current_file is None:
+            print("Missing file path")
+            return
+        token = os.urandom(30).hex()
+        status = t_add
+        try:
+            token = self.manager.get_value(current_file, False)
+            status = t_update
+        except:  # noqa: E722
+            pass
+        url = self.manager.proxy_url(self.role, token)
+        if self.manager.is_production():
+            print("No add done, you are in production\n")
+            return url
+        self.manager.add_prod(
+            {
+                "type": self.role,
+                "status": status,
+                "path": current_file,
+                "params": params,
+                "value": token,
+            },
             debug,
         )
         print("👌 Well done! Your Notebook has been sent to production.\n")
@@ -150,7 +214,7 @@ class Api:
             raise TypeError("data shoud be a dataframe")
         display(HTML(data.to_html(), metadata={"naas_api": True, "naas_type": "csv"}))
 
-    def delete(self, path=None, all=False, debug=False):
+    def delete(self, path=None, all=True, debug=False):
         self.deprecatedPrint()
         if self.manager.is_production():
             print("No delete done, you are in production\n")
@@ -159,5 +223,5 @@ class Api:
         self.manager.del_prod({"type": self.role, "path": current_file}, debug)
         print("🗑 Done! Your Notebook has been remove from production.\n")
         if all is True:
-            self.clear(path)
-            self.clear_output(path)
+            self.clear(current_file, 'all')
+            self.clear_output(current_file, 'all')

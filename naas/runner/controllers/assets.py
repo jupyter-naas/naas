@@ -1,7 +1,7 @@
 from sanic.views import HTTPMethodView
 from sanic import response
 from sanic.exceptions import ServerError
-from naas.types import t_asset, t_health, t_error, t_start, t_send
+from naas.types import t_asset, t_health, t_error, t_start, t_send, t_delete
 import uuid
 import os
 
@@ -25,11 +25,11 @@ class AssetsController(HTTPMethodView):
             )
         else:
             uid = str(uuid.uuid4())
-            task = await self.__jobs.find_by_value(uid, token, t_asset)
-            if task:
-                file_filepath = task.get("path")
+            job = await self.__jobs.find_by_value(uid, token, t_asset)
+            if job and job.get("status") != t_delete:
+                file_filepath = job.get("path")
                 file_name = os.path.basename(file_filepath)
-                params = task.get("params", dict())
+                params = job.get("params", dict())
                 inline = params.get("inline", False)
                 self.__logger.info(
                     {
