@@ -1,3 +1,9 @@
+## 1.5.23 (2021-03-22)
+
+### Fix
+
+- add new optional deep in readme
+
 ## 1.5.22 (2021-03-18)
 
 ### Fix

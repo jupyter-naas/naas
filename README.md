@@ -47,6 +47,10 @@ Test it in binder (WIP)
 
 `pip3 install naas`
 
+### Install with drivers
+
+`pip3 install 'naas[full]'`
+
 ---
 
 # DEVELOPMENT
