@@ -212,6 +212,7 @@ class Manager:
         decoded = base64.b64decode(filedata["data"])
         f.write(decoded)
         f.close()
+        return new_path
 
     def clear_file(self, path=None, mode=None, histo=None):
         if not path and self.is_production():
@@ -291,10 +292,11 @@ class Manager:
             res = r.json()
             if res.get("status") == t_error or res.get("status") == t_skip:
                 raise ValueError(f"❌ Cannot get your file {path}")
-            self.__save_file(self.safe_filepath(current_file), res.get("file"))
+            new_path = self.__save_file(self.safe_filepath(current_file), res.get("file"))
             print(
                 f"🕣 Your Notebook {mode or ''} {filename}, has been copied into your local folder.\n"
             )
+            return new_path
         except requests.exceptions.ConnectionError as err:
             print(error_busy, err)
             raise

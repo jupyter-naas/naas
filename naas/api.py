@@ -106,9 +106,11 @@ class Api:
             r = requests.get(url)
             r.raise_for_status()
             print("👌 Well done! Your Notebook runned in production.\n")
+            print(r.json())
         except Exception:
             print("😢 Your Notebook failed in production.\n")
-        self.get_output(path)
+        out_path = self.get_output(path)
+        print(f'👀 Check the output file <a href="out_path">{out_path}</a> !\n')
         self.manager.del_prod({"type": self.role, "path": current_file}, debug)
         return
 
