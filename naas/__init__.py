@@ -56,6 +56,9 @@ def reload_jobs():
     webhook.manager.reload_jobs()
 
 
+def run(path=None, debug=False):
+    return webhook.run(path, debug)
+
 def move_job(old_path, new_path):
     webhook.manager.move_job(old_path, new_path)
 

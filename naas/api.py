@@ -90,8 +90,8 @@ class Api:
             pass
         url = self.manager.proxy_url(self.role, token)
         if self.manager.is_production():
-            print("No add done, you are in production\n")
-            return url
+            print("No run done, you are in production\n")
+            return
         self.manager.add_prod(
             {
                 "type": self.role,
@@ -110,7 +110,7 @@ class Api:
             print("😢 Your Notebook failed in production.\n")
         self.get_output(path)
         self.manager.del_prod({"type": self.role, "path": current_file}, debug)
-        return url
+        return
 
     def find(self, path=None):
         current_file = self.manager.get_path(path)
