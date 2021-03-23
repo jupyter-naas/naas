@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import copy
+from naas.runner.env_var import cpath
 import nbformat
 from pathlib import Path
 
@@ -156,7 +157,7 @@ def prepare_notebook_naas(nb, input_path, uid, runtime):
     if language == "python":
         current_data = {
             "uid": uid,
-            "path": input_path,
+            "path": cpath(input_path),
             "env": "RUNNER",
             "runtime": runtime,
         }
