@@ -1,3 +1,9 @@
+## 1.6.0 (2021-03-23)
+
+### Feat
+
+- allow default result in callback
+
 ## 1.5.30 (2021-03-23)
 
 ### Fix
