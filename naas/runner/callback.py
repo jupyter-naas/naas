@@ -16,14 +16,19 @@ class Callback:
         self.headers = {"Authorization": f"token {n_env.token}"}
         self.logger = logger
 
-    def add(self, response=None, responseHeaders=None, autoDelete=True):
+    def add(self, response={}, response_headers={}, auto_delete=True, default_result=None, no_override=False, user=None):
         try:
             data = {
                 "response": response,
-                "autoDelete": autoDelete,
-                "responseHeaders": responseHeaders,
+                "autoDelete": auto_delete,
+                "responseHeaders": response_headers,
             }
-            req = None
+            if no_override:
+                data['responseHeaders']['naas_no_override'] = no_override
+            if default_result:
+                data['result'] = default_result
+            if user:
+                data['user'] = user
             req = requests.post(
                 url=f"{n_env.callback_api}/", headers=self.headers, json=data
             )
@@ -41,17 +46,17 @@ class Callback:
             else:
                 print(err)
 
-    def __get(self, uuid):
+    def __get(self, uuid, user=None):
         try:
             data = {
                 "uuid": uuid,
             }
-            req = None
+            if user:
+                data['user'] = user
             req = requests.get(
                 url=f"{n_env.callback_api}/",
-                params={"uuid": uuid},
+                params=data,
                 headers=self.headers,
-                json=data,
             )
             req.raise_for_status()
             jsn = req.json()
@@ -64,14 +69,14 @@ class Callback:
             else:
                 print(err)
 
-    def get(self, uuid, wait_until_data=False, timeout=3000, raw=False):
+    def get(self, uuid, wait_until_data=False, timeout=3000, raw=False, user=None):
         data = None
         total = 0
         while data is None or data.get("result") is None:
             if total > timeout:
                 print("🥲 Callback Get timeout !")
                 return None
-            data = self.__get(uuid)
+            data = self.__get(uuid, user)
             time.sleep(1)
             total += 1
             if wait_until_data:
@@ -82,12 +87,13 @@ class Callback:
             print("🥲 Callback is empty !")
         return data if raw else data.get("result")
 
-    def delete(self, uuid):
+    def delete(self, uuid, user=None):
         try:
             data = {
                 "uuid": uuid,
             }
-            req = None
+            if user:
+                data['user'] = user
             req = requests.delete(
                 url=f"{n_env.callback_api}/", headers=self.headers, json=data
             )
