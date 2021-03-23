@@ -138,7 +138,7 @@ class Manager:
 
     def notebook_path(self):
         if self.is_production():
-            return n_env.current.get("path")
+            return os.path.join(n_env.server_root, n_env.current.get("path"))
         try:
             connection_file = os.path.basename(ipykernel.get_connection_file())
             kernel_id = connection_file.split("-", 1)[1].split(".")[0]
