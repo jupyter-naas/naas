@@ -16,7 +16,7 @@ class Callback:
         self.headers = {"Authorization": f"token {n_env.token}"}
         self.logger = logger
 
-    def add(self, response={}, response_headers={}, auto_delete=True, default_result=None, no_override=False, user=None):
+    def add(self, response={}, response_headers={}, auto_delete=True, default_result=None, no_override=False, user=None, uuid=None):
         try:
             data = {
                 "response": response,
@@ -29,6 +29,8 @@ class Callback:
                 data['result'] = default_result
             if user:
                 data['user'] = user
+            if uuid:
+                data['uuid'] = uuid
             req = requests.post(
                 url=f"{n_env.callback_api}/", headers=self.headers, json=data
             )
