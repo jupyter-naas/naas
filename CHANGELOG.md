@@ -1,3 +1,9 @@
+## 1.5.27 (2021-03-23)
+
+### Fix
+
+- **dependency**: update singleuser {{ steps.get-latest-tag.outputs.tag }}
+
 ## 1.5.26 (2021-03-23)
 
 ### Fix
