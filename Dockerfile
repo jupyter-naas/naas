@@ -3,7 +3,7 @@ FROM jupyternaas/singleuser:2.8.2
 # Build-time metadata as defined at http://label-schema.org
 ARG BUILD_DATE
 ARG VCS_REF
-ENV NAAS_VERSION 1.6.1
+ENV NAAS_VERSION 1.6.2
 ENV JUPYTER_ENABLE_LAB 'yes'
 
 ENV NB_UMASK=022

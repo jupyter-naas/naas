@@ -1,3 +1,9 @@
+## 1.6.2 (2021-03-24)
+
+### Fix
+
+- remove launch un manager when runner mode
+
 ## 1.6.1 (2021-03-24)
 
 ### Fix
