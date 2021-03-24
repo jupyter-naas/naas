@@ -12,7 +12,6 @@ class Callback:
     headers = None
 
     def __init__(self, logger=None):
-        #         n_env.callback_api = "http://naas-callback:3004"
         self.headers = {"Authorization": f"token {n_env.token}"}
         self.logger = logger
 
@@ -116,9 +115,13 @@ class Callback:
         jsn = req.json()
         return jsn
 
-    def list(self):
+    def list(self, user=None):
+        data = {}
+        if user:
+            data['user'] = user
         req = requests.get(
             url=f"{n_env.callback_api}/",
+            params=data,
             headers=self.headers,
         )
         req.raise_for_status()
