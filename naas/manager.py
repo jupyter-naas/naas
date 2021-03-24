@@ -85,7 +85,7 @@ class Manager:
 
     def set_runner_mode(self):
         try:
-            r = requests.get(f"{n_env.api}/{t_env}", headers=self.headers)
+            r = requests.get(f"{n_env.api}/{t_env}", headers=self.headers, timeout=2)
             r.raise_for_status()
         except Exception:
             n_env.remote_mode = not n_env.remote_mode

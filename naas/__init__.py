@@ -11,10 +11,10 @@ from .scheduler import Scheduler
 import ipywidgets as widgets
 from .assets import Assets
 from .secret import Secret
-from .runner import Runner
 from .api import Api
 import requests
 import os
+import sys
 
 __version__ = "1.6.1"
 __github_repo = "jupyter-naas/naas"
@@ -23,16 +23,16 @@ __canny_js = '<script>!function(w,d,i,s){function l(){if(!d.getElementById(i)){v
 __crisp = '<script type="text/javascript">window.$crisp=[];window.CRISP_WEBSITE_ID="a64b999e-e44c-44ee-928f-5cd0233f9586";(function(){d=document;s=d.createElement("script");s.src="https://client.crisp.chat/l.js";s.async=1;d.getElementsByTagName("head")[0].appendChild(s);})();</script>'  # noqa: E501
 __location__ = os.getcwd()
 
-scheduler = Scheduler()
-secret = Secret()
-runner = Runner()
-api = Api(True)
-webhook = Api()
-assets = Assets()
-dependency = Dependency()
-notifications = Notifications()
-callback = Callback()
-Domain = Domain()
+if len(sys.argv) == 0 or (len(sys.argv) > 0 and sys.argv[0] != "-m"):
+    scheduler = Scheduler()
+    secret = Secret()
+    api = Api(True)
+    webhook = Api()
+    assets = Assets()
+    dependency = Dependency()
+    notifications = Notifications()
+    callback = Callback()
+    Domain = Domain()
 
 
 def version():

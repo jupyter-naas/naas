@@ -76,6 +76,12 @@ enter `test` as password
 
 if you want other password `./install.sh -t=mypassword`
 
+### Api documentation
+
+We have a WIP documentation in swagger.
+
+`http://127.0.0.1:5000/swagger/`
+
 ### Livereload 
 
 If you do change in naas code, the server will live reload.
@@ -85,7 +91,7 @@ If you use naas in a notebook restart the kernel to get the changes.
 ### isolated Manager
 open manager outsite of jupyter context :
 
-`http://localhost:8888/naas`
+`http://localhost:5000/naas`
 
 ## Run test 
 
