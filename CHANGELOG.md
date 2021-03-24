@@ -1,3 +1,9 @@
+## 1.6.1 (2021-03-24)
+
+### Fix
+
+- list callback allow by user
+
 ## 1.6.0 (2021-03-23)
 
 ### Feat
