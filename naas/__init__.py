@@ -3,11 +3,11 @@
 from .types import t_tz, error_busy, error_reject, copy_button
 from IPython.core.display import display, Javascript, HTML
 from .runner.notifications import Notifications
-from .runner.callback import Callback
 from .dependency import Dependency
 from .runner.env_var import n_env
 from .runner.proxy import Domain
 from .scheduler import Scheduler
+from .callback import Callback
 import ipywidgets as widgets
 from .assets import Assets
 from .secret import Secret

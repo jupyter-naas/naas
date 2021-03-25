@@ -1,8 +1,10 @@
 from naas.types import t_scheduler, t_start, t_main, t_health, t_error, t_busy, t_delete
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from naas.callback import Callback
 import apscheduler.schedulers.base
 from .env_var import n_env
 import traceback
+import requests
 import datetime
 import asyncio
 import aiohttp
@@ -221,6 +223,56 @@ class Scheduler:
                 t_error,
             )
 
+    def getTerminals(self):
+        try:
+            r = requests.get(
+                f"{n_env.user_url}/api/terminals",
+                headers={
+                    "Authorization": f"token {n_env.token}",
+                },
+            )
+            r.raise_for_status()
+            return r.json()
+        except Exception as e:
+            print(e)
+            return {}
+
+    def getSessions(self):
+        try:
+            r = requests.get(
+                f"{n_env.user_url}/api/sessions",
+                headers={
+                    "Authorization": f"token {n_env.token}",
+                },
+            )
+            r.raise_for_status()
+            return r.json()
+        except Exception as e:
+            print(e)
+            return {}
+
+    async def analytics(self, uid):
+        try:
+            data = {
+                "date": datetime.datetime.now(),
+                "jobs": await self.__jobs.list(uid),
+                "kernels": self.getSessions(),
+                "terminals": self.getTerminals(),
+            }
+            Callback().add(auto_delete=False, uuid="naas_analytics", default_result=data, no_override=True)
+        except Exception as e:
+            tb = traceback.format_exc()
+            self.__logger.error(
+                {
+                    "id": uid,
+                    "type": t_scheduler,
+                    "filepath": "analytics",
+                    "status": t_error,
+                    "error": str(e),
+                    "trace": tb,
+                }
+            )
+
     async def __scheduler_function(self):
         # Create unique for scheduling step (one step every minute)
         main_uid = str(uuid.uuid4())
@@ -264,6 +316,7 @@ class Scheduler:
                     "duration": duration_total,
                 }
             )
+            self.analytics(main_uid)
         except Exception as e:
             tb = traceback.format_exc()
             duration_total = time.time() - all_start_time

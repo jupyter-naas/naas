@@ -164,13 +164,14 @@ class Manager:
         child = subprocess.Popen(['pgrep', '-f', name], stdout=subprocess.PIPE, shell=False)
         response = child.communicate()[0]
         return [int(pid) for pid in response.split()]
-    
+
     def running_notebooks(self):
         try:
             base_url = f"{n_env.user_url}/api/sessions"
             req = requests.get(url=base_url, headers=self.headers)
             req.raise_for_status()
             sessions = req.json()
+            sessions = filter(lambda item: 'notebook' in item['type'], sessions)
             notebooks = [
                 {
                     "kernel_id": notebook["kernel"]["id"],

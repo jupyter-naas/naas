@@ -1,19 +1,16 @@
-from naas.runner.env_var import n_env
-from naas.types import copy_button
+from .runner.env_var import n_env
+from .types import copy_button
 import pandas as pd
 import requests
 import time
-import json
 
 
 class Callback:
-    logger = None
 
     headers = None
 
-    def __init__(self, logger=None):
+    def __init__(self):
         self.headers = {"Authorization": f"token {n_env.token}"}
-        self.logger = logger
 
     def add(self, response={}, response_headers={}, auto_delete=True, default_result=None, no_override=False, user=None, uuid=None):
         try:
@@ -40,12 +37,7 @@ class Callback:
             copy_button(url)
             return {"url": url, "uuid": jsn.get("uuid")}
         except Exception as err:
-            if self.logger is not None:
-                self.logger.error(
-                    json.dumps({"id": None, "type": "email error", "error": str(err)})
-                )
-            else:
-                print(err)
+            print("😢 Cannot add callback.\n", err)
 
     def __get(self, uuid, user=None):
         try:
@@ -63,12 +55,7 @@ class Callback:
             jsn = req.json()
             return jsn
         except Exception as err:
-            if self.logger is not None:
-                self.logger.error(
-                    json.dumps({"id": uuid, "type": "email error", "error": str(err)})
-                )
-            else:
-                print(err)
+            print("😢 Cannot add callback.\n", err)
 
     def get(self, uuid, wait_until_data=False, timeout=3000, raw=False, user=None):
         data = None
@@ -102,12 +89,7 @@ class Callback:
             print("👌 🔙 Callback has been delete successfully !")
             return
         except Exception as err:
-            if self.logger is not None:
-                self.logger.error(
-                    json.dumps({"id": uuid, "type": "email error", "error": str(err)})
-                )
-            else:
-                print(err)
+            print("😢 Cannot add callback.\n", err)
 
     def status(self):
         req = requests.get(url=f"{n_env.callback_api}/")

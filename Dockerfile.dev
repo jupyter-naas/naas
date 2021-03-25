@@ -29,6 +29,7 @@ LABEL org.label-schema.build-date=$BUILD_DATE \
     org.label-schema.schema-version="1.0"
 
 COPY naas /home/$NB_USER/naas
+ENV PYTHONPATH=/home/$NB_USER/naas
 COPY setup.cfg /home/$NB_USER/naas/setup.cfg
 COPY setup.py /home/$NB_USER/naas/setup.py
 COPY scripts /home/$NB_USER/naas/scripts
