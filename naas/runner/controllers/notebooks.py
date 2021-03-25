@@ -16,12 +16,14 @@ def rename_keys(old_dict):
 
 def parse_data(request):
     req_data = {}
-    if request.headers.get("content-type") == "multipart/form-data":
+    if request.headers.get("content-type").startswith("multipart/form-data"):
         req_data = request.files
-    elif request.headers.get("content-type") == "application/json":
+    elif request.headers.get("content-type").startswith("application/json"):
         req_data = request.json
-    elif request.headers.get("content-type") == "application/x-www-form-urlencoded":
+    elif request.headers.get("content-type").startswith("application/x-www-form-urlencoded"):
         req_data = dict(urllib.parse.parse_qsl(request.body.decode("utf-8")))
+    else:
+        req_data = str(request.body.decode("utf-8"))
     req_data = rename_keys(req_data)
     args = dict(
         urllib.parse.parse_qsl(request.query_string)
