@@ -14,7 +14,8 @@ from .runner.proxy import encode_proxy_url
 from .runner.env_var import n_env
 import pandas as pd
 import traceback
-import ipykernel
+# import ipykernel
+import subprocess
 import requests
 import base64
 import copy
@@ -140,19 +141,30 @@ class Manager:
         if self.is_production():
             return os.path.join(n_env.server_root, n_env.current.get("path"))
         try:
-            connection_file = os.path.basename(ipykernel.get_connection_file())
-            kernel_id = connection_file.split("-", 1)[1].split(".")[0]
-            if enterprise_gateway:
-                kernel_id = connection_file.split("-", 1)[1].split("_")[0]
+            # kernel_id = None
+            # try:
+            #     connection_file = os.path.basename(ipykernel.get_connection_file())
+            #     kernel_id = connection_file.split("-", 1)[1].split(".")[0]
+            #     if enterprise_gateway:
+            #         kernel_id = connection_file.split("-", 1)[1].split("_")[0]
+            # except Exception:
+            #     pass
+            process_id = os.getpid()
             notebooks = self.running_notebooks()
             for notebook in notebooks:
-                if kernel_id in notebook["kernel_id"]:
+                # if kernel_id in notebook["kernel_id"]:
+                if process_id in notebook['process_ids']:
                     return os.path.join(n_env.server_root, notebook["path"])
         except Exception as e:
             tb = traceback.format_exc()
             print("notebook_path", e, tb)
         return None
 
+    def __get_process_ids(self, name):
+        child = subprocess.Popen(['pgrep', '-f', name], stdout=subprocess.PIPE, shell=False)
+        response = child.communicate()[0]
+        return [int(pid) for pid in response.split()]
+    
     def running_notebooks(self):
         try:
             base_url = f"{n_env.user_url}/api/sessions"
@@ -163,6 +175,7 @@ class Manager:
                 {
                     "kernel_id": notebook["kernel"]["id"],
                     "path": notebook["notebook"]["path"],
+                    'process_ids': self.__get_process_ids(notebook['kernel']['id'])
                 }
                 for notebook in sessions
             ]
