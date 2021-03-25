@@ -1,3 +1,9 @@
+## 1.6.5 (2021-03-25)
+
+### Fix
+
+- test make if work in both mode
+
 ## 1.6.4 (2021-03-25)
 
 ### Fix
