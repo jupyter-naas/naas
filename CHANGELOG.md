@@ -1,3 +1,9 @@
+## 1.6.3 (2021-03-25)
+
+### Fix
+
+- **dependency**: update singleuser 2.9.0
+
 ## 1.6.2 (2021-03-24)
 
 ### Fix
