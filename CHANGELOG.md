@@ -1,3 +1,9 @@
+## 1.6.6 (2021-03-25)
+
+### Fix
+
+- webhook content-type use startswith
+
 ## 1.6.5 (2021-03-25)
 
 ### Fix
