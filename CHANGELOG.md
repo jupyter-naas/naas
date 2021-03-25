@@ -1,3 +1,13 @@
+## 1.7.0 (2021-03-25)
+
+### Feat
+
+- add auto reporting system
+
+### Fix
+
+- run local in linux
+
 ## 1.6.7 (2021-03-25)
 
 ### Fix
