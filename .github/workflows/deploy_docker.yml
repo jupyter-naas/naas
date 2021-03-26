@@ -65,12 +65,15 @@ jobs:
           token: '${{ secrets.PERSONAL_ACCESS_TOKEN }}'
           workDir: cs_confs
       - name: Image digest
-        run: echo ${{ steps.prepare.outputs.tag }}
+        run: echo ${{ steps.prepare.outputs.tag }}     
+      - name: Get the last version change
+        id: lastchanges
+        uses: jupyter-naas/get-chagelog-diff@v1
       - name: Slack notification
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
           SLACK_USERNAME: Naas # Optional. (defaults to webhook app)
           SLACK_CHANNEL: naas-ci # Optional. (defaults to webhook)
           SLACK_AVATAR: repository
-          SLACK_CUSTOM_PAYLOAD: '{"attachments":[{"color":"#47dd82","blocks":[{"type":"section","block_id":"section567","text":{"type":"mrkdwn","text":"<https://github.com/{{ GITHUB_REPOSITORY }}|{{ GITHUB_REPOSITORY }}>\nAvailable to pip and docker hub.\n*Version*\n${{ steps.get-latest-tag.outputs.tag }}"},"accessory":{"type":"image","image_url":"https://github.com/jupyter-naas/naas/raw/main/custom/naas-fav.png","alt_text":"Naas logo"}}]}]}'
+          SLACK_CUSTOM_PAYLOAD: '{"attachments":[{"color":"#47dd82","blocks":[{"type":"section","block_id":"section567","text":{"type":"mrkdwn","text":"<https://github.com/{{ GITHUB_REPOSITORY }}|{{ GITHUB_REPOSITORY }}>\nAvailable to pip and docker hub.\n*Version*\n${{ steps.get-latest-tag.outputs.tag }}\n ${{ steps.lastchanges.outputs.changes }}"},"accessory":{"type":"image","image_url":"https://github.com/jupyter-naas/naas/raw/main/custom/naas-fav.png","alt_text":"Naas logo"}}]}]}'
         uses: Ilshidur/action-slack@2.0.2
