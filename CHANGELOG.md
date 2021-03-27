@@ -1,3 +1,9 @@
+## 1.7.8 (2021-03-27)
+
+### Fix
+
+- remove try to cancel all tasks
+
 ## 1.7.7 (2021-03-27)
 
 ### Fix
