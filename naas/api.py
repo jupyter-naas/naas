@@ -1,4 +1,4 @@
-from .types import (
+from .ntypes import (
     t_notebook,
     t_output,
     guess_type,

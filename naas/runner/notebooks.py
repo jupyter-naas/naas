@@ -1,4 +1,5 @@
-from naas.types import (
+from .custom_papermill import execute_notebook
+from naas.ntypes import (
     t_notebook,
     t_scheduler,
     t_error,
@@ -14,27 +15,25 @@ from naas.types import (
     mime_list,
 )
 from nbconvert import HTMLExporter
-from sanic import response
 from .env_var import cpath, n_env
+from sanic import response
 import papermill as pm
-from .custom_papermill import execute_notebook
 import traceback
 import datetime
 import shutil
 import base64
+import pytz
 import json
 import time
 import bs4
 import csv
 import os
 import io
-import pytz
 
 kern_manager = None
 
 try:
     from enterprise_gateway.services.kernels.remotemanager import RemoteKernelManager
-
     kern_manager = RemoteKernelManager
 except ImportError:
     pass
@@ -236,6 +235,7 @@ class Notebooks:
                 input_path=file_filepath,
                 output_path=file_filepath_out,
                 progress_bar=False,
+                autosave_cell_every=0,
                 cwd=file_dirpath,
                 parameters=params,
                 kernel_manager_class=kern_manager,
@@ -247,6 +247,7 @@ class Notebooks:
                 input_path=file_filepath,
                 output_path=file_filepath_out,
                 progress_bar=False,
+                autosave_cell_every=0,
                 cwd=file_dirpath,
                 parameters=params,
             )
@@ -365,8 +366,13 @@ class Notebooks:
         res["duration"] = time.time() - start_time
         try:
             self.__send_notification(
-                uid, res, file_filepath_out, current_type, value, params
-            )
+                uid,
+                res,
+                file_filepath_out,
+                current_type,
+                value,
+                params
+                )
         except ConnectionError as err:
             self.__logger.error(
                 {

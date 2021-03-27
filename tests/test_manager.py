@@ -1,4 +1,4 @@
-from naas.types import t_notebook
+from naas.ntypes import t_notebook
 from naas.manager import Manager
 from naas.runner import n_env
 import pytest  # noqa: F401
@@ -24,7 +24,7 @@ def mock_for_nb_path(mocker, requests_mock):
         return_value="kernel-b1e19209-e251-4115-819e-7ab5bc4232b7.json",
     )
     mock_json = json.loads(open("tests/session_ids.json").read())
-    url = f"{n_env.hub_api}/user/{n_env.user}/api/sessions"
+    url = f"{n_env.user_url}/api/sessions"
     requests_mock.register_uri("GET", url, json=mock_json, status_code=200)
 
 

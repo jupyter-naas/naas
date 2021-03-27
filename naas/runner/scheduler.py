@@ -1,4 +1,4 @@
-from naas.types import t_scheduler, t_start, t_main, t_health, t_error, t_busy, t_delete
+from naas.ntypes import t_scheduler, t_start, t_main, t_health, t_error, t_busy, t_delete
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from naas.callback import Callback
 import apscheduler.schedulers.base
@@ -40,6 +40,7 @@ class Scheduler:
             return "paused"
 
     def stop(self):
+        print("Stop scheduler")
         if self.__scheduler is not None:
             self.__scheduler.pause()
             self.__scheduler.remove_job(n_env.scheduler_job_name)
@@ -253,13 +254,14 @@ class Scheduler:
 
     async def analytics(self, uid):
         try:
+            curdate = datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")
             data = {
-                "date": datetime.datetime.now(),
+                "date": curdate,
                 "jobs": await self.__jobs.list(uid),
                 "kernels": self.getSessions(),
                 "terminals": self.getTerminals(),
             }
-            Callback().add(auto_delete=False, uuid="naas_analytics", default_result=data, no_override=True)
+            Callback().add(auto_delete=False, uuid=f"naas_analytics__{curdate}", default_result=data, no_override=True)
         except Exception as e:
             tb = traceback.format_exc()
             self.__logger.error(
@@ -316,7 +318,7 @@ class Scheduler:
                     "duration": duration_total,
                 }
             )
-            self.analytics(main_uid)
+            await self.analytics(main_uid)
         except Exception as e:
             tb = traceback.format_exc()
             duration_total = time.time() - all_start_time

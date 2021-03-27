@@ -1,5 +1,5 @@
 from asyncio import Semaphore
-from naas.types import (
+from naas.ntypes import (
     t_delete,
     t_add,
     t_skip,

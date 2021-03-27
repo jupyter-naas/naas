@@ -37,6 +37,7 @@ esac
 done
 
 if [[ $BUILD == "YES" ]]; then
+    docker pull jupyternaas/singleuser:latest
     docker build -f Dockerfile.$N_ENV --build-arg INSTALL_SUPP=$SUPP -t naas_$N_ENV .
     echo "Build done"
 fi

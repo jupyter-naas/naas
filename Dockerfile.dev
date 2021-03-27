@@ -34,8 +34,8 @@ COPY setup.cfg /home/$NB_USER/naas/setup.cfg
 COPY setup.py /home/$NB_USER/naas/setup.py
 COPY scripts /home/$NB_USER/naas/scripts
 COPY README.md /home/$NB_USER/naas/README.md
-RUN /home/$NB_USER/naas/scripts/install_supp
 RUN cd /home/$NB_USER/naas && pip install -e '.[dev]'
+RUN /home/$NB_USER/naas/scripts/install_supp
 
 RUN mkdir /etc/naas
 COPY custom/* /etc/naas/
@@ -51,4 +51,3 @@ COPY custom/naas_logo_n.ico /opt/conda/lib/python3.8/site-packages/jupyter_serve
 COPY custom/naas_logo_n.ico /opt/conda/lib/python3.8/site-packages/notebook/static/favicon.ico
 COPY custom/naas_logo_n.ico /opt/conda/lib/python3.8/site-packages/notebook/static/base/images/favicon.ico
 RUN cat /etc/naas/custom.css >> /opt/conda/share/jupyter/lab/themes/@jupyterlab/theme-light-extension/index.css
-

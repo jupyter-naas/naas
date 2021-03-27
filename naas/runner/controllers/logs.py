@@ -1,6 +1,6 @@
 from sanic.views import HTTPMethodView
 from sanic import response
-from naas.types import t_log, t_send
+from naas.ntypes import t_log, t_send
 import uuid
 import json
 

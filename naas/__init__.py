@@ -1,6 +1,6 @@
 # Copyright (c) Naas Team.
 # Distributed under the terms of the GNU AGPL License.
-from .types import t_tz, error_busy, error_reject, copy_button
+from .ntypes import t_tz, error_busy, error_reject, copy_button
 from IPython.core.display import display, Javascript, HTML
 from .runner.notifications import Notifications
 from .dependency import Dependency

@@ -1,4 +1,4 @@
-from .types import (
+from .ntypes import (
     t_delete,
     t_size,
     t_job,
@@ -161,9 +161,12 @@ class Manager:
         return None
 
     def __get_process_ids(self, name):
-        child = subprocess.Popen(['pgrep', '-f', name], stdout=subprocess.PIPE, shell=False)
-        response = child.communicate()[0]
-        return [int(pid) for pid in response.split()]
+        try:
+            child = subprocess.Popen(['pgrep', '-f', name], stdout=subprocess.PIPE, shell=False)
+            response = child.communicate()[0]
+            return [int(pid) for pid in response.split()]
+        except Exception:
+            return []
 
     def running_notebooks(self):
         try:

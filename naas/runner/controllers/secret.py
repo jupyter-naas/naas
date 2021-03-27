@@ -1,6 +1,6 @@
 from sanic.views import HTTPMethodView
 from sanic import response
-from naas.types import t_secret, t_error, t_send
+from naas.ntypes import t_secret, t_error, t_send
 import uuid
 
 

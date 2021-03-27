@@ -1,6 +1,6 @@
 from sanic.views import HTTPMethodView
 from sanic.response import json
-from naas.types import t_health
+from naas.ntypes import t_health
 from naas.runner.env_var import n_env
 
 

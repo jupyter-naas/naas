@@ -1,4 +1,4 @@
-from .types import t_scheduler, t_output, t_add, t_update, t_delete
+from .ntypes import t_scheduler, t_output, t_add, t_update, t_delete
 from .manager import Manager
 import pretty_cron
 import requests

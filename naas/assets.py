@@ -1,4 +1,4 @@
-from .types import t_asset, copy_button, t_add, t_update, t_delete
+from .ntypes import t_asset, copy_button, t_add, t_update, t_delete
 from .manager import Manager
 import os
 

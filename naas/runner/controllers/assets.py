@@ -1,7 +1,7 @@
 from sanic.views import HTTPMethodView
 from sanic import response
 from sanic.exceptions import ServerError
-from naas.types import t_asset, t_health, t_error, t_start, t_send, t_delete
+from naas.ntypes import t_asset, t_health, t_error, t_start, t_send, t_delete
 import uuid
 import os
 

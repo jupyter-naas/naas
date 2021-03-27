@@ -1,6 +1,6 @@
 from base64 import b64encode
 from naas.runner.proxy import escape_kubernet
-from naas.types import (
+from naas.ntypes import (
     t_add,
     t_delete,
     t_notebook,

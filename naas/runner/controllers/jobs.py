@@ -1,4 +1,4 @@
-from naas.types import t_job, t_error, t_send, t_production
+from naas.ntypes import t_job, t_error, t_send, t_production
 from sanic.views import HTTPMethodView
 from naas.runner.env_var import n_env
 from sanic import response

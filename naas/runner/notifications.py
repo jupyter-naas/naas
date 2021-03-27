@@ -1,4 +1,4 @@
-from naas.types import t_notebook, t_scheduler, t_asset
+from naas.ntypes import t_notebook, t_scheduler, t_asset
 from .proxy import encode_proxy_url
 from .env_var import cpath, n_env
 from bs4 import BeautifulSoup

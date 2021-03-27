@@ -29,7 +29,7 @@ import uuid
 import os
 import sys
 import errno
-from naas.types import (
+from naas.ntypes import (
     t_main,
     t_notebook,
     t_scheduler,
@@ -118,14 +118,22 @@ class Runner:
             if n_env.scheduler:
                 await self.__scheduler.start()
 
-    def initialize_before_stop(self, app, loop):
-        if self.__nb is not None:
-            self.__nb = None
+    async def initialize_before_stop(self, app, loop):
+        for task in asyncio.Task.all_tasks():
+            task.cancel()
+            try:
+                await task
+            except asyncio.CancelledError:
+                print("Task cancelled")
         if n_env.scheduler and self.__scheduler is not None:
             self.__scheduler.stop()
             self.__scheduler = None
+        if self.__nb is not None:
+            self.__nb = None
         if self.__jobs is not None:
             self.__jobs = None
+        if self.__logger is not None:
+            self.__logger = None
 
     def init_app(self):
         if not os.path.exists(n_env.path_naas_folder):

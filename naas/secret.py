@@ -1,4 +1,4 @@
-from .types import t_secret, t_add, t_delete, error_reject, error_busy
+from .ntypes import t_secret, t_add, t_delete, error_reject, error_busy
 from .runner.env_var import n_env
 import pandas as pd
 import requests

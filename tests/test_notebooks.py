@@ -1,4 +1,4 @@
-from naas.types import t_add, t_notebook
+from naas.ntypes import t_add, t_notebook
 from naas.runner.logger import Logger
 from naas.runner.notebooks import Notebooks
 import getpass

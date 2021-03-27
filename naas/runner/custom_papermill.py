@@ -110,7 +110,6 @@ def execute_notebook(
         nb = remove_error_markers(nb)
         # add naas code to make naas feature act differently in production
         nb = prepare_notebook_naas(nb, input_path, uid, runtime)
-
         if not prepare_only:
             # Fetch the kernel name if it's not supplied
             kernel_name = kernel_name or nb.metadata.kernelspec.name
@@ -136,7 +135,6 @@ def execute_notebook(
 
         # Write final output in case the engine didn't write it on cell completion.
         write_ipynb(nb, output_path)
-
         return nb
 
 

@@ -1,4 +1,4 @@
-from .types import t_dependency, t_add, t_update, t_delete
+from .ntypes import t_dependency, t_add, t_update, t_delete
 from .manager import Manager
 
 

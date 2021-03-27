@@ -1,5 +1,5 @@
 from sanic.views import HTTPMethodView
-from naas.types import t_scheduler, t_send
+from naas.ntypes import t_scheduler, t_send
 from sanic.response import json
 import uuid
 

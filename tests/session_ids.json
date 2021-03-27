@@ -1,10 +1,16 @@
 [
     {
+        "type": "notebook",
         "kernel": {"id": "b1e19209-e251-4115-819e-7ab5bc4232b7"},
         "notebook": {"path":"MAIN_DIR/TEST_DIR1/ANOTHER_DIR1"}
     },
     {
+        "type": "notebook",
         "kernel": {"id": "100101"},
         "notebook": {"path":"TEST_DIR2/ANOTHER_DIR2"}
+    },
+    {
+        "type": "ternimal",
+        "kernel": {"id": "100101"}
     }
 ]

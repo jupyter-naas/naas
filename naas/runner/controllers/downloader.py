@@ -3,7 +3,7 @@ from naas.onboarding import download_file, wp_set_for_open_filebrowser
 from sanic.response import redirect, json
 from sanic.views import HTTPMethodView
 from naas.runner.env_var import n_env
-from naas.types import t_downloader, t_send, t_error
+from naas.ntypes import t_downloader, t_send, t_error
 import traceback
 import uuid
 

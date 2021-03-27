@@ -1,4 +1,4 @@
-from naas.types import t_notebook, t_add, t_delete, t_update
+from naas.ntypes import t_notebook, t_add, t_delete, t_update
 from naas.runner.jobs import Jobs
 from naas.runner.logger import Logger
 from naas.runner import n_env

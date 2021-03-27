@@ -1,4 +1,4 @@
-from naas.types import t_add, t_health, t_scheduler, t_job, t_output
+from naas.ntypes import t_add, t_health, t_scheduler, t_job, t_output
 from naas.runner.scheduler import Scheduler
 from naas.runner.notebooks import Notebooks
 from datetime import datetime, timedelta

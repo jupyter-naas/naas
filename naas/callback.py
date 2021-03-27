@@ -1,5 +1,5 @@
 from .runner.env_var import n_env
-from .types import copy_button
+from .ntypes import copy_button
 import pandas as pd
 import requests
 import time

@@ -1,4 +1,4 @@
-from naas.types import t_notebook, t_health, t_error, t_start, t_delete
+from naas.ntypes import t_notebook, t_health, t_error, t_start, t_delete
 from sanic.views import HTTPMethodView
 from sanic.exceptions import ServerError
 import urllib

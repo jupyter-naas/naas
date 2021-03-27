@@ -1,5 +1,7 @@
+from sanic.exceptions import ServerError
+from .env_var import cpath, n_env
 from asyncio import Semaphore
-from naas.types import (
+from naas.ntypes import (
     t_delete,
     t_add,
     t_skip,
@@ -16,15 +18,13 @@ from naas.types import (
     t_list,
     t_send,
 )
-from .env_var import cpath, n_env
 import pandas as pd
 import datetime
 import errno
 import json
-import os
 import uuid
-from sanic.exceptions import ServerError
 import pytz
+import os
 
 filters = [t_notebook, t_asset, t_dependency, t_scheduler]
 filters_api = [t_notebook, t_asset]
@@ -337,7 +337,8 @@ class Jobs:
         try:
             async with self.__storage_sem:
                 if as_df:
-                    data = self.__df
+                    data = self.__df.copy()
+                    data["path"] = data["path"] if prodPath else cpath(data["path"])
                 else:
                     data = self.__df.to_dict("records")
                     for d in data:
