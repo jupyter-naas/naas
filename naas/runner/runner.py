@@ -119,12 +119,6 @@ class Runner:
                 await self.__scheduler.start()
 
     async def initialize_before_stop(self, app, loop):
-        for task in asyncio.Task.all_tasks():
-            task.cancel()
-            try:
-                await task
-            except asyncio.CancelledError:
-                print("Task cancelled")
         if n_env.scheduler and self.__scheduler is not None:
             self.__scheduler.stop()
             self.__scheduler = None
