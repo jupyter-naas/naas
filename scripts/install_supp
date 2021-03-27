@@ -4,7 +4,7 @@ if [[ $INSTALL_SUPP == "YES" ]]; then
     cd /home/$NB_USER
     git clone https://github.com/jupyter-naas/drivers.git
     cd /home/$NB_USER/drivers
-    pip install --use-deprecated=legacy-resolver -e '.[dev]'
+    pip install -e '.[dev]'
     cd /home/$NB_USER
     git clone https://github.com/jupyter-naas/awesome-notebooks.git
 else

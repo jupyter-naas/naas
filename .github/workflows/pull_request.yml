@@ -22,11 +22,12 @@ jobs:
     - name: Install dependencies
       run: |
         python3 -m pip install -U pip
-        pip3 install --use-deprecated=legacy-resolver -e '.[dev]'
-    - name: Run tests and linters
+        pip3 install -e '.[dev]'
+    - name: Run test and linters
       run: |
         python3 -m black naas
         python3 -m flake8 naas
+        pytest
     - uses: amannn/action-semantic-pull-request@v3.1.0
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
