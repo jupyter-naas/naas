@@ -1,3 +1,9 @@
+## 1.7.10 (2021-03-27)
+
+### Fix
+
+- ci get changelog diff version
+
 ## 1.7.9 (2021-03-27)
 
 ### Fix
