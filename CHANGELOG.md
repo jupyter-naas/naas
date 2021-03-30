@@ -1,3 +1,9 @@
+## 1.8.2 (2021-03-30)
+
+### Fix
+
+- try to fix error about cache
+
 ## 1.8.1 (2021-03-30)
 
 ### Fix
