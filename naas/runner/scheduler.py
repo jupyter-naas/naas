@@ -12,7 +12,7 @@ import pycron
 import time
 import pytz
 import uuid
-
+import os
 
 async def fetch(url):
     with aiohttp.ClientSession() as session:
@@ -257,6 +257,7 @@ class Scheduler:
             curdate = datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")
             data = {
                 "date": curdate,
+                "gpu": os.environ.get('NAAS_GPU', 'NO'),
                 "jobs": await self.__jobs.list(uid),
                 "kernels": self.getSessions(),
                 "terminals": self.getTerminals(),
