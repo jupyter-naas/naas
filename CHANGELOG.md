@@ -1,3 +1,9 @@
+## 1.8.3 (2021-03-30)
+
+### Fix
+
+- add pip display version to track pip error
+
 ## 1.8.2 (2021-03-30)
 
 ### Fix
