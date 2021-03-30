@@ -195,7 +195,10 @@ class Manager:
 
     def get_path(self, path):
         if path is not None:
-            return os.path.abspath(os.path.join(os.getcwd(), path))
+            base_path = os.getcwd()
+            if self.is_production():
+                base_path = base_path.replace(n_env.path_naas_folder, "")
+            return os.path.abspath(os.path.join(base_path, path))
         else:
             return self.notebook_path()
 
