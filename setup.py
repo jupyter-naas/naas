@@ -25,7 +25,7 @@ dev_dep = [
 ]
 setup(
     name="naas",
-    version="1.7.10",
+    version="1.8.0",
     scripts=["scripts/naas"],
     author="Martin Donadieu",
     author_email="martindonadieu@gmail.com",
@@ -59,7 +59,7 @@ setup(
         "pandas==1.2.3",
         "escapism==1.0.1",
         "notebook==6.3.0",
-        "ipython==7.21.0",
+        "ipython==7.22.0",
         "ipykernel==5.5.0",
         "requests==2.25.1",
         "sentry-sdk==1.0.0",
