@@ -1,3 +1,9 @@
+## 1.8.0 (2021-03-30)
+
+### Feat
+
+- add gpu in analytics reporting
+
 ## 1.7.10 (2021-03-27)
 
 ### Fix
