@@ -60,7 +60,7 @@ setup(
         "escapism==1.0.1",
         "notebook==6.3.0",
         "ipython==7.22.0",
-        "ipykernel==5.5.0",
+        "ipykernel==5.5.3",
         "requests==2.25.1",
         "sentry-sdk==1.0.0",
         "sanic==20.12.2",
