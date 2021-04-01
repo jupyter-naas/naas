@@ -13,7 +13,7 @@ RUN cd $(dirname $(which jupyter-notebook)) \
     && ln -s jupyter-server jupyter-notebook
 
 # Add the entire source tree
-ADD . .
+COPY . /home/$NB_USER/naas
 RUN chown -R $NB_UID  .
 
 RUN cd /home/$NB_USER/naas && pip install --no-cache-dir -e '.[dev]'
