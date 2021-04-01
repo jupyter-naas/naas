@@ -16,7 +16,7 @@ WORKDIR ${HOME}
 # Add the entire source tree
 COPY . /home/$NB_USER/naas
 RUN chown -R $NB_UID  .
-RUN rm /home/$NB_USER/work
+RUN rmdir /home/$NB_USER/work
 
 RUN cd /home/$NB_USER/naas && pip install --no-cache-dir -e '.[dev]'
 RUN /home/$NB_USER/naas/scripts/install_supp
