@@ -16,7 +16,7 @@ RUN cd $(dirname $(which jupyter-notebook)) \
 ADD . .
 RUN chown -R $NB_UID  .
 
-RUN cd /home/$NB_USER/naas && pip install -e '.[dev]'
+RUN cd /home/$NB_USER/naas && pip install --no-cache-dir -e '.[dev]'
 
 RUN mkdir /etc/naas
 COPY custom/* /etc/naas/

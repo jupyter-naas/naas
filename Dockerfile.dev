@@ -34,7 +34,7 @@ COPY setup.cfg /home/$NB_USER/naas/setup.cfg
 COPY setup.py /home/$NB_USER/naas/setup.py
 COPY scripts /home/$NB_USER/naas/scripts
 COPY README.md /home/$NB_USER/naas/README.md
-RUN cd /home/$NB_USER/naas && pip install -e '.[dev]'
+RUN cd /home/$NB_USER/naas && pip install --no-cache-dir -e '.[dev]'
 RUN /home/$NB_USER/naas/scripts/install_supp
 
 RUN mkdir /etc/naas

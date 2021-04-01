@@ -28,7 +28,7 @@ LABEL org.label-schema.build-date=$BUILD_DATE \
 
 # https://app.naas.ai/user-redirect/naas => redirect to naas
 
-RUN python3 -m pip install --upgrade pip && python3 -m pip --version
+RUN python3 -m pip install --no-cache-dir --upgrade pip && python3 -m pip --version
 RUN python3 -m pip install --no-cache-dir --upgrade naas[full]==$NAAS_VERSION
 
 RUN mkdir /etc/naas
