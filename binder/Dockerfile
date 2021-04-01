@@ -5,6 +5,7 @@ ARG NB_UID
 ENV USER ${NB_USER}
 ENV HOME /home/${NB_USER}
 
+WORKDIR ${HOME}
 
 # As of 2020-12-31, force binder to use jupyter-server instead of jupyter-notebook
 RUN cd $(dirname $(which jupyter-notebook)) \
