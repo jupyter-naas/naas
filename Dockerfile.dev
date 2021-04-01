@@ -35,6 +35,7 @@ COPY setup.py /home/$NB_USER/naas/setup.py
 COPY scripts /home/$NB_USER/naas/scripts
 COPY README.md /home/$NB_USER/naas/README.md
 RUN cd /home/$NB_USER/naas && pip install --no-cache-dir -e '.[dev]'
+# RUN python3 -m pip install --no-cache-dir --upgrade naas[fulldev]==$NAAS_VERSION
 RUN /home/$NB_USER/naas/scripts/install_supp
 
 RUN mkdir /etc/naas
