@@ -4,7 +4,7 @@ ARG NB_USER
 ARG NB_UID
 ENV USER ${NB_USER}
 ENV HOME /home/${NB_USER}
-ENV JUPYTER_ENABLE_LAB 'yes'
+ENV NAAS_INSTALL_SUPP 'yes'
 
 WORKDIR ${HOME}
 
@@ -18,6 +18,7 @@ COPY . /home/$NB_USER/naas
 RUN chown -R $NB_UID  .
 
 RUN cd /home/$NB_USER/naas && pip install --no-cache-dir -e '.[dev]'
+RUN /home/$NB_USER/naas/scripts/install_supp
 
 RUN mkdir /etc/naas
 COPY custom/* /etc/naas/
