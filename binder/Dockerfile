@@ -22,7 +22,7 @@ RUN cd /home/$NB_USER/naas && pip install --no-cache-dir -e '.[dev]'
 RUN mkdir /etc/naas
 COPY custom/* /etc/naas/
 COPY custom/overrides.json /opt/conda/share/jupyter/lab/settings/overrides.json
-COPY custom/jupyter_server_config.py /home/$NB_USER/.jupyter/jupyter_notebook_config.py
+COPY custom/jupyter_server_config.py /home/$NB_USER/.jupyter/jupyter_server_config.py
 
 # Custom naas design
 RUN sed -i 's/JupyterLab/Naas/g' /opt/conda/share/jupyter/lab/static/index.html
