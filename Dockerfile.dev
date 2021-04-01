@@ -4,7 +4,6 @@ FROM jupyternaas/singleuser:latest
 ARG BUILD_DATE
 ARG VCS_REF
 ARG INSTALL_SUPP
-ENV JUPYTER_ENABLE_LAB 'yes'
 
 ENV NB_UMASK=022
 ENV NB_USER=ftp
@@ -12,10 +11,6 @@ ENV NB_UID=21
 ENV NB_GID=21
 ENV NB_GROUP=21
 
-# RUN adduser --disabled-password \
-#     --gecos "Naas user" \
-#     --uid ${NB_UID} \
-#     ${NB_USER}
 RUN mkdir /home/$NB_USER && \
     fix-permissions /home/$NB_USER
 
@@ -35,7 +30,6 @@ COPY setup.py /home/$NB_USER/naas/setup.py
 COPY scripts /home/$NB_USER/naas/scripts
 COPY README.md /home/$NB_USER/naas/README.md
 RUN cd /home/$NB_USER/naas && pip install --no-cache-dir -e '.[dev]'
-# RUN python3 -m pip install --no-cache-dir --upgrade naas[fulldev]==$NAAS_VERSION
 RUN /home/$NB_USER/naas/scripts/install_supp
 
 RUN mkdir /etc/naas

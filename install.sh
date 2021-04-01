@@ -38,8 +38,12 @@ done
 
 if [[ $BUILD == "YES" ]]; then
     docker pull jupyternaas/singleuser:latest
-    docker build -f Dockerfile.$N_ENV --build-arg INSTALL_SUPP=$SUPP -t naas_$N_ENV .
-    echo "Build done"
+    if docker build -f Dockerfile.$N_ENV --build-arg INSTALL_SUPP=$SUPP -t naas_$N_ENV . ; then
+        echo "Build succeeded"
+    else
+        echo "Build failed"
+        exit
+    fi
 fi
 
 
@@ -49,7 +53,7 @@ if [[ $RUN == "YES" ]]; then
     docker run \
         --name naas_$N_ENV \
         -e ALLOWED_IFRAME='' \
-        -e JUPYTER_ENABLE_LAB='yes' \
+        -e NAAS_INSTALL_SUPP='yes' \
         -e JUPYTER_TOKEN="$TOKEN" \
         -e JUPYTERHUB_URL='http://127.0.0.1:8888' \
         -p 8888:8888 \
