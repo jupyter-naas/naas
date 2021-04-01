@@ -41,7 +41,7 @@ You can try out some of Naas features using the My Binder service.
 
 Click on a link below to try Naas, on a sandbox environment, without having to install anything.
 Test it in binder (WIP)
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/jupyter-naas/naas/main)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/jupyter-naas/naas/main?urlpath=lab)
 
 ## Install
 
