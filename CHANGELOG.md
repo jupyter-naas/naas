@@ -1,3 +1,15 @@
+## 1.9.5 (2021-04-01)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.54.4
+
+## 1.9.4 (2021-04-01)
+
+### Fix
+
+- install script when it fail
+
 ## 1.9.3 (2021-04-01)
 
 ### Fix
