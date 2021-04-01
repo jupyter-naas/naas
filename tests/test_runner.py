@@ -70,7 +70,7 @@ def mock_session(mocker, requests_mock, cur_path):
         },
     ]
 
-    url = f"{n_env.hub_api}/user/{n_env.user}/api/sessions"
+    url = f"{n_env.hub_base}/user/{n_env.user}/api/sessions"
     requests_mock.register_uri("GET", url, json=mock_json, status_code=200)
 
 

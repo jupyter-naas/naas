@@ -166,7 +166,7 @@ def up_to_date():
 
 def update():
     username = n_env.user
-    api_url = f"{n_env.hub_api}/hub/api"
+    api_url = f"{n_env.hub_base}/hub/api"
     r = requests.delete(
         f"{api_url}/users/{username}/server",
         headers={

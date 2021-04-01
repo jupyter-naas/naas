@@ -16,7 +16,7 @@ class EnvController(HTTPMethodView):
             "NOTIFICATIONS_API": n_env.notif_api,
             "JUPYTERHUB_USER": n_env.user,
             "JUPYTER_SERVER_ROOT": n_env.server_root,
-            "JUPYTERHUB_URL": n_env.hub_api,
+            "JUPYTERHUB_URL": n_env.hub_base,
             "PUBLIC_PROXY_API": n_env.proxy_api,
             "TZ": n_env.tz,
         }

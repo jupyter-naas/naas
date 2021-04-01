@@ -18,7 +18,7 @@ def runner(caplog, tmp_path):
     n_env.user = user
     n_env.server_root = str(path_srv)
     n_env.scheduler = False
-    n_env.hub_api = "http://localhost:5000"
+    n_env.hub_base = "http://localhost:5000"
     n_env.proxy_api = "http://localhost:5001"
     n_env.notif_api = "http://localhost:5002"
 
@@ -38,7 +38,7 @@ def scheduler(caplog, tmp_path):
     n_env.scheduler = True
     n_env.scheduler_interval = "1"
     n_env.scheduler_job_max = "3"
-    n_env.hub_api = "http://localhost:5000"
+    n_env.hub_base = "http://localhost:5000"
     n_env.proxy_api = "http://localhost:5001"
     n_env.notif_api = "http://localhost:5002"
 

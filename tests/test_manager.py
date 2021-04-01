@@ -12,7 +12,7 @@ token = "test_token"
 test_file_path = os.path.join(
     os.path.dirname(os.path.abspath(__file__)), test_demo_folder, test_file
 )
-n_env.hub_api = "https://test.naas.com"
+n_env.hub_base = "https://test.naas.com"
 n_env.user = "TEST_USER"
 n_env.token = "TESTAPIKEY"
 n_env.proxy_api = "proxy.naas.com"

@@ -10,7 +10,7 @@ def get_hub_user(request):
                 "authorization": request.headers.get("authorization", None),
             },
         )
-        req = requests.get(url=f"{n_env.hub_api}/hub/api/user", headers=headers)
+        req = requests.get(url=f"{n_env.hub_base}/hub/api/user", headers=headers)
         req.raise_for_status()
         jsn = req.json()
         return jsn

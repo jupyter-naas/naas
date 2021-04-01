@@ -11,7 +11,7 @@ class n_env:
     _notif_api = None
     _callback_api = None
     _proxy_api = None
-    _hub_api = None
+    _hub_base = None
 
     _naas_folder = None
 
@@ -103,38 +103,40 @@ class n_env:
                 "PROXY_API", "https://public.naas.ai"
             )
         else:
-            return f"{self.hub_api}/naas"
+            return f"{self.user_url}/naas"
 
     @proxy_api.setter
     def proxy_api(self, proxy_api):
         self._proxy_api = proxy_api
 
     @property
-    def hub_api(self):
-        res = self._hub_api or os.environ.get("JUPYTERHUB_URL", "https://app.naas.ai")
+    def hub_base(self):
+        base_api_url = os.environ.get("JUPYTERHUB_API_URL", "").replace("/hub/api", "")
+        res = self._hub_base or base_api_url or os.environ.get("JUPYTERHUB_URL") or "https://app.naas.ai"
+        os.environ.get("JUPYTERHUB_API_URL").replace("/hub/api", "")
         if "://" not in res:
             return f"http://{res}"
         else:
             return res
 
-    @hub_api.setter
-    def hub_api(self, hub_api):
-        self._hub_api = hub_api
+    @hub_base.setter
+    def hub_base(self, hub_base):
+        self._hub_base = hub_base
 
     @property
     def any_user_url(self):
         if self.user and self.user != "":
-            base_url = f"{self.hub_api}/user-redirect"
+            base_url = f"{self.hub_base}/user-redirect"
         else:
-            base_url = self.hub_api
+            base_url = self.hub_base
         return base_url
 
     @property
     def user_url(self):
         if self.user and self.user != "":
-            base_url = f"{self.hub_api}/user/{self.user}"
+            base_url = f"{self.hub_base}/user/{self.user}"
         else:
-            base_url = self.hub_api
+            base_url = self.hub_base
         return base_url
 
     @property
