@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-if [[ $NAAS_INSTALL_SUPP == "YES" ]]; then
+if [[ $NAAS_INSTALL_SUPP == "yes" ]]; then
     cd /home/$NB_USER
     git clone https://github.com/jupyter-naas/drivers.git
     cd /home/$NB_USER/drivers
