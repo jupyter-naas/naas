@@ -51,7 +51,6 @@ if [[ $RUN == "YES" ]]; then
     echo "============================= RUN Naas ============================="
     docker stop naas_$N_ENV
     docker rm $(docker ps -aq --filter name=naas_$N_ENV)
-    docker rm $(docker ps -aq --filter name=naas_$N_ENV)
     docker run \
         --name naas_$N_ENV \
         -e ALLOWED_IFRAME='' \
