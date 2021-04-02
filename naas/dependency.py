@@ -57,7 +57,6 @@ class Dependency:
         )
         print("👌 Well done! Your Dependency has been sent to production. \n")
         print('PS: to remove the "Dependency" feature, just replace .add by .delete')
-        return self.manager.get_path(current_file)
 
     def delete(self, path=None, all=True, debug=False):
         if self.manager.is_production():
