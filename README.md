@@ -72,7 +72,7 @@ if you want to rebuild docker too `./install.sh -r`
 Then open your browser at the url:
 `http://localhost:8888`
 
-enter `test` as password
+enter `naas` as password
 
 if you want other password `./install.sh -t=mypassword`
 

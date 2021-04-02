@@ -135,3 +135,4 @@ tests/.DS_Store
 .vim/*
 pytest_tmp/
 Welcome_to_Naas.ipynb
+.naas

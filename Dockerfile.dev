@@ -3,8 +3,9 @@ FROM jupyternaas/singleuser:latest
 # Build-time metadata as defined at http://label-schema.org
 ARG BUILD_DATE
 ARG VCS_REF
-ARG INSTALL_SUPP
 
+ENV NAAS_INSTALL_SUPP 'yes'
+ENV JUPYTER_ENABLE_LAB 'yes'
 ENV NB_UMASK=022
 ENV NB_USER=ftp
 ENV NB_UID=21
