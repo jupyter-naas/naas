@@ -1,3 +1,9 @@
+## 1.9.11 (2021-04-02)
+
+### Fix
+
+- install drivers and awesome notebooks
+
 ## 1.9.10 (2021-04-02)
 
 ### Fix
