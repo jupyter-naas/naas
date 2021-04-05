@@ -1,3 +1,9 @@
+## 1.9.13 (2021-04-05)
+
+### Fix
+
+- use simpler step to build machine
+
 ## 1.9.12 (2021-04-05)
 
 ### Fix
