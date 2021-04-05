@@ -44,8 +44,11 @@ div#jp-MainLogo > * {
 .p-TabBar-tab[data-id='extensionmanager.main-view'] {
   order: 102;
 }
-.p-TabBar-tab[data-id='jp-running-sessions'] {
+.p-TabBar-tab[data-id='jp-debugger-sidebar'] {
   order: 103;
+}
+.p-TabBar-tab[data-id='jp-running-sessions'] {
+  order: 104;
 }
 .p-TabBar-tab[data-id='tab-manager'] {
   display: none;

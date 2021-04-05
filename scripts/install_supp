@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e
 
 if [[ $NAAS_INSTALL_SUPP == "yes" ]]; then
     cd /home/$NB_USER

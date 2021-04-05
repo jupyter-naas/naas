@@ -3,8 +3,8 @@ import urllib.parse
 import requests
 import os
 
-__jup_def_set_workspace = "/etc/naas/set_workspace.json"
-__jup_def_set_workspace_browser = "/etc/naas/set_workspace_browser.json"
+__jup_def_set_workspace = "/etc/naas/custom/set_workspace.json"
+__jup_def_set_workspace_browser = "/etc/naas/custom/set_workspace_browser.json"
 __jup_load_workspace = "jupyter lab workspaces import "
 __github_repo = "jupyter-naas/starters"
 __github_brach = "main"

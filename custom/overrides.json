@@ -15,7 +15,8 @@
   },
   "@jupyterlab/application-extension:sidebar": {
     "overrides": {
-      "jp-property-inspector": "left"
+      "jp-property-inspector": "left",
+      "jp-debugger-sidebar": "left"
     }
   },
   "@jupyterlab/apputils-extension:palette": {
