@@ -25,8 +25,8 @@ dev_dep = [
 ]
 setup(
     name="naas",
-    version="1.9.11",
-    # scripts=["scripts/naas"],
+    version="1.9.12",
+    scripts=["scripts/naas"],
     author="Martin Donadieu",
     author_email="martindonadieu@gmail.com",
     license="BSD",
