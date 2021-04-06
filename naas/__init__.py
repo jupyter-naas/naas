@@ -92,7 +92,6 @@ def close_help():
 
 def bug_report():
     email = n_env.user
-    name = email.split(".")[0]
     name = email.split("@")[0]
     board_id = "6a83d5c5-2165-2608-082d-49959c7f030c"
 
@@ -100,14 +99,6 @@ def bug_report():
     data += "<div data-canny />"
     data += """
     <script>
-        Canny('identify', {
-            appID: '5f81748112b5d73b2faf4b15',
-            user: {
-                email: "{EMAIL}",
-                name: "{NAME}",
-                created: new Date().toISOString()
-            },
-        });
         Canny('render', {
             boardToken: "{BOARD}",
         });

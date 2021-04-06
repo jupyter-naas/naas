@@ -3,8 +3,7 @@ set -e
 
 CANNY='<script>!function(w,d,i,s){function l(){if(!d.getElementById(i)){var f=d.getElementsByTagName(s)[0],e=d.createElement(s);e.type="text/javascript",e.async=!0,e.src="https://canny.io/sdk.js",f.parentNode.insertBefore(e,f)}}if("function"!=typeof w.Canny){var c=function(){c.q.push(arguments)};c.q=[],w.Canny=c,"complete"===d.readyState?l():w.attachEvent?w.attachEvent("onload",l):w.addEventListener("load",l,!1)}}(window,document,"canny-jssdk","script");</script>'
 CRISP='<script type="text/javascript">window.$crisp=[["set", "session:data", [[["naas_type", "docker"]]]], ["on", "message:received", () => {window.$crisp.push(["do", "chat:show"])}], ["on", "chat:closed", () => {window.$crisp.push(["do", "chat:hide"])}], ["do", "chat:hide"]];window.CRISP_WEBSITE_ID="a64b999e-e44c-44ee-928f-5cd0233f9586";(function(){d=document;s=d.createElement("script");s.src="https://client.crisp.chat/l.js";s.async=1;d.getElementsByTagName("head")[0].appendChild(s);})();</script>'
-CRISP_INJECT='<script type="text/javascript">const nHttp = new XMLHttpRequest();nHttp.open("GET", window.location.href.includes("/user/") ? "/user-redirect/naas/env" : "/naas/env");nHttp.send();nHttp.onreadystatechange = (e) => {try{const n_env = JSON.parse(nHttp.responseText);window.$crisp.push(["set", "user:email", [n_env.JUPYTERHUB_USER]], ["set", "session:data", [[["naas_version", n_env.version]]]]);}catch(err){}};</script>'
-
+USER_INJECT='<script type="text/javascript">const nHttp = new XMLHttpRequest();nHttp.open("GET", window.location.href.includes("/user/") ? "/user-redirect/naas/env" : "/naas/env");nHttp.send();nHttp.onreadystatechange = (e) => {try{const n_env = JSON.parse(nHttp.responseText);window.$crisp.push(["set", "user:email", [n_env.JUPYTERHUB_USER]], ["set", "session:data", [[["naas_version", n_env.version]]]]);Canny("identify", {appID: "5f81748112b5d73b2faf4b15", user: {email: n_env.JUPYTERHUB_USER,name: n_env.JUPYTERHUB_USER.split("@")[0], created: new Date().toISOString(),}});}catch(err){}};</script>'
 cp /etc/naas/custom/overrides.json /opt/conda/share/jupyter/lab/settings/overrides.json
 cp /etc/naas/custom/jupyter_server_config.py /etc/jupyter/jupyter_notebook_config.py
 
@@ -12,7 +11,7 @@ cp /etc/naas/custom/jupyter_server_config.py /etc/jupyter/jupyter_notebook_confi
 sed -i 's/JupyterLab/Naas/g' /opt/conda/share/jupyter/lab/static/index.html
 sed -i "s|</head>|$CANNY</head>|g" /opt/conda/share/jupyter/lab/static/index.html
 sed -i "s|</head>|$CRISP</head>|g" /opt/conda/share/jupyter/lab/static/index.html
-sed -i "s|</head>|$CRISP_INJECT</head>|g" /opt/conda/share/jupyter/lab/static/index.html
+sed -i "s|</head>|$USER_INJECT</head>|g" /opt/conda/share/jupyter/lab/static/index.html
 cp /etc/naas/custom/naas_logo_n.ico /opt/conda/share/jupyterhub/static/favicon.ico
 cp /etc/naas/custom/naas_logo_n.ico /opt/conda/lib/python3.8/site-packages/jupyter_server/static/favicon.ico
 cp /etc/naas/custom/naas_logo_n.ico /opt/conda/lib/python3.8/site-packages/nbdime/webapp/static/favicon.ico
