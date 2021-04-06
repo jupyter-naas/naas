@@ -16,7 +16,7 @@ import pytest  # noqa: F401
 import os
 from shutil import copy2
 from naas.runner import n_env
-from naas import assets, webhook, secret, dependency
+from naas import asset, webhook, secret, dependency
 from nbconvert import HTMLExporter
 from syncer import sync
 from .generate_df_csv import csv_text
@@ -247,14 +247,14 @@ async def test_asset(mocker, requests_mock, test_runner, tmp_path):
     assert os.path.isfile(new_path)
     mock_session(mocker, requests_mock, cur_path)
     mock_job(requests_mock, test_runner)
-    url = assets.add(new_path)
+    url = asset.add(new_path)
     assert os.path.isfile(real_path)
     assert url.startswith(f"http://localhost:5001/{getUserb64()}/asset/")
     response = await test_runner.get(f"/{t_job}")
     assert response.status_code == 200
     resp_json = response.json()
     assert len(resp_json) == 1
-    resp_json = assets.currents(True)
+    resp_json = asset.currents(True)
     assert len(resp_json) == 1
     res_job = resp_json[0]
     assert res_job.get("type") == t_asset
@@ -267,24 +267,24 @@ async def test_asset(mocker, requests_mock, test_runner, tmp_path):
     assert response.status_code == 200
     resp_json = response.json()
     assert resp_json == {"foo": "bar2"}
-    assets.get(new_path)
+    asset.get(new_path)
     filename = os.path.basename(new_path)
     dirname = os.path.dirname(new_path)
     new_path_prod = os.path.join(dirname, f"prod_{filename}")
     assert os.path.isfile(new_path_prod)
-    list_in_prod = assets.list(new_path)
+    list_in_prod = asset.list(new_path)
     assert len(list_in_prod) == 1
     histo = list_in_prod.to_dict("records")[0]
-    assets.get(new_path, histo.get("timestamp"))
+    asset.get(new_path, histo.get("timestamp"))
     filename = os.path.basename(new_path)
     dirname = os.path.dirname(new_path)
     new_path_histo = os.path.join(dirname, f"{histo.get('timestamp')}___{filename}")
     assert os.path.isfile(new_path_histo)
-    url_new = assets.add(new_path)
+    url_new = asset.add(new_path)
     assert url == url_new
-    assets.manager.move_job(new_path, new_new_path)
+    asset.manager.move_job(new_path, new_new_path)
     assert os.path.isfile(new_real_path)
-    assets.delete(new_new_path)
+    asset.delete(new_new_path)
     response = await test_runner.get(f"/{t_job}")
     assert response.status_code == 200
     resp_json = response.json()
