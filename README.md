@@ -59,14 +59,14 @@ Test it in binder (WIP)
 
 it will create and install all dependency in docker machine
 
-`./install.sh`
+`./install`
 
 ## Test local server
 
-`./install.sh -ro`
+`./install -ro`
 it will run your docker machine only.
 
-if you want to rebuild docker too `./install.sh -r`
+if you want to rebuild docker too `./install -r`
 
 
 Then open your browser at the url:
