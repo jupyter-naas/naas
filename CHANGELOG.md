@@ -1,3 +1,10 @@
+## 1.11.0 (2021-04-06)
+
+### Feat
+
+- update tests for assets and add routes notication and asset
+- add a deprecation message in the functions of Assets and Notifications
+
 ## 1.10.14 (2021-04-06)
 
 ### Fix
