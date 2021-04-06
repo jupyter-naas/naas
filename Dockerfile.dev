@@ -6,11 +6,7 @@ ARG VCS_REF
 
 ENV NAAS_INSTALL_SUPP 'no'
 ENV JUPYTER_ENABLE_LAB 'yes'
-ENV NB_UMASK=022
-ENV NB_USER=ftp
-ENV NB_UID=21
-ENV NB_GID=21
-ENV NB_GROUP=21
+ENV NB_USER=bob
 
 LABEL org.label-schema.build-date=$BUILD_DATE \
     org.label-schema.name="Naas machine" \
