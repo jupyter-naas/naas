@@ -1,3 +1,9 @@
+## 1.10.8 (2021-04-06)
+
+### Fix
+
+- crips and canny integration
+
 ## 1.10.7 (2021-04-06)
 
 ### Fix
