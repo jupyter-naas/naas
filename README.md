@@ -95,8 +95,16 @@ open manager outsite of jupyter context :
 
 ## Run test 
 
-run it in the shell of jupyter
-`pytest -x`  
+Open Jupyterlab
+click on `+` to open Launcher
+Open Shell
+Go the right directory `cd naas`
+Run it in the shell `pytest -x`  to test your code
+
+Each Change you do from your IDE or from jupyter in the Naas folder is live reloaded
+If you test naas feature inside a notebook reload your kernel between changes.
+Same for the manager page you have to reload the Page to see the changes.
+To go faster you can use `isolated Manager` to reload only manager and not full jupyterlab
 
 ## Check lint
 
