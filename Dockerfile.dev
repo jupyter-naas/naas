@@ -33,7 +33,7 @@ COPY README.md /home/$NB_USER/naas/README.md
 RUN cd /home/$NB_USER/naas && pip install --no-cache-dir -e '.[dev]'
 
 COPY naas /home/$NB_USER/naas
-ENV PYTHONPATH=/home/$NB_USER/naas:/home/$NB_USER/drivers:$PYTHONPATH
+ENV PYTHONPATH=/home/$NB_USER/naas:/home/$NB_USER/drivers
 
 RUN mkdir /etc/naas
 COPY scripts /etc/naas/scripts
