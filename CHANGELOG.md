@@ -1,3 +1,14 @@
+## 1.10.0 (2021-04-06)
+
+### Fix
+
+- Merge branch 'main' of github.com:jupyter-naas/naas
+
+### Feat
+
+- make crisp hidden at start
+- make crips hidden as start
+
 ## 1.9.15 (2021-04-05)
 
 ### Fix
