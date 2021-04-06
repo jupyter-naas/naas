@@ -68,7 +68,7 @@ jobs:
         run: echo ${{ steps.prepare.outputs.tag }}     
       - name: Get the last version change
         id: lastchanges
-        uses: jupyter-naas/get-chagelog-diff@v1.0.3
+        uses: jupyter-naas/get-chagelog-diff@v1.0.5
       - name: Slack notification
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
