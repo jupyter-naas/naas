@@ -1,3 +1,9 @@
+## 1.10.4 (2021-04-06)
+
+### Fix
+
+- add canny setup when user login
+
 ## 1.10.3 (2021-04-06)
 
 ### Fix
