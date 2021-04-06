@@ -71,10 +71,11 @@ class Api:
                     json_filtered.append(item)
                 else:
                     json_filtered.append({"path": item['path'], "url": self.manager.proxy_url('notebooks', item['value'])})
-        df = pd.DataFrame(json_filtered)
         if raw is False:
+            df = pd.DataFrame(json_filtered)
             df = df.style.format({'url': copy_button_df})
-        return df
+            return df
+        return json_filtered
 
     def run(self, path=None, debug=False):
         self.deprecatedPrint()

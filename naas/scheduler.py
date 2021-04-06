@@ -63,11 +63,12 @@ class Scheduler:
                     json_filtered.append(item)
                 else:
                     json_filtered.append({"path": item['path'], "value": item['value']})
-        df = pd.DataFrame(json_filtered)
-        if not raw:
+        if raw is False:
+            df = pd.DataFrame(json_filtered)
             df = df.style.format({'value': pretty_cron.prettify_cron})
-        return df
-
+            return df
+        return json_filtered
+    
     def __check_cron(self, text):
         res = False
         try:

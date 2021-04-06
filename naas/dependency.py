@@ -30,8 +30,10 @@ class Dependency:
                     json_filtered.append(item)
                 else:
                     json_filtered.append({"path": item['path']})
-        df = pd.DataFrame(json_filtered)
-        return df
+        if raw is False:
+            df = pd.DataFrame(json_filtered)
+            return df
+        return json_filtered
 
     def add(self, path=None, debug=False):
         if self.manager.is_production():

@@ -32,10 +32,11 @@ class Assets:
                     json_filtered.append(item)
                 else:
                     json_filtered.append({"path": item['path'], "url": self.manager.proxy_url('assets', item['value'])})
-        df = pd.DataFrame(json_filtered)
-        if not raw:
+        if raw is False:
+            df = pd.DataFrame(json_filtered)
             df = df.style.format({'url': copy_button_df})
-        return df
+            return df
+        return json_filtered
 
     def find(self, path=None):
         current_file = self.manager.get_path(path)
