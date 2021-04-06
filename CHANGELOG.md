@@ -1,3 +1,9 @@
+## 1.10.6 (2021-04-06)
+
+### Fix
+
+- remove test user in install
+
 ## 1.10.5 (2021-04-06)
 
 ### Fix
