@@ -1,3 +1,9 @@
+## 1.10.12 (2021-04-06)
+
+### Fix
+
+- add changelog output in slack
+
 ## 1.10.11 (2021-04-06)
 
 ### Fix
