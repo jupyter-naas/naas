@@ -1,3 +1,9 @@
+## 1.10.2 (2021-04-06)
+
+### Fix
+
+- ci display last changes in slack
+
 ## 1.10.1 (2021-04-06)
 
 ### Fix
