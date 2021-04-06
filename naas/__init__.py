@@ -64,15 +64,6 @@ def move_job(old_path, new_path):
     webhook.manager.move_job(old_path, new_path)
 
 
-def changelog():
-    data = __canny_js
-    data += """<button class="lm-Widget p-Widget jupyter-widgets jupyter-button widget-button mod-primary" data-canny-changelog>
-        View Changelog
-    </button>"""
-    data += "<script> Canny('initChangelog', {appID: '5f81748112b5d73b2faf4b15', position: 'bottom', align: 'left'});</script>"
-    display(HTML(data))
-
-
 def open_help():
     data = __crisp
     if n_env.user:
@@ -90,33 +81,16 @@ def close_help():
     display(HTML(data))
 
 
-def bug_report():
-    email = n_env.user
-    name = email.split("@")[0]
-    board_id = "6a83d5c5-2165-2608-082d-49959c7f030c"
-
+def changelog():
     data = __canny_js
-    data += "<div data-canny />"
-    data += """
-    <script>
-        Canny('render', {
-            boardToken: "{BOARD}",
-        });
-    </script>
-    """
-
-    data = data.replace("{EMAIL}", str(n_env.user))
-    data = data.replace("{BOARD}", board_id)
-    data = data.replace("{NAME}", name)
+    data += """<button class="lm-Widget p-Widget jupyter-widgets jupyter-button widget-button mod-primary" data-canny-changelog>
+        View Changelog
+    </button>"""
+    data += "<script> Canny('initChangelog', {appID: '5f81748112b5d73b2faf4b15', position: 'bottom', align: 'left'});</script>"
     display(HTML(data))
 
 
-def feature_request():
-    email = str(n_env.user)
-    name = email.split(".")[0]
-    name = email.split("@")[0]
-    board_id = "e3e3e0c3-7520-47f5-56f5-39182fb70480"
-
+def __open_canny_board(board_id, email, name, uid):
     data = __canny_js
     data += "<div data-canny />"
     data += """
@@ -126,6 +100,7 @@ def feature_request():
             user: {
                 email: "{EMAIL}",
                 name: "{NAME}",
+                id: "{UID}",
                 created: new Date().toISOString()
             },
         });
@@ -134,11 +109,27 @@ def feature_request():
         });
     </script>
     """
-
-    data = data.replace("{EMAIL}", str(n_env.user))
+    data = data.replace("{EMAIL}", email)
     data = data.replace("{BOARD}", board_id)
     data = data.replace("{NAME}", name)
+    data = data.replace("{UID}", uid)
     display(HTML(data))
+
+
+def bug_report():
+    email = str(n_env.user)
+    name = email.split("@")[0].split(".").join(" ")
+    uid = email.split("@")[0].replace(".", "")
+    board_id = "6a83d5c5-2165-2608-082d-49959c7f030c"
+    __open_canny_board(board_id, email, name, uid)
+
+
+def feature_request():
+    email = str(n_env.user)
+    uid = email.split("@")[0].replace(".", "")
+    name = email.split("@")[0].split(".").join(" ")
+    board_id = "e3e3e0c3-7520-47f5-56f5-39182fb70480"
+    __open_canny_board(board_id, email, name, uid)
 
 
 def doc():
