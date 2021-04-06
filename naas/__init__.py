@@ -28,9 +28,9 @@ if len(sys.argv) == 0 or (len(sys.argv) > 0 and sys.argv[0] != "-m"):
     secret = Secret()
     api = Api(True)
     webhook = Api()
-    assets = Assets()
+    assets = Assets(False)
     dependency = Dependency()
-    notifications = Notifications()
+    notifications = Notifications(False)
     callback = Callback()
     Domain = Domain()
 
