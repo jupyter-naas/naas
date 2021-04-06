@@ -1,3 +1,9 @@
+## 1.10.7 (2021-04-06)
+
+### Fix
+
+- allow run in local on linux and mac
+
 ## 1.10.6 (2021-04-06)
 
 ### Fix
