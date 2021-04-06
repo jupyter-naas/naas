@@ -1,3 +1,9 @@
+## 1.10.11 (2021-04-06)
+
+### Fix
+
+- remove config for linux file rights
+
 ## 1.10.10 (2021-04-06)
 
 ### Fix
