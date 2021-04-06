@@ -1,5 +1,6 @@
 from .ntypes import t_scheduler, t_output, t_add, t_update, t_delete
 from .manager import Manager
+import pandas as pd
 import pretty_cron
 import requests
 import pycron
@@ -55,20 +56,17 @@ class Scheduler:
 
     def currents(self, raw=False):
         json_data = self.manager.get_naas()
-        if raw:
-            json_filtered = []
-            for item in json_data:
-                if item["type"] == self.role and item["status"] != t_delete:
-                    print(item)
+        json_filtered = []
+        for item in json_data:
+            if item["type"] == self.role and item["status"] != t_delete:
+                if raw:
                     json_filtered.append(item)
-                return json_filtered
-        else:
-            for item in json_data:
-                kind = None
-                if item["type"] == self.role and item["status"] != t_delete:
-                    cron_string = pretty_cron.prettify_cron(item["value"])
-                    kind = f"scheduler {cron_string}"
-                    print(f'File ==> {item["path"]} is {kind}')
+                else:
+                    json_filtered.append({"path": item['path'], "value": item['value']})
+        df = pd.DataFrame(json_filtered)
+        if not raw:
+            df = df.style.format({'value': pretty_cron.prettify_cron})
+        return df
 
     def __check_cron(self, text):
         res = False

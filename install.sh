@@ -56,6 +56,7 @@ if [[ $RUN == "YES" ]]; then
         -e ALLOWED_IFRAME='' \
         -e ALLOWED_IFRAME='' \
         -e JUPYTER_TOKEN="$TOKEN" \
+        -e JUPYTERHUB_USER="naas@naas.ai" \
         -e JUPYTERHUB_URL='http://127.0.0.1:8888' \
         -p 8888:8888 \
         -p 5000:5000 \

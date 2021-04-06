@@ -1,4 +1,6 @@
 from .ntypes import (
+    copy_button_df,
+    copy_clipboard,
     t_notebook,
     t_output,
     guess_type,
@@ -60,20 +62,19 @@ class Api:
 
     def currents(self, raw=False):
         self.deprecatedPrint()
+        copy_clipboard()
         json_data = self.manager.get_naas()
-        if raw:
-            json_filtered = []
-            for item in json_data:
-                if item["type"] == self.role and item["status"] != t_delete:
-                    print(item)
+        json_filtered = []
+        for item in json_data:
+            if item["type"] == self.role and item["status"] != t_delete:
+                if raw:
                     json_filtered.append(item)
-                return json_filtered
-        else:
-            for item in json_data:
-                kind = None
-                if item["type"] == self.role and item["status"] != t_delete:
-                    kind = f"callable with this url {self.manager.proxy_url('notebooks', item['value'])}"
-                    print(f'File ==> {item["path"]} is {kind}')
+                else:
+                    json_filtered.append({"path": item['path'], "url": self.manager.proxy_url('notebooks', item['value'])})
+        df = pd.DataFrame(json_filtered)
+        if raw is False:
+            df = df.style.format({'url': copy_button_df})
+        return df
 
     def run(self, path=None, debug=False):
         self.deprecatedPrint()

@@ -1,7 +1,6 @@
-from IPython.core.display import display, HTML
+from IPython.core.display import Javascript, display, HTML
 import ipywidgets as widgets
 import mimetypes
-import uuid
 
 t_notebook = "notebook"
 t_asset = "asset"
@@ -57,6 +56,7 @@ def guess_type(filepath):
         result_type = mime_nb
     return result_type
 
+
 def guess_ext(cur_type):
     result_ext = mimetypes.guess_extension(cur_type, strict=False)
     if result_ext is None and cur_type == mime_nb:
@@ -64,32 +64,41 @@ def guess_ext(cur_type):
     return result_ext
 
 
-def copy_clipboard(text):
-    uid = uuid.uuid4().hex
-    js = """<script>
-    function copyToClipboard_{uid}(text) {
-        const dummy = document.createElement("textarea");
-        document.body.appendChild(dummy);
-        dummy.value = text;
-        dummy.select();
-        document.execCommand("copy");
-        document.body.removeChild(dummy);
+def copy_clipboard():
+    js = """
+    if (!window.copyToClipboard) {
+        window.copyToClipboard = (text) => {
+            const dummy = document.createElement("textarea");
+            document.body.appendChild(dummy);
+            dummy.value = text;
+            dummy.select();
+            document.execCommand("copy");
+            document.body.removeChild(dummy);
+        }
     }
-    </script>"""
-    js = js.replace("{uid}", uid)
-    display(HTML(js))
-    js2 = f"<script>copyToClipboard_{uid}(`" + text + "`);</script>"
-    display(HTML(js2))
+    """
+    display(Javascript(js))
+
+
+def copy_button_df(text, title="Copy URL"):
+    return f"""<button class="lm-Widget p-Widget jupyter-widgets jupyter-button widget-button mod-primary"
+        title="{title}"
+        onclick="window.copyToClipboard('{text}')">{title}</button>"""
+
+
+def link_df(val):
+    # target _blank to open new window
+    return f'<a target="_blank" href="{val}">{val}</a>'
 
 
 def copy_button(text, title="Copy URL"):
+    copy_clipboard()
     button = widgets.Button(description=title, button_style="primary")
     output = widgets.Output()
 
     def on_button_clicked(b):
         with output:
-            copy_clipboard(text)
-            html_div = '<div id="pasting_to_clipboard">✅ Copied !</div>'
+            html_div = f'<script>window.copyToClipboard("{text}");</script><div id="pasting_to_clipboard">✅ Copied !</div>'
             display(HTML(html_div))
 
     button.on_click(on_button_clicked)

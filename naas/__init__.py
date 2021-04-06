@@ -20,7 +20,7 @@ __version__ = "1.9.14"
 __github_repo = "jupyter-naas/naas"
 __doc_url = "https://naas.gitbook.io/naas/"
 __canny_js = '<script>!function(w,d,i,s){function l(){if(!d.getElementById(i)){var f=d.getElementsByTagName(s)[0],e=d.createElement(s);e.type="text/javascript",e.async=!0,e.src="https://canny.io/sdk.js",f.parentNode.insertBefore(e,f)}}if("function"!=typeof w.Canny){var c=function(){c.q.push(arguments)};c.q=[],w.Canny=c,"complete"===d.readyState?l():w.attachEvent?w.attachEvent("onload",l):w.addEventListener("load",l,!1)}}(window,document,"canny-jssdk","script");</script>'  # noqa: E501
-__crisp = '<script type="text/javascript">window.$crisp=[];window.CRISP_WEBSITE_ID="a64b999e-e44c-44ee-928f-5cd0233f9586";(function(){d=document;s=d.createElement("script");s.src="https://client.crisp.chat/l.js";s.async=1;d.getElementsByTagName("head")[0].appendChild(s);})();</script>'  # noqa: E501
+__crisp = '<script type="text/javascript">if(!window.$crisp){window.$crisp=[["set", "session:data", [[["naas_type", "pip"]]]], ["do", "chat:hide"], ["on", "message:received", () => {window.$crisp.push(["do", "chat:show"])}], ["on", "chat:closed", () => {window.$crisp.push(["do", "chat:hide"])}]];window.CRISP_WEBSITE_ID="a64b999e-e44c-44ee-928f-5cd0233f9586";(function(){d=document;s=d.createElement("script");s.src="https://client.crisp.chat/l.js";s.async=1;d.getElementsByTagName("head")[0].appendChild(s);})();}</script>'  # noqa: E501
 __location__ = os.getcwd()
 
 if len(sys.argv) == 0 or (len(sys.argv) > 0 and sys.argv[0] != "-m"):
@@ -75,11 +75,13 @@ def changelog():
 
 def open_help():
     data = __crisp
-    data += (
-        f'<script>$crisp.push(["set", "user:email", ["{str(n_env.user)}"]])</script>'
-    )
-    data += f'<script>$crisp.push(["set", "session:data", [[["naas_version", "{str(n_env.version)}"]]]])</script>'
-    data += '<script>$crisp.push(["do", "chat:open"])</script>'
+    if n_env.user:
+        data += (
+            f'<script>window.$crisp.push(["set", "user:email", ["{str(n_env.user)}"]])</script>'
+        )
+    data += f'<script>window.$crisp.push(["set", "session:data", [[["naas_version", "{str(n_env.version)}"]]]])</script>'
+    data += '<script>window.$crisp.push(["do", "chat:show"])</script>'
+    data += '<script>window.$crisp.push(["do", "chat:open"])</script>'
     display(HTML(data))
 
 

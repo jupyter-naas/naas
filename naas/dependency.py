@@ -1,5 +1,6 @@
 from .ntypes import t_dependency, t_add, t_update, t_delete
 from .manager import Manager
+import pandas as pd
 
 
 class Dependency:
@@ -22,17 +23,15 @@ class Dependency:
 
     def currents(self, raw=False):
         json_data = self.manager.get_naas()
-        if raw:
-            json_filtered = []
-            for item in json_data:
-                if item["type"] == self.role and item["status"] != t_delete:
-                    print(item)
+        json_filtered = []
+        for item in json_data:
+            if item["type"] == self.role and item["status"] != t_delete:
+                if raw:
                     json_filtered.append(item)
-                return json_filtered
-        else:
-            for item in json_data:
-                if item["type"] == self.role and item["status"] != t_delete:
-                    print(f'File ==> {item["path"]}')
+                else:
+                    json_filtered.append({"path": item['path']})
+        df = pd.DataFrame(json_filtered)
+        return df
 
     def add(self, path=None, debug=False):
         if self.manager.is_production():

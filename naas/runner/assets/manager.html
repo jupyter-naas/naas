@@ -65,7 +65,7 @@
     <script src="https://cdn.jsdelivr.net/npm/vue-loading-overlay@3"></script>
     <link href="https://cdn.jsdelivr.net/npm/vue-loading-overlay@3/dist/vue-loading.css" rel="stylesheet">
     <script type="module">
-        import Vue from 'https://cdn.jsdelivr.net/npm/vue@2.6.11/dist/vue.esm.browser.js';
+        import Vue from 'https://cdn.jsdelivr.net/npm/vue@2.6.11/dist/vue.esm.browser.min.js';
         import axios from 'https://cdn.jsdelivr.net/npm/@bundled-es-modules/axios@0.18.1/axios.js';
         import VueGoodTablePlugin from 'https://cdn.jsdelivr.net/npm/vue-good-table@2.21.1/dist/vue-good-table.esm.js';
         import * as VModal from 'https://cdn.jsdelivr.net/npm/vue-js-modal@2.0.0-rc.6/dist/index.min.js';
@@ -251,7 +251,7 @@
                         query['sort'] = JSON.stringify(this.serverLogParams.sort);
                     }
                     query['filters'] = JSON.stringify(['scheduler', 'asset', 'notebook'])
-                    console.log('query', query);
+                    // console.log('query', query);
                     return query
                 },
                 loadLogItems() {

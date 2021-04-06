@@ -1,5 +1,6 @@
-from .ntypes import t_asset, copy_button, t_add, t_update, t_delete
+from .ntypes import copy_button_df, copy_clipboard, t_asset, copy_button, t_add, t_update, t_delete
 from .manager import Manager
+import pandas as pd
 import os
 
 
@@ -22,20 +23,19 @@ class Assets:
         return self.manager.clear_file(path, None, histo)
 
     def currents(self, raw=False):
+        copy_clipboard()
         json_data = self.manager.get_naas()
-        if raw:
-            json_filtered = []
-            for item in json_data:
-                if item["type"] == self.role and item["status"] != t_delete:
-                    print(item)
+        json_filtered = []
+        for item in json_data:
+            if item["type"] == self.role and item["status"] != t_delete:
+                if raw:
                     json_filtered.append(item)
-                return json_filtered
-        else:
-            for item in json_data:
-                kind = None
-                if item["type"] == self.role and item["status"] != t_delete:
-                    kind = f"gettable with this url {self.manager.proxy_url('assets', item['value'])}"
-                    print(f'File ==> {item["path"]} is {kind}')
+                else:
+                    json_filtered.append({"path": item['path'], "url": self.manager.proxy_url('assets', item['value'])})
+        df = pd.DataFrame(json_filtered)
+        if not raw:
+            df = df.style.format({'url': copy_button_df})
+        return df
 
     def find(self, path=None):
         current_file = self.manager.get_path(path)
