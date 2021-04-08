@@ -3,7 +3,7 @@ FROM jupyternaas/singleuser:2.11.14
 # Build-time metadata as defined at http://label-schema.org
 ARG BUILD_DATE
 ARG VCS_REF
-ENV NAAS_VERSION 1.11.5
+ENV NAAS_VERSION 1.11.6
 ENV JUPYTER_ENABLE_LAB 'yes'
 ENV NB_UMASK=022
 ENV NB_USER=ftp
