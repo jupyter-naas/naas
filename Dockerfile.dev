@@ -8,6 +8,7 @@ ENV NAAS_INSTALL_SUPP 'no'
 ENV JUPYTER_ENABLE_LAB 'yes'
 ENV NB_USER=bob
 
+USER root
 LABEL org.label-schema.build-date=$BUILD_DATE \
     org.label-schema.name="Naas machine" \
     org.label-schema.description="test jupyter machine with naas" \

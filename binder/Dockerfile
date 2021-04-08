@@ -7,6 +7,7 @@ ENV HOME /home/${NB_USER}
 ENV NAAS_INSTALL_SUPP 'yes'
 ENV JUPYTER_ENABLE_LAB 'yes'
 
+USER root
 WORKDIR ${HOME}
 
 # # As of 2020-12-31, force binder to use jupyter-server instead of jupyter-notebook

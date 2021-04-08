@@ -11,6 +11,7 @@ ENV NB_UID=21
 ENV NB_GID=21
 ENV NB_GROUP=21
 
+USER root
 LABEL org.label-schema.build-date=$BUILD_DATE \
     org.label-schema.name="Naas machine" \
     org.label-schema.description="jupyter machine with naas" \
