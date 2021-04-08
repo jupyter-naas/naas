@@ -70,7 +70,6 @@
         import VueGoodTablePlugin from 'https://cdn.jsdelivr.net/npm/vue-good-table@2.21.1/dist/vue-good-table.esm.js';
         import * as VModal from 'https://cdn.jsdelivr.net/npm/vue-js-modal@2.0.0-rc.6/dist/index.min.js';
         import VueCodeHighlight from 'https://cdn.jsdelivr.net/npm/vue-code-highlight@0.7.6/dist/vue-code-highlight.esm.min.js';
-//        import PerformanceModal from 'components/performance_modal.html'
 
         const debouceTime = 800;
         Vue.use(window['vue-js-modal'].default);
@@ -81,8 +80,7 @@
         const app = new Vue({
             el: '#app',
             components: {
-                VueCodeHighlight,
-//                PerformanceModal
+                VueCodeHighlight
             },
             data: {
                 filter: '',
@@ -221,13 +219,30 @@
                     }, { error, url }, { width: "70%", scrollable: true, height: 'auto' });
                 },
                 openPerformanceModal() {
-                    const cpu = "/";
-                    const ram = "/";
-                    const storage = "/";
+                    var cpu = "/";
+                    var ram = "/";
+                    var storage = "/";
                     this.$modal.show({
                         methods: {
                             closeModal(url) {
                             },
+                        },
+                        created() {
+                            axios.get('performance', {}).then((response) => {
+                                if (response && !response.error) {
+                                    try {
+                                        this.cpu = response.data.cpu;
+                                        this.ram = response.data.ram;
+                                        this.storage = response.data.storage;
+                                    } catch (err) {
+                                        console.error(err);
+                                    }
+                                }
+                            }).then(() => {
+                                this.loadingLog = false;
+                            }).catch((err) => {
+                                console.error(err);
+                            })
                         },
                         template: `
                         <div class="w-full bg-white rounded-lg shadow-lg">
@@ -243,7 +258,9 @@
                             <div class="px-10 text-gray-600">
                                 <pre class="-my-12 break-words whitespace-pre-wrap">
                                     <code>
-                                        swag
+                                        CPU: {{ cpu }}<br/>
+                                        RAM: {{ ram }}<br/>
+                                        Storage: {{ storage }}<br/>
                                     </code>
                                 </pre>
                             </div>
@@ -253,8 +270,8 @@
                             </div>
                         </div>
                         `,
-                        props: ['cpu', 'ram', 'storage']
-                    }, { cpu, ram , storage }, { width: "70%", scrollable: true, height: 'auto' });
+                        props: ['cpu','ram','storage']
+                    }, {cpu, ram, storage}, { width: "70%", scrollable: true, height: 'auto' });
                 },
                 updateLogParams(newProps) {
                     this.serverLogParams = Object.assign({}, this.serverLogParams, newProps);
@@ -467,7 +484,6 @@
                             </svg>
                         </button>
                     </div>
-<!--                   <PerformanceModal :cpu="cpu" :ram="ram" :storage="storage"/>-->
                 </div>
                 <div class="flex items-center justify-center w-full">
                     <div class="relative w-1/4 text-gray-900">
@@ -493,6 +509,8 @@
                 <div class="flex flex-col hidden -mx-2 md:flex-row md:block">
                     <a href="#" v-on:click="load_data()"
                         class="px-2 py-2 text-gray-900 bg-gray-100 rounded hover:bg-gray-900 hover:text-gray-100 hover:font-medium md:mx-2">Reload</a>
+                </div>
+                <div class="flex flex-col hidden -mx-2 md:flex-row md:block">
                     <a href="#" v-on:click="openPerformanceModal()"
                         class="px-2 py-2 text-gray-900 bg-gray-100 rounded hover:bg-gray-900 hover:text-gray-100 hover:font-medium md:mx-2">Performance</a>
                 </div>
