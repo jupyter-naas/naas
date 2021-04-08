@@ -1,3 +1,9 @@
+## 1.11.8 (2021-04-08)
+
+### Fix
+
+- use good get-chagelog-diff version
+
 ## 1.11.7 (2021-04-08)
 
 ### Fix
