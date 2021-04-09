@@ -1,3 +1,13 @@
+## 1.12.0 (2021-04-09)
+
+### Fix
+
+- dev env with new shell script
+
+### Feat
+
+- add manager embed function + fix bug report
+
 ## 1.11.8 (2021-04-08)
 
 ### Fix
