@@ -2,6 +2,7 @@
 # Distributed under the terms of the GNU AGPL License.
 from .ntypes import t_tz, error_busy, error_reject, copy_button
 from IPython.core.display import display, Javascript, HTML
+from IPython.display import IFrame
 from .runner.notifications import Notifications
 from .dependency import Dependency
 from .runner.env_var import n_env
@@ -119,8 +120,7 @@ def __open_canny_board(board_id, email, name, uid):
 
 
 def manager():
-    data = f'<iframe width="100%" height="800" frameBorder="0" src="{n_env.user_url}/naas" ></iframe>'
-    display(HTML(data))
+    display(IFrame(f"{n_env.user_url}/naas", width="100%", height="800"))
 
 
 def bug_report():

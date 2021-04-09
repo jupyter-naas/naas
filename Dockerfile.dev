@@ -18,8 +18,7 @@ LABEL org.label-schema.build-date=$BUILD_DATE \
     org.label-schema.vendor="Cashstory, Inc." \
     org.label-schema.schema-version="1.0"
 
-RUN mkdir /home/$NB_USER && \
-    fix-permissions /home/$NB_USER \
+RUN mkdir /home/$NB_USER \
     && cd $(dirname $(which jupyter-notebook)) \
     && rm jupyter-notebook \
     && ln -s jupyter-server jupyter-notebook
@@ -29,7 +28,8 @@ COPY setup.py /home/$NB_USER/naas/setup.py
 COPY README.md /home/$NB_USER/naas/README.md
 RUN cd /home/$NB_USER/naas && pip install --no-cache-dir -e '.[dev]'
 
-COPY naas /home/$NB_USER/naas
+COPY . /home/$NB_USER/naas
+RUN fix-permissions /home/$NB_USER
 ENV PYTHONPATH=/home/$NB_USER/naas:/home/$NB_USER/drivers
 
 RUN mkdir /etc/naas

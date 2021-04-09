@@ -37,6 +37,19 @@ case $i in
 esac
 done
 
+VOLUME_SSH="$HOME/.ssh:/home/ftp/.ssh"
+
+if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+        # ...
+    VOLUME_NAAS="$PWD:/home/ftp/naas:z"
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+        # Mac OS
+    VOLUME_NAAS="$PWD:/home/ftp/naas"
+else
+    echo "UNRECONIZED OS, cannot mount volume"
+    VOLUME_NAAS=''
+fi
+
 if [[ $BUILD == "YES" ]]; then
     docker pull jupyternaas/singleuser:latest
     if docker build -f Dockerfile.$N_ENV --build-arg INSTALL_SUPP=$SUPP -t naas_$N_ENV . ; then
@@ -56,10 +69,10 @@ if [[ $RUN == "YES" ]]; then
         -e ALLOWED_IFRAME='' \
         -e ALLOWED_IFRAME='' \
         -e JUPYTER_TOKEN="$TOKEN" \
-        -e JUPYTERHUB_URL='http://127.0.0.1:8888' \
+        -e JUPYTERHUB_URL='http://localhost:8888' \
         -p 8888:8888 \
         -p 5000:5000 \
-        -v "$(pwd)":/home/ftp/naas:z \
-        -v ~/.ssh:/home/ftp/.ssh \
+        -v "$VOLUME_NAAS" \
+        -v $VOLUME_SSH \
         naas_$N_ENV
 fi
