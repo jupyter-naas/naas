@@ -7,6 +7,9 @@ USER_INJECT='<script type="text/javascript">const nHttp = new XMLHttpRequest();n
 cp /etc/naas/custom/overrides.json /opt/conda/share/jupyter/lab/settings/overrides.json
 cp /etc/naas/custom/jupyter_server_config.py /etc/jupyter/jupyter_notebook_config.py
 
+if [[ $NAAS_INSTALL_BINDER == "yes" ]]; then
+    cp /etc/naas/custom/jupyter_server_config.py /home/jovyan/.jupyter/jupyter_notebook_config.py
+fi
 # Custom naas design
 sed -i 's/JupyterLab/Naas/g' /opt/conda/share/jupyter/lab/static/index.html
 sed -i "s|</head>|$CANNY</head>|g" /opt/conda/share/jupyter/lab/static/index.html
