@@ -152,6 +152,12 @@ async def test_init(test_runner):
     assert resp_json == {"tz": "Africa/Asmera"}
 
 
+async def test_performance(test_runner):
+    response = await test_runner.get("/performance")
+    assert response.status_code == 200
+#   assert re.match("[0-9]+[\.][0-9]{2}[ ]*[kMGP]?[B]", response.data.storage)
+
+
 async def test_secret(mocker, requests_mock, test_runner, tmp_path):
     mock_session(mocker, requests_mock, tmp_path)
     mock_secret(requests_mock, test_runner)
