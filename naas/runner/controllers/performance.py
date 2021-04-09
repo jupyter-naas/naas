@@ -16,11 +16,11 @@ class PerformanceController(HTTPMethodView):
         }
         if modes.get(mode) is not None:
             return json({mode: modes[mode](self)})
-        return json({
-            "cpu": self.getCpu(),
-            "ram": self.getRam(),
-            "storage": self.getStorage()
-        })
+        else:
+            perf = {}
+            for key, value in modes.items():
+                perf[key] = value(self)
+            return json(perf)
 
     # TODO make the functions to get the cpu and ram value
     def getCpu(self):
