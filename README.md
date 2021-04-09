@@ -10,7 +10,7 @@
 <a href="http://commitizen.github.io/cz-cli/"><img alt="Commitizen friendly" src="https://img.shields.io/badge/commitizen-friendly-brightgreen.svg"></a>
 ![PyPI](https://img.shields.io/pypi/v/naas)
 
-# Naas (Notebooks As Automated Services)
+# Naas: Notebooks-as-a-service
 
 Schedule notebooks, to automate all your tasks.
 
