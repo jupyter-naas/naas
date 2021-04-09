@@ -219,14 +219,7 @@
                     }, { error, url }, { width: "70%", scrollable: true, height: 'auto' });
                 },
                 openPerformanceModal() {
-                    var cpu = "/";
-                    var ram = "/";
-                    var storage = "/";
                     this.$modal.show({
-                        methods: {
-                            closeModal(url) {
-                            },
-                        },
                         created() {
                             axios.get('performance', {}).then((response) => {
                                 if (response && !response.error) {
@@ -243,6 +236,13 @@
                             }).catch((err) => {
                                 console.error(err);
                             })
+                        },
+                        data() {
+                            return {
+                                cpu: "/",
+                                ram: "/",
+                                storage: "/"
+                            }
                         },
                         template: `
                         <div class="w-full bg-white rounded-lg shadow-lg">
@@ -270,8 +270,7 @@
                             </div>
                         </div>
                         `,
-                        props: ['cpu','ram','storage']
-                    }, {cpu, ram, storage}, { width: "70%", scrollable: true, height: 'auto' });
+                    }, {}, { width: "70%", scrollable: true, height: 'auto' });
                 },
                 updateLogParams(newProps) {
                     this.serverLogParams = Object.assign({}, this.serverLogParams, newProps);
