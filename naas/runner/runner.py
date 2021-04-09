@@ -106,6 +106,10 @@ class Runner:
             )
             self.__app.add_route(
                 PerformanceController.as_view(),
+                "/performance/<mode>"
+            )
+            self.__app.add_route(
+                PerformanceController.as_view(),
                 "/performance"
             )
             self.__app.add_route(LogsController.as_view(self.__logger), "/log")
