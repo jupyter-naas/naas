@@ -118,9 +118,14 @@ def __open_canny_board(board_id, email, name, uid):
     display(HTML(data))
 
 
+def manager():
+    data = f'<iframe width="100%" height="800" frameBorder="0" src="{n_env.user_url}/naas" ></iframe>'
+    display(HTML(data))
+
+
 def bug_report():
     email = str(n_env.user)
-    name = email.split("@")[0].split(".").join(" ")
+    name = " ".join(email.split("@")[0].split("."))
     uid = email.split("@")[0].replace(".", "")
     board_id = "6a83d5c5-2165-2608-082d-49959c7f030c"
     __open_canny_board(board_id, email, name, uid)
@@ -129,7 +134,7 @@ def bug_report():
 def feature_request():
     email = str(n_env.user)
     uid = email.split("@")[0].replace(".", "")
-    name = email.split("@")[0].split(".").join(" ")
+    name = " ".join(email.split("@")[0].split("."))
     board_id = "e3e3e0c3-7520-47f5-56f5-39182fb70480"
     __open_canny_board(board_id, email, name, uid)
 
