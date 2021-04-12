@@ -10,7 +10,6 @@ from .controllers.jobs import JobsController
 from .controllers.logs import LogsController
 from sanic_openapi import swagger_blueprint
 from .controllers.env import EnvController
-from .controllers.size import SizeController
 from .controllers.performance import PerformanceController
 from .notifications import Notifications
 from naas.onboarding import init_onborading
@@ -99,10 +98,6 @@ class Runner:
             self.__app.add_route(
                 EnvController.as_view(),
                 "/env",
-            )
-            self.__app.add_route(
-                SizeController.as_view(),
-                "/size",
             )
             self.__app.add_route(
                 PerformanceController.as_view(),
