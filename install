@@ -52,7 +52,7 @@ fi
 
 if [[ $BUILD == "YES" ]]; then
     docker pull jupyternaas/singleuser:latest
-    if docker build -f Dockerfile.$N_ENV --build-arg INSTALL_SUPP=$SUPP -t naas_$N_ENV . ; then
+    if docker build -f Dockerfile.$N_ENV --build-arg INSTALL_SUPP=$SUPP -t jupyternaas/naas:local_$N_ENV . ; then
         echo "Build succeeded"
     else
         echo "Build failed"
@@ -74,5 +74,5 @@ if [[ $RUN == "YES" ]]; then
         -p 5000:5000 \
         -v "$VOLUME_NAAS" \
         -v $VOLUME_SSH \
-        naas_$N_ENV
+        jupyternaas/naas:local_$N_ENV
 fi

@@ -1,0 +1,66 @@
+version: "3.5"
+
+services:
+    postgres_db:
+        image: postgres:9.5
+        container_name: postgres_db
+        networks:
+            - galaxy_cs_jup    
+        restart: always
+        environment:
+            - PGDATA=/var/lib/postgresql/data
+            - POSTGRES_PASSWORD=b76df14e4fae131d0df091f1cbba16d8d730a83e7b49783721504d2d75a424be
+            - POSTGRES_USER=postgres
+            - JUPYTER_DB=jupyterhub
+            - POSTGRES_MULTIPLE_DATABASES=jupyterhub
+        volumes:
+            - "postgres_db:/var/lib/postgresql/data"
+            - ./postgres:/docker-entrypoint-initdb.d
+        ports:
+            - 5432:5432
+    jupyterhub:
+        depends_on:
+            - postgres_db
+        networks:
+            - galaxy_cs_jup
+        restart: always
+        image: jupyternaas/lab:latest
+        container_name: jupyterhub
+        volumes:
+            - "$HOME/.docker/config.json:/root/.docker/config.json"
+            # Bind Docker socket on the host so we can connect to the daemon from
+            # within the container
+            - "/var/run/docker.sock:/var/run/docker.sock:rw"
+            # Bind Docker volume on host for JupyterHub database and cookie secrets
+            - "jupyter-data:/data"
+            - "./jupyterhub_config.py:/srv/jupyterhub/jupyterhub_config.py"
+        environment:
+            TZ: Europe/Paris
+            # All containers will join this network
+            DOCKER_NETWORK_NAME: galaxy_cs_jup
+            # JupyterHub will spawn this Notebook image for users
+            DOCKER_NOTEBOOK_IMAGE: jupyternaas/naas:local_dev
+            # Notebook directory inside user image
+            DOCKER_NOTEBOOK_DIR: /home/ftp/ftp
+            # Using this run command (optional)
+            DOCKER_SPAWN_CMD: start-singleuser.sh --NotebookApp.default_url=lab"
+            # Postgres db info
+            POSTGRES_DB: jupyterhub
+            POSTGRES_HOST: postgres_db
+            POSTGRES_PASSWORD: b76df14e4fae131d0df091f1cbba16d8d730a83e7b49783721504d2d75a424be
+            ADMIN_API_TOKEN: 3X7zEkxoeQAeQqsAhpoB4irBsQmn
+        ports:
+            - 8080:8080
+            - 8081:8081
+            - 8000:8000
+            - 8001:8001
+volumes:
+    jupyter-data:
+        driver: local
+    postgres_db:
+        driver: local
+
+networks:
+    galaxy_cs_jup:
+        driver: bridge
+        name: galaxy_cs_jup
