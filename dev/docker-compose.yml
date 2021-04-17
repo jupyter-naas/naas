@@ -44,6 +44,7 @@ services:
         environment:
             TZ: Europe/Paris
             PORT: "3002"
+            SINGLEUSER_PATH: ""
             HUB_HOST: "jupyterhub:8000"
             HUB_DB: postgres://postgres:b76df14e4fae131d0df091f1cbba16d8d730a83e7b49783721504d2d75a424be@postgres_db:5432/jupyterhub
         ports:
@@ -120,11 +121,11 @@ services:
             POSTGRES_PASSWORD: b76df14e4fae131d0df091f1cbba16d8d730a83e7b49783721504d2d75a424be
             ADMIN_API_TOKEN: 3X7zEkxoeQAeQqsAhpoB4irBsQmn
             PUBLIC_PROXY_API: http://localhost:3002
-            NOTIFICATIONS_API: http://localhost:3003
-            CALLBACK_API: http://localhost:3004
+            NOTIFICATIONS_API: http://naas_notif:3003
             NOTIFICATIONS_ADMIN_TOKEN: 110ec58a-a0f2-4ac4-8393-c866d813b8d1
-            SCREENSHOT_API: http://localhost:9000
-            JUPYTERHUB_URL: http://localhost:8000
+            CALLBACK_API: http://naas_callback:3004
+            SCREENSHOT_API: http://naas_screenshot:9000
+            JUPYTERHUB_URL: http://jupyterhub:8000
             LANDING_URL: "https://naas.ai"
             ### Enterprise Gateway Environment variables
             # JUPYTER_GATEWAY_URL: enterprise-gateway:8888
