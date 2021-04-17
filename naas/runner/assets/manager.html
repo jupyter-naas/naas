@@ -258,8 +258,6 @@
                             <div class="px-10 text-gray-600">
                                 <pre class="-my-12 break-words whitespace-pre-wrap">
                                     <code>
-                                        CPU: {{ cpu }}<br/>
-                                        RAM: {{ ram }}<br/>
                                         Storage: {{ storage }}<br/>
                                     </code>
                                 </pre>
@@ -505,13 +503,9 @@
                         </button>
                     </div>
                 </div>
-                <div class="flex flex-col hidden -mx-2 md:flex-row md:block">
+                <div class="flex flex-col hidden md:flex-row md:block">
                     <button v-on:click="load_data()"
-                        class="px-2 py-2 text-gray-900 bg-gray-100 rounded hover:bg-gray-900 hover:text-gray-100 hover:font-medium md:mx-2">Reload</button>
-                </div>
-                <div class="flex flex-col hidden -mx-2 md:flex-row md:block">
-                    <a href="#" v-on:click="openPerformanceModal()"
-                        class="px-2 py-2 text-gray-900 bg-gray-100 rounded hover:bg-gray-900 hover:text-gray-100 hover:font-medium md:mx-2">Performance</a>
+                        class="px-2 py-2 text-gray-900 bg-gray-100 rounded hover:bg-gray-600 hover:text-gray-100 md:mx-2">Reload</button>
                 </div>
             </div>
         </nav>
@@ -626,6 +620,9 @@
                     class="inline-block px-3 py-1 mr-2 text-sm font-semibold text-gray-700 bg-gray-200 rounded-full">{{env.version}}</span>
                 <button class="px-2 py-2 text-gray-900 bg-gray-100 rounded hover:bg-gray-900 hover:text-gray-100 hover:font-medium md:mx-2" data-canny-changelog>
                         What's new !
+                </button>
+                <button class="px-2 py-2 text-gray-900 bg-gray-100 rounded hover:bg-gray-900 hover:text-gray-100 hover:font-medium md:mx-2" v-on:click="openPerformanceModal()">
+                    Storage
                 </button>
             </div>
         </div>

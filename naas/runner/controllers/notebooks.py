@@ -9,13 +9,13 @@ def parse_data(request):
     req_data = {}
     ctype = request.headers.get("content-type", "")
     if ctype.startswith("multipart/form-data"):
-        req_data = request.files
+        req_data = {"files": request.files}
     elif ctype.startswith("application/json"):
         req_data = request.json
     elif ctype.startswith("application/x-www-form-urlencoded"):
         req_data = dict(urllib.parse.parse_qsl(request.body.decode("utf-8")))
     else:
-        req_data = str(request.body.decode("utf-8"))
+        req_data = {"str": str(request.body.decode("utf-8"))}
     args = dict(
         urllib.parse.parse_qsl(request.query_string)
     )  # fix to don't have array for each args
