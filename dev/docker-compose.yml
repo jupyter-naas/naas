@@ -18,6 +18,75 @@ services:
             - ./postgres:/docker-entrypoint-initdb.d
         ports:
             - 5432:5432
+    naas_screenshot:
+        depends_on:
+            - postgres_db
+            - jupyterhub
+        networks:
+            - galaxy_cs_jup
+        restart: always
+        image: jupyternaas/screenshot:latest
+        container_name: naas_screenshot
+        environment:
+            TZ: Europe/Paris
+            ALLOW_HTTP: "true"
+        ports:
+            - 9000:9000
+    naas_proxy:
+        depends_on:
+            - postgres_db
+            - jupyterhub
+        networks:
+            - galaxy_cs_jup
+        restart: always
+        image: jupyternaas/proxy:latest
+        container_name: naas_proxy
+        environment:
+            TZ: Europe/Paris
+            PORT: "3002"
+            HUB_HOST: "jupyterhub:8000"
+            HUB_DB: postgres://postgres:b76df14e4fae131d0df091f1cbba16d8d730a83e7b49783721504d2d75a424be@postgres_db:5432/jupyterhub
+        ports:
+            - 3002:3002
+    naas_notif:
+        depends_on:
+            - postgres_db
+            - jupyterhub
+        networks:
+            - galaxy_cs_jup
+        restart: always
+        image: jupyternaas/notifications:latest
+        container_name: naas_notif
+        environment:
+            TZ: Europe/Paris
+            PORT: "3003"
+            HUB_HOST: "jupyterhub:8000"
+            HUB_DB: postgres://postgres:b76df14e4fae131d0df091f1cbba16d8d730a83e7b49783721504d2d75a424be@postgres_db:5432/jupyterhub
+            EMAIL_FROM: "Naas notifications <notifications@naas.ai>"
+            ADMIN_TOKEN: 110ec58a-a0f2-4ac4-8393-c866d813b8d1
+            EMAIL_HOST: smtp.sendgrid.net
+            EMAIL_PASSWORD: "****"
+            EMAIL_PORT: "465"
+            EMAIL_SECURE: "true"
+            EMAIL_USER: apikey
+        ports:
+            - 3003:3003
+    naas_callback:
+        depends_on:
+            - postgres_db
+            - jupyterhub
+        networks:
+            - galaxy_cs_jup
+        restart: always
+        image: jupyternaas/callback:latest
+        container_name: naas_callback
+        environment:
+            TZ: Europe/Paris
+            PORT: "3004"
+            HUB_HOST: "jupyterhub:8000"
+            HUB_DB: postgres://postgres:b76df14e4fae131d0df091f1cbba16d8d730a83e7b49783721504d2d75a424be@postgres_db:5432/jupyterhub
+        ports:
+            - 3004:3004
     jupyterhub:
         depends_on:
             - postgres_db
@@ -39,9 +108,10 @@ services:
             # All containers will join this network
             DOCKER_NETWORK_NAME: galaxy_cs_jup
             # JupyterHub will spawn this Notebook image for users
-            DOCKER_NOTEBOOK_IMAGE: jupyternaas/naas:local_dev
+            DOCKER_NOTEBOOK_IMAGE: jupyternaas/naas:latest
+            # DOCKER_NOTEBOOK_IMAGE: jupyternaas/naas:local_dev
             # Notebook directory inside user image
-            DOCKER_NOTEBOOK_DIR: /home/ftp/ftp
+            DOCKER_NOTEBOOK_DIR: /home/ftp
             # Using this run command (optional)
             DOCKER_SPAWN_CMD: start-singleuser.sh --NotebookApp.default_url=lab"
             # Postgres db info
@@ -49,6 +119,31 @@ services:
             POSTGRES_HOST: postgres_db
             POSTGRES_PASSWORD: b76df14e4fae131d0df091f1cbba16d8d730a83e7b49783721504d2d75a424be
             ADMIN_API_TOKEN: 3X7zEkxoeQAeQqsAhpoB4irBsQmn
+            PUBLIC_PROXY_API: http://localhost:3002
+            NOTIFICATIONS_API: http://localhost:3003
+            CALLBACK_API: http://localhost:3004
+            NOTIFICATIONS_ADMIN_TOKEN: 110ec58a-a0f2-4ac4-8393-c866d813b8d1
+            SCREENSHOT_API: http://localhost:9000
+            JUPYTERHUB_URL: http://localhost:8000
+            LANDING_URL: "https://naas.ai"
+            ### Enterprise Gateway Environment variables
+            # JUPYTER_GATEWAY_URL: enterprise-gateway:8888
+            # EG_PORT: "8888"
+            #     # Created above.
+            # EG_NAMESPACE: "dev"
+            #     # Created above.  Used if no KERNEL_NAMESPACE is provided by client.
+            # EG_KERNEL_CLUSTER_ROLE: "kernel-controller"
+            #     # All kernels reside in the EG namespace if True, otherwise KERNEL_NAMESPACE
+            #     # must be provided or one will be created for each kernel.
+            # EG_SHARED_NAMESPACE: "True"
+            #     # NOTE: This requires appropriate volume mounts to make notebook dir accessible
+            # EG_MIRROR_WORKING_DIRS: "False"
+            #     # Current idle timeout is 1 hour.
+            # EG_CULL_IDLE_TIMEOUT: "3600"
+            # EG_LOG_LEVEL: "DEBUG"
+            # EG_KERNEL_LAUNCH_TIMEOUT: "60"
+            # EG_KERNEL_WHITELIST: "['python_kubernetes']"
+            # EG_DEFAULT_KERNEL_NAME: "python_kubernetes"
         ports:
             - 8080:8080
             - 8081:8081

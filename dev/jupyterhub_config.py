@@ -94,7 +94,7 @@ c.DockerSpawner.volumes = {
 }
 
 # Remove containers once they are stopped
-c.DockerSpawner.remove_containers = True
+c.DockerSpawner.remove = True
 # For debugging arguments passed to spawned containers
 c.DockerSpawner.debug = True
 
@@ -105,7 +105,7 @@ c.JupyterHub.hub_port = os.environ.get('PORT', 8081)
 
 c.JupyterHub.hub_ip = 'jupyterhub'
 c.JupyterHub.hub_connect_ip = 'jupyterhub'
-c.DockerSpawner.hub_connect_ip = 'jupyterhub'
+# c.DockerSpawner.hub_connect_ip = 'jupyterhub'
 
 # Authenticate users with GitHub OAuth
 c.JupyterHub.authenticator_class = 'naasauthenticator.NaasAuthenticator'
