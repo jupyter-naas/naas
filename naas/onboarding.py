@@ -58,6 +58,7 @@ def wp_set_for_open_filebrowser(url):
             with open(new_wp, "w+") as f:
                 f.write(new_content_wp)
         os.system(f"{__jup_load_workspace} {new_wp}")
+        os.remove(new_wp)
     except Exception as e:
         print("Cannot config jupyter workspace", e)
 
