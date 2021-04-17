@@ -1,3 +1,21 @@
+## 1.13.0 (2021-04-16)
+
+### Fix
+
+- manager.get_size make request on the good route
+
+### Refactor
+
+- beatify code of performance API
+- simplify code of performance modal
+
+### Feat
+
+- add specification for performance API endpoint
+- test for performance API
+- setup performance route API
+- add performance modal
+
 ## 1.12.1 (2021-04-09)
 
 ### Fix

@@ -11,10 +11,14 @@ t_scheduler = "scheduler"
 t_secret = "secret"
 
 t_tz = "timezone"
-t_size = "size"
+t_performance = "performance"
 t_job = "job"
 t_env = "env"
 t_log = "log"
+
+t_storage = "storage"
+t_cpu = "cpu"
+t_ram = "ram"
 
 t_list_output = "list_output"
 t_list_histo = "list_histo"

@@ -1,6 +1,7 @@
 from .ntypes import (
     t_delete,
-    t_size,
+    t_performance,
+    t_storage,
     t_job,
     t_env,
     t_skip,
@@ -41,10 +42,10 @@ class Manager:
         self.set_runner_mode()
 
     def get_size(self):
-        response = requests.get(f"{n_env.api}/{t_size}", headers=self.headers)
+        response = requests.get(f"{n_env.api}/{t_performance}/{t_storage}", headers=self.headers)
         data = response.json()
-        if data and data.get("size"):
-            print("📝 Memory used", data.get("size"))
+        if data and data.get(f"{t_storage}"):
+            print("📝 Memory used", data.get(f"{t_storage}"))
         else:
             print("😢 Cannot get Memory usage", data.get(t_error))
 

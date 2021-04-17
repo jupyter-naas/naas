@@ -10,7 +10,7 @@ from .controllers.jobs import JobsController
 from .controllers.logs import LogsController
 from sanic_openapi import swagger_blueprint
 from .controllers.env import EnvController
-from .controllers.size import SizeController
+from .controllers.performance import PerformanceController
 from .notifications import Notifications
 from naas.onboarding import init_onborading
 from .proxy import escape_kubernet
@@ -44,7 +44,7 @@ from naas.ntypes import (
 asyncio.set_event_loop_policy(None)
 nest_asyncio.apply()
 
-__version__ = "1.12.1"
+__version__ = "1.13.0"
 
 
 class Runner:
@@ -100,8 +100,12 @@ class Runner:
                 "/env",
             )
             self.__app.add_route(
-                SizeController.as_view(),
-                "/size",
+                PerformanceController.as_view(),
+                "/performance/<mode>"
+            )
+            self.__app.add_route(
+                PerformanceController.as_view(),
+                "/performance"
             )
             self.__app.add_route(LogsController.as_view(self.__logger), "/log")
             self.__app.add_route(
