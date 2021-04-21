@@ -53,7 +53,7 @@ setup(
         "pycron==3.0.0",
         "aiohttp==3.7.4",
         "html5lib==1.1",
-        "Pillow==8.1.2",
+        "Pillow==8.2.0",
         "markdown2==2.4.0",
         "pandas==1.2.3",
         "escapism==1.0.1",
