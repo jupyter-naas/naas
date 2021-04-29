@@ -18,9 +18,9 @@ dev_dep = [
     "twine==3.4.1",
     "flake8==3.9.1",
     "pre-commit==2.12.1",
-    "black==20.8b1",
+    "black==21.4b2",
     "imgcompare==2.0.1",
-    "commitizen==2.17.0",
+    "commitizen==2.17.4",
     "pytest-cov==2.11.1",
 ]
 setup(
@@ -55,7 +55,7 @@ setup(
         "html5lib==1.1",
         "Pillow==8.2.0",
         "markdown2==2.4.0",
-        "pandas==1.2.3",
+        "pandas==1.2.4",
         "escapism==1.0.1",
         "notebook==6.3.0",
         "ipython==7.22.0",
