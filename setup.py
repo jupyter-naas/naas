@@ -11,7 +11,7 @@ dev_dep = [
     "backports.zoneinfo==0.2.1",
     "pytest==6.2.3",
     "pytest-tornasync==0.6.0.post2",
-    "pytest-mock==3.5.1",
+    "pytest-mock==3.6.0",
     "pytest-sanic==1.7.0",
     "pytest-asyncio==0.14.0",
     "requests-mock==1.8.0",
@@ -20,7 +20,7 @@ dev_dep = [
     "pre-commit==2.12.1",
     "black==20.8b1",
     "imgcompare==2.0.1",
-    "commitizen==2.17.0",
+    "commitizen==2.17.4",
     "pytest-cov==2.11.1",
 ]
 setup(
@@ -55,7 +55,7 @@ setup(
         "html5lib==1.1",
         "Pillow==8.2.0",
         "markdown2==2.4.0",
-        "pandas==1.2.3",
+        "pandas==1.2.4",
         "escapism==1.0.1",
         "notebook==6.3.0",
         "ipython==7.22.0",
