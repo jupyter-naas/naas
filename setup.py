@@ -55,7 +55,7 @@ setup(
         "html5lib==1.1",
         "Pillow==8.2.0",
         "markdown2==2.4.0",
-        "pandas==1.2.3",
+        "pandas==1.2.4",
         "escapism==1.0.1",
         "notebook==6.3.0",
         "ipython==7.22.0",
