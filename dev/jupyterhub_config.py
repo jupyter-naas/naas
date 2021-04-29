@@ -57,12 +57,14 @@ def createEnv(NAAS_GPU=False):
         'PROXY_API': os.environ.get('PUBLIC_PROXY_API', ''),
         'ALLOWED_IFRAME': os.environ.get('ALLOWED_IFRAME', ''),
         'JUPYTER_ENABLE_LAB': 'YES',
+        "JUPYTERHUB_SINGLEUSER_APP": "jupyterlab_server.app.LabServerApp",
         'TZ': 'Europe/Paris'
     }
     if NAAS_GPU:
         base_env['NAAS_GPU'] = 'YES'
     return base_env
 
+c.SystemUserSpawner.run_as_root = True
 
 c.DockerSpawner.environment = createEnv()
 
@@ -76,8 +78,8 @@ ip = public_ips()[0]
 c.JupyterHub.hub_ip = ip
 
 c.DockerSpawner.extra_host_config = {'network_mode': network_name}
-
-c.DockerSpawner.cmd = ["start-notebook.sh", "--NotebookApp.default_url=lab"]
+c.DockerSpawner.cmd == ['jupyterhub-singleuser']
+# c.DockerSpawner.cmd = ["start-notebook.sh", "--NotebookApp.default_url=lab"]
 
 # Explicitly set notebook directory because we'll be mounting a host volume to
 # it.  Most jupyter/docker-stacks *-notebook images run the Notebook server as

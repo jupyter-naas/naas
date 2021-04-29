@@ -17,7 +17,7 @@ services:
             - "postgres_db:/var/lib/postgresql/data"
             - ./postgres:/docker-entrypoint-initdb.d
         ports:
-            - 5432:5432
+            - 5431:5432
     naas_screenshot:
         depends_on:
             - postgres_db
@@ -94,7 +94,7 @@ services:
         networks:
             - galaxy_cs_jup
         restart: always
-        image: jupyternaas/lab:latest
+        image: jupyternaas/hub:latest
         container_name: jupyterhub
         volumes:
             - "$HOME/.docker/config.json:/root/.docker/config.json"
