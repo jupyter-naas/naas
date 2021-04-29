@@ -3,20 +3,20 @@ from setuptools import setup, find_packages
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-NDV = "0.54.6"
+NDV = "0.54.7"
 
 driver_dep = [f'naas_drivers=={NDV}']
 dev_dep = [
     "syncer==1.3.0",
     "backports.zoneinfo==0.2.1",
-    "pytest==6.2.2",
+    "pytest==6.2.3",
     "pytest-tornasync==0.6.0.post2",
     "pytest-mock==3.5.1",
     "pytest-sanic==1.7.0",
     "pytest-asyncio==0.14.0",
     "requests-mock==1.8.0",
     "twine==3.4.1",
-    "flake8==3.9.0",
+    "flake8==3.9.1",
     "pre-commit==2.12.1",
     "black==20.8b1",
     "imgcompare==2.0.1",
@@ -25,7 +25,7 @@ dev_dep = [
 ]
 setup(
     name="naas",
-    version="1.14.2",
+    version="1.15.1",
     author="Martin Donadieu",
     author_email="martindonadieu@gmail.com",
     license="BSD",
@@ -53,7 +53,7 @@ setup(
         "pycron==3.0.0",
         "aiohttp==3.7.4",
         "html5lib==1.1",
-        "Pillow==8.1.2",
+        "Pillow==8.2.0",
         "markdown2==2.4.0",
         "pandas==1.2.4",
         "escapism==1.0.1",
