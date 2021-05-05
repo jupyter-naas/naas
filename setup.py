@@ -18,7 +18,7 @@ dev_dep = [
     "twine==3.4.1",
     "flake8==3.9.1",
     "pre-commit==2.12.1",
-    "black==21.4b2",
+    "black==21.5b0",
     "imgcompare==2.0.1",
     "commitizen==2.17.4",
     "pytest-cov==2.11.1",
