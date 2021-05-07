@@ -70,7 +70,6 @@ setup(
         "tzdata"
     ],
     classifiers=[
-        "Development Status :: 1 - Production/Stable",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3 :: Only",
         "License :: OSI Approved :: BSD License",
@@ -80,7 +79,5 @@ setup(
         "Intended Audience :: Developers",
         "Topic :: Software Development",
         "Topic :: Scientific/Engineering",
-        "Topic :: Lowcode",
-        "Topic :: No-code",
     ],
 )
