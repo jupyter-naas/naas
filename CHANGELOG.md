@@ -1,3 +1,9 @@
+## 1.15.7 (2021-05-19)
+
+### Refactor
+
+- user logs as now managed by SQLite3
+
 ## 1.15.6 (2021-05-17)
 
 ### Fix
