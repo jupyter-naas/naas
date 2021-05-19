@@ -9,7 +9,7 @@ driver_dep = [f'naas_drivers=={NDV}']
 dev_dep = [
     "syncer==1.3.0",
     "backports.zoneinfo==0.2.1",
-    "pytest==6.2.3",
+    "pytest==6.2.4",
     "pytest-tornasync==0.6.0.post2",
     "pytest-mock==3.6.0",
     "pytest-sanic==1.7.0",
