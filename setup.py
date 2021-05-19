@@ -21,7 +21,7 @@ dev_dep = [
     "black==21.5b1",
     "imgcompare==2.0.1",
     "commitizen==2.17.4",
-    "pytest-cov==2.11.1",
+    "pytest-cov==2.12.0",
 ]
 setup(
     name="naas",
