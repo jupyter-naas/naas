@@ -67,7 +67,8 @@ setup(
         "argparse==1.4.0",
         "nbclient==0.5.3",
         "beautifulsoup4==4.9.3",
-        "tzdata"
+        "tzdata",
+        "pysqlite3==0.4.6"
     ],
     classifiers=[
         "Programming Language :: Python :: 3.9",
