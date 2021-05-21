@@ -34,7 +34,7 @@ class SqliteTable:
                 print(e)
 
     def clear(self):
-        self.execute_command(f"DELETE FROM {self.__focused_table}")
+        self.execute_command(f"DELETE * FROM {self.__focused_table}")
 
     def search_in_db(self, value, table="", columns=None):
         if table == "":

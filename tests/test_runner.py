@@ -555,6 +555,6 @@ async def test_logs(test_runner):
     response = await test_runner.get("/log")
     assert response.status_code == 200
     logs = response.json()
-    assert logs.get("totalRecords") == 1
+    assert logs.get("totalRecords") > 0
     status = logs.get("data")[0].get("status")
     assert status == "init API"
