@@ -1,5 +1,7 @@
 import sqlite3
 import pandas as pd
+import os
+import errno
 
 
 class SqliteTable:
@@ -18,6 +20,17 @@ class SqliteTable:
         return pd.read_csv(csv_file, sep=";")
 
     def __create_connection(self):
+        folder = os.path.dirname(self.__file_name)
+        if not os.path.exists(folder):
+            try:
+                print("Init Sqlite folder")
+                os.makedirs(folder)
+            except OSError as exc:  # Guard against race condition
+                print("__path_sql_files", folder)
+                if exc.errno != errno.EEXIST:
+                    raise
+            except Exception as e:
+                print("Exception", e)
         try:
             self.__db = sqlite3.connect(self.__file_name)
         except Exception as e:
