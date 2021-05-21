@@ -10,6 +10,7 @@ class n_env:
     _api_port = None
     _notif_api = None
     _callback_api = None
+    _report_callback = False
     _proxy_api = None
     _hub_base = None
 
@@ -95,6 +96,16 @@ class n_env:
     @callback_api.setter
     def callback_api(self, callback_api):
         self._callback_api = callback_api
+
+    @property
+    def report_callback(self):
+        return self._report_callback or (os.environ.get(
+            "REPORT_CALLBACK", "True"
+        ) == 'True')
+
+    @report_callback.setter
+    def report_callback(self, report_callback):
+        self._report_callback = report_callback
 
     @property
     def proxy_api(self):

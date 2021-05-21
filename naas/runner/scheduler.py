@@ -262,7 +262,8 @@ class Scheduler:
                 "kernels": self.getSessions(),
                 "terminals": self.getTerminals(),
             }
-            Callback().add(auto_delete=False, uuid=f"naas_analytics__{curdate}", default_result=data, no_override=True)
+            if n_env.report_callback:
+                Callback().add(auto_delete=False, uuid=f"naas_analytics__{curdate}", default_result=data, no_override=True)
         except Exception as e:
             tb = traceback.format_exc()
             self.__logger.error(
