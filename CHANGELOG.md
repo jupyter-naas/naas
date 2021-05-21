@@ -1,3 +1,9 @@
+## 1.15.13 (2021-05-21)
+
+### Fix
+
+- add path create if don't exist for logs.sql
+
 ## 1.15.12 (2021-05-21)
 
 ### Fix
