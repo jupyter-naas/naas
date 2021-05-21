@@ -129,7 +129,7 @@ class Notebooks:
             result_type = mime_json
             result = {
                 "error": "output file not found",
-                "trace": tb,
+                "traceback": tb,
             }
         result_ext = guess_ext(result_type)
         old_filename = os.path.basename(filepath)

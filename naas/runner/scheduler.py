@@ -171,7 +171,7 @@ class Scheduler:
                                 "status": t_error,
                                 "filepath": file_filepath,
                                 "error": "Error in next_url",
-                                "trace": str(tb),
+                                "traceback": str(tb),
                             }
                         )
                 self.__logger.info(
@@ -212,7 +212,7 @@ class Scheduler:
                     "status": t_error,
                     "filepath": file_filepath,
                     "error": "Unknow error",
-                    "trace": str(tb),
+                    "traceback": str(tb),
                 }
             )
             await self.__jobs.update(
@@ -273,7 +273,7 @@ class Scheduler:
                     "filepath": "analytics",
                     "status": t_error,
                     "error": str(e),
-                    "trace": tb,
+                    "traceback": tb,
                 }
             )
 
@@ -332,7 +332,7 @@ class Scheduler:
                     "filepath": "scheduler",
                     "duration": duration_total,
                     "error": str(e),
-                    "trace": tb,
+                    "traceback": tb,
                 }
             )
         except:  # noqa: E722
@@ -346,6 +346,6 @@ class Scheduler:
                     "filepath": "scheduler",
                     "duration": duration_total,
                     "error": "Unknow error",
-                    "trace": tb,
+                    "traceback": tb,
                 }
             )

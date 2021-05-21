@@ -46,9 +46,13 @@ class SqliteTable:
             if col != "":
                 col += " or "
             col += f"{c} like " + "'%" + value + "%'"
-        cursor = self.__db.cursor()
-        cursor.execute(f"SELECT * FROM {table} WHERE {col}")
-        return cursor.fetchall()
+        try:
+            cursor = self.__db.cursor()
+            cursor.execute(f"SELECT * FROM {table} WHERE {col}")
+            return cursor.fetchall()
+        except Exception as e:
+            print(e)
+            return []
 
     def add_on_table(self, to_add, commit=True, table=""):
         keys = ""
@@ -71,9 +75,13 @@ class SqliteTable:
     def get_db_content(self, table=""):
         if table == "":
             table = self.__focused_table
-        cursor = self.__db.cursor()
-        cursor.execute(f'SELECT * FROM {table}')
-        return cursor.fetchall()
+        try:
+            cursor = self.__db.cursor()
+            cursor.execute(f'SELECT * FROM {table}')
+            return cursor.fetchall()
+        except Exception as e:
+            print(e)
+            return []
 
     def csv_to_sql(self, csv_file):
         try:
