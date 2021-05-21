@@ -1,3 +1,9 @@
+## 1.15.11 (2021-05-21)
+
+### Fix
+
+- add missing colunm + add try catch
+
 ## 1.15.10 (2021-05-21)
 
 ### Fix
