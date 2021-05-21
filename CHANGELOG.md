@@ -1,3 +1,9 @@
+## 1.15.8 (2021-05-21)
+
+### Fix
+
+- add sqlite to requirements
+
 ## 1.15.7 (2021-05-19)
 
 ### Refactor
