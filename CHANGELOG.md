@@ -1,3 +1,9 @@
+## 1.15.10 (2021-05-21)
+
+### Fix
+
+- disable report callback with env var
+
 ## 1.15.9 (2021-05-21)
 
 ### Fix
