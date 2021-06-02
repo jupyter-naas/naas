@@ -70,9 +70,7 @@ def move_job(old_path, new_path):
 def open_help():
     data = __crisp
     if n_env.user:
-        data += (
-            f'<script>window.$crisp.push(["set", "user:email", ["{str(n_env.user)}"]])</script>'
-        )
+        data += f'<script>window.$crisp.push(["set", "user:email", ["{str(n_env.user)}"]])</script>'
     data += f'<script>window.$crisp.push(["set", "session:data", [[["naas_version", "{str(n_env.version)}"]]]])</script>'
     data += '<script>window.$crisp.push(["do", "chat:show"])</script>'
     data += '<script>window.$crisp.push(["do", "chat:open"])</script>'

@@ -104,12 +104,8 @@ class Jobs:
         async with self.__storage_sem:
             try:
                 if len(self.__df) > 0:
-                    cur_elems = self.__df.query(
-                        f'path == "{old_path}"'
-                    )
-                    new_elems = self.__df.query(
-                        f'path == "{new_path}"'
-                    )
+                    cur_elems = self.__df.query(f'path == "{old_path}"')
+                    new_elems = self.__df.query(f'path == "{new_path}"')
                     if len(cur_elems.index) == 0:
                         return {"status": t_skip, "error": "job not found"}
                     elif len(new_elems.index) != 0:
@@ -127,11 +123,15 @@ class Jobs:
                     os.rename(old_path, new_path)
                     moved = [{"from": cpath(old_path), "to": cpath(new_path)}]
                     for ffile in os.listdir(dirname):
-                        if ffile.endswith(f'__{filename}'):
+                        if ffile.endswith(f"__{filename}"):
                             tmp_path = os.path.join(dirname, ffile)
                             start = ffile.replace(filename, "")
-                            new_tmp_path = new_path.replace(new_filename, f"{start}{new_filename}")
-                            moved.append({"from": cpath(tmp_path), "to": cpath(new_tmp_path)})
+                            new_tmp_path = new_path.replace(
+                                new_filename, f"{start}{new_filename}"
+                            )
+                            moved.append(
+                                {"from": cpath(tmp_path), "to": cpath(new_tmp_path)}
+                            )
                             os.rename(tmp_path, new_tmp_path)
                     self.__save_to_file(uid, data)
                     return {"status": t_send, "data": moved}
@@ -259,7 +259,11 @@ class Jobs:
         return res
 
     def __match_clear(self, cur_filename, filename, clear_all):
-        if clear_all and cur_filename.endswith(f'__{filename}') or cur_filename == filename:
+        if (
+            clear_all
+            and cur_filename.endswith(f"__{filename}")
+            or cur_filename == filename
+        ):
             return True
         else:
             return False

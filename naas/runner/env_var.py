@@ -99,9 +99,9 @@ class n_env:
 
     @property
     def report_callback(self):
-        return self._report_callback or (os.environ.get(
-            "REPORT_CALLBACK", "True"
-        ) == 'True')
+        return self._report_callback or (
+            os.environ.get("REPORT_CALLBACK", "True") == "True"
+        )
 
     @report_callback.setter
     def report_callback(self, report_callback):
@@ -122,7 +122,9 @@ class n_env:
 
     @property
     def hub_base(self):
-        res = self._hub_base or os.environ.get("JUPYTERHUB_URL") or "https://app.naas.ai"
+        res = (
+            self._hub_base or os.environ.get("JUPYTERHUB_URL") or "https://app.naas.ai"
+        )
         if "://" not in res:
             return f"http://{res}"
         else:
@@ -279,6 +281,4 @@ n_env = n_env()
 
 
 def cpath(path):
-    return path.replace(n_env.path_naas_folder, "").replace(
-                            f"{n_env.server_root}/", ""
-                        )
+    return path.replace(n_env.path_naas_folder, "").replace(f"{n_env.server_root}/", "")
