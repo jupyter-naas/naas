@@ -81,16 +81,14 @@ class SqliteTable:
                     values += f"""'{value}'"""
             except Exception as e:
                 print(e)
-        self.execute_command(
-            f"Insert Into {table} ({keys}) Values({values})",
-            commit)
+        self.execute_command(f"Insert Into {table} ({keys}) Values({values})", commit)
 
     def get_db_content(self, table=""):
         if table == "":
             table = self.__focused_table
         try:
             cursor = self.__db.cursor()
-            cursor.execute(f'SELECT * FROM {table}')
+            cursor.execute(f"SELECT * FROM {table}")
             return cursor.fetchall()
         except Exception as e:
             print(e)
@@ -117,6 +115,4 @@ class SqliteTable:
                 columns += col + " TEXT"
             except Exception as e:
                 print(e)
-        self.execute_command(
-            f"Create Table IF NOT EXISTS {table} ({columns})",
-            False)
+        self.execute_command(f"Create Table IF NOT EXISTS {table} ({columns})", False)

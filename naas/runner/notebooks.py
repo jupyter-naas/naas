@@ -34,6 +34,7 @@ kern_manager = None
 
 try:
     from enterprise_gateway.services.kernels.remotemanager import RemoteKernelManager
+
     kern_manager = RemoteKernelManager
 except ImportError:
     pass
@@ -366,13 +367,8 @@ class Notebooks:
         res["duration"] = time.time() - start_time
         try:
             self.__send_notification(
-                uid,
-                res,
-                file_filepath_out,
-                current_type,
-                value,
-                params
-                )
+                uid, res, file_filepath_out, current_type, value, params
+            )
         except ConnectionError as err:
             self.__logger.error(
                 {

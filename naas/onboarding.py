@@ -17,7 +17,7 @@ def download_file(url, file_name=None):
     if not file_name:
         file_name = raw_target.split("/")[-1]
         file_name = urllib.parse.unquote(file_name)
-    elif file_name not in '.':
+    elif file_name not in ".":
         file_name = f"{file_name}.ipynb"
 
     file_name = f"dl_{file_name}"
@@ -29,13 +29,20 @@ def download_file(url, file_name=None):
     content = b"ERROR"
     if "://" not in raw_target:
         try:
-            cur_path = os.path.join(f"{n_env.path_naas_folder}{n_env.server_root}", raw_target)
+            cur_path = os.path.join(
+                f"{n_env.path_naas_folder}{n_env.server_root}", raw_target
+            )
             ff = open(cur_path, "rb")
             content = ff.read()
             ff.close()
         except Exception as e:
             print(f"Cannot open local file {cur_path}", e)
-            content = b"ERROR: Cannot open local file " + bytes(cur_path, 'utf-8') + b" " + bytes(raw_target, 'utf-8')
+            content = (
+                b"ERROR: Cannot open local file "
+                + bytes(cur_path, "utf-8")
+                + b" "
+                + bytes(raw_target, "utf-8")
+            )
     else:
         r = requests.get(raw_target)
         content = r.content

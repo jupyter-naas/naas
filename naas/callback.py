@@ -12,7 +12,16 @@ class Callback:
     def __init__(self):
         self.headers = {"Authorization": f"token {n_env.token}"}
 
-    def add(self, response={}, response_headers={}, auto_delete=True, default_result=None, no_override=False, user=None, uuid=None):
+    def add(
+        self,
+        response={},
+        response_headers={},
+        auto_delete=True,
+        default_result=None,
+        no_override=False,
+        user=None,
+        uuid=None,
+    ):
         try:
             data = {
                 "response": response,
@@ -20,13 +29,13 @@ class Callback:
                 "responseHeaders": response_headers,
             }
             if no_override:
-                data['responseHeaders']['naas_no_override'] = no_override
+                data["responseHeaders"]["naas_no_override"] = no_override
             if default_result:
-                data['result'] = default_result
+                data["result"] = default_result
             if user:
-                data['user'] = user
+                data["user"] = user
             if uuid:
-                data['uuid'] = uuid
+                data["uuid"] = uuid
             req = requests.post(
                 url=f"{n_env.callback_api}/", headers=self.headers, json=data
             )
@@ -45,7 +54,7 @@ class Callback:
                 "uuid": uuid,
             }
             if user:
-                data['user'] = user
+                data["user"] = user
             req = requests.get(
                 url=f"{n_env.callback_api}/",
                 params=data,
@@ -81,7 +90,7 @@ class Callback:
                 "uuid": uuid,
             }
             if user:
-                data['user'] = user
+                data["user"] = user
             req = requests.delete(
                 url=f"{n_env.callback_api}/", headers=self.headers, json=data
             )
@@ -100,7 +109,7 @@ class Callback:
     def list(self, user=None):
         data = {}
         if user:
-            data['user'] = user
+            data["user"] = user
         req = requests.get(
             url=f"{n_env.callback_api}/",
             params=data,

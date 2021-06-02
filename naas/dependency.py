@@ -29,7 +29,7 @@ class Dependency:
                 if raw:
                     json_filtered.append(item)
                 else:
-                    json_filtered.append({"path": item['path']})
+                    json_filtered.append({"path": item["path"]})
         if raw is False:
             df = pd.DataFrame(json_filtered)
             return df
@@ -67,4 +67,4 @@ class Dependency:
         self.manager.del_prod({"type": self.role, "path": current_file}, debug)
         print("🗑 Done! Your Dependency has been remove from production.\n")
         if all is True:
-            self.clear(current_file, 'all')
+            self.clear(current_file, "all")
