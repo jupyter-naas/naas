@@ -41,16 +41,16 @@ class Logger:
         is_csv = os.path.exists(self.__logs_csv_file)
         print("Init Naas logger")
         self.__sql = SqliteTable(self.__columns, self.__logs_file)
-        if (not file_creation and clear):
+        if not file_creation and clear:
             self.__sql.clear()
-        if (file_creation and is_csv and not clear):
+        if file_creation and is_csv and not clear:
             self.__sql.csv_to_sql(self.__logs_csv_file)
             os.remove(self.__logs_csv_file)
 
     def add_log(self, data, levelname):
-        data['asctime'] = dt.datetime.now().strftime(self.__date_format)
-        data['levelname'] = levelname
-        data['name'] = self.__name
+        data["asctime"] = dt.datetime.now().strftime(self.__date_format)
+        data["levelname"] = levelname
+        data["name"] = self.__name
         self.__sql.add_on_table(data)
 
     def info(self, data):
@@ -76,7 +76,9 @@ class Logger:
     ):
         df = None
         try:
-            df = pd.DataFrame(data=self.__sql.search_in_db(search), index=None, columns=self.__columns)
+            df = pd.DataFrame(
+                data=self.__sql.search_in_db(search), index=None, columns=self.__columns
+            )
             if len(filters) > 0:
                 df = df[df.type.isin(filters)]
             if len(sort) > 0:

@@ -42,7 +42,9 @@ class Manager:
         self.set_runner_mode()
 
     def get_size(self):
-        response = requests.get(f"{n_env.api}/{t_performance}/{t_storage}", headers=self.headers)
+        response = requests.get(
+            f"{n_env.api}/{t_performance}/{t_storage}", headers=self.headers
+        )
         data = response.json()
         if data and data.get(f"{t_storage}"):
             print("📝 Memory used", data.get(f"{t_storage}"))
@@ -154,7 +156,7 @@ class Manager:
             except Exception:
                 process_id = os.getpid()
                 for notebook in notebooks:
-                    if process_id in notebook['process_ids']:
+                    if process_id in notebook["process_ids"]:
                         return os.path.join(n_env.server_root, notebook["path"])
         except Exception as e:
             tb = traceback.format_exc()
@@ -163,7 +165,9 @@ class Manager:
 
     def __get_process_ids(self, name):
         try:
-            child = subprocess.Popen(['pgrep', '-f', name], stdout=subprocess.PIPE, shell=False)
+            child = subprocess.Popen(
+                ["pgrep", "-f", name], stdout=subprocess.PIPE, shell=False
+            )
             response = child.communicate()[0]
             return [int(pid) for pid in response.split()]
         except Exception:
@@ -175,12 +179,12 @@ class Manager:
             req = requests.get(url=base_url, headers=self.headers)
             req.raise_for_status()
             sessions = req.json()
-            sessions = filter(lambda item: 'notebook' in item['type'], sessions)
+            sessions = filter(lambda item: "notebook" in item["type"], sessions)
             notebooks = [
                 {
                     "kernel_id": notebook["kernel"]["id"],
                     "path": notebook["notebook"]["path"],
-                    'process_ids': self.__get_process_ids(notebook['kernel']['id'])
+                    "process_ids": self.__get_process_ids(notebook["kernel"]["id"]),
                 }
                 for notebook in sessions
             ]
@@ -313,7 +317,9 @@ class Manager:
             res = r.json()
             if res.get("status") == t_error or res.get("status") == t_skip:
                 raise ValueError(f"❌ Cannot get your file {path}")
-            new_path = self.__save_file(self.safe_filepath(current_file), res.get("file"))
+            new_path = self.__save_file(
+                self.safe_filepath(current_file), res.get("file")
+            )
             print(
                 f"🕣 Your Notebook {mode or ''} {filename}, has been copied into your local folder.\n"
             )

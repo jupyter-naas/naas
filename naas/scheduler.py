@@ -62,13 +62,13 @@ class Scheduler:
                 if raw:
                     json_filtered.append(item)
                 else:
-                    json_filtered.append({"path": item['path'], "value": item['value']})
+                    json_filtered.append({"path": item["path"], "value": item["value"]})
         if raw is False:
             df = pd.DataFrame(json_filtered)
-            df = df.style.format({'value': pretty_cron.prettify_cron})
+            df = df.style.format({"value": pretty_cron.prettify_cron})
             return df
         return json_filtered
-    
+
     def __check_cron(self, text):
         res = False
         try:
@@ -123,5 +123,5 @@ class Scheduler:
         self.manager.del_prod({"type": self.role, "path": current_file}, debug)
         print("🗑 Done! Your Scheduler has been remove from production.\n")
         if all is True:
-            self.clear(current_file, 'all')
-            self.clear_output(current_file, 'all')
+            self.clear(current_file, "all")
+            self.clear_output(current_file, "all")

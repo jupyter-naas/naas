@@ -99,7 +99,9 @@ class JobsController(HTTPMethodView):
         path = self.__get_prod_path(cur_path, cur_type)
         job = await self.__jobs.find_by_path(uid, path, cur_type)
         if not job:
-            return response.json({"status": t_error, "error": "job not found"}, status=500)
+            return response.json(
+                {"status": t_error, "error": "job not found"}, status=500
+            )
         if cur_mode and cur_mode == "list_history":
             job["files"] = self.__jobs.list_files(uid, path, cur_type)
         elif cur_mode and cur_mode == "list_output":
