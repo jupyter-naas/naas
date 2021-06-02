@@ -136,3 +136,6 @@ tests/.DS_Store
 pytest_tmp/
 Welcome_to_Naas.ipynb
 .naas
+
+# PyCharm
+.idea/

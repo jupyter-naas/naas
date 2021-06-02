@@ -23,11 +23,12 @@ jobs:
       run: |
         python3 -m pip install -U pip
         pip3 install -e '.[dev]'
-    - name: Run test and linters
+    - name: Run linters
       run: |
-        python3 -m black naas
-        python3 -m flake8 naas
-        pytest
+        black --check naas
+        flake8 naas
+    - name: Run test and linters
+      run: pytest tests/
     - uses: amannn/action-semantic-pull-request@v3.1.0
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
