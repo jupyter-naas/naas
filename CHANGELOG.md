@@ -1,3 +1,9 @@
+## 1.16.1 (2021-06-08)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.61.0
+
 ## 1.16.0 (2021-06-04)
 
 ### Feat
