@@ -1,3 +1,9 @@
+## 1.16.2 (2021-06-09)
+
+### Fix
+
+- **scheduler.py**: Disable call to self.analytics(main_uid) every minutes
+
 ## 1.16.1 (2021-06-08)
 
 ### Fix
