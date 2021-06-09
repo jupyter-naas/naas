@@ -1,3 +1,10 @@
+## 1.16.4 (2021-06-09)
+
+### Refactor
+
+- logger reformatted with black
+- fix unused variable
+
 ## 1.16.3 (2021-06-09)
 
 ### Fix
