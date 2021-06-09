@@ -3,6 +3,7 @@ from .ntypes import (
     t_performance,
     t_storage,
     t_job,
+    t_job_not_found,
     t_env,
     t_skip,
     t_send,
@@ -280,9 +281,12 @@ class Manager:
                 headers=self.headers,
                 params={"path": current_file, "type": self.__filetype, "mode": mode},
             )
-            r.raise_for_status()
+            if r.status_code != 404:
+                r.raise_for_status()
             res = r.json()
-            if res.get("status") == t_error or res.get("status") == t_skip:
+            if (
+                res.get("status") == t_error or res.get("status") == t_skip
+            ) and res.get("error") != t_job_not_found:
                 raise ValueError(f"❌ Cannot list your file {path}")
             if res.get("files", None) and len(res.get("files", [])) > 0:
                 return pd.DataFrame(data=res.get("files", []))
