@@ -335,7 +335,7 @@ class Scheduler:
                 }
             )
             # We disable this for now as it is not used and is therefore filling up the database.
-            #await self.analytics(main_uid)
+            # await self.analytics(main_uid)
         except Exception as e:
             tb = traceback.format_exc()
             duration_total = time.time() - all_start_time
