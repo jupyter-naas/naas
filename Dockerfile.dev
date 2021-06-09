@@ -6,7 +6,7 @@ ARG VCS_REF
 
 ENV NAAS_INSTALL_SUPP 'no'
 ENV JUPYTER_ENABLE_LAB 'yes'
-ENV NB_USER=bob
+ENV NB_USER=ftp
 
 USER root
 LABEL org.label-schema.build-date=$BUILD_DATE \
@@ -37,3 +37,4 @@ COPY scripts /etc/naas/scripts
 COPY custom /etc/naas/custom
 RUN /etc/naas/scripts/install_supp
 RUN /etc/naas/scripts/customize
+RUN rm -rf /home/$NB_USER/naas

@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -x
+
 BUILD="YES"
 SUPP="NO"
 N_ENV="dev"
