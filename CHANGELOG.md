@@ -1,3 +1,9 @@
+## 1.16.5 (2021-06-09)
+
+### Fix
+
+- **jobs.list**: Return 404 instead of 500 when no jobs are found for a Notebook (path)
+
 ## 1.16.4 (2021-06-09)
 
 ### Refactor
