@@ -43,9 +43,9 @@ class Logger:
         self.__sql = SqliteTable(self.__columns, self.__logs_file)
         if not file_creation and clear:
             self.__sql.clear()
-        if file_creation and is_csv and not clear:
-            self.__sql.csv_to_sql(self.__logs_csv_file)
-            os.remove(self.__logs_csv_file)
+#        if file_creation and is_csv and not clear:
+#            self.__sql.csv_to_sql(self.__logs_csv_file)
+#            os.remove(self.__logs_csv_file)
 
     def add_log(self, data, levelname):
         data["asctime"] = dt.datetime.now().strftime(self.__date_format)
