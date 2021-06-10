@@ -1,3 +1,9 @@
+## 1.16.7 (2021-06-10)
+
+### Fix
+
+- **naas-runner**: Run naas runner in a Thread and restart it automatically
+
 ## 1.16.6 (2021-06-10)
 
 ### Refactor
