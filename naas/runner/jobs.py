@@ -348,8 +348,13 @@ class Jobs:
                     for d in data:
                         try:
                             d["path"] = d["path"] if prodPath else cpath(d["path"])
-                            d["runs"] = json.loads(d.get("runs", "[]"))
-                        except Exception:
+                            runs = d.get("runs", "[]")
+                            if type(runs) is str:
+                                d["runs"] = json.loads(runs)
+                            else:
+                                d["runs"] = runs
+                        except Exception as e:
+                            print(e)
                             d["runs"] = []
                             pass
         except Exception as e:
