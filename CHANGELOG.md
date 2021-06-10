@@ -1,3 +1,9 @@
+## 1.16.8 (2021-06-10)
+
+### Fix
+
+- **naas/runner/jobs.py**: Fix job not returning "runs" because of a JSON exception being triggered
+
 ## 1.16.7 (2021-06-10)
 
 ### Fix
