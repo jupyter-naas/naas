@@ -6,7 +6,7 @@ ARG VCS_REF
 
 ENV NAAS_INSTALL_SUPP 'no'
 ENV JUPYTER_ENABLE_LAB 'yes'
-ENV NB_USER=bob
+ENV NB_USER=ftp
 
 USER root
 LABEL org.label-schema.build-date=$BUILD_DATE \
