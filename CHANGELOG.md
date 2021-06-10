@@ -1,3 +1,13 @@
+## 1.16.6 (2021-06-10)
+
+### Refactor
+
+- **Dockerfile.dev**: Remove RUN rm -rf /home/$NB_USER/naas
+
+### Fix
+
+- **install-and-Dockerfile.dev**: Fixed livereload for development environment
+
 ## 1.16.5 (2021-06-09)
 
 ### Fix
