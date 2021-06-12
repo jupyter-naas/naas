@@ -25,7 +25,7 @@ dev_dep = [
 ]
 setup(
     name="naas",
-    version="1.16.8",
+    version="1.17.0",
     author="Martin Donadieu",
     author_email="martindonadieu@gmail.com",
     license="BSD",

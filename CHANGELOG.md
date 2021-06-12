@@ -1,3 +1,9 @@
+## 1.17.0 (2021-06-12)
+
+### Feat
+
+- **install**: Add a setCrossPlatformVolumeParameter function to fix volumes
+
 ## 1.16.8 (2021-06-10)
 
 ### Fix
