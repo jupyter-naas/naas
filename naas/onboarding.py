@@ -20,7 +20,7 @@ def download_file(url, file_name=None):
     elif file_name not in ".":
         file_name = f"{file_name}.ipynb"
 
-    file_name = f"dl_{file_name}"
+    file_name = f"{file_name}"
     if "://github.com" in raw_target:
         raw_target = raw_target.replace(
             "https://github.com/", "https://raw.githubusercontent.com/"
