@@ -1,3 +1,15 @@
+## 1.17.17b0 (2021-06-23)
+
+### Fix
+
+- **downloader**: Update redirect url to open downloaded file (#132)
+
+## 1.17.15b0 (2021-06-23)
+
+### Fix
+
+- **papermill**: Surround Papermill import with warning catching logic (#131)
+
 ## 1.17.16 (2021-06-23)
 
 ### Fix
