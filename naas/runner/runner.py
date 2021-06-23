@@ -44,11 +44,7 @@ from naas.ntypes import (
 asyncio.set_event_loop_policy(None)
 nest_asyncio.apply()
 
-<<<<<<< HEAD
-__version__ = "1.17.16"
-=======
 __version__ = "1.17.15b0"
->>>>>>> dev
 
 
 class Runner:
