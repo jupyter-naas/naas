@@ -9,6 +9,11 @@
 ### Fix
 
 - **dependency**: update naas_drivers 0.66.7
+## 1.17.15b0 (2021-06-23)
+
+### Fix
+
+- **papermill**: Surround Papermill import with warning catching logic (#131)
 
 ## 1.17.14 (2021-06-22)
 
