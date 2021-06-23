@@ -20,7 +20,6 @@ class DownloaderController(HTTPMethodView):
         url = request.args.get("url", None)
         mode_api = request.args.get("api", None)
         file_name = request.args.get("name", None)
-        redirect_to = f"{n_env.user_url}/lab"
         if url is None and file_name is None:
             return json({"status": t_error})
         if url is None:
@@ -47,6 +46,7 @@ class DownloaderController(HTTPMethodView):
                 return json({"status": t_error, "error": str(e), "tb": str(tb)})
         wp_set_for_open_filebrowser(file_name)
         if mode_api is None:
+            redirect_to = f"{n_env.user_url}/lab/tree/{file_name}"
             return redirect(redirect_to)
         else:
             return json({"status": t_send})

@@ -1,3 +1,14 @@
+## 1.17.16 (2021-06-23)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.66.8
+
+## 1.17.15 (2021-06-23)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.66.7
 ## 1.17.15b0 (2021-06-23)
 
 ### Fix
