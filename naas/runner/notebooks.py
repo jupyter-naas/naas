@@ -1,4 +1,3 @@
-
 from .custom_papermill import execute_notebook
 from naas.ntypes import (
     t_notebook,
@@ -18,8 +17,10 @@ from naas.ntypes import (
 from nbconvert import HTMLExporter
 from .env_var import cpath, n_env
 from sanic import response
+
 # # Temporary way to remove Papermill import warnings. Shuold be fixed when reaching Papermill 2.3.4
 import warnings
+
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
     import papermill as pm

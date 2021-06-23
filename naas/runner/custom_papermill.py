@@ -7,6 +7,7 @@ from pathlib import Path
 
 # Temporary way to remove Papermill import warnings. Shuold be fixed when reaching Papermill 2.3.4
 import warnings
+
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
     from papermill.log import logger
@@ -27,7 +28,7 @@ with warnings.catch_warnings():
         add_builtin_parameters,
         parameterize_notebook,
         parameterize_path,
-        )
+    )
 
 import json
 
