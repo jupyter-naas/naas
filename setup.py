@@ -20,7 +20,7 @@ dev_dep = [
     "pre-commit==2.12.1",
     "black==21.5b1",
     "imgcompare==2.0.1",
-    "commitizen==2.17.4",
+    "commitizen==2.17.11",
     "pytest-cov==2.11.1",
 ]
 setup(
