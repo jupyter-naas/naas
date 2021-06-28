@@ -1,3 +1,9 @@
+## 1.17.17b3 (2021-06-28)
+
+### Fix
+
+- **flake8**: Remove wp_set_for_open_filebrowser as it is not used
+
 ## 1.17.17b2 (2021-06-28)
 
 ### Fix
