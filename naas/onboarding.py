@@ -2,6 +2,9 @@ from naas.runner.env_var import n_env
 import urllib.parse
 import requests
 import os
+from os import path
+import pathlib
+
 
 __jup_def_set_workspace = "/etc/naas/custom/set_workspace.json"
 __jup_def_set_workspace_browser = "/etc/naas/custom/set_workspace_browser.json"
@@ -12,6 +15,16 @@ __github_api_url = "https://api.github.com/repos/{REPO}/git/trees/{BRANCH}?recur
 __github_base_url = "https://github.com/{REPO}/blob/{BRANCH}/"
 
 
+def __generate_unique_path(filepath):
+    count = 1
+    unique_path = filepath
+    while path.exists(unique_path):
+        p = pathlib.Path(filepath)
+        unique_path = path.join(p.parents[0], f"{p.stem}_({count}){p.suffix}")
+        count += 1
+    return unique_path
+
+
 def download_file(url, file_name=None):
     raw_target = url
     if not file_name:
@@ -20,7 +33,7 @@ def download_file(url, file_name=None):
     elif file_name not in ".":
         file_name = f"{file_name}.ipynb"
 
-    file_name = f"dl_{file_name}"
+    file_name = f"{file_name}"
     if "://github.com" in raw_target:
         raw_target = raw_target.replace(
             "https://github.com/", "https://raw.githubusercontent.com/"
@@ -48,6 +61,7 @@ def download_file(url, file_name=None):
         content = r.content
     if content.startswith(b"ERROR"):
         file_name = "dl_error.txt"
+    file_name = __generate_unique_path(file_name)
     with open(file_name, "wb") as f:
         f.write(content)
         f.close()
