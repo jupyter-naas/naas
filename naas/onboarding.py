@@ -68,22 +68,6 @@ def download_file(url, file_name=None):
     return file_name
 
 
-def wp_set_for_open_filebrowser(url):
-    try:
-        filename = url.split("/")[-1]
-        filename = filename.split(".")[0]
-        new_wp = os.path.join(n_env.path_naas_folder, f"{filename}_workspace.json")
-        with open(__jup_def_set_workspace_browser, "r") as fh:
-            content_wp = fh.read()
-            new_content_wp = content_wp.replace("{NB_NAME}", filename)
-            with open(new_wp, "w+") as f:
-                f.write(new_content_wp)
-        os.system(f"{__jup_load_workspace} {new_wp}")
-        os.remove(new_wp)
-    except Exception as e:
-        print("Cannot config jupyter workspace", e)
-
-
 def __wp_set_for_open(url):
     try:
         filename_full = url.split("/")[-1]
