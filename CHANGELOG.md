@@ -1,3 +1,9 @@
+## 1.17.17b1 (2021-06-28)
+
+### Refactor
+
+- **onboarding,downloader**: Remove dl_ prefix on downloaded files (#133)
+
 ## 1.17.17b0 (2021-06-23)
 
 ### Fix
