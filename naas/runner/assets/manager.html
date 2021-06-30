@@ -151,6 +151,7 @@
                 ],
                 env: {},
                 logs: [],
+                pageState: 0,
                 totalLogRecords: 0,
                 debouceFilter: null,
                 serverLogParams: {
@@ -409,7 +410,7 @@
                     return base
                 },
                 linkToLab() {
-                    return `${this.linkToHub()}/lab`
+                    return `${this.linkToHub()}/naas`
                 },
                 linkToJupOutput(link) {
                     const partial = this.stripNaasPath(link);
@@ -424,6 +425,9 @@
                     const fileUrl = `${this.linkToHub()}/naas/downloader?url=${partial}`;
                     window.open(fileUrl, '_blank');
                 },
+                setPageState(value) {
+                    this.pageState = value;
+                }
             },
             created: function () {
                 const uri = window.location.href.split('?');
@@ -508,108 +512,119 @@
             </div>
         </nav>
         <div class="w-full py-8 md:px-12">
-            <h2 class="text-2xl font-semibold text-gray-800"><span class="text-white">Jobs</span></h2>
-            <vue-good-table :columns="columns_jobs" :rows="jobs" :search-options="{
-                    enabled: true,
-                    externalQuery: filter
-                }" :pagination-options="{
-                    enabled: filter === '',
-                    mode: 'records',
-                    perPage: 10,
-                    position: 'top',
-                    perPageDropdown: [5, 15, 20],
-                    dropdownAllowAll: true,
-                    nextLabel: 'next',
-                    prevLabel: 'prev',
-                    rowsPerPageLabel: 'Rows per page',
-                    ofLabel: 'of',
-                    pageLabel: 'page', // for 'pages' mode
-                    allLabel: 'All',
-                }">
-                <template slot="table-row" slot-scope="props">
-                    <span v-if="props.column.field == 'status'">
-                        <span v-if="props.row.status === 'healthy'"
-                            style="font-weight: bold; color: #22BC66;">{{props.formattedRow[props.column.field]}}</span>
-                        <span
-                            v-else-if="props.row.status === 'error' || props.row.status === 'exception' || props.row.status === 'not_found'"
-                            style="font-weight: bold; color: #f56565;">{{props.formattedRow[props.column.field]}}</span>
-                        <span v-else
-                            style="font-weight: bold; color: #ed8936;">{{props.formattedRow[props.column.field]}}</span>
-                    </span>
-                    <span v-else-if="props.column.field == 'value'">
-                        <a :href="openUrl(props.formattedRow[props.column.field], props.row.type)" target="_blank" style="font-weight: bold; color: #4299e1;"
-                            v-if="props.row.type == 'asset' || props.row.type == 'notebook'"
-                            >
-                            {{props.formattedRow[props.column.field].substring(0,6)}}
-                        </a>
-                        <span v-else>{{props.formattedRow[props.column.field]}}</span>
-                    </span>
-                    <span v-else-if="props.column.field == 'id'">
-                        <a href="#" style="font-weight: bold; color: #4299e1;"
-                            v-on:click="setFilter(props.formattedRow[props.column.field])">
-                            {{props.formattedRow[props.column.field].substring(0,6)}}
-                        </a>
-                    </span>
-                    <span v-else-if="props.column.field == 'path'">
-                        <a href="#" v-on:click="linkToJup(props.formattedRow[props.column.field])" target="_blank"
-                            style="font-weight: bold; color: gray;">{{stripNaasPath(props.formattedRow[props.column.field])}}</a>
-                    </span>
-                    <span v-else-if="props.column.field == 'lastRun'">
-                        {{toMMSS(props.row.type, props.formattedRow[props.column.field])}}
-                    </span>
-                    <span v-else>
-                        {{props.formattedRow[props.column.field]}}
-                    </span>
-                </template>
-            </vue-good-table>
-            <h2 class="pt-8 text-2xl font-semibold text-gray-800"><span class="text-white">History</span></h2>
-            <!-- <vue-loaders-line-scale v-if="loadingLog"/> -->
-            <div class="vld-parent">
-                <loading :active.sync="loadingLog" 
-                :is-full-page="loadingFull"></loading>
-                <vue-good-table mode="remote" :columns="columns_logs" @on-page-change="onPageLogChange"
-                    @on-sort-change="onSortLogChange" @on-column-filter="onColumnLogFilter"
-                    @on-per-page-change="onPerPageLogChange" :total-rows="totalLogRecords" :rows="logs" :search-options="{
-                    enabled: true,
-                    externalQuery: filter
-                }" :sort-options="{
-                    enabled: true,
-                }" :pagination-options="{
-                    enabled: true,
-                    mode: 'records',
-                    perPage: 15,
-                    position: 'top',
-                    perPageDropdown: [5, 10, 20],
-                    dropdownAllowAll: true,
-                    nextLabel: 'next',
-                    prevLabel: 'prev',
-                    rowsPerPageLabel: 'Rows per page',
-                    ofLabel: 'of',
-                    pageLabel: 'page', // for 'pages' mode
-                    allLabel: 'All',
-                }">
+            <button @click="setPageState(0)" class="px-2 py-2 text-gray-900 bg-gray-100 rounded hover:bg-gray-600 hover:text-gray-100 md:mx-2">Jobs</button>
+            <button @click="setPageState(1)" class="px-2 py-2 text-gray-900 bg-gray-100 rounded hover:bg-gray-600 hover:text-gray-100 md:mx-2">History</button>
+            <button @click="setPageState(2)" class="px-2 py-2 text-gray-900 bg-gray-100 rounded hover:bg-gray-600 hover:text-gray-100 md:mx-2">Template</button>
+            <div v-if="pageState == 0">
+                <h2 class="pt-8 text-2xl font-semibold text-gray-800"><span class="text-white">Jobs</span></h2>
+                <vue-good-table :columns="columns_jobs" :rows="jobs" :search-options="{
+                        enabled: true,
+                        externalQuery: filter
+                    }" :pagination-options="{
+                        enabled: filter === '',
+                        mode: 'records',
+                        perPage: 10,
+                        position: 'top',
+                        perPageDropdown: [5, 15, 20],
+                        dropdownAllowAll: true,
+                        nextLabel: 'next',
+                        prevLabel: 'prev',
+                        rowsPerPageLabel: 'Rows per page',
+                        ofLabel: 'of',
+                        pageLabel: 'page', // for 'pages' mode
+                        allLabel: 'All',
+                    }">
                     <template slot="table-row" slot-scope="props">
-                        <span v-if="props.column.field == 'id'">
+                        <span v-if="props.column.field == 'status'">
+                            <span v-if="props.row.status === 'healthy'"
+                                style="font-weight: bold; color: #22BC66;">{{props.formattedRow[props.column.field]}}</span>
+                            <span
+                                v-else-if="props.row.status === 'error' || props.row.status === 'exception' || props.row.status === 'not_found'"
+                                style="font-weight: bold; color: #f56565;">{{props.formattedRow[props.column.field]}}</span>
+                            <span v-else
+                                style="font-weight: bold; color: #ed8936;">{{props.formattedRow[props.column.field]}}</span>
+                        </span>
+                        <span v-else-if="props.column.field == 'value'">
+                            <a :href="openUrl(props.formattedRow[props.column.field], props.row.type)" target="_blank" style="font-weight: bold; color: #4299e1;"
+                                v-if="props.row.type == 'asset' || props.row.type == 'notebook'"
+                                >
+                                {{props.formattedRow[props.column.field].substring(0,6)}}
+                            </a>
+                            <span v-else>{{props.formattedRow[props.column.field]}}</span>
+                        </span>
+                        <span v-else-if="props.column.field == 'id'">
                             <a href="#" style="font-weight: bold; color: #4299e1;"
-                                v-on:click="setFilter(props.formattedRow[props.column.field])">{{props.formattedRow[props.column.field].substring(0,
-                                4)}}</a>
+                                v-on:click="setFilter(props.formattedRow[props.column.field])">
+                                {{props.formattedRow[props.column.field].substring(0,6)}}
+                            </a>
                         </span>
-                        <span v-else-if="props.column.field == 'filepath'">
-                            {{stripNaasPath(props.formattedRow[props.column.field])}}
+                        <span v-else-if="props.column.field == 'path'">
+                            <a href="#" v-on:click="linkToJup(props.formattedRow[props.column.field])" target="_blank"
+                                style="font-weight: bold; color: gray;">{{stripNaasPath(props.formattedRow[props.column.field])}}</a>
                         </span>
-                        <span v-else-if="props.column.field == 'status'">
-                            <a href="#" v-if="props.formattedRow['error']" style="font-weight: bold; color: #f56565;"
-                                v-on:click="openError(props.formattedRow['error'], props.formattedRow['filepath'])">error</a>
-                            <a href="#" v-else-if="props.formattedRow[props.column.field] == 'healthy'"
-                                style="font-weight: bold; color: #22BC66;"
-                                v-on:click="openOutput(props.formattedRow['filepath'])">healthy</a>
-                            <p v-else>{{props.formattedRow[props.column.field]}}</p>
+                        <span v-else-if="props.column.field == 'lastRun'">
+                            {{toMMSS(props.row.type, props.formattedRow[props.column.field])}}
                         </span>
                         <span v-else>
                             {{props.formattedRow[props.column.field]}}
                         </span>
                     </template>
                 </vue-good-table>
+            </div>
+            <div v-if="pageState == 1">
+                <h2 class="pt-8 text-2xl font-semibold text-gray-800"><span class="text-white">History</span></h2>
+                <!-- <vue-loaders-line-scale v-if="loadingLog"/> -->
+                <div class="vld-parent">
+                    <loading :active.sync="loadingLog" 
+                    :is-full-page="loadingFull"></loading>
+                    <vue-good-table mode="remote" :columns="columns_logs" @on-page-change="onPageLogChange"
+                        @on-sort-change="onSortLogChange" @on-column-filter="onColumnLogFilter"
+                        @on-per-page-change="onPerPageLogChange" :total-rows="totalLogRecords" :rows="logs" :search-options="{
+                        enabled: true,
+                        externalQuery: filter
+                    }" :sort-options="{
+                        enabled: true,
+                    }" :pagination-options="{
+                        enabled: true,
+                        mode: 'records',
+                        perPage: 15,
+                        position: 'top',
+                        perPageDropdown: [5, 10, 20],
+                        dropdownAllowAll: true,
+                        nextLabel: 'next',
+                        prevLabel: 'prev',
+                        rowsPerPageLabel: 'Rows per page',
+                        ofLabel: 'of',
+                        pageLabel: 'page', // for 'pages' mode
+                        allLabel: 'All',
+                    }">
+                        <template slot="table-row" slot-scope="props">
+                            <span v-if="props.column.field == 'id'">
+                                <a href="#" style="font-weight: bold; color: #4299e1;"
+                                    v-on:click="setFilter(props.formattedRow[props.column.field])">{{props.formattedRow[props.column.field].substring(0,
+                                    4)}}</a>
+                            </span>
+                            <span v-else-if="props.column.field == 'filepath'">
+                                {{stripNaasPath(props.formattedRow[props.column.field])}}
+                            </span>
+                            <span v-else-if="props.column.field == 'status'">
+                                <a href="#" v-if="props.formattedRow['error']" style="font-weight: bold; color: #f56565;"
+                                    v-on:click="openError(props.formattedRow['error'], props.formattedRow['filepath'])">error</a>
+                                <a href="#" v-else-if="props.formattedRow[props.column.field] == 'healthy'"
+                                    style="font-weight: bold; color: #22BC66;"
+                                    v-on:click="openOutput(props.formattedRow['filepath'])">healthy</a>
+                                <p v-else>{{props.formattedRow[props.column.field]}}</p>
+                            </span>
+                            <span v-else>
+                                {{props.formattedRow[props.column.field]}}
+                            </span>
+                        </template>
+                    </vue-good-table>
+                </div>
+            </div>
+            <div v-if="pageState == 2">
+                <h2 class="pt-8 text-2xl font-semibold text-gray-800"><span class="text-white">Templates</span></h2>
+                <p class="pt-8 text-white">This section is empty</p>
             </div>
 
             <div class="col-start-2 py-4 pt-8" v-if="env && env.version">
