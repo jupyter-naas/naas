@@ -595,7 +595,6 @@
                     allLabel: 'All',
                 }">
                     <template slot="table-row" slot-scope="props">
-                        <span v-if="">
                         <span v-if="props.column.field == 'id'">
                             <a href="#" style="font-weight: bold; color: #4299e1;"
                                 v-on:click="setFilter(props.formattedRow[props.column.field])">{{props.formattedRow[props.column.field].substring(0,
