@@ -311,10 +311,14 @@
                     this.loadingLog = !this.loading;
                     return axios.get('log', { params: this.convertApiArgs() }).then((response) => {
                         if (response && !response.error) {
+                            this.logs = response.data.data;
+                            for (let i = 0; i < this.logs.length; i++) {
+                                if (this.logs[i].type == this.logs[i].filepath) {
+                                    this.logs.splice(i, 1);
+                                    --i;
+                                }
+                            }
                             try {
-                                console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
-                                console.log(response.data.data[0])
-                                this.logs = response.data.data;
                                 this.totalLogRecords = response.data.totalRecords;
                             } catch (err) {
                                 console.error(err);
@@ -591,6 +595,7 @@
                     allLabel: 'All',
                 }">
                     <template slot="table-row" slot-scope="props">
+                        <span v-if="">
                         <span v-if="props.column.field == 'id'">
                             <a href="#" style="font-weight: bold; color: #4299e1;"
                                 v-on:click="setFilter(props.formattedRow[props.column.field])">{{props.formattedRow[props.column.field].substring(0,
