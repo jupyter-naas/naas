@@ -312,6 +312,8 @@
                     return axios.get('log', { params: this.convertApiArgs() }).then((response) => {
                         if (response && !response.error) {
                             try {
+                                console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+                                console.log(response.data.data[0])
                                 this.logs = response.data.data;
                                 this.totalLogRecords = response.data.totalRecords;
                             } catch (err) {
