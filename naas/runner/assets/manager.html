@@ -12,6 +12,12 @@
     <meta name="mobile-web-app-capable" content="yes">
     <title>Naas | Manager</title>
     <style>
+        .border-object {
+            border-radius: 0.25em;
+        }
+        .border-object div {
+            border-radius: 0.25em;
+        }
         .bg-naas {
             background-color: #191b1d;
         }
@@ -19,7 +25,8 @@
             font-size: 1.5em;
             font-weight: bolder;
             color: white;
-            padding: 0.5em;
+            padding: 0.25em;
+            margin: 0.5em;
         }
         .naas-tab:hover {
             color: #dddddd;
@@ -166,8 +173,23 @@
                         field: 'lastCredit',
                     },
                 ],
+                columns_templates: [
+                    {
+                        label: 'Service',
+                        field: 'service',
+                    },
+                    {
+                        label: 'Notebook',
+                        field: 'notebook',
+                    },
+                    {
+                        label: 'Open in Naas',
+                        field: 'open',
+                    }
+                ],
                 env: {},
                 logs: [],
+                templates: [],
                 pageState: 0,
                 totalLogRecords: 0,
                 templatesState: 0,
@@ -345,6 +367,20 @@
                         console.error(err);
                     })
                 },
+                loadTemplatesItems() {
+                    return axios.get('https://raw.githubusercontent.com/jupyter-naas/awesome-notebooks/master/README.md').then((response) => {
+                        if (response && !response.error) {
+                            try {
+                                this.templates = []
+                                console.log(response.data);
+                            } catch (err) {
+                                console.error(err);
+                            }
+                        }
+                    }).catch((err) => {
+                        console.error(err);
+                    })
+                },
                 stripNaasPath(path) {
                     return path.replace(this.env.NAAS_BASE_PATH, '').replace(`${this.env.JUPYTER_SERVER_ROOT}/`, '')
                 },
@@ -396,6 +432,7 @@
                         }
                     }));
                     all_loads.push(this.loadLogItems());
+                    all_loads.push(this.loadTemplatesItems());
                     return Promise.all(all_loads).then(()=> {
                         this.loading = false;
                     });
@@ -515,40 +552,39 @@
                         </button>
                     </div>
                 </div>
-                <div class="flex items-center justify-center w-full">
-                    <div class="relative w-1/4 text-gray-900">
-                        <input type="text" name="search" v-model="filter" placeholder="Search"
-                            class="w-full h-10 px-5 pr-10 text-sm text-gray-900 bg-gray-100 rounded-full focus:outline-none">
-                        <button type="submit" class="absolute top-0 right-0 mt-3 mr-4">
-                            <svg v-if="filter == ''" class="w-4 h-4 fill-current" xmlns="http://www.w3.org/2000/svg"
-                                xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px" y="0px"
-                                viewBox="0 0 56.966 56.966" style="enable-background:new 0 0 56.966 56.966;"
-                                xml:space="preserve" width="512px" height="512px">
-                                <path
-                                    d="M55.146,51.887L41.588,37.786c3.486-4.144,5.396-9.358,5.396-14.786c0-12.682-10.318-23-23-23s-23,10.318-23,23  s10.318,23,23,23c4.761,0,9.298-1.436,13.177-4.162l13.661,14.208c0.571,0.593,1.339,0.92,2.162,0.92  c0.779,0,1.518-0.297,2.079-0.837C56.255,54.982,56.293,53.08,55.146,51.887z M23.984,6c9.374,0,17,7.626,17,17s-7.626,17-17,17  s-17-7.626-17-17S14.61,6,23.984,6z" />
-                            </svg>
-                            <svg v-if="filter != ''" @click="filter= ''" class="w-4 h-4 fill-current"
-                                viewBox="0 0 20 20">
-                                <path
-                                    d="M10.185,1.417c-4.741,0-8.583,3.842-8.583,8.583c0,4.74,3.842,8.582,8.583,8.582S18.768,14.74,18.768,10C18.768,5.259,14.926,1.417,10.185,1.417 M10.185,17.68c-4.235,0-7.679-3.445-7.679-7.68c0-4.235,3.444-7.679,7.679-7.679S17.864,5.765,17.864,10C17.864,14.234,14.42,17.68,10.185,17.68 M10.824,10l2.842-2.844c0.178-0.176,0.178-0.46,0-0.637c-0.177-0.178-0.461-0.178-0.637,0l-2.844,2.841L7.341,6.52c-0.176-0.178-0.46-0.178-0.637,0c-0.178,0.176-0.178,0.461,0,0.637L9.546,10l-2.841,2.844c-0.178,0.176-0.178,0.461,0,0.637c0.178,0.178,0.459,0.178,0.637,0l2.844-2.841l2.844,2.841c0.178,0.178,0.459,0.178,0.637,0c0.178-0.176,0.178-0.461,0-0.637L10.824,10z">
-                                </path>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
                 <div class="flex flex-col hidden md:flex-row md:block">
                     <button v-on:click="load_data()"
-                        class="px-2 py-2 text-gray-900 bg-gray-100 rounded hover:bg-gray-600 hover:text-gray-100 md:mx-2">Reload</button>
+                        class="px-2 py-2 text-gray-900 bg-gray-100 hover:bg-gray-600 hover:text-gray-100 md:mx-2 border-object">Reload</button>
                 </div>
             </div>
         </nav>
+        <div class="flex items-center justify-center w-full">
+            <div class="relative text-gray-900" style="width: 100%; margin: 0 1em 0 1em;">
+                <input type="text" name="search" v-model="filter" placeholder="Search"
+                    class="w-full h-10 px-5 pr-10 text-sm text-gray-900 bg-gray-100 focus:outline-none border-object">
+                <button type="submit" class="absolute top-0 right-0 mt-3 mr-4">
+                    <svg v-if="filter == ''" class="w-4 h-4 fill-current" xmlns="http://www.w3.org/2000/svg"
+                        xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px" y="0px"
+                        viewBox="0 0 56.966 56.966" style="enable-background:new 0 0 56.966 56.966;"
+                        xml:space="preserve" width="512px" height="512px">
+                        <path
+                            d="M55.146,51.887L41.588,37.786c3.486-4.144,5.396-9.358,5.396-14.786c0-12.682-10.318-23-23-23s-23,10.318-23,23  s10.318,23,23,23c4.761,0,9.298-1.436,13.177-4.162l13.661,14.208c0.571,0.593,1.339,0.92,2.162,0.92  c0.779,0,1.518-0.297,2.079-0.837C56.255,54.982,56.293,53.08,55.146,51.887z M23.984,6c9.374,0,17,7.626,17,17s-7.626,17-17,17  s-17-7.626-17-17S14.61,6,23.984,6z" />
+                    </svg>
+                    <svg v-if="filter != ''" @click="filter= ''" class="w-4 h-4 fill-current"
+                        viewBox="0 0 20 20">
+                        <path
+                            d="M10.185,1.417c-4.741,0-8.583,3.842-8.583,8.583c0,4.74,3.842,8.582,8.583,8.582S18.768,14.74,18.768,10C18.768,5.259,14.926,1.417,10.185,1.417 M10.185,17.68c-4.235,0-7.679-3.445-7.679-7.68c0-4.235,3.444-7.679,7.679-7.679S17.864,5.765,17.864,10C17.864,14.234,14.42,17.68,10.185,17.68 M10.824,10l2.842-2.844c0.178-0.176,0.178-0.46,0-0.637c-0.177-0.178-0.461-0.178-0.637,0l-2.844,2.841L7.341,6.52c-0.176-0.178-0.46-0.178-0.637,0c-0.178,0.176-0.178,0.461,0,0.637L9.546,10l-2.841,2.844c-0.178,0.176-0.178,0.461,0,0.637c0.178,0.178,0.459,0.178,0.637,0l2.844-2.841l2.844,2.841c0.178,0.178,0.459,0.178,0.637,0c0.178-0.176,0.178-0.461,0-0.637L10.824,10z">
+                        </path>
+                    </svg>
+                </button>
+            </div>
+        </div>
         <div class="w-full py-8 md:px-12">
             <button @click="setPageState(templatesState)" class="naas-tab" :class="templatesActive ? 'naas-current-tab' : ''">Template</button>
             <button @click="setPageState(jobsState)" class="naas-tab" :class="jobsActive ? 'naas-current-tab' : ''">Jobs</button>
             <button @click="setPageState(historyState)" class="naas-tab" :class="historyActive ? 'naas-current-tab' : ''">History</button>
             <div v-if="jobsActive">
-                <h2 class="pt-8 text-2xl font-semibold text-gray-800"><span class="text-white">Jobs</span></h2>
-                <vue-good-table :columns="columns_jobs" :rows="jobs" :search-options="{
+                <vue-good-table class="border-object" :columns="columns_jobs" :rows="jobs" :search-options="{
                         enabled: true,
                         externalQuery: filter
                     }" :pagination-options="{
@@ -603,12 +639,11 @@
                 </vue-good-table>
             </div>
             <div v-if="historyActive">
-                <h2 class="pt-8 text-2xl font-semibold text-gray-800"><span class="text-white">History</span></h2>
                 <!-- <vue-loaders-line-scale v-if="loadingLog"/> -->
                 <div class="vld-parent">
                     <loading :active.sync="loadingLog" 
                     :is-full-page="loadingFull"></loading>
-                    <vue-good-table mode="remote" :columns="columns_logs" @on-page-change="onPageLogChange"
+                    <vue-good-table class="border-object" mode="remote" :columns="columns_logs" @on-page-change="onPageLogChange"
                         @on-sort-change="onSortLogChange" @on-column-filter="onColumnLogFilter"
                         @on-per-page-change="onPerPageLogChange" :total-rows="totalLogRecords" :rows="logs" :search-options="{
                         enabled: true,
@@ -654,14 +689,32 @@
                 </div>
             </div>
             <div v-if="templatesActive">
-                <h2 class="pt-8 text-2xl font-semibold text-gray-800"><span class="text-white">Templates</span></h2>
-                <p class="pt-8 text-white">This section is empty</p>
+                <vue-good-table class="border-object" :columns="columns_templates" :rows="templates" :search-options="{
+                    enabled: true,
+                    externalQuery: filter
+                }" :pagination-options="{
+                    enabled: filter === '',
+                    mode: 'records',
+                    perPage: 10,
+                    position: 'top',
+                    perPageDropdown: [5, 15, 20],
+                    dropdownAllowAll: true,
+                    nextLabel: 'next',
+                    prevLabel: 'prev',
+                    rowsPerPageLabel: 'Rows per page',
+                    ofLabel: 'of',
+                    pageLabel: 'page', // for 'pages' mode
+                    allLabel: 'All',
+                }">
+                    <template slot="table-row" slot-scope="props">
+                    </template>
+                </vue-good-table>
             </div>
 
             <div class="col-start-2 py-4 pt-8" v-if="env && env.version">
                 <h4 class="text-2xl font-semibold text-gray-800"><span class="text-white">Version</span></h4>
                 <span
-                    class="inline-block px-3 py-1 mr-2 text-sm font-semibold text-gray-700 bg-gray-200 rounded-full">{{env.version}}</span>
+                    class="inline-block px-3 py-1 mr-2 text-sm font-semibold text-gray-700 bg-gray-200 border-object">{{env.version}}</span>
                 <!--<button class="px-2 py-2 text-gray-900 bg-gray-100 rounded hover:bg-gray-900 hover:text-gray-100 hover:font-medium md:mx-2" v-on:click="openPerformanceModal()">
                     Storage
                 </button>-->
