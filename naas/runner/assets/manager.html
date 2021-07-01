@@ -15,6 +15,23 @@
         .bg-naas {
             background-color: #191b1d;
         }
+        .naas-tab {
+            font-size: 1.5em;
+            font-weight: bolder;
+            color: white;
+            padding: 0.5em;
+        }
+        .naas-tab:hover {
+            color: #dddddd;
+            transition: all 0.3s;
+        }
+        .naas-tab:active {
+            color: #22BC66;
+            transition: all 0.3s;
+        }
+        .naas-current-tab {
+            border-bottom: 2px solid #22BC66;
+        }
         #cs_loader_wrap {
             display: flex;
             justify-content: center;
@@ -153,6 +170,9 @@
                 logs: [],
                 pageState: 0,
                 totalLogRecords: 0,
+                templatesState: 0,
+                jobsState: 1,
+                historyState: 2,
                 debouceFilter: null,
                 serverLogParams: {
                     columnFilters: "",
@@ -429,6 +449,17 @@
                     this.pageState = value;
                 }
             },
+            computed: {
+                jobsActive() {
+                    return this.pageState == this.jobsState
+                },
+                historyActive() {
+                    return this.pageState == this.historyState
+                },
+                templatesActive() {
+                    return this.pageState == this.templatesState
+                },
+            },
             created: function () {
                 const uri = window.location.href.split('?');
                 if (uri.length == 2) {
@@ -512,10 +543,10 @@
             </div>
         </nav>
         <div class="w-full py-8 md:px-12">
-            <button @click="setPageState(0)" class="px-2 py-2 text-gray-900 bg-gray-100 rounded hover:bg-gray-600 hover:text-gray-100 md:mx-2">Jobs</button>
-            <button @click="setPageState(1)" class="px-2 py-2 text-gray-900 bg-gray-100 rounded hover:bg-gray-600 hover:text-gray-100 md:mx-2">History</button>
-            <button @click="setPageState(2)" class="px-2 py-2 text-gray-900 bg-gray-100 rounded hover:bg-gray-600 hover:text-gray-100 md:mx-2">Template</button>
-            <div v-if="pageState == 0">
+            <button @click="setPageState(templatesState)" class="naas-tab" :class="templatesActive ? 'naas-current-tab' : ''">Template</button>
+            <button @click="setPageState(jobsState)" class="naas-tab" :class="jobsActive ? 'naas-current-tab' : ''">Jobs</button>
+            <button @click="setPageState(historyState)" class="naas-tab" :class="historyActive ? 'naas-current-tab' : ''">History</button>
+            <div v-if="jobsActive">
                 <h2 class="pt-8 text-2xl font-semibold text-gray-800"><span class="text-white">Jobs</span></h2>
                 <vue-good-table :columns="columns_jobs" :rows="jobs" :search-options="{
                         enabled: true,
@@ -571,7 +602,7 @@
                     </template>
                 </vue-good-table>
             </div>
-            <div v-if="pageState == 1">
+            <div v-if="historyActive">
                 <h2 class="pt-8 text-2xl font-semibold text-gray-800"><span class="text-white">History</span></h2>
                 <!-- <vue-loaders-line-scale v-if="loadingLog"/> -->
                 <div class="vld-parent">
@@ -622,7 +653,7 @@
                     </vue-good-table>
                 </div>
             </div>
-            <div v-if="pageState == 2">
+            <div v-if="templatesActive">
                 <h2 class="pt-8 text-2xl font-semibold text-gray-800"><span class="text-white">Templates</span></h2>
                 <p class="pt-8 text-white">This section is empty</p>
             </div>
