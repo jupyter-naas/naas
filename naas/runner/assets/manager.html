@@ -36,6 +36,10 @@
             color: #22BC66;
             transition: all 0.3s;
         }
+        .naas-tab:focus {
+          outline: none;
+          box-shadow: none;
+        }
         .naas-current-tab {
             border-bottom: 2px solid #22BC66;
         }
@@ -368,18 +372,29 @@
                     })
                 },
                 loadTemplatesItems() {
-                    return axios.get('https://raw.githubusercontent.com/jupyter-naas/awesome-notebooks/master/README.md').then((response) => {
-                        if (response && !response.error) {
-                            try {
-                                this.templates = []
-                                console.log(response.data);
-                            } catch (err) {
-                                console.error(err);
-                            }
-                        }
-                    }).catch((err) => {
-                        console.error(err);
-                    })
+                    //return axios.get('https://raw.githubusercontent.com/jupyter-naas/awesome-notebooks/master/README.md').then((response) => {
+                    //    if (response && !response.error) {
+                    //        try {
+                    //            this.templates = []
+                    //            print(response.data.data)
+                    //            let md = response.data.data
+                    //            md = md.split("Tool | Notebook | Open in Naas\n--- | --- | ---\n")[1]
+                    //            md = md.split("<br/>")[0]
+                    //            md = md.split('\n')
+                    //            for (const element of md) {
+                    //                elements = md.split('|')
+                    //                console.log(elements[0]);
+                    //            }
+//                  //              console.log(result);
+                    //        } catch (err) {
+                    //            console.log("ERROR")
+                    //            console.error(err);
+                    //        }
+                    //    }
+//
+                    //}).catch((err) => {
+                    //    console.error(err);
+                    //})
                 },
                 stripNaasPath(path) {
                     return path.replace(this.env.NAAS_BASE_PATH, '').replace(`${this.env.JUPYTER_SERVER_ROOT}/`, '')
@@ -558,8 +573,8 @@
                 </div>
             </div>
         </nav>
-        <div class="flex items-center justify-center w-full">
-            <div class="relative text-gray-900" style="width: 100%; margin: 0 1em 0 1em;">
+        <div class="flex items-center justify-center w-full py-4 md:px-12">
+            <div class="relative text-gray-900" style="width: 100%;">
                 <input type="text" name="search" v-model="filter" placeholder="Search"
                     class="w-full h-10 px-5 pr-10 text-sm text-gray-900 bg-gray-100 focus:outline-none border-object">
                 <button type="submit" class="absolute top-0 right-0 mt-3 mr-4">
@@ -591,7 +606,7 @@
                         enabled: filter === '',
                         mode: 'records',
                         perPage: 10,
-                        position: 'top',
+                        position: 'bottom',
                         perPageDropdown: [5, 15, 20],
                         dropdownAllowAll: true,
                         nextLabel: 'next',
@@ -654,7 +669,7 @@
                         enabled: true,
                         mode: 'records',
                         perPage: 15,
-                        position: 'top',
+                        position: 'bottom',
                         perPageDropdown: [5, 10, 20],
                         dropdownAllowAll: true,
                         nextLabel: 'next',
@@ -696,7 +711,7 @@
                     enabled: filter === '',
                     mode: 'records',
                     perPage: 10,
-                    position: 'top',
+                    position: 'bottom',
                     perPageDropdown: [5, 15, 20],
                     dropdownAllowAll: true,
                     nextLabel: 'next',
