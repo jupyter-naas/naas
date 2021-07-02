@@ -4,14 +4,32 @@
 <head>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vue-good-table@2.21.1/dist/vue-good-table.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@1.9.5/dist/tailwind.min.css">
-    <link rel="icon" href="asset/naas_fav.svg" />
+    <link rel="icon" href="asset/naas_fav.svg" type="image/gif" sizes="16x16">
+    <link rel="preconnect" href="https://fonts.googleapis.com"> 
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
     <meta charset="utf-8">
     <meta name="theme-color" content="#000000">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="apple-mobile-web-app-title" content="Naas | Manager">
+    <meta name="apple-mobile-web-app-title" content="Naas manager">
     <meta name="mobile-web-app-capable" content="yes">
-    <title>Naas | Manager</title>
+    <title>Naas manager</title>
     <style>
+
+        .button-primary {
+            color: white;
+            background-color:#181c1e;
+            border: none;
+            outline: none;
+            border-radius: 3px;
+            font-weight: 500;
+        }
+        .button-secondary {
+            color: rgba(255, 255, 255, 1);
+            background-color: rgba(71, 221, 130, 1);
+            padding-left: 12px;
+            padding-right: 12px;
+        }
         .border-object {
             border-radius: 0.25em;
         }
@@ -21,9 +39,13 @@
         .bg-naas {
             background-color: #191b1d;
         }
+        .naas-search {
+            padding-top: 40px;
+        }
         .naas-tab {
             font-size: 1.5em;
             font-weight: bolder;
+            font-family: Poppins,sans-serif;
             color: white;
             padding: 0.25em;
             margin: 0.5em;
@@ -32,9 +54,36 @@
             color: #dddddd;
             transition: all 0.3s;
         }
-        .naas-green {
+        .naas-manager-green {
             color: #22BC66;
+            font-family: Poppins,sans-serif;
+            font-size: 1.1em;
         }
+        .naas-header-green {
+            color: #22BC66;
+            padding-left: 35px;
+            font-family: Poppins,sans-serif;
+            font-size: 1.1em;
+        }
+        .naas-header-black {
+            color: white;
+            font-weight: 200;   
+            border-color: white;;
+            margin-left: 30px;
+            background-color: b;
+            font-family: Poppins,sans-serif;
+            font-size: 1.1em;
+        }
+        .naas-header-notebook {
+            color: black;
+            margin-left: 0rem;
+            margin-right: 0rem;
+            font-family: Poppins,sans-serif;
+            font-size: 1.1em;
+        }
+
+
+
         .naas-tab:active {
             color: #22BC66;
             transition: all 0.3s;
@@ -81,6 +130,28 @@
             animation: spin-bot 1s ease-in-out infinite;
             z-index: 4213;
         }
+        #footerlogo {
+            display: inline-block;
+            height: 50px; /*sets height of element*/
+            -align: center;
+            background: #181c1e; /*sets the background of this element (here a solid colour)*/
+            transition: all 0.6s; /*sets a transition (for hover effect)*/
+            padding-left: 5px; /*sets 'padding'*/
+            padding-right: 5px; /*sets 'padding'*/
+            padding-top: 10px;
+            line-height: 50px; /*for this, it sets vertical alignment*/
+        }
+        img:hover {
+            background: #181c1e; /*sets background colour*/
+        }
+        #footer{
+            display: inline-block;
+            background:  #191b1d;
+            height: 200px;
+            padding-top:30px;
+            padding-bottom:50px;
+            width: 100%
+        }
 
         @keyframes spin-bot {
             0% {
@@ -121,20 +192,20 @@
                 VisibleModal: false,
                 columns_logs: [
                     {
-                        label: 'Date',
-                        field: 'asctime',
-                    },
-                    {
-                        label: 'ID',
-                        field: 'id',
+                        label: 'File',
+                        field: 'filepath',
                     },
                     {
                         label: 'Service',
                         field: 'type',
                     },
                     {
-                        label: 'File',
-                        field: 'filepath',
+                        label: 'Date',
+                        field: 'asctime',
+                    },
+                    {
+                        label: 'ID',
+                        field: 'id',
                     },
                     {
                         label: 'Status',
@@ -148,12 +219,12 @@
                 ],
                 columns_jobs: [
                     {
-                        label: 'Type',
-                        field: 'type',
-                    },
-                    {
                         label: 'File',
                         field: 'path',
+                    },
+                    {
+                        label: 'Service',
+                        field: 'type',
                     },
                     {
                         label: 'Value',
@@ -176,13 +247,17 @@
                         field: 'lastRun',
                     },
                     {
-                        label: 'Credit',
+                        label: 'Unit Price',
+                        field: '',
+                    },
+                    {
+                        label: 'Tokens',
                         field: 'lastCredit',
                     },
                 ],
                 columns_templates: [
                     {
-                        label: 'Service',
+                        label: 'Tool',
                         field: 'service',
                     },
                     {
@@ -190,7 +265,19 @@
                         field: 'notebook',
                     },
                     {
-                        label: 'Open in Naas',
+                        label: 'Tags',
+                        field: 'service',
+                    },
+                    {
+                        label: 'Last update',
+                        field: 'notebook',
+                    },
+                    {
+                        label: 'Creator',
+                        field: 'notebook',
+                    },
+                    {
+                        label: 'Action',
                         field: 'open',
                     }
                 ],
@@ -267,6 +354,54 @@
                         `,
                         props: ['error', 'url']
                     }, { error, url }, { width: "70%", scrollable: true, height: 'auto' });
+                },
+                openProfile() {
+                    this.$modal.show({
+                        created() {
+                            axios.get('performance', {}).then((response) => {
+                                if (response && !response.error) {
+                                    try {
+                                        this.cpu = response.data.cpu;
+                                        this.ram = response.data.ram;
+                                        this.storage = response.data.storage;
+                                    } catch (err) {
+                                        console.error(err);
+                                    }
+                                }
+                            }).then(() => {
+                                this.loadingLog = false;
+                            }).catch((err) => {
+                                console.error(err);
+                            })
+                        },
+                        data() {
+                            return {
+                                cpu: "/",
+                                ram: "/",
+                                storage: "/"
+                            }
+                        },
+                        template: `
+                        <div class="w-full bg-white rounded-lg shadow-lg">
+                            <div class="flex justify-between px-5 py-4 border-b border-gray-100">
+                                <div>
+                                    <span class="text-lg font-bold text-gray-700">Profile</span>
+                                </div>
+                                <div>
+                                    <button><i class="text-red-500 transition duration-150 fa fa-times-circle hover:text-red-600"></i></button>
+                                </div>
+                            </div>
+                        
+                            <center><div class="px-10 text-gray-600">🎽 Work in Progress</div></center>
+                            <iframe src="https://giphy.com/embed/l0K4hO8mVvq8Oygjm" width="100%" height="100%" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a href="https://giphy.com/gifs/topshelfrecords-clique-top-shelf-records-l0K4hO8mVvq8Oygjm"></a></p>
+                            <center><div class="px-10">Any question? hello@naas.ai</div></center>
+                            <div class="flex justify-end px-5 py-4">
+
+                            <button @click="$emit('close')" class="px-3 py-2 text-sm text-gray-500 transition duration-150 hover:text-gray-600">Close</button>
+                            </div>
+                        </div>
+                        `,
+                    }, {}, { width: "25%", scrollable: true, height: 'auto' });
                 },
                 /*openPerformanceModal() {
                     this.$modal.show({
@@ -542,7 +677,7 @@
     <div id="app" class="w-full bg-naas h-full">
         <div id="cs_loader_wrap" v-if="loading">
             <div id="cs_logo_wrap">
-                <img id="cs_logo_loading" alt="Naas logo" src="asset/naas_fav.svg" />
+                <img id="cs_logo_loading"/>
                 <div id="cs_spinner_loading"></div>
             </div>
         </div>
@@ -551,11 +686,11 @@
                 <div class="flex items-center justify-between">
                     <div class="flex flex-row mb-2 sm:mb-0 ">
                         <div class="self-center mr-2 h-70 w-70">
-                            <img alt="Naas logo" src="asset/naas_fav.svg" width="70" height="70" />
+                            <img alt="Naas logo" src="https://landen.imgix.net/jtci2pxwjczr/assets/5ice39g4.png?w=160" width="70" height="70" />
                         </div>
                         <div class="my-auto">
                             <a href="#" :href="linkToLab()"
-                                class="font-sans text-2xl font-bold text-gray-100 no-underline hover:text-#4299e1-dark">Manager</a>
+                                class="font-sans naas-manager-green text-2xl font-bold text-gray-100 no-underline hover:text-#4299e1-dark">manager</a>
                         </div>
                     </div>
                     <div class="md:hidden">
@@ -571,19 +706,19 @@
                     </div>
                 </div>
                 <div class="flex flex-col hidden md:flex-row md:block">
-                    <a href="https://docs.naas.ai/" target="_blank" class="px-2 naas-green">Docs</a>
-                    <a href="https://github.com/jupyter-naas" target="_blank" class="px-2 naas-green">Github</a>
-                    <!--<a href="https://github.com/orgs/jupyter-naas/projects/4?fullscreen=true" target="_blank" class="px-2 naas-green">Roadmap</a>-->
-                    <a href="https://www.naas.ai/pricing" target="_blank" class="px-2 naas-green">Pricing</a>
-                    <a href="https://aiclubhq.slack.com/" target="_blank" class="px-2 naas-green">Community</a>
-                    <button v-on:click="load_data()"
-                        class="px-2 py-2 text-gray-900 bg-gray-100 hover:bg-gray-600 hover:text-gray-100 md:mx-2 border-object">Refresh</button>
+                    <a href="https://docs.naas.ai/" target="_blank" class="naas-header-green">Docs</a>       
+                    <a href="https://github.com/orgs/jupyter-naas/projects/4?fullscreen=true" target="_blank" class="naas-header-green">Roadmap</a>
+                    <a href="https://aiclub-hq.slack.com/" target="_blank" class="naas-header-green py-8">Slack</a>
+                    <a href="https://www.naas.ai/pricing" target="_blank" class="naas-header-green">⚡️  Upgrade</a>         
+                    <button v-on:click="openProfile()" class="px-2 py-2 button-primary naas-header-black">Profile</button>
+                    <a href="https://app.naas.ai/user-redirect/naas/downloader?url=https://raw.githubusercontent.com/jupyter-naas/awesome-notebooks/master/template.ipynb" target="_blank" class="naas-header-green"><button class="px-2 py-2 button-secondary naas-header-notebook border-object">➕ New</button></a> 
                 </div>
+                
             </div>
         </nav>
         <div class="flex items-center justify-center w-full py-4 md:px-12">
-            <div class="relative text-gray-900" style="width: 100%;">
-                <input type="text" name="search" v-model="filter" placeholder="Search"
+            <div class="relative naas-search text-gray-900" style="width: 100%;">r
+                <input type="text" name="search" v-model="filter" placeholder="Search..."
                     class="w-full h-10 px-5 pr-10 text-sm text-gray-900 bg-gray-100 focus:outline-none border-object">
                 <button type="submit" class="absolute top-0 right-0 mt-3 mr-4">
                     <svg v-if="filter == ''" class="w-4 h-4 fill-current" xmlns="http://www.w3.org/2000/svg"
@@ -602,10 +737,10 @@
                 </button>
             </div>
         </div>
-        <div class="w-full py-8 md:px-12">
-            <button @click="setPageState(templatesState)" class="naas-tab" :class="templatesActive ? 'naas-current-tab' : ''">Template</button>
-            <button @click="setPageState(jobsState)" class="naas-tab" :class="jobsActive ? 'naas-current-tab' : ''">Jobs</button>
-            <button @click="setPageState(historyState)" class="naas-tab" :class="historyActive ? 'naas-current-tab' : ''">History</button>
+        <div class="w-full p-3 py-8 md:px-12">
+            <button @click="setPageState(templatesState)" class="naas-tab" :class="templatesActive ? 'naas-current-tab' : ''">😎 Templates</button>
+            <button @click="setPageState(jobsState)" class="naas-tab" :class="jobsActive ? 'naas-current-tab' : ''">🌱 Jobs</button>
+            <button @click="setPageState(historyState)" class="naas-tab" :class="historyActive ? 'naas-current-tab' : ''">🧬 History</button>
             <div v-if="jobsActive">
                 <vue-good-table class="border-object" :columns="columns_jobs" :rows="jobs" :search-options="{
                         enabled: true,
@@ -698,10 +833,10 @@
                             </span>
                             <span v-else-if="props.column.field == 'status'">
                                 <a href="#" v-if="props.formattedRow['error']" style="font-weight: bold; color: #f56565;"
-                                    v-on:click="openError(props.formattedRow['error'], props.formattedRow['filepath'])">error</a>
+                                    v-on:click="openError(props.formattedRow['error'], props.formattedRow['filepath'])">❌ Error</a>
                                 <a href="#" v-else-if="props.formattedRow[props.column.field] == 'healthy'"
                                     style="font-weight: bold; color: #22BC66;"
-                                    v-on:click="openOutput(props.formattedRow['filepath'])">healthy</a>
+                                    v-on:click="openOutput(props.formattedRow['filepath'])">✅ Active</a>
                                 <p v-else>{{props.formattedRow[props.column.field]}}</p>
                             </span>
                             <span v-else>
@@ -735,13 +870,25 @@
             </div>
 
             <div class="col-start-2 py-4 pt-8" v-if="env && env.version">
-                <h4 class="text-2xl font-semibold text-gray-800"><span class="text-white">Version</span></h4>
+                <h4 class="text-2xl font-semibold text-gray-800"><span class="text-white"></span></h4>
                 <span
-                    class="inline-block px-3 py-1 mr-2 text-sm font-semibold text-gray-700 bg-gray-200 border-object">{{env.version}}</span>
-                <!--<button class="px-2 py-2 text-gray-900 bg-gray-100 rounded hover:bg-gray-900 hover:text-gray-100 hover:font-medium md:mx-2" v-on:click="openPerformanceModal()">
+                    class="inline-block px-3 py-1 mr-2 text-sm font-semibold text-gray-700 bg-gray-200 border-object">Version: {{env.version}}</span>
+                    <!-- <button class="px-2 py-2 text-gray-900 bg-gray-100 rounded hover:bg-gray-900 hover:text-gray-100 hover:font-medium md:mx-2" v-on:click="openPerformanceModal()">
                     Storage
-                </button>-->
+                </button> -->
             </div>
+        </div>
+
+        <div id=footer>
+            <center>
+            <h3 class="text-2xs text-gray-400"><span class="text-white">Naas: Notebooks as a service</span></h3>
+            <h3><span class="text-white " style="font-size: 14px;">Opensourced by CashStory</span></h3>
+            <a href="https://github.com/jupyter-naas" target="_blank"><img id=footerlogo src="https://cdn3.iconfinder.com/data/icons/social-media-2169/24/social_media_social_media_logo_github-1024.png">
+            <a href="https://www.youtube.com/channel/UCKKG5hzjXXU_rRdHHWQ8JHQ" target="_blank"><img id=footerlogo src="https://cdn3.iconfinder.com/data/icons/2018-social-media-logotypes/1000/2018_social_media_popular_app_logo_youtube-1024.png"></a>
+            <a href="https://twitter.com/JupyterNaas" target="_blank"><a href="https://www.youtube.com/channel/UCKKG5hzjXXU_rRdHHWQ8JHQ" target="_blank"><img id=footerlogo src="https://cdn4.iconfinder.com/data/icons/social-messaging-ui-color-shapes-2-free/128/social-twitter-circle-128.png">
+            <a href="https://www.linkedin.com/company/naas-ai/" target="_blank"><img id=footerlogo src="https://cdn0.iconfinder.com/data/icons/social-circle-3/72/Linkedin-1024.png">
+        </center>
+        </div>
         </div>
     </div>
     </div>
