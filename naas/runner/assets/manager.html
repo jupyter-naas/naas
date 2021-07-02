@@ -32,6 +32,9 @@
             color: #dddddd;
             transition: all 0.3s;
         }
+        .naas-green {
+            color: #22BC66;
+        }
         .naas-tab:active {
             color: #22BC66;
             transition: all 0.3s;
@@ -41,7 +44,7 @@
           box-shadow: none;
         }
         .naas-current-tab {
-            border-bottom: 2px solid #22BC66;
+            border-bottom: 5px solid #22BC66;
         }
         #cs_loader_wrap {
             display: flex;
@@ -50,7 +53,7 @@
             height: 100vh;
             width: 100vw;
             position: absolute;
-            background-color: white;
+            background-color: black;
             z-index: 4210;
         }
 
@@ -568,8 +571,13 @@
                     </div>
                 </div>
                 <div class="flex flex-col hidden md:flex-row md:block">
+                    <a href="https://docs.naas.ai/" target="_blank" class="px-2 naas-green">Docs</a>
+                    <a href="https://github.com/jupyter-naas" target="_blank" class="px-2 naas-green">Github</a>
+                    <!--<a href="https://github.com/orgs/jupyter-naas/projects/4?fullscreen=true" target="_blank" class="px-2 naas-green">Roadmap</a>-->
+                    <a href="https://www.naas.ai/pricing" target="_blank" class="px-2 naas-green">Pricing</a>
+                    <a href="https://aiclubhq.slack.com/" target="_blank" class="px-2 naas-green">Community</a>
                     <button v-on:click="load_data()"
-                        class="px-2 py-2 text-gray-900 bg-gray-100 hover:bg-gray-600 hover:text-gray-100 md:mx-2 border-object">Reload</button>
+                        class="px-2 py-2 text-gray-900 bg-gray-100 hover:bg-gray-600 hover:text-gray-100 md:mx-2 border-object">Refresh</button>
                 </div>
             </div>
         </nav>
