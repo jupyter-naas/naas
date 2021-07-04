@@ -45,7 +45,7 @@
         * Naas navigation component
         */
         .naas-search {
-            padding-top: 40px;
+            padding-top: 20px;
         }
         .naas-tab {
             font-size: 1.5em;
@@ -65,8 +65,8 @@
             font-size: 1.1em;
         }
         .naas-credits {
-            color: #22BC66;
-            padding-left: 35px;
+            color: white;
+            margin-left: 3rem;
             font-family: Poppins,sans-serif;
             font-size: 1.1em;
         }
@@ -412,6 +412,53 @@
                         `,
                         props: ['error', 'url']
                     }, { error, url }, { width: "70%", scrollable: true, height: 'auto' });
+                },
+                openStatement() {
+                    this.$modal.show({
+                        created() {
+                            axios.get('performance', {}).then((response) => {
+                                if (response && !response.error) {
+                                    try {
+                                        this.cpu = response.data.cpu;
+                                        this.ram = response.data.ram;
+                                        this.storage = response.data.storage;
+                                    } catch (err) {
+                                        console.error(err);
+                                    }
+                                }
+                            }).then(() => {
+                                this.loadingLog = false;
+                            }).catch((err) => {
+                                console.error(err);
+                            })
+                        },
+                        data() {
+                            return {
+                                cpu: "/",
+                                ram: "/",
+                                storage: "/"
+                            }
+                        },
+                        template: `
+                        <div class="w-full bg-white rounded-lg shadow-lg">
+                            <div class="flex justify-between px-5 py-4 border-b border-gray-100">
+                                <div>
+                                    <span class="text-lg font-bold text-gray-700">Account Statement (coming soon)</span>
+                                </div>
+                                <div>
+                                    <button><i class="text-red-500 transition duration-150 fa fa-times-circle hover:text-red-600"></i></button>
+                                </div>
+                            </div>
+                            <div>
+                            <input type="text" placeholder="Temporary: send STATEMENT101 to hello@naas.ai" class="w-full h-10 px-5 py-2 pr-10 text-sm text-gray-900 bg-gray-100 border-object profile-field">
+                            </div>
+                            
+                            <div class="flex justify-end px-5 py-4">
+                            <button @click="$emit('close')" class="px-3 py-2 text-sm text-gray-500 transition duration-150 hover:text-gray-600">Close</button>
+                            </div>
+                        </div>
+                        `,
+                    }, {}, { width: "25%", scrollable: true, height: 'auto' });
                 },
                 openProfile() {
                     this.$modal.show({
@@ -793,9 +840,9 @@
                 
             </div>
         </nav>
-        <div class="flex items-center justify-center w-full naas-search md:px-12">
+        <button v-on:click="openStatement()" class="px-2 py-2 button-primary naas-credits">Account Statement</a></button>
+        <div class="flex items-center justify-center w-full naas-search md:px-12">          
             <div class="relative text-gray-900" style="width: 100%;">
-                <!--<a href="https://www.naas.ai/pricing" target="_blank" class="naas-credits">$1,200</a> -->
                 <input type="text" name="search" v-model="filter" placeholder="Search..."
                     class="w-full h-10 px-5 pr-10 text-sm text-gray-900 bg-gray-100 focus:outline-none border-object">
                 <button type="submit" class="absolute top-0 right-0 mt-3 mr-4">
