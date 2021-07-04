@@ -15,7 +15,9 @@
     <meta name="mobile-web-app-capable" content="yes">
     <title>Naas manager</title>
     <style>
-
+        /**
+        * General design component
+        */
         .button-primary {
             color: white;
             background-color:#181c1e;
@@ -39,6 +41,9 @@
         .bg-naas {
             background-color: #191b1d;
         }
+        /**
+        * Naas navigation component
+        */
         .naas-search {
             padding-top: 40px;
         }
@@ -56,6 +61,12 @@
         }
         .naas-manager-green {
             color: #22BC66;
+            font-family: Poppins,sans-serif;
+            font-size: 1.1em;
+        }
+        .naas-credits {
+            color: #22BC66;
+            padding-left: 35px;
             font-family: Poppins,sans-serif;
             font-size: 1.1em;
         }
@@ -81,9 +92,6 @@
             font-family: Poppins,sans-serif;
             font-size: 1.1em;
         }
-
-
-
         .naas-tab:active {
             color: #22BC66;
             transition: all 0.3s;
@@ -95,6 +103,53 @@
         .naas-current-tab {
             border-bottom: 5px solid #22BC66;
         }
+        /**
+        * Profile image component
+        */
+        .profile-header-container{
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .profile-header-img {
+            padding: 20px;
+        }
+
+        .profile-header-img > img.img-circle {
+            width: 120px;
+            height: 120px;
+            border: 2px solid #22BC66;
+            border-radius: 50px;
+        }
+        .profile-header {
+            margin-top: 43px;
+        }
+        /**
+        * Ranking component
+        */
+        .rank-label-container {
+            margin-top: -10px;
+            z-index: 1000; 
+            text-align: center;
+        }
+
+        .label.label-default.rank-label {
+            background-color: #191b1d;
+            color:white;
+            padding: 5px 10px 5px 10px;
+            border-radius: 27px;
+        }
+        /**
+        * Profile modal component
+        */
+        .profile-data {
+            padding-top: 20px;
+            padding-right: 15px;
+            padding-left: 15px;
+        } 
+        .profile-field {
+            margin-bottom: 10px;
+        } 
         #cs_loader_wrap {
             display: flex;
             justify-content: center;
@@ -112,7 +167,9 @@
             border-radius: 50%;
             margin: 0 auto;
         }
-
+        /**
+        * Footer and other component
+        */
         #cs_logo_loading {
             display: flex;
             margin: auto;
@@ -172,6 +229,7 @@
         import VueGoodTablePlugin from 'https://cdn.jsdelivr.net/npm/vue-good-table@2.21.1/dist/vue-good-table.esm.js';
         import * as VModal from 'https://cdn.jsdelivr.net/npm/vue-js-modal@2.0.0-rc.6/dist/index.min.js';
         import VueCodeHighlight from 'https://cdn.jsdelivr.net/npm/vue-code-highlight@0.7.6/dist/vue-code-highlight.esm.min.js';
+
 
         const debouceTime = 800;
         Vue.use(window['vue-js-modal'].default);
@@ -385,18 +443,37 @@
                         <div class="w-full bg-white rounded-lg shadow-lg">
                             <div class="flex justify-between px-5 py-4 border-b border-gray-100">
                                 <div>
-                                    <span class="text-lg font-bold text-gray-700">Profile</span>
+                                    <span class="text-lg font-bold text-gray-700">Profile (coming soon)</span>
                                 </div>
                                 <div>
                                     <button><i class="text-red-500 transition duration-150 fa fa-times-circle hover:text-red-600"></i></button>
                                 </div>
                             </div>
-                        
-                            <center><div class="px-10 text-gray-600">🎽 Work in Progress</div></center>
-                            <iframe src="https://giphy.com/embed/l0K4hO8mVvq8Oygjm" width="100%" height="100%" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a href="https://giphy.com/gifs/topshelfrecords-clique-top-shelf-records-l0K4hO8mVvq8Oygjm"></a></p>
-                            <center><div class="px-10">Any question? hello@naas.ai</div></center>
-                            <div class="flex justify-end px-5 py-4">
+                            <div id=profile class="profile-data">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="profile-header-container">   
+                                        <div class="profile-header-img">
+                                            <img class="img-circle" src="https://avatars.githubusercontent.com/u/47117399?v=4" />
+                                            <div class="rank-label-container">
+                                                <span class="label label-default rank-label">Free Plan</span>
+                                            </div>
+                                        </div>
+                                    </div> 
+                                </div>
+                            </div>
+                            <input type="text" placeholder="First name" class="w-full h-10 px-5 py-2 pr-10 text-sm text-gray-900 bg-gray-100 border-object profile-field">
+                            <input type="text" placeholder="Last name" class="w-full h-10 px-5 pr-10 text-sm text-gray-900 bg-gray-100 focus:outline-none border-object profile-field">
+                            <input type="text" placeholder="Email" class="w-full h-10 px-5 pr-10 text-sm text-gray-900 bg-gray-100 focus:outline-none border-object profile-field">
+                            <input type="text" placeholder="Country" class="w-full h-10 px-5 pr-10 text-sm text-gray-900 bg-gray-100 focus:outline-none border-object profile-field">
+                            <input type="tel" placeholder="Phone number"  class="form-control w-full h-10 px-5 pr-10 text-sm text-gray-900 bg-gray-100 focus:outline-none border-object profile-field">                                              
+                            <input type="text" placeholder="LinkedIn profile" class="w-full h-10 px-5 pr-10 text-sm text-gray-900 bg-gray-100 focus:outline-none border-object profile-field">
+                            <input type="text" placeholder="Twitter profile" class="w-full h-10 px-5 pr-10 text-sm text-gray-900 bg-gray-100 focus:outline-none border-object profile-field">
+                            <input type="text" placeholder="Github profile" class="w-full h-10 px-5 pr-10 text-sm text-gray-900 bg-gray-100 focus:outline-none border-object profile-field">
 
+                            </div>
+                            
+                            <div class="flex justify-end px-5 py-4">
                             <button @click="$emit('close')" class="px-3 py-2 text-sm text-gray-500 transition duration-150 hover:text-gray-600">Close</button>
                             </div>
                         </div>
@@ -711,13 +788,14 @@
                     <a href="https://aiclub-hq.slack.com/" target="_blank" class="naas-header-green py-8">Slack</a>
                     <a href="https://www.naas.ai/pricing" target="_blank" class="naas-header-green">⚡️  Upgrade</a>         
                     <button v-on:click="openProfile()" class="px-2 py-2 button-primary naas-header-black">Profile</button>
-                    <a href="https://app.naas.ai/user-redirect/naas/downloader?url=https://raw.githubusercontent.com/jupyter-naas/awesome-notebooks/master/template.ipynb" target="_blank" class="naas-header-green"><button class="px-2 py-2 button-secondary naas-header-notebook border-object">➕ New</button></a> 
+                    <a href="" target="_blank" class="naas-header-green"><button class="px-2 py-2 button-secondary naas-header-notebook border-object">➕ New</button></a> 
                 </div>
                 
             </div>
         </nav>
-        <div class="flex items-center justify-center w-full py-4 md:px-12">
-            <div class="relative naas-search text-gray-900" style="width: 100%;">r
+        <div class="flex items-center justify-center w-full naas-search md:px-12">
+            <div class="relative text-gray-900" style="width: 100%;">
+                <!--<a href="https://www.naas.ai/pricing" target="_blank" class="naas-credits">$1,200</a> -->
                 <input type="text" name="search" v-model="filter" placeholder="Search..."
                     class="w-full h-10 px-5 pr-10 text-sm text-gray-900 bg-gray-100 focus:outline-none border-object">
                 <button type="submit" class="absolute top-0 right-0 mt-3 mr-4">
@@ -739,7 +817,7 @@
         </div>
         <div class="w-full p-3 py-8 md:px-12">
             <button @click="setPageState(templatesState)" class="naas-tab" :class="templatesActive ? 'naas-current-tab' : ''">😎 Templates</button>
-            <button @click="setPageState(jobsState)" class="naas-tab" :class="jobsActive ? 'naas-current-tab' : ''">🌱 Jobs</button>
+            <button @click="setPageState(jobsState)" class="naas-tab" :class="jobsActive ? 'naas-current-tab' : ''">🌱 Tasks</button>
             <button @click="setPageState(historyState)" class="naas-tab" :class="historyActive ? 'naas-current-tab' : ''">🧬 History</button>
             <div v-if="jobsActive">
                 <vue-good-table class="border-object" :columns="columns_jobs" :rows="jobs" :search-options="{
@@ -778,7 +856,7 @@
                             <span v-else>{{props.formattedRow[props.column.field]}}</span>
                         </span>
                         <span v-else-if="props.column.field == 'id'">
-                            <a href="#" style="font-weight: bold; color: #4299e1;"
+                            <a href="#" 
                                 v-on:click="setFilter(props.formattedRow[props.column.field])">
                                 {{props.formattedRow[props.column.field].substring(0,6)}}
                             </a>
@@ -824,7 +902,7 @@
                     }">
                         <template slot="table-row" slot-scope="props">
                             <span v-if="props.column.field == 'id'">
-                                <a href="#" style="font-weight: bold; color: #4299e1;"
+                                <a href="#"
                                     v-on:click="setFilter(props.formattedRow[props.column.field])">{{props.formattedRow[props.column.field].substring(0,
                                     4)}}</a>
                             </span>
@@ -885,7 +963,7 @@
             <h3><span class="text-white " style="font-size: 14px;">Opensourced by CashStory</span></h3>
             <a href="https://github.com/jupyter-naas" target="_blank"><img id=footerlogo src="https://cdn3.iconfinder.com/data/icons/social-media-2169/24/social_media_social_media_logo_github-1024.png">
             <a href="https://www.youtube.com/channel/UCKKG5hzjXXU_rRdHHWQ8JHQ" target="_blank"><img id=footerlogo src="https://cdn3.iconfinder.com/data/icons/2018-social-media-logotypes/1000/2018_social_media_popular_app_logo_youtube-1024.png"></a>
-            <a href="https://twitter.com/JupyterNaas" target="_blank"><a href="https://www.youtube.com/channel/UCKKG5hzjXXU_rRdHHWQ8JHQ" target="_blank"><img id=footerlogo src="https://cdn4.iconfinder.com/data/icons/social-messaging-ui-color-shapes-2-free/128/social-twitter-circle-128.png">
+            <a href="https://twitter.com/JupyterNaas" target="_blank"><a href="https://twitter.com/JupyterNaas" target="_blank"><img id=footerlogo src="https://cdn4.iconfinder.com/data/icons/social-messaging-ui-color-shapes-2-free/128/social-twitter-circle-128.png">
             <a href="https://www.linkedin.com/company/naas-ai/" target="_blank"><img id=footerlogo src="https://cdn0.iconfinder.com/data/icons/social-circle-3/72/Linkedin-1024.png">
         </center>
         </div>
