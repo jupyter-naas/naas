@@ -316,7 +316,7 @@
                 columns_templates: [
                     {
                         label: 'Tool',
-                        field: 'service',
+                        field: 'tool',
                     },
                     {
                         label: 'Notebook',
@@ -324,19 +324,12 @@
                     },
                     {
                         label: 'Tags',
-                        field: 'service',
-                    },
-                    {
-                        label: 'Last update',
-                        field: 'notebook',
-                    },
-                    {
-                        label: 'Creator',
-                        field: 'notebook',
+                        field: 'tags',
                     },
                     {
                         label: 'Action',
-                        field: 'open',
+                        field: 'action',
+                        html: true
                     }
                 ],
                 env: {},
@@ -634,29 +627,19 @@
                     })
                 },
                 loadTemplatesItems() {
-                    //return axios.get('https://raw.githubusercontent.com/jupyter-naas/awesome-notebooks/master/README.md').then((response) => {
-                    //    if (response && !response.error) {
-                    //        try {
-                    //            this.templates = []
-                    //            print(response.data.data)
-                    //            let md = response.data.data
-                    //            md = md.split("Tool | Notebook | Open in Naas\n--- | --- | ---\n")[1]
-                    //            md = md.split("<br/>")[0]
-                    //            md = md.split('\n')
-                    //            for (const element of md) {
-                    //                elements = md.split('|')
-                    //                console.log(elements[0]);
-                    //            }
-//                  //              console.log(result);
-                    //        } catch (err) {
-                    //            console.log("ERROR")
-                    //            console.error(err);
-                    //        }
-                    //    }
-//
-                    //}).catch((err) => {
-                    //    console.error(err);
-                    //})
+                    return axios.get('https://raw.githubusercontent.com/jupyter-naas/awesome-notebooks/master/templates.json').then((response) => {
+                        if (response && !response.error) {
+                            try {
+                                this.templates = response.data
+                            } catch (err) {
+                                console.log("ERROR");
+                                console.error(err);
+                            }
+                        }
+
+                    }).catch((err) => {
+                        console.error(err);
+                    })
                 },
                 stripNaasPath(path) {
                     return path.replace(this.env.NAAS_BASE_PATH, '').replace(`${this.env.JUPYTER_SERVER_ROOT}/`, '')
