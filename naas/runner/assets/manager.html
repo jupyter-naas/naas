@@ -32,6 +32,12 @@
             padding-left: 12px;
             padding-right: 12px;
         }
+        .button-open {
+            background-color: #181c1e;
+            padding-left: 12px;
+            padding-right: 12px;
+            border: 1px solid #22BC66;
+        }
         .border-object {
             border-radius: 0.25em;
         }
@@ -82,6 +88,13 @@
             border-color: white;;
             margin-left: 30px;
             background-color: b;
+            font-family: Poppins,sans-serif;
+            font-size: 1.1em;
+        }
+        .naas-header-open {
+            color: #22BC66;
+            margin-left: 0rem;
+            margin-right: 0rem;
             font-family: Poppins,sans-serif;
             font-size: 1.1em;
         }
@@ -443,7 +456,7 @@
                         <div class="w-full bg-white rounded-lg shadow-lg">
                             <div class="flex justify-between px-5 py-4 border-b border-gray-100">
                                 <div>
-                                    <span class="text-lg font-bold text-gray-700">Account Statement (coming soon)</span>
+                                    <span class="text-lg font-bold text-gray-700">Account Balance (coming soon)</span>
                                 </div>
                                 <div>
                                     <button><i class="text-red-500 transition duration-150 fa fa-times-circle hover:text-red-600"></i></button>
@@ -743,8 +756,14 @@
                     }
                     return base
                 },
-                linkToLab() {
+                linkToManager() {
                     return `${this.linkToHub()}/naas`
+                },
+                linkToLab() {
+                    return `${this.linkToHub()}/lab`
+                },
+                linkToTemplate() {
+                    return `https://app.naas.ai/user-redirect/naas/downloader?url=https://raw.githubusercontent.com/jupyter-naas/awesome-notebooks/master/template.ipynb`
                 },
                 linkToJupOutput(link) {
                     const partial = this.stripNaasPath(link);
@@ -813,7 +832,7 @@
                             <img alt="Naas logo" src="https://landen.imgix.net/jtci2pxwjczr/assets/5ice39g4.png?w=160" width="70" height="70" />
                         </div>
                         <div class="my-auto">
-                            <a href="#" :href="linkToLab()"
+                            <a href="#" :href="linkToManager()"
                                 class="font-sans naas-manager-green text-2xl font-bold text-gray-100 no-underline hover:text-#4299e1-dark">manager</a>
                         </div>
                     </div>
@@ -835,12 +854,13 @@
                     <a href="https://aiclub-hq.slack.com/" target="_blank" class="naas-header-green py-8">Slack</a>
                     <a href="https://www.naas.ai/pricing" target="_blank" class="naas-header-green">⚡️  Upgrade</a>         
                     <button v-on:click="openProfile()" class="px-2 py-2 button-primary naas-header-black">Profile</button>
-                    <a href="" target="_blank" class="naas-header-green"><button class="px-2 py-2 button-secondary naas-header-notebook border-object">➕ New</button></a> 
+                    <a href="#" :href="linkToLab()"><button class="px-2 py-2 button-open naas-header-open border-object">Go to engine</button></a> 
+                    <a href="#" :href="linkToTemplate()"><button class="px-2 py-2 button-secondary naas-header-notebook border-object">➕ New</button></a> 
                 </div>
                 
             </div>
         </nav>
-        <button v-on:click="openStatement()" class="px-2 py-2 button-primary naas-credits">Account Statement</a></button>
+        <button v-on:click="openStatement()" class="px-2 py-2 button-primary naas-credits">💲 Account Balance</a></button>
         <div class="flex items-center justify-center w-full naas-search md:px-12">          
             <div class="relative text-gray-900" style="width: 100%;">
                 <input type="text" name="search" v-model="filter" placeholder="Search..."
@@ -961,7 +981,7 @@
                                     v-on:click="openError(props.formattedRow['error'], props.formattedRow['filepath'])">❌ Error</a>
                                 <a href="#" v-else-if="props.formattedRow[props.column.field] == 'healthy'"
                                     style="font-weight: bold; color: #22BC66;"
-                                    v-on:click="openOutput(props.formattedRow['filepath'])">✅ Active</a>
+                                    v-on:click="openOutput(props.formattedRow['filepath'])">✅ Active </a>
                                 <p v-else>{{props.formattedRow[props.column.field]}}</p>
                             </span>
                             <span v-else>
