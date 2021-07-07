@@ -15,11 +15,23 @@ class Scheduler:
         self.manager = Manager(t_scheduler)
         self.path = self.manager.path
 
-    def list(self, path=None):
-        return self.manager.list_prod("list_history", path)
+    def list(self, path=None, raw=False):
+        result = pd.DataFrame()
+        if path:
+            result = self.manager.list_prod("list_history", path)
+        else:
+            prod_files = self.manager.get_naas()
+            for file in prod_files:
+                file = file['path'].split('/')
+                if isinstance(file, list):
+                    file = file[-1]
+                dfs = [result, self.manager.list_prod("list_history", file)]
+                result = pd.concat(dfs)
+        return result
 
     def list_output(self, path=None):
         return self.manager.list_prod("list_output", path)
+        
 
     def get(self, path=None, histo=None):
         return self.manager.get_file(path, histo=histo)
