@@ -422,30 +422,6 @@
                 },
                 openStatement() {
                     this.$modal.show({
-                        created() {
-                            axios.get('performance', {}).then((response) => {
-                                if (response && !response.error) {
-                                    try {
-                                        this.cpu = response.data.cpu;
-                                        this.ram = response.data.ram;
-                                        this.storage = response.data.storage;
-                                    } catch (err) {
-                                        console.error(err);
-                                    }
-                                }
-                            }).then(() => {
-                                this.loadingLog = false;
-                            }).catch((err) => {
-                                console.error(err);
-                            })
-                        },
-                        data() {
-                            return {
-                                cpu: "/",
-                                ram: "/",
-                                storage: "/"
-                            }
-                        },
                         template: `
                         <div class="w-full bg-white rounded-lg shadow-lg">
                             <div class="flex justify-between px-5 py-4 border-b border-gray-100">
@@ -469,30 +445,6 @@
                 },
                 openProfile() {
                     this.$modal.show({
-                        created() {
-                            axios.get('performance', {}).then((response) => {
-                                if (response && !response.error) {
-                                    try {
-                                        this.cpu = response.data.cpu;
-                                        this.ram = response.data.ram;
-                                        this.storage = response.data.storage;
-                                    } catch (err) {
-                                        console.error(err);
-                                    }
-                                }
-                            }).then(() => {
-                                this.loadingLog = false;
-                            }).catch((err) => {
-                                console.error(err);
-                            })
-                        },
-                        data() {
-                            return {
-                                cpu: "/",
-                                ram: "/",
-                                storage: "/"
-                            }
-                        },
                         template: `
                         <div class="w-full bg-white rounded-lg shadow-lg">
                             <div class="flex justify-between px-5 py-4 border-b border-gray-100">
