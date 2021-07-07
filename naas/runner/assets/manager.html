@@ -203,7 +203,7 @@
         #footerlogo {
             display: inline-block;
             height: 50px; /*sets height of element*/
-            -align: center;
+            text-align: center;
             background: #181c1e; /*sets the background of this element (here a solid colour)*/
             transition: all 0.6s; /*sets a transition (for hover effect)*/
             padding-left: 5px; /*sets 'padding'*/
@@ -220,7 +220,8 @@
             height: 200px;
             padding-top:30px;
             padding-bottom:50px;
-            width: 100%
+            width: 100%;
+            text-align: center;
         }
 
         @keyframes spin-bot {
@@ -643,7 +644,18 @@
                     return axios.get('https://raw.githubusercontent.com/jupyter-naas/awesome-notebooks/master/templates.json').then((response) => {
                         if (response && !response.error) {
                             try {
-                                this.templates = response.data
+                                let templates = response.data
+                                for (let i = 0; i < templates.length; i++) {
+                                    let tags = "";
+
+                                    if (templates[i].tags != null)
+                                        for (let j = 0; j < templates[i].tags.length; j++) {
+                                            tags += templates[i].tags[j]
+                                            tags += " "
+                                        }
+                                    templates[i].tags = tags
+                                }
+                                this.templates = templates
                             } catch (err) {
                                 console.log("ERROR");
                                 console.error(err);
@@ -803,7 +815,7 @@
     <div id="app" class="w-full bg-naas h-full">
         <div id="cs_loader_wrap" v-if="loading">
             <div id="cs_logo_wrap">
-                <img id="cs_logo_loading"/>
+                <img id="cs_logo_loading" alt="loading logo"/>
                 <div id="cs_spinner_loading"></div>
             </div>
         </div>
@@ -832,10 +844,10 @@
                     </div>
                 </div>
                 <div class="flex flex-col hidden md:flex-row md:block">
-                    <a href="https://docs.naas.ai/" target="_blank" class="naas-header-green">Docs</a>       
-                    <a href="https://github.com/orgs/jupyter-naas/projects/4?fullscreen=true" target="_blank" class="naas-header-green">Roadmap</a>
-                    <a href="https://aiclub-hq.slack.com/" target="_blank" class="naas-header-green py-8">Slack</a>
-                    <a href="https://www.naas.ai/pricing" target="_blank" class="naas-header-green">⚡️  Upgrade</a>         
+                    <a href="https://docs.naas.ai/" target="_blank" rel="noopener" class="naas-header-green">Docs</a>       
+                    <a href="https://github.com/orgs/jupyter-naas/projects/4?fullscreen=true" target="_blank" rel="noopener" class="naas-header-green">Roadmap</a>
+                    <a href="https://aiclub-hq.slack.com/" target="_blank" rel="noopener" class="naas-header-green py-8">Slack</a>
+                    <a href="https://www.naas.ai/pricing" target="_blank" rel="noopener" class="naas-header-green">⚡️  Upgrade</a>         
                     <button v-on:click="openProfile()" class="px-2 py-2 button-primary naas-header-black">Profile</button>
                     <a href="#" :href="linkToLab()"><button class="px-2 py-2 button-open naas-header-open border-object">Go to engine</button></a> 
                     <a href="#" :href="linkToTemplate()"><button class="px-2 py-2 button-secondary naas-header-notebook border-object">➕ New</button></a> 
@@ -898,7 +910,7 @@
                                 style="font-weight: bold; color: #ed8936;">{{props.formattedRow[props.column.field]}}</span>
                         </span>
                         <span v-else-if="props.column.field == 'value'">
-                            <a :href="openUrl(props.formattedRow[props.column.field], props.row.type)" target="_blank" style="font-weight: bold; color: #4299e1;"
+                            <a :href="openUrl(props.formattedRow[props.column.field], props.row.type)" target="_blank" rel="noopener" style="font-weight: bold; color: #4299e1;"
                                 v-if="props.row.type == 'asset' || props.row.type == 'notebook'"
                                 >
                                 {{props.formattedRow[props.column.field].substring(0,6)}}
@@ -912,7 +924,7 @@
                             </a>
                         </span>
                         <span v-else-if="props.column.field == 'path'">
-                            <a href="#" v-on:click="linkToJup(props.formattedRow[props.column.field])" target="_blank"
+                            <a href="#" v-on:click="linkToJup(props.formattedRow[props.column.field])" target="_blank" rel="noopener"
                                 style="font-weight: bold; color: gray;">{{stripNaasPath(props.formattedRow[props.column.field])}}</a>
                         </span>
                         <span v-else-if="props.column.field == 'lastRun'">
@@ -1008,17 +1020,13 @@
         </div>
 
         <div id=footer>
-            <center>
-            <h3 class="text-2xs text-gray-400"><span class="text-white">Naas: Notebooks as a service</span></h3>
+            <h3 class="text-2xs text-gray-400 center"><span class="text-white">Naas: Notebooks as a service</span></h3>
             <h3><span class="text-white " style="font-size: 14px;">Opensourced by CashStory</span></h3>
-            <a href="https://github.com/jupyter-naas" target="_blank"><img id=footerlogo src="https://cdn3.iconfinder.com/data/icons/social-media-2169/24/social_media_social_media_logo_github-1024.png">
-            <a href="https://www.youtube.com/channel/UCKKG5hzjXXU_rRdHHWQ8JHQ" target="_blank"><img id=footerlogo src="https://cdn3.iconfinder.com/data/icons/2018-social-media-logotypes/1000/2018_social_media_popular_app_logo_youtube-1024.png"></a>
-            <a href="https://twitter.com/JupyterNaas" target="_blank"><a href="https://twitter.com/JupyterNaas" target="_blank"><img id=footerlogo src="https://cdn4.iconfinder.com/data/icons/social-messaging-ui-color-shapes-2-free/128/social-twitter-circle-128.png">
-            <a href="https://www.linkedin.com/company/naas-ai/" target="_blank"><img id=footerlogo src="https://cdn0.iconfinder.com/data/icons/social-circle-3/72/Linkedin-1024.png">
-        </center>
+            <a href="https://github.com/jupyter-naas" target="_blank" rel="noopener"><img id=footerlogo src="https://cdn3.iconfinder.com/data/icons/social-media-2169/24/social_media_social_media_logo_github-1024.png" alt="Github logo"></a>
+            <a href="https://www.youtube.com/channel/UCKKG5hzjXXU_rRdHHWQ8JHQ" target="_blank" rel="noopener"><img id=footerlogo src="https://cdn3.iconfinder.com/data/icons/2018-social-media-logotypes/1000/2018_social_media_popular_app_logo_youtube-1024.png" alt="Youtube logo"></a>
+            <a href="https://twitter.com/JupyterNaas" target="_blank" rel="noopener"><img id=footerlogo src="https://cdn4.iconfinder.com/data/icons/social-messaging-ui-color-shapes-2-free/128/social-twitter-circle-128.png" alt="Twitter logo"></a>
+            <a href="https://www.linkedin.com/company/naas-ai/" target="_blank" rel="noopener"><img id=footerlogo src="https://cdn0.iconfinder.com/data/icons/social-circle-3/72/Linkedin-1024.png" alt="LinkedIn logo"></a>
         </div>
-        </div>
-    </div>
     </div>
 </body>
 
