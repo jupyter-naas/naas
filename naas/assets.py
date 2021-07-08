@@ -65,7 +65,6 @@ class Assets:
         self.deprecatedPrint()
         copy_clipboard()
         json_data = self.manager.get_naas()
-        print(json_data)
         json_filtered = []
         for item in json_data:
             if item["type"] == self.role and item["status"] != t_delete:
