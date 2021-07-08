@@ -1,3 +1,9 @@
+## 1.18.1b0 (2021-07-08)
+
+### Refactor
+
+- redesign naas manager (#153)
+
 ## 1.18.0 (2021-06-28)
 
 ### Feat
