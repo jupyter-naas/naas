@@ -1,8 +1,6 @@
 from .ntypes import t_dependency, t_add, t_update, t_delete
 from .manager import Manager
 import pandas as pd
-import sys
-import os
 
 
 class Dependency:
@@ -15,23 +13,7 @@ class Dependency:
         self.path = self.manager.path
 
     def list(self, path=None):
-        result = pd.DataFrame()
-        if path:
-            result = self.manager.list_prod("list_history", path)
-        else:
-            prod_files = self.manager.get_naas()
-            original_stdout = sys.stdout
-            sys.stdout = open(os.devnull, 'w')
-            for file in prod_files:
-                file = file['path'].split('/')
-                if isinstance(file, list):
-                    file = file[-1]
-                new_prod = self.manager.list_prod("list_history", file)
-                if isinstance(new_prod, pd.DataFrame):
-                    dfs = [result, new_prod]
-                    result = pd.concat(dfs)
-            sys.stdout = original_stdout
-        return result
+        return self.manager.list_prod("list_history", path)
 
     def get(self, path=None, histo=None):
         return self.manager.get_file(path, histo=histo)

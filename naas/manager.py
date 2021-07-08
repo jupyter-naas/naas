@@ -270,10 +270,22 @@ class Manager:
             print(error_reject, err)
             raise
 
-    def list_prod(self, mode, path=None):
+    def list_prod(self, mode, path=None, display=True):
         if not path and self.is_production():
             print("No list_prod done you are in production\n")
             return []
+        if not path:
+            result = pd.DataFrame()
+            prod_files = self.get_naas()
+            for file in prod_files:
+                file = file["path"].split("/")
+                if isinstance(file, list):
+                    file = file[-1]
+                new_prod = self.list_prod("list_history", file, False)
+                if isinstance(new_prod, pd.DataFrame):
+                    dfs = [result, new_prod]
+                    result = pd.concat(dfs)
+            return result
         current_file = self.get_path(path)
         try:
             r = requests.get(
@@ -291,7 +303,8 @@ class Manager:
             if res.get("files", None) and len(res.get("files", [])) > 0:
                 return pd.DataFrame(data=res.get("files", []))
             else:
-                print("No files found in prod")
+                if display:
+                    print("No files found in prod")
                 return []
         except requests.exceptions.ConnectionError as err:
             print(error_busy, err)
