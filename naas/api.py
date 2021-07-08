@@ -16,6 +16,7 @@ import markdown2
 import requests
 import warnings
 import os
+import sys
 
 
 class Api:
@@ -38,7 +39,23 @@ class Api:
 
     def list(self, path=None):
         self.deprecatedPrint()
-        return self.manager.list_prod("list_history", path)
+        result = pd.DataFrame()
+        if path:
+            result = self.manager.list_prod("list_history", path)
+        else:
+            prod_files = self.manager.get_naas()
+            original_stdout = sys.stdout
+            sys.stdout = open(os.devnull, 'w')
+            for file in prod_files:
+                file = file['path'].split('/')
+                if isinstance(file, list):
+                    file = file[-1]
+                new_prod = self.manager.list_prod("list_history", file)
+                if isinstance(new_prod, pd.DataFrame):
+                    dfs = [result, new_prod]
+                    result = pd.concat(dfs)
+            sys.stdout = original_stdout
+        return result
 
     def list_output(self, path=None):
         self.deprecatedPrint()
