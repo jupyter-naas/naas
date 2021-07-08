@@ -1,4 +1,3 @@
-from pandas.core.frame import DataFrame
 from .ntypes import (
     copy_button_df,
     copy_clipboard,
