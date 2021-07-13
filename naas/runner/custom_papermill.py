@@ -5,25 +5,31 @@ from naas.runner.env_var import cpath
 import nbformat
 from pathlib import Path
 
-from papermill.log import logger
-from papermill.iorw import (
-    get_pretty_path,
-    local_file_io_cwd,
-    load_notebook_node,
-    write_ipynb,
-)
-from papermill.engines import papermill_engines
-from papermill.execute import (
-    prepare_notebook_metadata,
-    remove_error_markers,
-    raise_for_execution_errors,
-)
-from papermill.utils import chdir
-from papermill.parameterize import (
-    add_builtin_parameters,
-    parameterize_notebook,
-    parameterize_path,
-)
+# Temporary way to remove Papermill import warnings. Shuold be fixed when reaching Papermill 2.3.4
+import warnings
+
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore")
+    from papermill.log import logger
+    from papermill.iorw import (
+        get_pretty_path,
+        local_file_io_cwd,
+        load_notebook_node,
+        write_ipynb,
+    )
+    from papermill.engines import papermill_engines
+    from papermill.execute import (
+        prepare_notebook_metadata,
+        remove_error_markers,
+        raise_for_execution_errors,
+    )
+    from papermill.utils import chdir
+    from papermill.parameterize import (
+        add_builtin_parameters,
+        parameterize_notebook,
+        parameterize_path,
+    )
+
 import json
 
 
