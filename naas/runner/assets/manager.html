@@ -85,7 +85,7 @@
         .naas-header-black {
             color: white;
             font-weight: 200;   
-            border-color: white;;
+            border-color: white;
             margin-left: 30px;
             background-color: b;
             font-family: Poppins,sans-serif;
@@ -936,10 +936,10 @@
                                     style="font-weight: bold; color: #22BC66;"
                                     v-on:click="openOutput(props.formattedRow['filepath'])">✅ Active</a>
                                 <a href="#" v-else-if="props.formattedRow[props.column.field] == 'started'"
-                                    style="font-weight: bold; color: #ed8936;;"
+                                    style="font-weight: bold; color: #ed8936;"
                                     v-on:click="openOutput(props.formattedRow['filepath'])">🎽 Running</a>
                                 <a href="#" v-else-if="props.formattedRow[props.column.field] == 'edited'"
-                                    style="font-weight: bold; color: #ed8936;;"
+                                    style="font-weight: bold; color: #ed8936;"
                                     v-on:click="openOutput(props.formattedRow['filepath'])">✏️ Edited</a>
                                 <p v-else>{{props.formattedRow[props.column.field]}}</p>
                             </span>
