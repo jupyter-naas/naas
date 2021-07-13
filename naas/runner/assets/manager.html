@@ -268,7 +268,7 @@
                         field: 'filepath',
                     },
                     {
-                        label: 'Type',
+                        label: 'Service',
                         field: 'type',
                     },
                     {
@@ -303,10 +303,6 @@
                         field: 'value',
                     },
                     {
-                        label: 'Status',
-                        field: 'status',
-                    },
-                    {
                         label: 'Date',
                         field: 'lastUpdate',
                     },
@@ -315,17 +311,19 @@
                         field: 'id',
                     },
                     {
+                        label: 'Status',
+                        field: 'status',
+                    },
+                    {
                         label: 'Quantity',
                         field: 'lastRun',
+                        hidden: true,
                     },
                     {
                         label: 'Unit Price',
                         field: '',
-                    },
-                    {
-                        label: 'Tokens',
-                        field: 'lastCredit',
-                    },
+                        hidden: true,
+                    }
                 ],
                 columns_templates: [
                     {
@@ -433,15 +431,14 @@
                                 </div>
                             </div>
                             <div>
-                            <input type="text" placeholder="Temporary: send STATEMENT101 to hello@naas.ai" class="w-full h-10 px-5 py-2 pr-10 text-sm text-gray-900 bg-gray-100 border-object profile-field">
-                            </div>
-                            
+                                <center><span class="text-lg text-gray-700">Please send STATEMENT to hello@naas.ai to get your account statement.<br> We will send it to you ASAP 🙏.</span></center>
+                            </div>                        
                             <div class="flex justify-end px-5 py-4">
                             <button @click="$emit('close')" class="px-3 py-2 text-sm text-gray-500 transition duration-150 hover:text-gray-600">Close</button>
                             </div>
                         </div>
                         `,
-                    }, {}, { width: "25%", scrollable: true, height: 'auto' });
+                    }, {}, { width: "50%", scrollable: true, height: 'auto' });
                 },
                 openProfile() {
                     this.$modal.show({
@@ -484,7 +481,7 @@
                             </div>
                         </div>
                         `,
-                    }, {}, { width: "25%", scrollable: true, height: 'auto' });
+                    }, {}, { width: "50%", scrollable: true, height: 'auto' });
                 },
                 /*openPerformanceModal() {
                     this.$modal.show({
