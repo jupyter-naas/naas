@@ -1,3 +1,9 @@
+## 1.18.1b3 (2021-07-13)
+
+### Feat
+
+- improved search for templates (#164)
+
 ## 1.18.1b2 (2021-07-13)
 
 ### Feat
