@@ -343,7 +343,8 @@
                     {
                         label: 'Action',
                         field: 'action',
-                        html: true
+                        html: true,
+                        globalSearchDisabled: true,
                     }
                 ],
                 env: {},
@@ -585,6 +586,9 @@
                             } catch (err) {
                                 console.error(err);
                             }
+                            for (let i = 0; i < this.logs.length; i++)
+                                if ('asctime' in this.logs[i])
+                                    this.logs[i].asctime = this.logs[i].asctime.split('.')[0]
                         }
                     }).then(() => {
                         this.loadingLog = false;
@@ -930,7 +934,13 @@
                                     v-on:click="openError(props.formattedRow['error'], props.formattedRow['filepath'])">❌ Error</a>
                                 <a href="#" v-else-if="props.formattedRow[props.column.field] == 'healthy'"
                                     style="font-weight: bold; color: #22BC66;"
-                                    v-on:click="openOutput(props.formattedRow['filepath'])">✅ Active </a>
+                                    v-on:click="openOutput(props.formattedRow['filepath'])">✅ Active</a>
+                                <a href="#" v-else-if="props.formattedRow[props.column.field] == 'started'"
+                                    style="font-weight: bold; color: #ed8936;;"
+                                    v-on:click="openOutput(props.formattedRow['filepath'])">🎽 Running</a>
+                                <a href="#" v-else-if="props.formattedRow[props.column.field] == 'edited'"
+                                    style="font-weight: bold; color: #ed8936;;"
+                                    v-on:click="openOutput(props.formattedRow['filepath'])">✏️ Edited</a>
                                 <p v-else>{{props.formattedRow[props.column.field]}}</p>
                             </span>
                             <span v-else>
