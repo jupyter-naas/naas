@@ -1,3 +1,9 @@
+## 1.18.1b2 (2021-07-13)
+
+### Feat
+
+- changes related to Issue #146
+
 ## 1.18.1b1 (2021-07-13)
 
 ### Feat
