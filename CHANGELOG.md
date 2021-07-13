@@ -1,3 +1,31 @@
+## 1.18.1b1 (2021-07-13)
+
+### Feat
+
+- all buttons open link on a new tab
+
+### Refactor
+
+- rename Service row ro Type
+
+## 1.17.17 (2021-06-28)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.67.0
+
+## 1.17.16 (2021-06-23)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.66.8
+
+## 1.17.15 (2021-06-23)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.66.7
+
 ## 1.18.1b0 (2021-07-08)
 
 ### Refactor
