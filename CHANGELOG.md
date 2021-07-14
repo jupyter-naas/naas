@@ -1,3 +1,9 @@
+## 1.18.1b6 (2021-07-14)
+
+### Feat
+
+- hide non pertinent logs (#151)
+
 ## 1.18.1b5 (2021-07-14)
 
 ### Refactor
