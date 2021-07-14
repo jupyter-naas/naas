@@ -38,6 +38,78 @@
 
 - **dependency**: update naas_drivers 0.67.0
 ## 1.17.17b3 (2021-06-28)
+=======
+## 1.18.1b6 (2021-07-14)
+
+### Feat
+
+- hide non pertinent logs (#151)
+
+## 1.18.1b5 (2021-07-14)
+
+### Refactor
+
+- naas manager rename rows (#145)
+
+## 1.18.1b4 (2021-07-14)
+
+### Feat
+
+- improve manager tables (#165)
+
+## 1.18.1b3 (2021-07-13)
+
+### Feat
+
+- improved search for templates (#164)
+
+## 1.18.1b2 (2021-07-13)
+
+### Feat
+
+- changes related to Issue #146
+
+## 1.18.1b1 (2021-07-13)
+
+### Feat
+
+- all buttons open link on a new tab
+
+### Refactor
+
+- rename Service row ro Type
+
+## 1.17.17 (2021-06-28)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.67.0
+
+## 1.17.16 (2021-06-23)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.66.8
+
+## 1.17.15 (2021-06-23)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.66.7
+
+## 1.18.1b0 (2021-07-08)
+
+### Refactor
+
+- redesign naas manager (#153)
+
+## 1.18.0 (2021-06-28)
+
+### Feat
+
+- Merge dev on main
+
+## 1.17.17b3 (2021-06-28)
 
 ### Fix
 
@@ -48,13 +120,6 @@
 ### Fix
 
 - **CI**: Fix CI
-
-### Refactor
-
-- **onboarding,downloader**: Remove dl_ prefix on downloaded files (#133)
-
-## 1.17.17b1 (2021-06-28)
-
 
 ### Refactor
 
@@ -72,6 +137,35 @@
 
 - **papermill**: Surround Papermill import with warning catching logic (#131)
 
+## 1.17.17 (2021-06-28)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.67.0
+## 1.17.17b3 (2021-06-28)
+
+### Fix
+
+- **flake8**: Remove wp_set_for_open_filebrowser as it is not used
+
+## 1.17.17b2 (2021-06-28)
+
+### Fix
+
+- **CI**: Fix CI
+
+### Refactor
+
+- **onboarding,downloader**: Remove dl_ prefix on downloaded files (#133)
+
+## 1.17.17b1 (2021-06-28)
+
+## 1.17.17 (2021-06-28)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.67.0
+
 ## 1.17.16 (2021-06-23)
 
 ### Fix
@@ -83,11 +177,6 @@
 ### Fix
 
 - **dependency**: update naas_drivers 0.66.7
-## 1.17.15b0 (2021-06-23)
-
-### Fix
-
-- **papermill**: Surround Papermill import with warning catching logic (#131)
 
 ## 1.17.14 (2021-06-22)
 
