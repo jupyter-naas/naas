@@ -1,3 +1,52 @@
+## 1.18.1b7 (2021-07-14)
+
+### Fix
+
+- evolve scheduler list (#156)
+
+## 1.18.1b6 (2021-07-14)
+
+### Feat
+
+- hide non pertinent logs (#151)
+
+## 1.18.1b5 (2021-07-14)
+
+### Refactor
+
+- naas manager rename rows (#145)
+
+## 1.18.1b4 (2021-07-14)
+
+### Feat
+
+- improve manager tables (#165)
+
+## 1.18.1b3 (2021-07-13)
+
+### Feat
+
+- improved search for templates (#164)
+
+## 1.18.1b2 (2021-07-13)
+
+### Feat
+
+- changes related to Issue #146
+
+## 1.18.1b1 (2021-07-13)
+
+### Feat
+
+- all buttons open link on a new tab
+
+## 1.18.1b0 (2021-07-08)
+
+### Refactor
+
+- redesign naas manager (#153)
+- rename Service row ro Type
+
 ## 1.18.0 (2021-06-28)
 
 ### Feat
