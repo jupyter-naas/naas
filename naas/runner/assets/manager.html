@@ -301,6 +301,7 @@
                     {
                         label: 'Value',
                         field: 'value',
+                        hidden: true
                     },
                     {
                         label: 'Date',
@@ -731,6 +732,12 @@
                 setPageState(value) {
                     this.pageState = value;
                 },
+                formatStatus(status) {
+                    if (typeof status === 'string') {
+                        status = status.charAt(0).toUpperCase() + status.slice(1);
+                    }
+                    return status
+                }
             },
             computed: {
                 jobsActive() {
@@ -856,13 +863,18 @@
                     }">
                     <template slot="table-row" slot-scope="props">
                         <span v-if="props.column.field == 'status'">
-                            <span v-if="props.row.status === 'healthy'"
-                                style="font-weight: bold; color: #22BC66;">{{props.formattedRow[props.column.field]}}</span>
-                            <span
-                                v-else-if="props.row.status === 'error' || props.row.status === 'exception' || props.row.status === 'not_found'"
-                                style="font-weight: bold; color: #f56565;">{{props.formattedRow[props.column.field]}}</span>
-                            <span v-else
-                                style="font-weight: bold; color: #ed8936;">{{props.formattedRow[props.column.field]}}</span>
+                            <a href="#" v-if="props.row.status === 'error' || props.row.status === 'exception' || props.row.status === 'not_found'" style="font-weight: bold; color: #f56565;"
+                                v-on:click="openError(props.formattedRow['error'], props.formattedRow['filepath'])">❌ {{ formatStatus(props.row.status) }}</a>
+                            <a href="#" v-else-if="props.row.status === 'healthy'"
+                                style="font-weight: bold; color: #22BC66;"
+                                v-on:click="openOutput(props.formattedRow['filepath'])">✅ Active</a>
+                            <a href="#" v-else-if="props.row.status === 'started'"
+                                style="font-weight: bold; color: #36b3ed;"
+                                v-on:click="openOutput(props.formattedRow['filepath'])">🎽 Running</a>
+                            <a href="#" v-else-if="props.row.status === 'edited'"
+                                style="font-weight: bold; color: #ed8936;;"
+                                v-on:click="openOutput(props.formattedRow['filepath'])">✏️ Edited</a>
+                            <p v-else>{{props.formattedRow[props.column.field]}}</p>
                         </span>
                         <span v-else-if="props.column.field == 'value'">
                             <a :href="openUrl(props.formattedRow[props.column.field], props.row.type)" target="_blank" rel="noopener" style="font-weight: bold; color: #4299e1;"
@@ -933,7 +945,7 @@
                                     style="font-weight: bold; color: #22BC66;"
                                     v-on:click="openOutput(props.formattedRow['filepath'])">✅ Active</a>
                                 <a href="#" v-else-if="props.formattedRow[props.column.field] == 'started'"
-                                    style="font-weight: bold; color: #ed8936;"
+                                    style="font-weight: bold; color: #36b3ed;"
                                     v-on:click="openOutput(props.formattedRow['filepath'])">🎽 Running</a>
                                 <a href="#" v-else-if="props.formattedRow[props.column.field] == 'edited'"
                                     style="font-weight: bold; color: #ed8936;"
