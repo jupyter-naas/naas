@@ -1,3 +1,9 @@
+## 1.18.1b5 (2021-07-14)
+
+### Refactor
+
+- naas manager rename rows (#145)
+
 ## 1.18.1b4 (2021-07-14)
 
 ### Feat
