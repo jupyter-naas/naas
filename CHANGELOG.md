@@ -107,22 +107,11 @@
 
 ## 1.17.17b1 (2021-06-28)
 
-
-### Refactor
-
-- **onboarding,downloader**: Remove dl_ prefix on downloaded files (#133)
-
-## 1.17.17b0 (2021-06-23)
+## 1.17.17 (2021-06-28)
 
 ### Fix
 
-- **downloader**: Update redirect url to open downloaded file (#132)
-
-## 1.17.15b0 (2021-06-23)
-
-### Fix
-
-- **papermill**: Surround Papermill import with warning catching logic (#131)
+- **dependency**: update naas_drivers 0.67.0
 
 ## 1.17.16 (2021-06-23)
 
@@ -135,11 +124,6 @@
 ### Fix
 
 - **dependency**: update naas_drivers 0.66.7
-## 1.17.15b0 (2021-06-23)
-
-### Fix
-
-- **papermill**: Surround Papermill import with warning catching logic (#131)
 
 ## 1.17.14 (2021-06-22)
 
