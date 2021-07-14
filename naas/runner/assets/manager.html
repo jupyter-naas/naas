@@ -865,13 +865,13 @@
                         <span v-if="props.column.field == 'status'">
                             <a href="#" v-if="props.row.status === 'error' || props.row.status === 'exception' || props.row.status === 'not_found'" style="font-weight: bold; color: #f56565;"
                                 v-on:click="openError(props.formattedRow['error'], props.formattedRow['filepath'])">❌ {{ formatStatus(props.row.status) }}</a>
-                            <a href="#" v-else-if="props.formattedRow[props.column.field] == 'healthy'"
+                            <a href="#" v-else-if="props.row.status === 'healthy'"
                                 style="font-weight: bold; color: #22BC66;"
                                 v-on:click="openOutput(props.formattedRow['filepath'])">✅ Active</a>
-                            <a href="#" v-else-if="props.formattedRow[props.column.field] == 'started'"
+                            <a href="#" v-else-if="props.row.status === 'started'"
                                 style="font-weight: bold; color: #36b3ed;"
                                 v-on:click="openOutput(props.formattedRow['filepath'])">🎽 Running</a>
-                            <a href="#" v-else-if="props.formattedRow[props.column.field] == 'edited'"
+                            <a href="#" v-else-if="props.row.status === 'edited'"
                                 style="font-weight: bold; color: #ed8936;;"
                                 v-on:click="openOutput(props.formattedRow['filepath'])">✏️ Edited</a>
                             <p v-else>{{props.formattedRow[props.column.field]}}</p>
@@ -948,7 +948,7 @@
                                     style="font-weight: bold; color: #36b3ed;"
                                     v-on:click="openOutput(props.formattedRow['filepath'])">🎽 Running</a>
                                 <a href="#" v-else-if="props.formattedRow[props.column.field] == 'edited'"
-                                    style="font-weight: bold; color: #ed8936;;"
+                                    style="font-weight: bold; color: #ed8936;"
                                     v-on:click="openOutput(props.formattedRow['filepath'])">✏️ Edited</a>
                                 <p v-else>{{props.formattedRow[props.column.field]}}</p>
                             </span>
