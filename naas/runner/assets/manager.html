@@ -268,7 +268,7 @@
                         field: 'filepath',
                     },
                     {
-                        label: 'Type',
+                        label: 'Service',
                         field: 'type',
                     },
                     {
@@ -346,6 +346,59 @@
                         globalSearchDisabled: true,
                     }
                 ],
+                status_dict: {
+                    'error': {
+                        string: '❌ Error',
+                        color: '#f56565'
+                    },
+                    'exception': {
+                        string: '❌ Exception',
+                        color: '#f56565'
+                    },
+                    'not_found': {
+                        string: '❌ Not found',
+                        color: '#f56565'
+                    },
+                    'healthy': {
+                        string: '✅ Active',
+                        color: '#22BC66'
+                    },
+                    'started': {
+                        string: '🎽 Running',
+                        color: '#36b3ed'
+                    },
+                    'edited': {
+                        string: '✏️ Edited',
+                        color: '#ed8936'
+                    },
+                    'installed': {
+                        string: '⬇️ Installed',
+                        color: '#22BC66'
+                    }
+                },
+                type_dict: {
+                    'scheduler': {
+                        string: '⏰ Scheduler'
+                    },
+                    'asset': {
+                        string: '🖼️ Asset'
+                    },
+                    'webhook': {
+                        string: '⚙️ Webhook'
+                    },
+                    'notification': {
+                        string: '🛎️ Notification'
+                    },
+                    'callback': {
+                        string: '👈 Callback'
+                    },
+                    'dependency': {
+                        string: '✏️ 🔗 Dependency'
+                    },
+                    'secret': {
+                        string: '🔑 Secret key'
+                    }
+                },
                 env: {},
                 logs: [],
                 templates: [],
@@ -579,12 +632,13 @@
                     return axios.get('log', { params: this.convertApiArgs() }).then((response) => {
                         if (response && !response.error) {
                             this.logs = response.data.data;
-                            for (let i = 0; i < this.logs.length; i++) {
-                                if (this.logs[i].type == this.logs[i].filepath) {
-                                    this.logs.splice(i, 1);
-                                    --i;
-                                }
-                            }
+                            //for (let i = 0; i < this.logs.length; i++) {
+                            //    if (this.logs[i].type == this.logs[i].filepath) {
+                            //        this.logs.splice(i, 1);
+                            //        --i;
+                            //    }
+                            //}
+                            console.log(this.logs)
                             try {
                                 this.totalLogRecords = response.data.totalRecords;
                             } catch (err) {
@@ -869,26 +923,22 @@
                     }">
                     <template slot="table-row" slot-scope="props">
                         <span v-if="props.column.field == 'status'">
-                            <a href="#" v-if="props.row.status === 'error' || props.row.status === 'exception' || props.row.status === 'not_found'" style="font-weight: bold; color: #f56565;"
-                                v-on:click="openError(props.formattedRow['error'], props.formattedRow['filepath'])">❌ {{ formatStatus(props.row.status) }}</a>
-                            <a href="#" v-else-if="props.row.status === 'healthy'"
-                                style="font-weight: bold; color: #22BC66;"
-                                v-on:click="openOutput(props.formattedRow['filepath'])">✅ Active</a>
-                            <a href="#" v-else-if="props.row.status === 'started'"
-                                style="font-weight: bold; color: #36b3ed;"
-                                v-on:click="openOutput(props.formattedRow['filepath'])">🎽 Running</a>
-                            <a href="#" v-else-if="props.row.status === 'edited'"
-                                style="font-weight: bold; color: #ed8936;;"
-                                v-on:click="openOutput(props.formattedRow['filepath'])">✏️ Edited</a>
+                            <a href="#" v-if="props.row.status in status_dict" style="font-weight: bold;" :style="{color: status_dict[props.row.status].color}">
+                                {{ status_dict[props.row.status].string }}</a>
+                            <p v-else>{{props.row.status}}</p>
                             <p v-else>{{props.formattedRow[props.column.field]}}</p>
                         </span>
                         <span v-else-if="props.column.field == 'value'">
                             <a :href="openUrl(props.formattedRow[props.column.field], props.row.type)" target="_blank" rel="noopener" style="font-weight: bold; color: #4299e1;"
-                                v-if="props.row.type == 'asset' || props.row.type == 'notebook'"
-                                >
+                                v-if="props.row.type == 'asset' || props.row.type == 'notebook'">
                                 {{props.formattedRow[props.column.field].substring(0,6)}}
                             </a>
                             <span v-else>{{props.formattedRow[props.column.field]}}</span>
+                        </span>
+                        <span v-else-if="props.column.field == 'type'">
+                            <a href="#" v-if="props.row.type in type_dict" style="font-weight: bold;">
+                                {{ type_dict[props.row.type].string }}</a>
+                            <p v-else>{{props.row.type}}</p>
                         </span>
                         <span v-else-if="props.column.field == 'id'">
                             <a href="#" 
@@ -945,18 +995,14 @@
                                 {{stripNaasPath(props.formattedRow[props.column.field])}}
                             </span>
                             <span v-else-if="props.column.field == 'status'">
-                                <a href="#" v-if="props.formattedRow['error']" style="font-weight: bold; color: #f56565;"
-                                    v-on:click="openError(props.formattedRow['error'], props.formattedRow['filepath'])">❌ Error</a>
-                                <a href="#" v-else-if="props.formattedRow[props.column.field] == 'healthy'"
-                                    style="font-weight: bold; color: #22BC66;"
-                                    v-on:click="openOutput(props.formattedRow['filepath'])">✅ Active</a>
-                                <a href="#" v-else-if="props.formattedRow[props.column.field] == 'started'"
-                                    style="font-weight: bold; color: #36b3ed;"
-                                    v-on:click="openOutput(props.formattedRow['filepath'])">🎽 Running</a>
-                                <a href="#" v-else-if="props.formattedRow[props.column.field] == 'edited'"
-                                    style="font-weight: bold; color: #ed8936;"
-                                    v-on:click="openOutput(props.formattedRow['filepath'])">✏️ Edited</a>
-                                <p v-else>{{props.formattedRow[props.column.field]}}</p>
+                                <a href="#" v-if="props.row.status in status_dict" style="font-weight: bold;" :style="{color: status_dict[props.row.status].color}">
+                                    {{ status_dict[props.row.status].string }}</a>
+                                <p v-else>{{props.row.status}}</p>
+                            </span>
+                            <span v-else-if="props.column.field == 'type'">
+                                <a href="#" v-if="props.row.type in type_dict" style="font-weight: bold;">
+                                    {{ type_dict[props.row.type].string }}</a>
+                                <p v-else>{{props.row.type}}</p>
                             </span>
                             <span v-else>
                                 {{props.formattedRow[props.column.field]}}
