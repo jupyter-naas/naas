@@ -10,17 +10,16 @@
 <a href="http://commitizen.github.io/cz-cli/"><img alt="Commitizen friendly" src="https://img.shields.io/badge/commitizen-friendly-brightgreen.svg"></a>
 ![PyPI](https://img.shields.io/pypi/v/naas)
 
-# Naas: Notebooks-as-a-service
+# 🎱 Naas in short
 
-Schedule notebooks, to automate all your tasks.
+The Naas project and its hosted version naas.ai is open-source, it transforms Jupyter Notebooks in a safe production environment thanks to micro-services(like a scheduler) accessible in « low-code ».
 
-Use the power of scripting in the cloud.
-Whenever you need it (even when you sleep).
+The product is based on 3 elements: features, drivers and templates.
+The templates enable "data geeks" to kickstart projects in minutes, the low-code drivers act as connectors to facilitate access to tools, and complex libraries (database, API, ML algorithm...) while the low-code features (scheduling, asset sharing, notifications...) enable faster iteration and deployment of outputs to end users, in a headless manner.
 
-* Schedule your scripts
-* Use Notebooks as API
-* Share assets securely
-* Send emails
+Naas is forever free to use with 100 credits/month.
+Open your account
+PS: If you contribute to this library of open-source notebooks templates, you can X2 your monthly credits 🏆
 
 # Documentation 
 
@@ -32,11 +31,11 @@ Whenever you need it (even when you sleep).
 
 # Issue
 
-If you found a bug or need a new feature go there :
-https://naas.canny.io/
+If you found a bug or need a new feature, please open an Issue here. 
 
-## Try Naas
-Using Binder
+
+## Try Naas on Binder
+
 You can try out some of Naas features using the My Binder service.
 
 Click on a link below to try Naas, on a sandbox environment, without having to install anything.
@@ -82,14 +81,14 @@ We have a WIP documentation in swagger.
 
 `http://127.0.0.1:5000/swagger/`
 
-### Livereload 
+### Live reload 
 
 If you do change in naas code, the server will live reload.
 
 If you use naas in a notebook restart the kernel to get the changes.
 
-### isolated Manager
-open manager outsite of jupyter context :
+### Naas Manager
+Open Naas manager outsite of jupyter context :
 
 `http://localhost:5000/naas`
 
@@ -125,10 +124,9 @@ this auto publish by github action on main branch
   <a href="https://gitbook.com" title="Redirect to Gitbook">
     <img width="200px" src="https://raw.githubusercontent.com/jupyter-naas/naas/main/images/gitbook.svg" alt="Gitbooks" />
   </a>
-  <a href="https://canny.io" title="Redirect to Canny">
-    <img width="200px" src="https://raw.githubusercontent.com/jupyter-naas/naas/main/images/canny.svg" alt="Canny" />
-  </a>
 </p>
 
 ### Authors:
-* [Martin donadieu](https://github.com/riderx)
+* [Jeremy Ravenel](https://github.com/jravenel)
+* [Maxime Jublou](https://github.com/Dr0p42)
+* [Martin Donadieu](https://github.com/riderx)
