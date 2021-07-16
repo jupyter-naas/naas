@@ -614,8 +614,9 @@
                 },
                 convertApiArgs() {
                     const query = {
-//                        limit: this.serverLogParams.perPage,
-//                        skip: this.serverLogParams.perPage * (this.serverLogParams.page - 1),
+                        limit: this.serverLogParams.perPage,
+                        skip: this.serverLogParams.perPage * (this.serverLogParams.page - 1),
+                        technical_rows: false
                     }
                     if (this.serverLogParams.columnFilters !== "") {
                         query['search'] = this.serverLogParams.columnFilters;
@@ -632,13 +633,6 @@
                     return axios.get('log', { params: this.convertApiArgs() }).then((response) => {
                         if (response && !response.error) {
                             this.logs = response.data.data;
-                            for (let i = 0; i < this.logs.length; i++) {
-                                if (this.logs[i].type == this.logs[i].filepath) {
-                                    this.logs.splice(i, 1);
-                                    --i;
-                                }
-                            }
-                            console.log(this.logs)
                             try {
                                 this.totalLogRecords = response.data.totalRecords;
                             } catch (err) {
@@ -964,7 +958,9 @@
                 <div class="vld-parent">
                     <loading :active.sync="loadingLog" 
                     :is-full-page="loadingFull"></loading>
-                    <vue-good-table class="border-object" :columns="columns_logs" :rows="logs" :search-options="{
+                    <vue-good-table class="border-object" mode="remote" :columns="columns_logs" @on-page-change="onPageLogChange"
+                        @on-sort-change="onSortLogChange" @on-column-filter="onColumnLogFilter"
+                        @on-per-page-change="onPerPageLogChange" :total-rows="totalLogRecords" :rows="logs" :search-options="{
                         enabled: true,
                         externalQuery: filter
                     }" :sort-options="{
