@@ -34,7 +34,7 @@ PS: If you contribute to this library of open-source notebooks templates, you ca
 If you found a bug or need a new feature, please open an Issue here. 
 
 
-## Try Naas on Binder
+# Try Naas on Binder
 
 You can try out some of Naas features using the My Binder service.
 
@@ -42,17 +42,17 @@ Click on a link below to try Naas, on a sandbox environment, without having to i
 Test it in binder (WIP)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/jupyter-naas/naas/main?urlpath=lab)
 
-## Install
+## Install Naas only
 
 `pip3 install naas`
 
-### Install with drivers
+## Install Naas with drivers
 
 `pip3 install 'naas[full]'`
 
 ---
 
-# DEVELOPMENT
+# Run locally
 
 ## Install
 
