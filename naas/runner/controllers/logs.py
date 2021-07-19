@@ -27,7 +27,9 @@ class LogsController(HTTPMethodView):
             search = str(request.args.get("search", ""))
             sort = list(json.loads(request.args.get("sort", "[]")))
             filters = list(json.loads(request.args.get("filters", "[]")))
-            technical_rows = bool(json.loads(request.args.get("technical_rows", 'true')))
+            technical_rows = bool(
+                json.loads(request.args.get("technical_rows", "true"))
+            )
             logs = self.__logger.list(
                 uid, skip, limit, search, filters, sort, technical_rows
             )

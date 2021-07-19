@@ -81,7 +81,7 @@ class Logger:
             df = pd.DataFrame(
                 data=self.__sql.search_in_db(search), index=None, columns=self.__columns
             )
-            if not technical_rows and 'type' in df and 'filepath' in df:
+            if not technical_rows and "type" in df and "filepath" in df:
                 df = df[df["type"] != df["filepath"]]
             if len(filters) > 0:
                 df = df[df.type.isin(filters)]
