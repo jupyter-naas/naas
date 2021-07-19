@@ -363,6 +363,10 @@
                         string: '✅ Active',
                         color: '#22BC66'
                     },
+                    'installed': {
+                        string: '✅ Active',
+                        color: '#22BC66'
+                    },
                     'started': {
                         string: '🎽 Running',
                         color: '#36b3ed'
@@ -370,10 +374,6 @@
                     'edited': {
                         string: '✏️ Edited',
                         color: '#ed8936'
-                    },
-                    'installed': {
-                        string: '⬇️ Installed',
-                        color: '#22BC66'
                     }
                 },
                 type_dict: {
@@ -919,8 +919,7 @@
                         <span v-if="props.column.field == 'status'">
                             <a href="#" v-if="props.row.status in status_dict" style="font-weight: bold;" :style="{color: status_dict[props.row.status].color}">
                                 {{ status_dict[props.row.status].string }}</a>
-                            <p v-else>{{props.row.status}}</p>
-                            <p v-else>{{props.formattedRow[props.column.field]}}</p>
+                            <p v-else>{{formatStatus(props.row.status)}}</p>
                         </span>
                         <span v-else-if="props.column.field == 'value'">
                             <a :href="openUrl(props.formattedRow[props.column.field], props.row.type)" target="_blank" rel="noopener" style="font-weight: bold; color: #4299e1;"
@@ -991,7 +990,7 @@
                             <span v-else-if="props.column.field == 'status'">
                                 <a href="#" v-if="props.row.status in status_dict" style="font-weight: bold;" :style="{color: status_dict[props.row.status].color}">
                                     {{ status_dict[props.row.status].string }}</a>
-                                <p v-else>{{props.row.status}}</p>
+                                <p v-else>{{formatStatus(props.row.status)}}</p>
                             </span>
                             <span v-else-if="props.column.field == 'type'">
                                 <a href="#" v-if="props.row.type in type_dict" style="font-weight: bold;">
