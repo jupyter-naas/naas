@@ -323,9 +323,8 @@
                         field: 'status',
                     },
                     {
-                        label: 'Quantity',
+                        label: 'Last Duration',
                         field: 'lastRun',
-                        hidden: true,
                     },
                     {
                         label: 'Unit Price',
@@ -878,6 +877,9 @@
                         ofLabel: 'of',
                         pageLabel: 'page', // for 'pages' mode
                         allLabel: 'All',
+                    }" :sort-options="{
+                        enabled: true,
+                        initialSortBy: {field: 'lastUpdate', type: 'desc'}
                     }">
                     <template slot="table-row" slot-scope="props">
                         <span v-if="props.column.field == 'status'">
@@ -933,6 +935,7 @@
                         externalQuery: filter
                     }" :sort-options="{
                         enabled: true,
+                        initialSortBy: {field: 'asctime', type: 'desc'}
                     }" :pagination-options="{
                         enabled: true,
                         mode: 'records',
