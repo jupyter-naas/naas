@@ -909,10 +909,6 @@
                                 {{props.formattedRow[props.column.field].substring(0,6)}}
                             </a>
                         </span>
-<!--                        <span v-else-if="props.column.field == 'path'">
-                            <a href="#" v-on:click="linkToJup(props.formattedRow[props.column.field])" target="_blank" rel="noopener"
-                                style="font-weight: bold; color: gray;">{{stripNaasPath(props.formattedRow[props.column.field])}}</a>
-                        </span>-->
                         <span v-else-if="props.column.field == 'lastRun'">
                             {{toMMSS(props.row.type, props.formattedRow[props.column.field])}}
                         </span>
