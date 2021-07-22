@@ -36,3 +36,5 @@ COPY scripts /etc/naas/scripts
 COPY custom /etc/naas/custom
 RUN /etc/naas/scripts/install_supp
 RUN /etc/naas/scripts/customize
+
+RUN fix-permissions /opt/conda/share/jupyter/lab/extensions
