@@ -1,3 +1,9 @@
+## 1.19.1b1 (2021-07-22)
+
+### Fix
+
+- **fs-permissions**: /opt/conda/share/jupyter/lab/extensions
+
 ## 1.19.1b0 (2021-07-22)
 
 ### Fix
