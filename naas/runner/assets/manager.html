@@ -235,7 +235,6 @@
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/vue-loading-overlay@3"></script>
-    <script src="https://unpkg.com/vue-router"></script>
     <link href="https://cdn.jsdelivr.net/npm/vue-loading-overlay@3/dist/vue-loading.css" rel="stylesheet">
     <script type="module">
         import Vue from 'https://cdn.jsdelivr.net/npm/vue@2.6.11/dist/vue.esm.browser.min.js';
@@ -243,7 +242,7 @@
         import VueGoodTablePlugin from 'https://cdn.jsdelivr.net/npm/vue-good-table@2.21.1/dist/vue-good-table.esm.js';
         import * as VModal from 'https://cdn.jsdelivr.net/npm/vue-js-modal@2.0.0-rc.6/dist/index.min.js';
         import VueCodeHighlight from 'https://cdn.jsdelivr.net/npm/vue-code-highlight@0.7.6/dist/vue-code-highlight.esm.min.js';
-//        import * as VRouter from 'https://cdn.jsdelivr.net/npm/vue-router@3.5.2/dist/vue-router.min.js';
+        import * as VRouter from 'https://cdn.jsdelivr.net/npm/vue-router@3.5.2/dist/vue-router.min.js';
 
         Vue.use(VueRouter)
 
@@ -910,10 +909,10 @@
                                 {{props.formattedRow[props.column.field].substring(0,6)}}
                             </a>
                         </span>
-                        <span v-else-if="props.column.field == 'path'">
+<!--                        <span v-else-if="props.column.field == 'path'">
                             <a href="#" v-on:click="linkToJup(props.formattedRow[props.column.field])" target="_blank" rel="noopener"
                                 style="font-weight: bold; color: gray;">{{stripNaasPath(props.formattedRow[props.column.field])}}</a>
-                        </span>
+                        </span>-->
                         <span v-else-if="props.column.field == 'lastRun'">
                             {{toMMSS(props.row.type, props.formattedRow[props.column.field])}}
                         </span>
