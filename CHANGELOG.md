@@ -1,3 +1,19 @@
+## 1.19.1b2 (2021-07-26)
+
+### Feat
+
+- rename busy to running
+- status uppercase
+- technical rows are ignord
+- services are beatified + better system to exchange text in table
+
+### Fix
+
+- black format
+- prevent code from crash
+- black format
+- blank hisotry
+
 ## 1.19.1b1 (2021-07-22)
 
 ### Fix
