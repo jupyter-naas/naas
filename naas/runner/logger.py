@@ -83,6 +83,7 @@ class Logger:
             )
             if not technical_rows and "type" in df and "filepath" in df:
                 df = df[df["type"] != df["filepath"]]
+                df = df[df["status"] != "busy"]
             if len(filters) > 0:
                 df = df[df.type.isin(filters)]
             if len(sort) > 0:

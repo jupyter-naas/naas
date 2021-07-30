@@ -299,9 +299,9 @@
                         field: 'type',
                     },
                     {
-                        label: 'Value',
+                        label: 'Meta',
                         field: 'value',
-                        hidden: true
+                        hidden: false
                     },
                     {
                         label: 'Date',
@@ -359,8 +359,16 @@
                         string: '❌ Not found',
                         color: '#f56565'
                     },
+                    'delete': {
+                        string: '❎ Deleted',
+                        color: '#22BC66'
+                    },
                     'healthy': {
-                        string: '✅ Active',
+                        string: '✅ Completed',
+                        color: '#22BC66'
+                    },
+                    'send': {
+                        string: '✅ Sent',
                         color: '#22BC66'
                     },
                     'installed': {
@@ -368,7 +376,7 @@
                         color: '#22BC66'
                     },
                     'started': {
-                        string: '🎽 Running',
+                        string: '🎽 Started',
                         color: '#36b3ed'
                     },
                     'busy': {
@@ -376,8 +384,8 @@
                         color: '#36b3ed'
                     },
                     'edited': {
-                        string: '✏️ Edited',
-                        color: '#ed8936'
+                        string: '✅ Active',
+                        color: '#22BC66'
                     }
                 },
                 type_dict: {
@@ -387,7 +395,7 @@
                     'asset': {
                         string: '🖼️ Asset'
                     },
-                    'webhook': {
+                    'notebook': {
                         string: '⚙️ Webhook'
                     },
                     'notification': {
@@ -397,7 +405,7 @@
                         string: '👈 Callback'
                     },
                     'dependency': {
-                        string: '✏️ 🔗 Dependency'
+                        string: '🔗 Dependency'
                     },
                     'secret': {
                         string: '🔑 Secret key'
@@ -908,10 +916,12 @@
                             <p v-else>{{formatStatus(props.row.status)}}</p>
                         </span>
                         <span v-else-if="props.column.field == 'value'">
+                            <a v-if="props.row.type == 'asset'">Download </a>
+                            <a v-else-if="props.row.type == 'notebook'">Call </a>
                             <a :href="openUrl(props.formattedRow[props.column.field], props.row.type)" target="_blank" rel="noopener" style="font-weight: bold; color: #4299e1;"
-                                v-if="props.row.type == 'asset' || props.row.type == 'notebook'">
-                                {{props.formattedRow[props.column.field].substring(0,6)}}
-                            </a>
+                                v-if="props.row.type == 'asset' || props.row.type == 'notebook'">here</a>
+                            <a v-else-if="props.row.type == 'scheduler'">Cron: {{props.formattedRow[props.column.field]}}</a>
+                            <a v-else-if="props.row.type == 'dependency'"></a>
                             <span v-else>{{props.formattedRow[props.column.field]}}</span>
                         </span>
                         <span v-else-if="props.column.field == 'type'">
