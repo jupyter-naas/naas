@@ -54,7 +54,7 @@
             padding-top: 20px;
         }
         .naas-tab {
-            font-size: 1.5em;
+            font-size: 1.2em;
             font-weight: bolder;
             font-family: Poppins,sans-serif;
             color: white;
@@ -411,6 +411,7 @@
                 templatesState: 0,
                 jobsState: 1,
                 historyState: 2,
+                accountState: 3,
                 debouceFilter: null,
                 serverLogParams: {
                     columnFilters: "",
@@ -476,28 +477,6 @@
                         `,
                         props: ['error', 'url']
                     }, { error, url }, { width: "70%", scrollable: true, height: 'auto' });
-                },
-                openStatement() {
-                    this.$modal.show({
-                        template: `
-                        <div class="w-full bg-white rounded-lg shadow-lg">
-                            <div class="flex justify-between px-5 py-4 border-b border-gray-100">
-                                <div>
-                                    <span class="text-lg font-bold text-gray-700">Account Balance (coming soon)</span>
-                                </div>
-                                <div>
-                                    <button><i class="text-red-500 transition duration-150 fa fa-times-circle hover:text-red-600"></i></button>
-                                </div>
-                            </div>
-                            <div>
-                                <center><span class="text-lg text-gray-700">Please send STATEMENT to hello@naas.ai to get your account statement.<br> We will send it to you ASAP 🙏.</span></center>
-                            </div>                        
-                            <div class="flex justify-end px-5 py-4">
-                            <button @click="$emit('close')" class="px-3 py-2 text-sm text-gray-500 transition duration-150 hover:text-gray-600">Close</button>
-                            </div>
-                        </div>
-                        `,
-                    }, {}, { width: "50%", scrollable: true, height: 'auto' });
                 },
                 openProfile() {
                     this.$modal.show({
@@ -807,6 +786,9 @@
                 templatesActive() {
                     return this.pageState == this.templatesState
                 },
+                accountActive() {
+                    return this.pageState == this.accountState
+                },
             },
             created: function () {
                 const uri = window.location.href.split('?');
@@ -875,7 +857,6 @@
                 
             </div>
         </nav>
-        <button v-on:click="openStatement()" class="px-2 py-2 button-primary naas-credits">💲 Account Balance</a></button>
         <div class="flex items-center justify-center w-full naas-search md:px-12">          
             <div class="relative text-gray-900" style="width: 100%;">
                 <input type="text" name="search" v-model="filter" placeholder="Search..."
@@ -901,6 +882,7 @@
             <button @click="setPageState(templatesState)" class="naas-tab" :class="templatesActive ? 'naas-current-tab' : ''">😎 Templates</button>
             <button @click="setPageState(jobsState)" class="naas-tab" :class="jobsActive ? 'naas-current-tab' : ''">🌱 Tasks</button>
             <button @click="setPageState(historyState)" class="naas-tab" :class="historyActive ? 'naas-current-tab' : ''">🧬 History</button>
+            <button @click="setPageState(accountState)" class="naas-tab" :class="accountActive ? 'naas-current-tab' : ''">💵 Account Balance</button>
             <div v-if="jobsActive">
                 <vue-good-table class="border-object" :columns="columns_jobs" :rows="jobs" :search-options="{
                         enabled: true,
@@ -1029,6 +1011,15 @@
                     <template slot="table-row" slot-scope="props">
                     </template>
                 </vue-good-table>
+            </div>
+            <div v-if="accountActive" style="text-align: center;">
+                <div class="text-white" style="font-size: 26px; font-weight: bold; margin: 1em;">Account Balance is coming soon...</div>
+                <div class="text-2xs text-white center">
+                    In the meantime, please
+                    <a href="mailto:hello@naas.ai?subject=STATEMENT&body=STATEMENT" style="color: #22BC66; font-weight: bold;">send message 📧</a>
+                    to get your account statement.<br/>
+                    We will send it to you ASAP 🙏.
+                </div>
             </div>
 
             <div class="col-start-2 py-4 pt-8" v-if="env && env.version">
