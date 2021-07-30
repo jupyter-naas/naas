@@ -1,3 +1,14 @@
+## 1.19.1b7 (2021-07-30)
+
+### Feat
+
+- deleted status added
+- add meta column in task table
+
+### Refactor
+
+- hide busy status in log + rename status in manager tables
+
 ## 1.19.1b6 (2021-07-30)
 
 ### Refactor
