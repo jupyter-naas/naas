@@ -858,7 +858,12 @@
             <button @click="setPageState(jobsState)" class="naas-tab" :class="jobsActive ? 'naas-current-tab' : ''">🌱 Tasks</button>
             <button @click="setPageState(historyState)" class="naas-tab" :class="historyActive ? 'naas-current-tab' : ''">🧬 History</button>
             <a href="#" :href="linkToManager() + '?tab=' + pageState"
-                class="px-2 py-2 button-secondary naas-header-notebook border-object no-underline hover:text-#4299e1-dark float-right" position="right">Refresh</a>
+                class="px-2 py-2 button-secondary naas-header-notebook border-object no-underline float-right" position="right">
+<!--                <img src="https://upload.wikimedia.org/wikipedia/commons/c/ce/Ic_refresh_48px.svg"/>-->
+                <svg xmlns="https://upload.wikimedia.org/wikipedia/commons/c/ce/Ic_refresh_48px.svg">
+                </svg>
+                  
+            </a>
             <div v-if="jobsActive">
                 <vue-good-table class="border-object" :columns="columns_jobs" :rows="jobs" :search-options="{
                         enabled: true,
