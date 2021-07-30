@@ -823,7 +823,7 @@
                     <a href="https://docs.naas.ai/" target="_blank" rel="noopener" class="naas-header-green">Docs</a>       
                     <a href="https://github.com/orgs/jupyter-naas/projects/4?fullscreen=true" target="_blank" rel="noopener" class="naas-header-green">Roadmap</a>
                     <a href="https://aiclub-hq.slack.com/" target="_blank" rel="noopener" class="naas-header-green py-8">Slack</a>
-                    <a href="https://www.naas.ai/pricing" target="_blank" rel="noopener" class="naas-header-green">⚡️  Upgrade</a>         
+                    <a href="https://www.naas.ai/pricing" target="_blank" rel="noopener" class="naas-header-green">⚡️  Upgrade</a>
                     <button v-on:click="openProfile()" class="px-2 py-2 button-primary naas-header-black">Profile</button>
                     <!-- <a href="#" :href="linkToLab()"><button class="px-2 py-2 button-open naas-header-open border-object">Go to engine</button></a> -->
                     <a href="#" :href="linkToTemplate()" target="_blank"><button class="px-2 py-2 button-secondary naas-header-notebook border-object">➕ New</button></a> 
@@ -858,7 +858,7 @@
             <button @click="setPageState(jobsState)" class="naas-tab" :class="jobsActive ? 'naas-current-tab' : ''">🌱 Tasks</button>
             <button @click="setPageState(historyState)" class="naas-tab" :class="historyActive ? 'naas-current-tab' : ''">🧬 History</button>
             <a href="#" :href="linkToManager() + '?tab=' + pageState"
-                                class="font-sans text-2xl font-bold text-gray-100 no-underline hover:text-#4299e1-dark float-right" position="right">Refresh</a>
+                class="px-2 py-2 button-secondary naas-header-notebook border-object no-underline hover:text-#4299e1-dark float-right" position="right">Refresh</a>
             <div v-if="jobsActive">
                 <vue-good-table class="border-object" :columns="columns_jobs" :rows="jobs" :search-options="{
                         enabled: true,
