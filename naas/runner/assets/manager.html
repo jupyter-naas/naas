@@ -116,6 +116,15 @@
         .naas-current-tab {
             border-bottom: 5px solid #22BC66;
         }
+        .refresh-button {
+            mask: url(https://upload.wikimedia.org/wikipedia/commons/c/ce/Ic_refresh_48px.svg);
+            display: inline-block;
+            width: 1.5em;
+            height: 1.5em;
+            background: black;
+            mask-size: cover;
+            vertical-align: bottom;
+        }
         /**
         * Profile image component
         */
@@ -858,11 +867,9 @@
             <button @click="setPageState(jobsState)" class="naas-tab" :class="jobsActive ? 'naas-current-tab' : ''">🌱 Tasks</button>
             <button @click="setPageState(historyState)" class="naas-tab" :class="historyActive ? 'naas-current-tab' : ''">🧬 History</button>
             <a href="#" :href="linkToManager() + '?tab=' + pageState"
-                class="px-2 py-2 button-secondary naas-header-notebook border-object no-underline float-right" position="right">
-<!--                <img src="https://upload.wikimedia.org/wikipedia/commons/c/ce/Ic_refresh_48px.svg"/>-->
-                <svg xmlns="https://upload.wikimedia.org/wikipedia/commons/c/ce/Ic_refresh_48px.svg">
-                </svg>
-                  
+                class="px-2 py-2 button-secondary naas-header-notebook border-object no-underline float-right">
+                <span class="refresh-button">
+                </span>
             </a>
             <div v-if="jobsActive">
                 <vue-good-table class="border-object" :columns="columns_jobs" :rows="jobs" :search-options="{
