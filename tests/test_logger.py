@@ -88,3 +88,4 @@ def test_list(tmp_path, caplog):
         )
         == 2
     )
+    logger.clear()

@@ -1,4 +1,12 @@
-from .ntypes import copy_button_df, copy_clipboard, t_asset, copy_button, t_add, t_update, t_delete
+from .ntypes import (
+    copy_button_df,
+    copy_clipboard,
+    t_asset,
+    copy_button,
+    t_add,
+    t_update,
+    t_delete,
+)
 from .manager import Manager
 import pandas as pd
 import warnings
@@ -45,10 +53,15 @@ class Assets:
                 if raw:
                     json_filtered.append(item)
                 else:
-                    json_filtered.append({"path": item['path'], "url": self.manager.proxy_url('assets', item['value'])})
+                    json_filtered.append(
+                        {
+                            "path": item["path"],
+                            "url": self.manager.proxy_url("assets", item["value"]),
+                        }
+                    )
         if raw is False:
             df = pd.DataFrame(json_filtered)
-            df = df.style.format({'url': copy_button_df})
+            df = df.style.format({"url": copy_button_df})
             return df
         return json_filtered
 
@@ -106,4 +119,4 @@ class Assets:
         self.manager.del_prod({"type": self.role, "path": current_file}, debug)
         print("🗑 Done! Your Assets has been remove from production.\n")
         if all is True:
-            self.clear(current_file, 'all')
+            self.clear(current_file, "all")

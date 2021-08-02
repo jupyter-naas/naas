@@ -2,6 +2,9 @@ from naas.runner.env_var import n_env
 import urllib.parse
 import requests
 import os
+from os import path
+import pathlib
+
 
 __jup_def_set_workspace = "/etc/naas/custom/set_workspace.json"
 __jup_def_set_workspace_browser = "/etc/naas/custom/set_workspace_browser.json"
@@ -12,15 +15,25 @@ __github_api_url = "https://api.github.com/repos/{REPO}/git/trees/{BRANCH}?recur
 __github_base_url = "https://github.com/{REPO}/blob/{BRANCH}/"
 
 
+def __generate_unique_path(filepath):
+    count = 1
+    unique_path = filepath
+    while path.exists(unique_path):
+        p = pathlib.Path(filepath)
+        unique_path = path.join(p.parents[0], f"{p.stem}_({count}){p.suffix}")
+        count += 1
+    return unique_path
+
+
 def download_file(url, file_name=None):
     raw_target = url
     if not file_name:
         file_name = raw_target.split("/")[-1]
         file_name = urllib.parse.unquote(file_name)
-    elif file_name not in '.':
+    elif file_name not in ".":
         file_name = f"{file_name}.ipynb"
 
-    file_name = f"dl_{file_name}"
+    file_name = f"{file_name}"
     if "://github.com" in raw_target:
         raw_target = raw_target.replace(
             "https://github.com/", "https://raw.githubusercontent.com/"
@@ -29,38 +42,30 @@ def download_file(url, file_name=None):
     content = b"ERROR"
     if "://" not in raw_target:
         try:
-            cur_path = os.path.join(f"{n_env.path_naas_folder}{n_env.server_root}", raw_target)
+            cur_path = os.path.join(
+                f"{n_env.path_naas_folder}{n_env.server_root}", raw_target
+            )
             ff = open(cur_path, "rb")
             content = ff.read()
             ff.close()
         except Exception as e:
             print(f"Cannot open local file {cur_path}", e)
-            content = b"ERROR: Cannot open local file " + bytes(cur_path, 'utf-8') + b" " + bytes(raw_target, 'utf-8')
+            content = (
+                b"ERROR: Cannot open local file "
+                + bytes(cur_path, "utf-8")
+                + b" "
+                + bytes(raw_target, "utf-8")
+            )
     else:
         r = requests.get(raw_target)
         content = r.content
     if content.startswith(b"ERROR"):
         file_name = "dl_error.txt"
+    file_name = __generate_unique_path(file_name)
     with open(file_name, "wb") as f:
         f.write(content)
         f.close()
     return file_name
-
-
-def wp_set_for_open_filebrowser(url):
-    try:
-        filename = url.split("/")[-1]
-        filename = filename.split(".")[0]
-        new_wp = os.path.join(n_env.path_naas_folder, f"{filename}_workspace.json")
-        with open(__jup_def_set_workspace_browser, "r") as fh:
-            content_wp = fh.read()
-            new_content_wp = content_wp.replace("{NB_NAME}", filename)
-            with open(new_wp, "w+") as f:
-                f.write(new_content_wp)
-        os.system(f"{__jup_load_workspace} {new_wp}")
-        os.remove(new_wp)
-    except Exception as e:
-        print("Cannot config jupyter workspace", e)
 
 
 def __wp_set_for_open(url):

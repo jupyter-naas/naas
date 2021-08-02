@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -x
+
 BUILD="YES"
 SUPP="NO"
 N_ENV="dev"
@@ -37,18 +39,19 @@ case $i in
 esac
 done
 
-VOLUME_SSH="$HOME/.ssh:/home/ftp/.ssh"
+setCrossPlatformVolumeParameter() 
+{
+    if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+        echo $1:z
+    elif [[ "$OSTYPE" == "darwin"* ]]; then
+        echo $1
+    else
+        echo $1
+    fi
+}
 
-if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-        # ...
-    VOLUME_NAAS="$PWD:/home/ftp/naas:z"
-elif [[ "$OSTYPE" == "darwin"* ]]; then
-        # Mac OS
-    VOLUME_NAAS="$PWD:/home/ftp/naas"
-else
-    echo "UNRECONIZED OS, cannot mount volume"
-    VOLUME_NAAS=''
-fi
+VOLUME_SSH=$(setCrossPlatformVolumeParameter "$HOME/.ssh:/home/ftp/.ssh")
+VOLUME_NAAS=$(setCrossPlatformVolumeParameter "$PWD:/home/ftp/naas")
 
 if [[ $BUILD == "YES" ]]; then
     docker pull jupyternaas/singleuser:latest
@@ -73,6 +76,6 @@ if [[ $RUN == "YES" ]]; then
         -p 8888:8888 \
         -p 5000:5000 \
         -v "$VOLUME_NAAS" \
-        -v $VOLUME_SSH \
+        -v "$VOLUME_SSH" \
         jupyternaas/naas:local_$N_ENV
 fi

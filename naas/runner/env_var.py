@@ -10,6 +10,7 @@ class n_env:
     _api_port = None
     _notif_api = None
     _callback_api = None
+    _report_callback = False
     _proxy_api = None
     _hub_base = None
 
@@ -97,6 +98,16 @@ class n_env:
         self._callback_api = callback_api
 
     @property
+    def report_callback(self):
+        return self._report_callback or (
+            os.environ.get("REPORT_CALLBACK", "True") == "True"
+        )
+
+    @report_callback.setter
+    def report_callback(self, report_callback):
+        self._report_callback = report_callback
+
+    @property
     def proxy_api(self):
         if self.user and self.user != "":
             return self._proxy_api or os.environ.get(
@@ -111,7 +122,9 @@ class n_env:
 
     @property
     def hub_base(self):
-        res = self._hub_base or os.environ.get("JUPYTERHUB_URL") or "https://app.naas.ai"
+        res = (
+            self._hub_base or os.environ.get("JUPYTERHUB_URL") or "https://app.naas.ai"
+        )
         if "://" not in res:
             return f"http://{res}"
         else:
@@ -268,6 +281,4 @@ n_env = n_env()
 
 
 def cpath(path):
-    return path.replace(n_env.path_naas_folder, "").replace(
-                            f"{n_env.server_root}/", ""
-                        )
+    return path.replace(n_env.path_naas_folder, "").replace(f"{n_env.server_root}/", "")

@@ -1,9 +1,9 @@
-FROM jupyternaas/singleuser:2.11.14
+FROM jupyternaas/singleuser:2.11.15
 
 # Build-time metadata as defined at http://label-schema.org
 ARG BUILD_DATE
 ARG VCS_REF
-ENV NAAS_VERSION 1.14.2
+ENV NAAS_VERSION 1.20.0
 ENV JUPYTER_ENABLE_LAB 'yes'
 ENV NB_UMASK=022
 ENV NB_USER=ftp
@@ -29,7 +29,7 @@ RUN mkdir /home/$NB_USER && \
     && ln -s jupyter-server jupyter-notebook
 
 RUN python3 -m pip install --no-cache-dir --upgrade pip && python3 -m pip --version
-RUN python3 -m pip install --no-cache-dir --upgrade naas[full]==$NAAS_VERSION
+RUN python3 -m pip install --no-cache-dir --upgrade --use-deprecated=legacy-resolver naas[full]==$NAAS_VERSION
 
 RUN mkdir /etc/naas
 COPY scripts /etc/naas/scripts

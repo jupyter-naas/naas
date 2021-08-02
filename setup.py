@@ -3,29 +3,29 @@ from setuptools import setup, find_packages
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-NDV = "0.54.6"
+NDV = "0.69.2"
 
 driver_dep = [f'naas_drivers=={NDV}']
 dev_dep = [
     "syncer==1.3.0",
     "backports.zoneinfo==0.2.1",
-    "pytest==6.2.3",
+    "pytest==6.2.4",
     "pytest-tornasync==0.6.0.post2",
-    "pytest-mock==3.5.1",
+    "pytest-mock==3.6.0",
     "pytest-sanic==1.7.0",
-    "pytest-asyncio==0.14.0",
-    "requests-mock==1.8.0",
+    "pytest-asyncio==0.15.1",
+    "requests-mock==1.9.2",
     "twine==3.4.1",
-    "flake8==3.9.0",
+    "flake8==3.9.1",
     "pre-commit==2.12.1",
-    "black==20.8b1",
+    "black==21.5b1",
     "imgcompare==2.0.1",
-    "commitizen==2.17.0",
+    "commitizen==2.17.4",
     "pytest-cov==2.11.1",
 ]
 setup(
     name="naas",
-    version="1.14.2",
+    version="1.20.0",
     author="Martin Donadieu",
     author_email="martindonadieu@gmail.com",
     license="BSD",
@@ -55,10 +55,10 @@ setup(
         "html5lib==1.1",
         "Pillow==8.2.0",
         "markdown2==2.4.0",
-        "pandas==1.2.3",
+        "pandas==1.2.4",
         "escapism==1.0.1",
-        "notebook==6.3.0",
-        "ipython==7.22.0",
+        "notebook==6.4.0",
+        "ipython==7.23.1",
         "ipykernel==5.5.3",
         "requests==2.25.1",
         "sentry-sdk==1.0.0",
@@ -67,12 +67,19 @@ setup(
         "argparse==1.4.0",
         "nbclient==0.5.3",
         "beautifulsoup4==4.9.3",
-        "tzdata"
+        "tzdata",
+        "pysqlite3==0.4.6",
+        "pymongo[srv]==3.11.4"
     ],
     classifiers=[
         "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3 :: Only",
         "License :: OSI Approved :: BSD License",
         "Framework :: Jupyter",
         "Operating System :: OS Independent",
+        "Intended Audience :: Science/Research",
+        "Intended Audience :: Developers",
+        "Topic :: Software Development",
+        "Topic :: Scientific/Engineering",
     ],
 )

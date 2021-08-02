@@ -5,6 +5,7 @@
 import os
 import requests
 from jupyter_client.localinterfaces import public_ips
+from tornado.log import app_log
 
 c = get_config()
 
@@ -23,13 +24,9 @@ c.Spawner.default_url = '/lab'
 c.JupyterHub.spawner_class = 'dockerspawner.DockerSpawner'
 
 
-c.JupyterHub.api_tokens = {
-    "secret-token": "service-admin",
-}
-
 c.JupyterHub.services = [
     {
-        "name": "service-token",
+        "name": "service-admin",
         "admin": True,
         "api_token": os.environ.get('ADMIN_API_TOKEN', 'SHOULD_BE_CHANGED'),
     },
@@ -60,12 +57,14 @@ def createEnv(NAAS_GPU=False):
         'PROXY_API': os.environ.get('PUBLIC_PROXY_API', ''),
         'ALLOWED_IFRAME': os.environ.get('ALLOWED_IFRAME', ''),
         'JUPYTER_ENABLE_LAB': 'YES',
+        "JUPYTERHUB_SINGLEUSER_APP": "jupyterlab_server.app.LabServerApp",
         'TZ': 'Europe/Paris'
     }
     if NAAS_GPU:
         base_env['NAAS_GPU'] = 'YES'
     return base_env
 
+c.SystemUserSpawner.run_as_root = True
 
 c.DockerSpawner.environment = createEnv()
 
@@ -79,8 +78,8 @@ ip = public_ips()[0]
 c.JupyterHub.hub_ip = ip
 
 c.DockerSpawner.extra_host_config = {'network_mode': network_name}
-
-c.DockerSpawner.cmd = ["start-notebook.sh", "--NotebookApp.default_url=lab"]
+c.DockerSpawner.cmd == ['jupyterhub-singleuser']
+# c.DockerSpawner.cmd = ["start-notebook.sh", "--NotebookApp.default_url=lab"]
 
 # Explicitly set notebook directory because we'll be mounting a host volume to
 # it.  Most jupyter/docker-stacks *-notebook images run the Notebook server as
@@ -92,6 +91,42 @@ c.DockerSpawner.notebook_dir = notebook_dir
 c.DockerSpawner.volumes = {
     'jupyterhub-user-{username}': {"bind": notebook_dir, "mode": "z"},
 }
+
+
+def create_user(username, password):
+    signup_url = "http://jupyterhub:8000/hub/signup"
+    login = {
+        "username": username,
+        "password": password,
+    }
+    headers = {"Authorization": f"token {os.environ.get('ADMIN_API_TOKEN')}"}
+    try:
+        r = requests.post(signup_url, data=login, headers=headers, timeout=5)
+        r.raise_for_status()
+        app_log.info("user created ", username)
+    except Exception as e:
+        app_log.warn("cannot create", {"username": username, "error": e})
+
+
+def start_user(username):
+    start_url = f"{os.environ.get('JUPYTERHUB_URL', '')}/hub/api/users/{username}/server"
+    headers = {"Authorization": f"token {os.environ.get('ADMIN_API_TOKEN')}"}
+    try:
+        r = requests.post(start_url, headers=headers, timeout=30)
+        r.raise_for_status()
+        app_log.info("user started ", username)
+    except Exception as e:
+        app_log.warn("cannot start ", {"username": username, "error": e})
+
+
+def my_hook_stop(spawner):
+    username = spawner.user.name
+    if (username == 'bob@cashstory.com'):
+        app_log.info("restart bob")
+        start_user(username)
+
+
+c.DockerSpawner.post_stop_hook = my_hook_stop
 
 # Remove containers once they are stopped
 c.DockerSpawner.remove = True
@@ -131,23 +166,8 @@ c.JupyterHub.tornado_settings = {
 
 # Whitlelist users and admins
 c.Authenticator.whitelist = set()
-c.Authenticator.admin_users = {"service-admin"}
+c.Authenticator.admin_users = {"service-admin", "admin@cashstory.com"}
 c.JupyterHub.admin_access = True
 
-
-def create_user(username, password):
-    signup_url = "http://localhost:8000/hub/signup"
-    login = {
-        "username": username,
-        "password": password,
-    }
-    headers = {"Authorization": f"token {os.environ.get('ADMIN_API_TOKEN')}"}
-    try:
-        r = requests.post(signup_url, data=login, headers=headers)
-        r.raise_for_status()
-        print("user created ", username)
-    except Exception as e:
-        print("cannot create ", username, e)
-
-
-# create_user('bob@cashstory.com', '1bcbaba339d6f93993c5adf277227a1e')
+create_user('demo@cashstory.com', 'test')
+create_user('admin@cashstory.com', 'admin')
