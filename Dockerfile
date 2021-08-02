@@ -3,7 +3,7 @@ FROM jupyternaas/singleuser:2.11.15
 # Build-time metadata as defined at http://label-schema.org
 ARG BUILD_DATE
 ARG VCS_REF
-ENV NAAS_VERSION 1.20.0
+ENV NAAS_VERSION 1.21.0b0
 ENV JUPYTER_ENABLE_LAB 'yes'
 ENV NB_UMASK=022
 ENV NB_USER=ftp
@@ -36,3 +36,5 @@ COPY scripts /etc/naas/scripts
 COPY custom /etc/naas/custom
 RUN /etc/naas/scripts/install_supp
 RUN /etc/naas/scripts/customize
+
+RUN fix-permissions /opt/conda/share/jupyter/lab/extensions

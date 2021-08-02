@@ -74,12 +74,16 @@ class Logger:
         search: str = "",
         filters: list = [],
         sort: list = [],
+        technical_rows: bool = True,
     ):
         df = None
         try:
             df = pd.DataFrame(
                 data=self.__sql.search_in_db(search), index=None, columns=self.__columns
             )
+            if not technical_rows and "type" in df and "filepath" in df:
+                df = df[df["type"] != df["filepath"]]
+                df = df[df["status"] != "busy"]
             if len(filters) > 0:
                 df = df[df.type.isin(filters)]
             if len(sort) > 0:
