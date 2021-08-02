@@ -116,6 +116,15 @@
         .naas-current-tab {
             border-bottom: 5px solid #22BC66;
         }
+        .refresh-button {
+            mask: url(https://upload.wikimedia.org/wikipedia/commons/c/ce/Ic_refresh_48px.svg);
+            display: inline-block;
+            width: 1.5em;
+            height: 1.5em;
+            background: black;
+            mask-size: cover;
+            vertical-align: bottom;
+        }
         /**
         * Profile image component
         */
@@ -234,7 +243,6 @@
             }
         }
     </style>
-    
     <script src="https://cdn.jsdelivr.net/npm/vue-loading-overlay@3"></script>
     <link href="https://cdn.jsdelivr.net/npm/vue-loading-overlay@3/dist/vue-loading.css" rel="stylesheet">
     <script type="module">
@@ -243,7 +251,9 @@
         import VueGoodTablePlugin from 'https://cdn.jsdelivr.net/npm/vue-good-table@2.21.1/dist/vue-good-table.esm.js';
         import * as VModal from 'https://cdn.jsdelivr.net/npm/vue-js-modal@2.0.0-rc.6/dist/index.min.js';
         import VueCodeHighlight from 'https://cdn.jsdelivr.net/npm/vue-code-highlight@0.7.6/dist/vue-code-highlight.esm.min.js';
+        import * as VRouter from 'https://cdn.jsdelivr.net/npm/vue-router@3.5.2/dist/vue-router.min.js';
 
+        Vue.use(VueRouter)
 
         const debouceTime = 800;
         Vue.use(window['vue-js-modal'].default);
@@ -251,7 +261,12 @@
         Vue.component('loading', VueLoading)
         Vue.use(VueCodeHighlight);
         Vue.use(VueGoodTablePlugin);
+        var router = new VueRouter({
+            mode: 'history',
+            routes: []
+        });
         const app = new Vue({
+            router,
             el: '#app',
             components: {
                 VueCodeHighlight
@@ -316,9 +331,8 @@
                         field: 'status',
                     },
                     {
-                        label: 'Quantity',
+                        label: 'Last Duration',
                         field: 'lastRun',
-                        hidden: true,
                     },
                     {
                         label: 'Unit Price',
@@ -775,7 +789,8 @@
                     window.open(fileUrl, '_blank');
                 },
                 setPageState(value) {
-                    this.pageState = value;
+                    if (value >= 0 && value <= 2)
+                        this.pageState = value;
                 },
                 formatStatus(status) {
                     if (typeof status === 'string') {
@@ -816,6 +831,8 @@
                     }
                 }
                 this.load_data();
+                if (this.$route.query.tab && !isNaN(this.$route.query.tab))
+                    this.setPageState(parseInt(this.$route.query.tab));
             }
         });
     </script>
@@ -857,7 +874,7 @@
                     <a href="https://docs.naas.ai/" target="_blank" rel="noopener" class="naas-header-green">Docs</a>       
                     <a href="https://github.com/orgs/jupyter-naas/projects/4?fullscreen=true" target="_blank" rel="noopener" class="naas-header-green">Roadmap</a>
                     <a href="https://aiclub-hq.slack.com/" target="_blank" rel="noopener" class="naas-header-green py-8">Slack</a>
-                    <a href="https://www.naas.ai/pricing" target="_blank" rel="noopener" class="naas-header-green">⚡️  Upgrade</a>         
+                    <a href="https://www.naas.ai/pricing" target="_blank" rel="noopener" class="naas-header-green">⚡️  Upgrade</a>
                     <button v-on:click="openProfile()" class="px-2 py-2 button-primary naas-header-black">Profile</button>
                     <!-- <a href="#" :href="linkToLab()"><button class="px-2 py-2 button-open naas-header-open border-object">Go to engine</button></a> -->
                     <a href="#" :href="linkToTemplate()" target="_blank"><button class="px-2 py-2 button-secondary naas-header-notebook border-object">➕ New</button></a> 
@@ -891,6 +908,11 @@
             <button @click="setPageState(jobsState)" class="naas-tab" :class="jobsActive ? 'naas-current-tab' : ''">🌱 Tasks</button>
             <button @click="setPageState(historyState)" class="naas-tab" :class="historyActive ? 'naas-current-tab' : ''">🧬 History</button>
             <button @click="setPageState(accountState)" class="naas-tab" :class="accountActive ? 'naas-current-tab' : ''">💵 Account Balance</button>
+            <a href="#" :href="linkToManager() + '?tab=' + pageState"
+                class="px-2 py-2 button-secondary naas-header-notebook border-object no-underline float-right">
+                <span class="refresh-button">
+                </span>
+            </a>
             <div v-if="jobsActive">
                 <vue-good-table class="border-object" :columns="columns_jobs" :rows="jobs" :search-options="{
                         enabled: true,
@@ -908,6 +930,9 @@
                         ofLabel: 'of',
                         pageLabel: 'page', // for 'pages' mode
                         allLabel: 'All',
+                    }" :sort-options="{
+                        enabled: true,
+                        initialSortBy: {field: 'lastUpdate', type: 'desc'}
                     }">
                     <template slot="table-row" slot-scope="props">
                         <span v-if="props.column.field == 'status'">
@@ -935,10 +960,6 @@
                                 {{props.formattedRow[props.column.field].substring(0,6)}}
                             </a>
                         </span>
-                        <span v-else-if="props.column.field == 'path'">
-                            <a href="#" v-on:click="linkToJup(props.formattedRow[props.column.field])" target="_blank" rel="noopener"
-                                style="font-weight: bold; color: gray;">{{stripNaasPath(props.formattedRow[props.column.field])}}</a>
-                        </span>
                         <span v-else-if="props.column.field == 'lastRun'">
                             {{toMMSS(props.row.type, props.formattedRow[props.column.field])}}
                         </span>
@@ -960,6 +981,7 @@
                         externalQuery: filter
                     }" :sort-options="{
                         enabled: true,
+                        initialSortBy: {field: 'asctime', type: 'desc'}
                     }" :pagination-options="{
                         enabled: true,
                         mode: 'records',
