@@ -54,7 +54,7 @@ VOLUME_SSH=$(setCrossPlatformVolumeParameter "$HOME/.ssh:/home/ftp/.ssh")
 VOLUME_NAAS=$(setCrossPlatformVolumeParameter "$PWD:/home/ftp/naas")
 
 if [[ $BUILD == "YES" ]]; then
-    docker pull jupyternaas/singleuser:latest
+    docker pull jupyternaas/singleuser:2.11.15
     if docker build -f Dockerfile.$N_ENV --build-arg INSTALL_SUPP=$SUPP -t jupyternaas/naas:local_$N_ENV . ; then
         echo "Build succeeded"
     else
