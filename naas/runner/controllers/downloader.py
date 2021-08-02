@@ -1,5 +1,5 @@
 from notebook.services.contents.filemanager import FileContentsManager as FCM
-from naas.onboarding import download_file, wp_set_for_open_filebrowser
+from naas.onboarding import download_file
 from sanic.response import redirect, json
 from sanic.views import HTTPMethodView
 from naas.runner.env_var import n_env
@@ -20,7 +20,6 @@ class DownloaderController(HTTPMethodView):
         url = request.args.get("url", None)
         mode_api = request.args.get("api", None)
         file_name = request.args.get("name", None)
-        redirect_to = f"{n_env.user_url}/lab"
         if url is None and file_name is None:
             return json({"status": t_error})
         if url is None:
@@ -45,8 +44,8 @@ class DownloaderController(HTTPMethodView):
                     {"id": uid, "type": t_downloader, "status": t_send, "filepath": url}
                 )
                 return json({"status": t_error, "error": str(e), "tb": str(tb)})
-        wp_set_for_open_filebrowser(file_name)
         if mode_api is None:
+            redirect_to = f"{n_env.user_url}/lab/tree/{file_name}"
             return redirect(redirect_to)
         else:
             return json({"status": t_send})

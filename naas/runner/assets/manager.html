@@ -4,17 +4,165 @@
 <head>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vue-good-table@2.21.1/dist/vue-good-table.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@1.9.5/dist/tailwind.min.css">
-    <link rel="icon" href="asset/naas_fav.svg" />
+    <link rel="icon" href="asset/naas_fav.svg" type="image/gif" sizes="16x16">
+    <link rel="preconnect" href="https://fonts.googleapis.com"> 
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
     <meta charset="utf-8">
     <meta name="theme-color" content="#000000">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="apple-mobile-web-app-title" content="Naas | Manager">
+    <meta name="apple-mobile-web-app-title" content="Naas manager">
     <meta name="mobile-web-app-capable" content="yes">
-    <title>Naas | Manager</title>
+    <title>Naas manager</title>
     <style>
+        /**
+        * General design component
+        */
+        .button-primary {
+            color: white;
+            background-color:#181c1e;
+            border: none;
+            outline: none;
+            border-radius: 3px;
+            font-weight: 500;
+        }
+        .button-secondary {
+            color: rgba(255, 255, 255, 1);
+            background-color: rgba(71, 221, 130, 1);
+            padding-left: 12px;
+            padding-right: 12px;
+        }
+        .button-open {
+            background-color: #181c1e;
+            padding-left: 12px;
+            padding-right: 12px;
+            border: 1px solid #22BC66;
+        }
+        .border-object {
+            border-radius: 0.25em;
+        }
+        .border-object div {
+            border-radius: 0.25em;
+        }
         .bg-naas {
             background-color: #191b1d;
         }
+        /**
+        * Naas navigation component
+        */
+        .naas-search {
+            padding-top: 20px;
+        }
+        .naas-tab {
+            font-size: 1.5em;
+            font-weight: bolder;
+            font-family: Poppins,sans-serif;
+            color: white;
+            padding: 0.25em;
+            margin: 0.5em;
+        }
+        .naas-tab:hover {
+            color: #dddddd;
+            transition: all 0.3s;
+        }
+        .naas-manager-green {
+            color: #22BC66;
+            font-family: Poppins,sans-serif;
+            font-size: 1.1em;
+        }
+        .naas-credits {
+            color: white;
+            margin-left: 3rem;
+            font-family: Poppins,sans-serif;
+            font-size: 1.1em;
+        }
+        .naas-header-green {
+            color: #22BC66;
+            padding-left: 35px;
+            font-family: Poppins,sans-serif;
+            font-size: 1.1em;
+        }
+        .naas-header-black {
+            color: white;
+            font-weight: 200;   
+            border-color: white;
+            margin-left: 30px;
+            background-color: b;
+            font-family: Poppins,sans-serif;
+            font-size: 1.1em;
+        }
+        .naas-header-open {
+            color: #22BC66;
+            margin-left: 0rem;
+            margin-right: 0rem;
+            font-family: Poppins,sans-serif;
+            font-size: 1.1em;
+        }
+        .naas-header-notebook {
+            color: black;
+            margin-left: 0rem;
+            margin-right: 0rem;
+            font-family: Poppins,sans-serif;
+            font-size: 1.1em;
+        }
+        .naas-tab:active {
+            color: #22BC66;
+            transition: all 0.3s;
+        }
+        .naas-tab:focus {
+          outline: none;
+          box-shadow: none;
+        }
+        .naas-current-tab {
+            border-bottom: 5px solid #22BC66;
+        }
+        /**
+        * Profile image component
+        */
+        .profile-header-container{
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .profile-header-img {
+            padding: 20px;
+        }
+
+        .profile-header-img > img.img-circle {
+            width: 120px;
+            height: 120px;
+            border: 2px solid #22BC66;
+            border-radius: 50px;
+        }
+        .profile-header {
+            margin-top: 43px;
+        }
+        /**
+        * Ranking component
+        */
+        .rank-label-container {
+            margin-top: -10px;
+            z-index: 1000; 
+            text-align: center;
+        }
+
+        .label.label-default.rank-label {
+            background-color: #191b1d;
+            color:white;
+            padding: 5px 10px 5px 10px;
+            border-radius: 27px;
+        }
+        /**
+        * Profile modal component
+        */
+        .profile-data {
+            padding-top: 20px;
+            padding-right: 15px;
+            padding-left: 15px;
+        } 
+        .profile-field {
+            margin-bottom: 10px;
+        } 
         #cs_loader_wrap {
             display: flex;
             justify-content: center;
@@ -22,7 +170,7 @@
             height: 100vh;
             width: 100vw;
             position: absolute;
-            background-color: white;
+            background-color: black;
             z-index: 4210;
         }
 
@@ -32,7 +180,9 @@
             border-radius: 50%;
             margin: 0 auto;
         }
-
+        /**
+        * Footer and other component
+        */
         #cs_logo_loading {
             display: flex;
             margin: auto;
@@ -50,6 +200,29 @@
             animation: spin-bot 1s ease-in-out infinite;
             z-index: 4213;
         }
+        #footerlogo {
+            display: inline-block;
+            height: 50px; /*sets height of element*/
+            text-align: center;
+            background: #181c1e; /*sets the background of this element (here a solid colour)*/
+            transition: all 0.6s; /*sets a transition (for hover effect)*/
+            padding-left: 5px; /*sets 'padding'*/
+            padding-right: 5px; /*sets 'padding'*/
+            padding-top: 10px;
+            line-height: 50px; /*for this, it sets vertical alignment*/
+        }
+        img:hover {
+            background: #181c1e; /*sets background colour*/
+        }
+        #footer{
+            display: inline-block;
+            background:  #191b1d;
+            height: 200px;
+            padding-top:30px;
+            padding-bottom:50px;
+            width: 100%;
+            text-align: center;
+        }
 
         @keyframes spin-bot {
             0% {
@@ -61,7 +234,6 @@
             }
         }
     </style>
-    
     <script src="https://cdn.jsdelivr.net/npm/vue-loading-overlay@3"></script>
     <link href="https://cdn.jsdelivr.net/npm/vue-loading-overlay@3/dist/vue-loading.css" rel="stylesheet">
     <script type="module">
@@ -70,6 +242,9 @@
         import VueGoodTablePlugin from 'https://cdn.jsdelivr.net/npm/vue-good-table@2.21.1/dist/vue-good-table.esm.js';
         import * as VModal from 'https://cdn.jsdelivr.net/npm/vue-js-modal@2.0.0-rc.6/dist/index.min.js';
         import VueCodeHighlight from 'https://cdn.jsdelivr.net/npm/vue-code-highlight@0.7.6/dist/vue-code-highlight.esm.min.js';
+        import * as VRouter from 'https://cdn.jsdelivr.net/npm/vue-router@3.5.2/dist/vue-router.min.js';
+
+        Vue.use(VueRouter)
 
         const debouceTime = 800;
         Vue.use(window['vue-js-modal'].default);
@@ -77,7 +252,12 @@
         Vue.component('loading', VueLoading)
         Vue.use(VueCodeHighlight);
         Vue.use(VueGoodTablePlugin);
+        var router = new VueRouter({
+            mode: 'history',
+            routes: []
+        });
         const app = new Vue({
+            router,
             el: '#app',
             components: {
                 VueCodeHighlight
@@ -90,20 +270,20 @@
                 VisibleModal: false,
                 columns_logs: [
                     {
+                        label: 'File',
+                        field: 'filepath',
+                    },
+                    {
+                        label: 'Type',
+                        field: 'type',
+                    },
+                    {
                         label: 'Date',
                         field: 'asctime',
                     },
                     {
                         label: 'ID',
                         field: 'id',
-                    },
-                    {
-                        label: 'Service',
-                        field: 'type',
-                    },
-                    {
-                        label: 'File',
-                        field: 'filepath',
                     },
                     {
                         label: 'Status',
@@ -117,20 +297,17 @@
                 ],
                 columns_jobs: [
                     {
-                        label: 'Type',
-                        field: 'type',
-                    },
-                    {
                         label: 'File',
                         field: 'path',
                     },
                     {
-                        label: 'Value',
-                        field: 'value',
+                        label: 'Service',
+                        field: 'type',
                     },
                     {
-                        label: 'Status',
-                        field: 'status',
+                        label: 'Value',
+                        field: 'value',
+                        hidden: true
                     },
                     {
                         label: 'Date',
@@ -141,17 +318,47 @@
                         field: 'id',
                     },
                     {
-                        label: 'Quantity',
+                        label: 'Status',
+                        field: 'status',
+                    },
+                    {
+                        label: 'Last Duration',
                         field: 'lastRun',
                     },
                     {
-                        label: 'Credit',
-                        field: 'lastCredit',
+                        label: 'Unit Price',
+                        field: '',
+                        hidden: true,
+                    }
+                ],
+                columns_templates: [
+                    {
+                        label: 'Tool',
+                        field: 'tool',
                     },
+                    {
+                        label: 'Notebook',
+                        field: 'notebook',
+                    },
+                    {
+                        label: 'Tags',
+                        field: 'tags',
+                    },
+                    {
+                        label: 'Action',
+                        field: 'action',
+                        html: true,
+                        globalSearchDisabled: true,
+                    }
                 ],
                 env: {},
                 logs: [],
+                templates: [],
+                pageState: 0,
                 totalLogRecords: 0,
+                templatesState: 0,
+                jobsState: 1,
+                historyState: 2,
                 debouceFilter: null,
                 serverLogParams: {
                     columnFilters: "",
@@ -218,7 +425,72 @@
                         props: ['error', 'url']
                     }, { error, url }, { width: "70%", scrollable: true, height: 'auto' });
                 },
-                openPerformanceModal() {
+                openStatement() {
+                    this.$modal.show({
+                        template: `
+                        <div class="w-full bg-white rounded-lg shadow-lg">
+                            <div class="flex justify-between px-5 py-4 border-b border-gray-100">
+                                <div>
+                                    <span class="text-lg font-bold text-gray-700">Account Balance (coming soon)</span>
+                                </div>
+                                <div>
+                                    <button><i class="text-red-500 transition duration-150 fa fa-times-circle hover:text-red-600"></i></button>
+                                </div>
+                            </div>
+                            <div>
+                                <center><span class="text-lg text-gray-700">Please send STATEMENT to hello@naas.ai to get your account statement.<br> We will send it to you ASAP 🙏.</span></center>
+                            </div>                        
+                            <div class="flex justify-end px-5 py-4">
+                            <button @click="$emit('close')" class="px-3 py-2 text-sm text-gray-500 transition duration-150 hover:text-gray-600">Close</button>
+                            </div>
+                        </div>
+                        `,
+                    }, {}, { width: "50%", scrollable: true, height: 'auto' });
+                },
+                openProfile() {
+                    this.$modal.show({
+                        template: `
+                        <div class="w-full bg-white rounded-lg shadow-lg">
+                            <div class="flex justify-between px-5 py-4 border-b border-gray-100">
+                                <div>
+                                    <span class="text-lg font-bold text-gray-700">Profile (coming soon)</span>
+                                </div>
+                                <div>
+                                    <button><i class="text-red-500 transition duration-150 fa fa-times-circle hover:text-red-600"></i></button>
+                                </div>
+                            </div>
+                            <div id=profile class="profile-data">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="profile-header-container">   
+                                        <div class="profile-header-img">
+                                            <img class="img-circle" src="https://avatars.githubusercontent.com/u/47117399?v=4" />
+                                            <div class="rank-label-container">
+                                                <span class="label label-default rank-label">Free Plan</span>
+                                            </div>
+                                        </div>
+                                    </div> 
+                                </div>
+                            </div>
+                            <input type="text" placeholder="First name" class="w-full h-10 px-5 py-2 pr-10 text-sm text-gray-900 bg-gray-100 border-object profile-field">
+                            <input type="text" placeholder="Last name" class="w-full h-10 px-5 pr-10 text-sm text-gray-900 bg-gray-100 focus:outline-none border-object profile-field">
+                            <input type="text" placeholder="Email" class="w-full h-10 px-5 pr-10 text-sm text-gray-900 bg-gray-100 focus:outline-none border-object profile-field">
+                            <input type="text" placeholder="Country" class="w-full h-10 px-5 pr-10 text-sm text-gray-900 bg-gray-100 focus:outline-none border-object profile-field">
+                            <input type="tel" placeholder="Phone number"  class="form-control w-full h-10 px-5 pr-10 text-sm text-gray-900 bg-gray-100 focus:outline-none border-object profile-field">                                              
+                            <input type="text" placeholder="LinkedIn profile" class="w-full h-10 px-5 pr-10 text-sm text-gray-900 bg-gray-100 focus:outline-none border-object profile-field">
+                            <input type="text" placeholder="Twitter profile" class="w-full h-10 px-5 pr-10 text-sm text-gray-900 bg-gray-100 focus:outline-none border-object profile-field">
+                            <input type="text" placeholder="Github profile" class="w-full h-10 px-5 pr-10 text-sm text-gray-900 bg-gray-100 focus:outline-none border-object profile-field">
+
+                            </div>
+                            
+                            <div class="flex justify-end px-5 py-4">
+                            <button @click="$emit('close')" class="px-3 py-2 text-sm text-gray-500 transition duration-150 hover:text-gray-600">Close</button>
+                            </div>
+                        </div>
+                        `,
+                    }, {}, { width: "50%", scrollable: true, height: 'auto' });
+                },
+                /*openPerformanceModal() {
                     this.$modal.show({
                         created() {
                             axios.get('performance', {}).then((response) => {
@@ -269,7 +541,7 @@
                         </div>
                         `,
                     }, {}, { width: "70%", scrollable: true, height: 'auto' });
-                },
+                },*/
                 updateLogParams(newProps) {
                     this.serverLogParams = Object.assign({}, this.serverLogParams, newProps);
                 },
@@ -311,15 +583,52 @@
                     this.loadingLog = !this.loading;
                     return axios.get('log', { params: this.convertApiArgs() }).then((response) => {
                         if (response && !response.error) {
+                            this.logs = response.data.data;
+                            for (let i = 0; i < this.logs.length; i++) {
+                                if (this.logs[i].type == this.logs[i].filepath) {
+                                    this.logs.splice(i, 1);
+                                    --i;
+                                }
+                            }
                             try {
-                                this.logs = response.data.data;
                                 this.totalLogRecords = response.data.totalRecords;
                             } catch (err) {
                                 console.error(err);
                             }
+                            for (let i = 0; i < this.logs.length; i++)
+                                if ('asctime' in this.logs[i])
+                                    this.logs[i].asctime = this.logs[i].asctime.split('.')[0]
                         }
                     }).then(() => {
                         this.loadingLog = false;
+                    }).catch((err) => {
+                        console.error(err);
+                    })
+                },
+                loadTemplatesItems() {
+                    return axios.get('https://raw.githubusercontent.com/jupyter-naas/awesome-notebooks/master/templates.json').then((response) => {
+                        if (response && !response.error) {
+                            try {
+                                let templates = response.data
+                                for (let i = 0; i < templates.length; i++) {
+                                    let tags = "";
+
+                                    if (templates[i].tags != null)
+                                        for (let j = 0; j < templates[i].tags.length; j++) {
+                                            tags += templates[i].tags[j]
+                                            tags += " "
+                                        }
+                                    templates[i].tags = tags
+                                    if ("action" in templates[i])
+                                        templates[i].action = templates[i].action.replace("_parent", "_blank")
+                                }
+                                this.templates = templates
+                            } catch (err) {
+                                console.log("ERROR");
+                                console.error(err);
+                            }
+                        }
+
                     }).catch((err) => {
                         console.error(err);
                     })
@@ -375,6 +684,7 @@
                         }
                     }));
                     all_loads.push(this.loadLogItems());
+                    all_loads.push(this.loadTemplatesItems());
                     return Promise.all(all_loads).then(()=> {
                         this.loading = false;
                     });
@@ -408,8 +718,14 @@
                     }
                     return base
                 },
+                linkToManager() {
+                    return `${this.linkToHub()}/naas`
+                },
                 linkToLab() {
                     return `${this.linkToHub()}/lab`
+                },
+                linkToTemplate() {
+                    return `https://app.naas.ai/user-redirect/naas/downloader?url=https://raw.githubusercontent.com/jupyter-naas/awesome-notebooks/master/template.ipynb`
                 },
                 linkToJupOutput(link) {
                     const partial = this.stripNaasPath(link);
@@ -423,6 +739,27 @@
                     const partial = this.stripNaasPath(link);
                     const fileUrl = `${this.linkToHub()}/naas/downloader?url=${partial}`;
                     window.open(fileUrl, '_blank');
+                },
+                setPageState(value) {
+                    if (value >= 0 && value <= 2)
+                        this.pageState = value;
+                },
+                formatStatus(status) {
+                    if (typeof status === 'string') {
+                        status = status.charAt(0).toUpperCase() + status.slice(1);
+                    }
+                    return status
+                }
+            },
+            computed: {
+                jobsActive() {
+                    return this.pageState == this.jobsState
+                },
+                historyActive() {
+                    return this.pageState == this.historyState
+                },
+                templatesActive() {
+                    return this.pageState == this.templatesState
                 },
             },
             created: function () {
@@ -443,18 +780,18 @@
                     }
                 }
                 this.load_data();
+                if (this.$route.query.tab && !isNaN(this.$route.query.tab))
+                    this.setPageState(parseInt(this.$route.query.tab));
             }
         });
     </script>
-    <script>!function(w,d,i,s){function l(){if(!d.getElementById(i)){var f=d.getElementsByTagName(s)[0],e=d.createElement(s);e.type="text/javascript",e.async=!0,e.src="https://canny.io/sdk.js",f.parentNode.insertBefore(e,f)}}if("function"!=typeof w.Canny){var c=function(){c.q.push(arguments)};c.q=[],w.Canny=c,"complete"===d.readyState?l():w.attachEvent?w.attachEvent("onload",l):w.addEventListener("load",l,!1)}}(window,document,"canny-jssdk","script");</script>
-    <script> Canny('initChangelog', {appID: '5f81748112b5d73b2faf4b15', position: 'top', align: 'left'});</script>
 </head>
 
 <body class="h-full">
     <div id="app" class="w-full bg-naas h-full">
         <div id="cs_loader_wrap" v-if="loading">
             <div id="cs_logo_wrap">
-                <img id="cs_logo_loading" alt="Naas logo" src="asset/naas_fav.svg" />
+                <img id="cs_logo_loading" alt="loading logo"/>
                 <div id="cs_spinner_loading"></div>
             </div>
         </div>
@@ -463,11 +800,11 @@
                 <div class="flex items-center justify-between">
                     <div class="flex flex-row mb-2 sm:mb-0 ">
                         <div class="self-center mr-2 h-70 w-70">
-                            <img alt="Naas logo" src="asset/naas_fav.svg" width="70" height="70" />
+                            <img alt="Naas logo" src="https://landen.imgix.net/jtci2pxwjczr/assets/5ice39g4.png?w=160" width="70" height="70" />
                         </div>
                         <div class="my-auto">
-                            <a href="#" :href="linkToLab()"
-                                class="font-sans text-2xl font-bold text-gray-100 no-underline hover:text-#4299e1-dark">Manager</a>
+                            <a href="#" :href="linkToManager()"
+                                class="font-sans naas-manager-green text-2xl font-bold text-gray-100 no-underline hover:text-#4299e1-dark">manager</a>
                         </div>
                     </div>
                     <div class="md:hidden">
@@ -482,43 +819,171 @@
                         </button>
                     </div>
                 </div>
-                <div class="flex items-center justify-center w-full">
-                    <div class="relative w-1/4 text-gray-900">
-                        <input type="text" name="search" v-model="filter" placeholder="Search"
-                            class="w-full h-10 px-5 pr-10 text-sm text-gray-900 bg-gray-100 rounded-full focus:outline-none">
-                        <button type="submit" class="absolute top-0 right-0 mt-3 mr-4">
-                            <svg v-if="filter == ''" class="w-4 h-4 fill-current" xmlns="http://www.w3.org/2000/svg"
-                                xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px" y="0px"
-                                viewBox="0 0 56.966 56.966" style="enable-background:new 0 0 56.966 56.966;"
-                                xml:space="preserve" width="512px" height="512px">
-                                <path
-                                    d="M55.146,51.887L41.588,37.786c3.486-4.144,5.396-9.358,5.396-14.786c0-12.682-10.318-23-23-23s-23,10.318-23,23  s10.318,23,23,23c4.761,0,9.298-1.436,13.177-4.162l13.661,14.208c0.571,0.593,1.339,0.92,2.162,0.92  c0.779,0,1.518-0.297,2.079-0.837C56.255,54.982,56.293,53.08,55.146,51.887z M23.984,6c9.374,0,17,7.626,17,17s-7.626,17-17,17  s-17-7.626-17-17S14.61,6,23.984,6z" />
-                            </svg>
-                            <svg v-if="filter != ''" @click="filter= ''" class="w-4 h-4 fill-current"
-                                viewBox="0 0 20 20">
-                                <path
-                                    d="M10.185,1.417c-4.741,0-8.583,3.842-8.583,8.583c0,4.74,3.842,8.582,8.583,8.582S18.768,14.74,18.768,10C18.768,5.259,14.926,1.417,10.185,1.417 M10.185,17.68c-4.235,0-7.679-3.445-7.679-7.68c0-4.235,3.444-7.679,7.679-7.679S17.864,5.765,17.864,10C17.864,14.234,14.42,17.68,10.185,17.68 M10.824,10l2.842-2.844c0.178-0.176,0.178-0.46,0-0.637c-0.177-0.178-0.461-0.178-0.637,0l-2.844,2.841L7.341,6.52c-0.176-0.178-0.46-0.178-0.637,0c-0.178,0.176-0.178,0.461,0,0.637L9.546,10l-2.841,2.844c-0.178,0.176-0.178,0.461,0,0.637c0.178,0.178,0.459,0.178,0.637,0l2.844-2.841l2.844,2.841c0.178,0.178,0.459,0.178,0.637,0c0.178-0.176,0.178-0.461,0-0.637L10.824,10z">
-                                </path>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
                 <div class="flex flex-col hidden md:flex-row md:block">
-                    <button v-on:click="load_data()"
-                        class="px-2 py-2 text-gray-900 bg-gray-100 rounded hover:bg-gray-600 hover:text-gray-100 md:mx-2">Reload</button>
+                    <a href="https://docs.naas.ai/" target="_blank" rel="noopener" class="naas-header-green">Docs</a>       
+                    <a href="https://github.com/orgs/jupyter-naas/projects/4?fullscreen=true" target="_blank" rel="noopener" class="naas-header-green">Roadmap</a>
+                    <a href="https://aiclub-hq.slack.com/" target="_blank" rel="noopener" class="naas-header-green py-8">Slack</a>
+                    <a href="https://www.naas.ai/pricing" target="_blank" rel="noopener" class="naas-header-green">⚡️  Upgrade</a>         
+                    <button v-on:click="openProfile()" class="px-2 py-2 button-primary naas-header-black">Profile</button>
+                    <!-- <a href="#" :href="linkToLab()"><button class="px-2 py-2 button-open naas-header-open border-object">Go to engine</button></a> -->
+                    <a href="#" :href="linkToTemplate()" target="_blank"><button class="px-2 py-2 button-secondary naas-header-notebook border-object">➕ New</button></a> 
                 </div>
+                
             </div>
         </nav>
-        <div class="w-full py-8 md:px-12">
-            <h2 class="text-2xl font-semibold text-gray-800"><span class="text-white">Jobs</span></h2>
-            <vue-good-table :columns="columns_jobs" :rows="jobs" :search-options="{
+        <button v-on:click="openStatement()" class="px-2 py-2 button-primary naas-credits">💲 Account Balance</a></button>
+        <div class="flex items-center justify-center w-full naas-search md:px-12">          
+            <div class="relative text-gray-900" style="width: 100%;">
+                <input type="text" name="search" v-model="filter" placeholder="Search..."
+                    class="w-full h-10 px-5 pr-10 text-sm text-gray-900 bg-gray-100 focus:outline-none border-object">
+                <button type="submit" class="absolute top-0 right-0 mt-3 mr-4">
+                    <svg v-if="filter == ''" class="w-4 h-4 fill-current" xmlns="http://www.w3.org/2000/svg"
+                        xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px" y="0px"
+                        viewBox="0 0 56.966 56.966" style="enable-background:new 0 0 56.966 56.966;"
+                        xml:space="preserve" width="512px" height="512px">
+                        <path
+                            d="M55.146,51.887L41.588,37.786c3.486-4.144,5.396-9.358,5.396-14.786c0-12.682-10.318-23-23-23s-23,10.318-23,23  s10.318,23,23,23c4.761,0,9.298-1.436,13.177-4.162l13.661,14.208c0.571,0.593,1.339,0.92,2.162,0.92  c0.779,0,1.518-0.297,2.079-0.837C56.255,54.982,56.293,53.08,55.146,51.887z M23.984,6c9.374,0,17,7.626,17,17s-7.626,17-17,17  s-17-7.626-17-17S14.61,6,23.984,6z" />
+                    </svg>
+                    <svg v-if="filter != ''" @click="filter= ''" class="w-4 h-4 fill-current"
+                        viewBox="0 0 20 20">
+                        <path
+                            d="M10.185,1.417c-4.741,0-8.583,3.842-8.583,8.583c0,4.74,3.842,8.582,8.583,8.582S18.768,14.74,18.768,10C18.768,5.259,14.926,1.417,10.185,1.417 M10.185,17.68c-4.235,0-7.679-3.445-7.679-7.68c0-4.235,3.444-7.679,7.679-7.679S17.864,5.765,17.864,10C17.864,14.234,14.42,17.68,10.185,17.68 M10.824,10l2.842-2.844c0.178-0.176,0.178-0.46,0-0.637c-0.177-0.178-0.461-0.178-0.637,0l-2.844,2.841L7.341,6.52c-0.176-0.178-0.46-0.178-0.637,0c-0.178,0.176-0.178,0.461,0,0.637L9.546,10l-2.841,2.844c-0.178,0.176-0.178,0.461,0,0.637c0.178,0.178,0.459,0.178,0.637,0l2.844-2.841l2.844,2.841c0.178,0.178,0.459,0.178,0.637,0c0.178-0.176,0.178-0.461,0-0.637L10.824,10z">
+                        </path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <div class="w-full p-3 py-8 md:px-12">
+            <button @click="setPageState(templatesState)" class="naas-tab" :class="templatesActive ? 'naas-current-tab' : ''">😎 Templates</button>
+            <button @click="setPageState(jobsState)" class="naas-tab" :class="jobsActive ? 'naas-current-tab' : ''">🌱 Tasks</button>
+            <button @click="setPageState(historyState)" class="naas-tab" :class="historyActive ? 'naas-current-tab' : ''">🧬 History</button>
+            <a href="#" :href="linkToManager() + '?tab=' + pageState"
+                                class="font-sans text-2xl font-bold text-gray-100 no-underline hover:text-#4299e1-dark float-right" position="right">Refresh</a>
+            <div v-if="jobsActive">
+                <vue-good-table class="border-object" :columns="columns_jobs" :rows="jobs" :search-options="{
+                        enabled: true,
+                        externalQuery: filter
+                    }" :pagination-options="{
+                        enabled: filter === '',
+                        mode: 'records',
+                        perPage: 10,
+                        position: 'bottom',
+                        perPageDropdown: [5, 15, 20],
+                        dropdownAllowAll: true,
+                        nextLabel: 'next',
+                        prevLabel: 'prev',
+                        rowsPerPageLabel: 'Rows per page',
+                        ofLabel: 'of',
+                        pageLabel: 'page', // for 'pages' mode
+                        allLabel: 'All',
+                    }" :sort-options="{
+                        enabled: true,
+                        initialSortBy: {field: 'lastUpdate', type: 'desc'}
+                    }">
+                    <template slot="table-row" slot-scope="props">
+                        <span v-if="props.column.field == 'status'">
+                            <a href="#" v-if="props.row.status === 'error' || props.row.status === 'exception' || props.row.status === 'not_found'" style="font-weight: bold; color: #f56565;"
+                                v-on:click="openError(props.formattedRow['error'], props.formattedRow['filepath'])">❌ {{ formatStatus(props.row.status) }}</a>
+                            <a href="#" v-else-if="props.row.status === 'healthy'"
+                                style="font-weight: bold; color: #22BC66;"
+                                v-on:click="openOutput(props.formattedRow['filepath'])">✅ Active</a>
+                            <a href="#" v-else-if="props.row.status === 'started'"
+                                style="font-weight: bold; color: #36b3ed;"
+                                v-on:click="openOutput(props.formattedRow['filepath'])">🎽 Running</a>
+                            <a href="#" v-else-if="props.row.status === 'edited'"
+                                style="font-weight: bold; color: #ed8936;;"
+                                v-on:click="openOutput(props.formattedRow['filepath'])">✏️ Edited</a>
+                            <p v-else>{{props.formattedRow[props.column.field]}}</p>
+                        </span>
+                        <span v-else-if="props.column.field == 'value'">
+                            <a :href="openUrl(props.formattedRow[props.column.field], props.row.type)" target="_blank" rel="noopener" style="font-weight: bold; color: #4299e1;"
+                                v-if="props.row.type == 'asset' || props.row.type == 'notebook'"
+                                >
+                                {{props.formattedRow[props.column.field].substring(0,6)}}
+                            </a>
+                            <span v-else>{{props.formattedRow[props.column.field]}}</span>
+                        </span>
+                        <span v-else-if="props.column.field == 'id'">
+                            <a href="#" 
+                                v-on:click="setFilter(props.formattedRow[props.column.field])">
+                                {{props.formattedRow[props.column.field].substring(0,6)}}
+                            </a>
+                        </span>
+                        <span v-else-if="props.column.field == 'lastRun'">
+                            {{toMMSS(props.row.type, props.formattedRow[props.column.field])}}
+                        </span>
+                        <span v-else>
+                            {{props.formattedRow[props.column.field]}}
+                        </span>
+                    </template>
+                </vue-good-table>
+            </div>
+            <div v-if="historyActive">
+                <!-- <vue-loaders-line-scale v-if="loadingLog"/> -->
+                <div class="vld-parent">
+                    <loading :active.sync="loadingLog" 
+                    :is-full-page="loadingFull"></loading>
+                    <vue-good-table class="border-object" mode="remote" :columns="columns_logs" @on-page-change="onPageLogChange"
+                        @on-sort-change="onSortLogChange" @on-column-filter="onColumnLogFilter"
+                        @on-per-page-change="onPerPageLogChange" :total-rows="totalLogRecords" :rows="logs" :search-options="{
+                        enabled: true,
+                        externalQuery: filter
+                    }" :sort-options="{
+                        enabled: true,
+                        initialSortBy: {field: 'asctime', type: 'desc'}
+                    }" :pagination-options="{
+                        enabled: true,
+                        mode: 'records',
+                        perPage: 15,
+                        position: 'bottom',
+                        perPageDropdown: [5, 10, 20],
+                        dropdownAllowAll: true,
+                        nextLabel: 'next',
+                        prevLabel: 'prev',
+                        rowsPerPageLabel: 'Rows per page',
+                        ofLabel: 'of',
+                        pageLabel: 'page', // for 'pages' mode
+                        allLabel: 'All',
+                    }">
+                        <template slot="table-row" slot-scope="props">
+                            <span v-if="props.column.field == 'id'">
+                                <a href="#"
+                                    v-on:click="setFilter(props.formattedRow[props.column.field])">{{props.formattedRow[props.column.field].substring(0,
+                                    4)}}</a>
+                            </span>
+                            <span v-else-if="props.column.field == 'filepath'">
+                                {{stripNaasPath(props.formattedRow[props.column.field])}}
+                            </span>
+                            <span v-else-if="props.column.field == 'status'">
+                                <a href="#" v-if="props.formattedRow['error']" style="font-weight: bold; color: #f56565;"
+                                    v-on:click="openError(props.formattedRow['error'], props.formattedRow['filepath'])">❌ Error</a>
+                                <a href="#" v-else-if="props.formattedRow[props.column.field] == 'healthy'"
+                                    style="font-weight: bold; color: #22BC66;"
+                                    v-on:click="openOutput(props.formattedRow['filepath'])">✅ Active</a>
+                                <a href="#" v-else-if="props.formattedRow[props.column.field] == 'started'"
+                                    style="font-weight: bold; color: #36b3ed;"
+                                    v-on:click="openOutput(props.formattedRow['filepath'])">🎽 Running</a>
+                                <a href="#" v-else-if="props.formattedRow[props.column.field] == 'edited'"
+                                    style="font-weight: bold; color: #ed8936;"
+                                    v-on:click="openOutput(props.formattedRow['filepath'])">✏️ Edited</a>
+                                <p v-else>{{props.formattedRow[props.column.field]}}</p>
+                            </span>
+                            <span v-else>
+                                {{props.formattedRow[props.column.field]}}
+                            </span>
+                        </template>
+                    </vue-good-table>
+                </div>
+            </div>
+            <div v-if="templatesActive">
+                <vue-good-table class="border-object" :columns="columns_templates" :rows="templates" :search-options="{
                     enabled: true,
                     externalQuery: filter
                 }" :pagination-options="{
                     enabled: filter === '',
                     mode: 'records',
                     perPage: 10,
-                    position: 'top',
+                    position: 'bottom',
                     perPageDropdown: [5, 15, 20],
                     dropdownAllowAll: true,
                     nextLabel: 'next',
@@ -528,105 +993,29 @@
                     pageLabel: 'page', // for 'pages' mode
                     allLabel: 'All',
                 }">
-                <template slot="table-row" slot-scope="props">
-                    <span v-if="props.column.field == 'status'">
-                        <span v-if="props.row.status === 'healthy'"
-                            style="font-weight: bold; color: #22BC66;">{{props.formattedRow[props.column.field]}}</span>
-                        <span
-                            v-else-if="props.row.status === 'error' || props.row.status === 'exception' || props.row.status === 'not_found'"
-                            style="font-weight: bold; color: #f56565;">{{props.formattedRow[props.column.field]}}</span>
-                        <span v-else
-                            style="font-weight: bold; color: #ed8936;">{{props.formattedRow[props.column.field]}}</span>
-                    </span>
-                    <span v-else-if="props.column.field == 'value'">
-                        <a :href="openUrl(props.formattedRow[props.column.field], props.row.type)" target="_blank" style="font-weight: bold; color: #4299e1;"
-                            v-if="props.row.type == 'asset' || props.row.type == 'notebook'"
-                            >
-                            {{props.formattedRow[props.column.field].substring(0,6)}}
-                        </a>
-                        <span v-else>{{props.formattedRow[props.column.field]}}</span>
-                    </span>
-                    <span v-else-if="props.column.field == 'id'">
-                        <a href="#" style="font-weight: bold; color: #4299e1;"
-                            v-on:click="setFilter(props.formattedRow[props.column.field])">
-                            {{props.formattedRow[props.column.field].substring(0,6)}}
-                        </a>
-                    </span>
-                    <span v-else-if="props.column.field == 'path'">
-                        <a href="#" v-on:click="linkToJup(props.formattedRow[props.column.field])" target="_blank"
-                            style="font-weight: bold; color: gray;">{{stripNaasPath(props.formattedRow[props.column.field])}}</a>
-                    </span>
-                    <span v-else-if="props.column.field == 'lastRun'">
-                        {{toMMSS(props.row.type, props.formattedRow[props.column.field])}}
-                    </span>
-                    <span v-else>
-                        {{props.formattedRow[props.column.field]}}
-                    </span>
-                </template>
-            </vue-good-table>
-            <h2 class="pt-8 text-2xl font-semibold text-gray-800"><span class="text-white">History</span></h2>
-            <!-- <vue-loaders-line-scale v-if="loadingLog"/> -->
-            <div class="vld-parent">
-                <loading :active.sync="loadingLog" 
-                :is-full-page="loadingFull"></loading>
-                <vue-good-table mode="remote" :columns="columns_logs" @on-page-change="onPageLogChange"
-                    @on-sort-change="onSortLogChange" @on-column-filter="onColumnLogFilter"
-                    @on-per-page-change="onPerPageLogChange" :total-rows="totalLogRecords" :rows="logs" :search-options="{
-                    enabled: true,
-                    externalQuery: filter
-                }" :sort-options="{
-                    enabled: true,
-                }" :pagination-options="{
-                    enabled: true,
-                    mode: 'records',
-                    perPage: 15,
-                    position: 'top',
-                    perPageDropdown: [5, 10, 20],
-                    dropdownAllowAll: true,
-                    nextLabel: 'next',
-                    prevLabel: 'prev',
-                    rowsPerPageLabel: 'Rows per page',
-                    ofLabel: 'of',
-                    pageLabel: 'page', // for 'pages' mode
-                    allLabel: 'All',
-                }">
                     <template slot="table-row" slot-scope="props">
-                        <span v-if="props.column.field == 'id'">
-                            <a href="#" style="font-weight: bold; color: #4299e1;"
-                                v-on:click="setFilter(props.formattedRow[props.column.field])">{{props.formattedRow[props.column.field].substring(0,
-                                4)}}</a>
-                        </span>
-                        <span v-else-if="props.column.field == 'filepath'">
-                            {{stripNaasPath(props.formattedRow[props.column.field])}}
-                        </span>
-                        <span v-else-if="props.column.field == 'status'">
-                            <a href="#" v-if="props.formattedRow['error']" style="font-weight: bold; color: #f56565;"
-                                v-on:click="openError(props.formattedRow['error'], props.formattedRow['filepath'])">error</a>
-                            <a href="#" v-else-if="props.formattedRow[props.column.field] == 'healthy'"
-                                style="font-weight: bold; color: #22BC66;"
-                                v-on:click="openOutput(props.formattedRow['filepath'])">healthy</a>
-                            <p v-else>{{props.formattedRow[props.column.field]}}</p>
-                        </span>
-                        <span v-else>
-                            {{props.formattedRow[props.column.field]}}
-                        </span>
                     </template>
                 </vue-good-table>
             </div>
 
             <div class="col-start-2 py-4 pt-8" v-if="env && env.version">
-                <h4 class="text-2xl font-semibold text-gray-800"><span class="text-white">Version</span></h4>
+                <h4 class="text-2xl font-semibold text-gray-800"><span class="text-white"></span></h4>
                 <span
-                    class="inline-block px-3 py-1 mr-2 text-sm font-semibold text-gray-700 bg-gray-200 rounded-full">{{env.version}}</span>
-                <button class="px-2 py-2 text-gray-900 bg-gray-100 rounded hover:bg-gray-900 hover:text-gray-100 hover:font-medium md:mx-2" data-canny-changelog>
-                        What's new !
-                </button>
-                <button class="px-2 py-2 text-gray-900 bg-gray-100 rounded hover:bg-gray-900 hover:text-gray-100 hover:font-medium md:mx-2" v-on:click="openPerformanceModal()">
+                    class="inline-block px-3 py-1 mr-2 text-sm font-semibold text-gray-700 bg-gray-200 border-object">Version: {{env.version}}</span>
+                    <!-- <button class="px-2 py-2 text-gray-900 bg-gray-100 rounded hover:bg-gray-900 hover:text-gray-100 hover:font-medium md:mx-2" v-on:click="openPerformanceModal()">
                     Storage
-                </button>
+                </button> -->
             </div>
         </div>
-    </div>
+
+        <div id=footer>
+            <h3 class="text-2xs text-gray-400 center"><span class="text-white">Naas: Notebooks as a service</span></h3>
+            <h3><span class="text-white " style="font-size: 14px;">Opensourced by CashStory</span></h3>
+            <a href="https://github.com/jupyter-naas" target="_blank" rel="noopener"><img id=footerlogo src="https://cdn3.iconfinder.com/data/icons/social-media-2169/24/social_media_social_media_logo_github-1024.png" alt="Github logo"></a>
+            <a href="https://www.youtube.com/channel/UCKKG5hzjXXU_rRdHHWQ8JHQ" target="_blank" rel="noopener"><img id=footerlogo src="https://cdn3.iconfinder.com/data/icons/2018-social-media-logotypes/1000/2018_social_media_popular_app_logo_youtube-1024.png" alt="Youtube logo"></a>
+            <a href="https://twitter.com/JupyterNaas" target="_blank" rel="noopener"><img id=footerlogo src="https://cdn4.iconfinder.com/data/icons/social-messaging-ui-color-shapes-2-free/128/social-twitter-circle-128.png" alt="Twitter logo"></a>
+            <a href="https://www.linkedin.com/company/naas-ai/" target="_blank" rel="noopener"><img id=footerlogo src="https://cdn0.iconfinder.com/data/icons/social-circle-3/72/Linkedin-1024.png" alt="LinkedIn logo"></a>
+        </div>
     </div>
 </body>
 

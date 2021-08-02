@@ -1,5 +1,7 @@
 import sqlite3
 import pandas as pd
+import os
+import errno
 
 
 class SqliteTable:
@@ -8,16 +10,27 @@ class SqliteTable:
     __db = None
     __focused_table = ""
 
-    def __init__(self, cols=[], name="logs.db"):
+    def __init__(self, cols=[], file="logs.db", table="logs"):
         self.__columns = cols
-        self.__file_name = name
+        self.__file_name = file
         self.__create_connection()
-        self.create_table("logs")
+        self.create_table(table)
 
     def __get_csv_values(self, csv_file):
         return pd.read_csv(csv_file, sep=";")
 
     def __create_connection(self):
+        folder = os.path.dirname(self.__file_name)
+        if not os.path.exists(folder):
+            try:
+                print("Init Sqlite folder")
+                os.makedirs(folder)
+            except OSError as exc:  # Guard against race condition
+                print("__path_sql_files", folder)
+                if exc.errno != errno.EEXIST:
+                    raise
+            except Exception as e:
+                print("Exception", e)
         try:
             self.__db = sqlite3.connect(self.__file_name)
         except Exception as e:
@@ -36,7 +49,7 @@ class SqliteTable:
     def clear(self):
         self.execute_command(f"DELETE FROM {self.__focused_table}")
 
-    def search_in_db(self, value, table="", columns=None):
+    def search_in_db(self, value="", table="", columns=None):
         if table == "":
             table = self.__focused_table
         if columns is None:
@@ -46,9 +59,13 @@ class SqliteTable:
             if col != "":
                 col += " or "
             col += f"{c} like " + "'%" + value + "%'"
-        cursor = self.__db.cursor()
-        cursor.execute(f"SELECT * FROM {table} WHERE {col}")
-        return cursor.fetchall()
+        try:
+            cursor = self.__db.cursor()
+            cursor.execute(f"SELECT * FROM {table} WHERE {col}")
+            return cursor.fetchall()
+        except Exception as e:
+            print(e)
+            return []
 
     def add_on_table(self, to_add, commit=True, table=""):
         keys = ""
@@ -64,16 +81,18 @@ class SqliteTable:
                     values += f"""'{value}'"""
             except Exception as e:
                 print(e)
-        self.execute_command(
-            f"Insert Into {table} ({keys}) Values({values})",
-            commit)
+        self.execute_command(f"Insert Into {table} ({keys}) Values({values})", commit)
 
     def get_db_content(self, table=""):
         if table == "":
             table = self.__focused_table
-        cursor = self.__db.cursor()
-        cursor.execute(f'SELECT * FROM {table}')
-        return cursor.fetchall()
+        try:
+            cursor = self.__db.cursor()
+            cursor.execute(f"SELECT * FROM {table}")
+            return cursor.fetchall()
+        except Exception as e:
+            print(e)
+            return []
 
     def csv_to_sql(self, csv_file):
         try:
@@ -96,6 +115,4 @@ class SqliteTable:
                 columns += col + " TEXT"
             except Exception as e:
                 print(e)
-        self.execute_command(
-            f"Create Table IF NOT EXISTS {table} ({columns})",
-            False)
+        self.execute_command(f"Create Table IF NOT EXISTS {table} ({columns})", False)

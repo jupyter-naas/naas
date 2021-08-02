@@ -10,7 +10,6 @@ from .sqlite_table import SqliteTable
 
 class Logger:
     __sql = None
-    __log = None
     __name = "naas_logger"
     __logs_file = n_env.path_naas_folder + "/logs.db"
     __logs_csv_file = n_env.path_naas_folder + "/logs.csv"
@@ -21,22 +20,38 @@ class Logger:
         "name",
         "id",
         "type",
+        "filename",
+        "histo",
         "filepath",
+        "output_filepath",
         "status",
         "error",
+        "traceback",
+        "duration",
+        "url",
+        "params",
+        "token",
+        "value",
+        "main_id",
+        "search",
     ]
 
     def __init__(self, clear=False):
-        file_creation = not os.path.isfile(self.__logs_file)
+        file_creation = not os.path.exists(self.__logs_file)
+        #        is_csv = os.path.exists(self.__logs_csv_file)
         print("Init Naas logger")
         self.__sql = SqliteTable(self.__columns, self.__logs_file)
-        if (file_creation):
-            self.__sql.csv_to_sql(self.__logs_csv_file)
+        if not file_creation and clear:
+            self.__sql.clear()
+
+    #        if file_creation and is_csv and not clear:
+    #            self.__sql.csv_to_sql(self.__logs_csv_file)
+    #            os.remove(self.__logs_csv_file)
 
     def add_log(self, data, levelname):
-        data['asctime'] = dt.datetime.now().strftime(self.__date_format)
-        data['levelname'] = levelname
-        data['name'] = self.__name
+        data["asctime"] = dt.datetime.now().strftime(self.__date_format)
+        data["levelname"] = levelname
+        data["name"] = self.__name
         self.__sql.add_on_table(data)
 
     def info(self, data):
@@ -62,7 +77,9 @@ class Logger:
     ):
         df = None
         try:
-            df = pd.DataFrame(data=self.__sql.search_in_db(search), index=None, columns=self.__columns)
+            df = pd.DataFrame(
+                data=self.__sql.search_in_db(search), index=None, columns=self.__columns
+            )
             if len(filters) > 0:
                 df = df[df.type.isin(filters)]
             if len(sort) > 0:

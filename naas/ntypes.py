@@ -13,6 +13,7 @@ t_secret = "secret"
 t_tz = "timezone"
 t_performance = "performance"
 t_job = "job"
+t_job_not_found = "job not found"
 t_env = "env"
 t_log = "log"
 

@@ -17,7 +17,13 @@ from naas.ntypes import (
 from nbconvert import HTMLExporter
 from .env_var import cpath, n_env
 from sanic import response
-import papermill as pm
+
+# # Temporary way to remove Papermill import warnings. Shuold be fixed when reaching Papermill 2.3.4
+import warnings
+
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore")
+    import papermill as pm
 import traceback
 import datetime
 import shutil
@@ -34,6 +40,7 @@ kern_manager = None
 
 try:
     from enterprise_gateway.services.kernels.remotemanager import RemoteKernelManager
+
     kern_manager = RemoteKernelManager
 except ImportError:
     pass
@@ -129,7 +136,7 @@ class Notebooks:
             result_type = mime_json
             result = {
                 "error": "output file not found",
-                "trace": tb,
+                "traceback": tb,
             }
         result_ext = guess_ext(result_type)
         old_filename = os.path.basename(filepath)
@@ -366,13 +373,8 @@ class Notebooks:
         res["duration"] = time.time() - start_time
         try:
             self.__send_notification(
-                uid,
-                res,
-                file_filepath_out,
-                current_type,
-                value,
-                params
-                )
+                uid, res, file_filepath_out, current_type, value, params
+            )
         except ConnectionError as err:
             self.__logger.error(
                 {
