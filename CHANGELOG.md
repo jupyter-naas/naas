@@ -1,3 +1,17 @@
+## 1.19.1b8 (2021-08-02)
+
+### Feat
+
+- refresh button with logo centered
+- add refresh svg
+
+## 1.20.0 (2021-07-26)
+
+### Feat
+
+- default sorted by date
+- refresh button
+
 ## 1.19.1b7 (2021-07-30)
 
 ### Feat
