@@ -17,7 +17,7 @@ import requests
 import os
 import sys
 
-__version__ = "1.15.19"
+__version__ = "1.20.0"
 __github_repo = "jupyter-naas/naas"
 __doc_url = "https://naas.gitbook.io/naas/"
 __canny_js = '<script>!function(w,d,i,s){function l(){if(!d.getElementById(i)){var f=d.getElementsByTagName(s)[0],e=d.createElement(s);e.type="text/javascript",e.async=!0,e.src="https://canny.io/sdk.js",f.parentNode.insertBefore(e,f)}}if("function"!=typeof w.Canny){var c=function(){c.q.push(arguments)};c.q=[],w.Canny=c,"complete"===d.readyState?l():w.attachEvent?w.attachEvent("onload",l):w.addEventListener("load",l,!1)}}(window,document,"canny-jssdk","script");</script>'  # noqa: E501
@@ -70,9 +70,7 @@ def move_job(old_path, new_path):
 def open_help():
     data = __crisp
     if n_env.user:
-        data += (
-            f'<script>window.$crisp.push(["set", "user:email", ["{str(n_env.user)}"]])</script>'
-        )
+        data += f'<script>window.$crisp.push(["set", "user:email", ["{str(n_env.user)}"]])</script>'
     data += f'<script>window.$crisp.push(["set", "session:data", [[["naas_version", "{str(n_env.version)}"]]]])</script>'
     data += '<script>window.$crisp.push(["do", "chat:show"])</script>'
     data += '<script>window.$crisp.push(["do", "chat:open"])</script>'

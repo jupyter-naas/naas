@@ -44,7 +44,7 @@ from naas.ntypes import (
 asyncio.set_event_loop_policy(None)
 nest_asyncio.apply()
 
-__version__ = "1.15.19"
+__version__ = "1.20.0"
 
 
 class Runner:
@@ -99,14 +99,8 @@ class Runner:
                 EnvController.as_view(),
                 "/env",
             )
-            self.__app.add_route(
-                PerformanceController.as_view(),
-                "/performance/<mode>"
-            )
-            self.__app.add_route(
-                PerformanceController.as_view(),
-                "/performance"
-            )
+            self.__app.add_route(PerformanceController.as_view(), "/performance/<mode>")
+            self.__app.add_route(PerformanceController.as_view(), "/performance")
             self.__app.add_route(LogsController.as_view(self.__logger), "/log")
             self.__app.add_route(
                 ManagerController.as_view(self.__path_lib_files),

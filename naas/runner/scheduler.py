@@ -1,4 +1,12 @@
-from naas.ntypes import t_scheduler, t_start, t_main, t_health, t_error, t_busy, t_delete
+from naas.ntypes import (
+    t_scheduler,
+    t_start,
+    t_main,
+    t_health,
+    t_error,
+    t_busy,
+    t_delete,
+)
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from naas.callback import Callback
 import apscheduler.schedulers.base
@@ -13,6 +21,7 @@ import time
 import pytz
 import uuid
 import os
+
 
 async def fetch(url):
     with aiohttp.ClientSession() as session:
@@ -257,13 +266,18 @@ class Scheduler:
             curdate = datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")
             data = {
                 "date": curdate,
-                "gpu": os.environ.get('NAAS_GPU', 'NO'),
+                "gpu": os.environ.get("NAAS_GPU", "NO"),
                 "jobs": await self.__jobs.list(uid),
                 "kernels": self.getSessions(),
                 "terminals": self.getTerminals(),
             }
             if n_env.report_callback:
-                Callback().add(auto_delete=False, uuid=f"naas_analytics__{curdate}", default_result=data, no_override=True)
+                Callback().add(
+                    auto_delete=False,
+                    uuid=f"naas_analytics__{curdate}",
+                    default_result=data,
+                    no_override=True,
+                )
         except Exception as e:
             tb = traceback.format_exc()
             self.__logger.error(
@@ -320,7 +334,8 @@ class Scheduler:
                     "duration": duration_total,
                 }
             )
-            await self.analytics(main_uid)
+            # We disable this for now as it is not used and is therefore filling up the database.
+            # await self.analytics(main_uid)
         except Exception as e:
             tb = traceback.format_exc()
             duration_total = time.time() - all_start_time

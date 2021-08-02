@@ -1,3 +1,441 @@
+## 1.20.0 (2021-07-26)
+
+### Feat
+
+- default sorted by date
+- refresh button
+
+## 1.19.0 (2021-07-15)
+
+## 1.18.1b7 (2021-07-14)
+
+### Fix
+
+- evolve scheduler list (#156)
+
+## 1.18.1b6 (2021-07-14)
+
+### Feat
+
+- hide non pertinent logs (#151)
+
+## 1.18.1b5 (2021-07-14)
+
+### Refactor
+
+- naas manager rename rows (#145)
+
+## 1.18.1b4 (2021-07-14)
+
+### Feat
+
+- improve manager tables (#165)
+
+## 1.18.1b3 (2021-07-13)
+
+### Feat
+
+- improved search for templates (#164)
+
+## 1.18.1b2 (2021-07-13)
+
+### Feat
+
+- changes related to Issue #146
+
+## 1.18.1b1 (2021-07-13)
+
+### Feat
+
+- all buttons open link on a new tab
+
+## 1.18.1b0 (2021-07-08)
+
+### Refactor
+
+- redesign naas manager (#153)
+- rename Service row ro Type
+
+## 1.18.5 (2021-07-15)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.69.2
+
+## 1.18.4 (2021-07-15)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.69.1
+
+## 1.18.3 (2021-07-15)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.69.0
+
+## 1.18.2 (2021-07-15)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.68.0
+
+## 1.18.1 (2021-07-12)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.67.1
+
+## 1.18.0 (2021-06-28)
+
+### Feat
+
+- Merge dev on main
+
+## 1.17.17b3 (2021-06-28)
+
+### Fix
+
+- **flake8**: Remove wp_set_for_open_filebrowser as it is not used
+
+## 1.17.17b2 (2021-06-28)
+
+### Fix
+
+- **CI**: Fix CI
+
+### Refactor
+
+- **onboarding,downloader**: Remove dl_ prefix on downloaded files (#133)
+
+## 1.17.17b0 (2021-06-23)
+
+### Fix
+
+- **downloader**: Update redirect url to open downloaded file (#132)
+
+## 1.17.15b0 (2021-06-23)
+
+### Fix
+
+- **papermill**: Surround Papermill import with warning catching logic (#131)
+
+## 1.17.17 (2021-06-28)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.67.0
+## 1.17.17b3 (2021-06-28)
+
+### Fix
+
+- **flake8**: Remove wp_set_for_open_filebrowser as it is not used
+
+## 1.17.17b2 (2021-06-28)
+
+### Fix
+
+- **CI**: Fix CI
+
+### Refactor
+
+- **onboarding,downloader**: Remove dl_ prefix on downloaded files (#133)
+
+## 1.17.17b0 (2021-06-23)
+
+### Fix
+
+- **downloader**: Update redirect url to open downloaded file (#132)
+
+## 1.17.15b0 (2021-06-23)
+
+### Fix
+
+- **papermill**: Surround Papermill import with warning catching logic (#131)
+
+## 1.17.17 (2021-06-28)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.67.0
+## 1.17.17b3 (2021-06-28)
+=======
+## 1.18.1b6 (2021-07-14)
+
+### Feat
+
+- hide non pertinent logs (#151)
+
+## 1.18.1b5 (2021-07-14)
+
+### Refactor
+
+- naas manager rename rows (#145)
+
+## 1.18.1b4 (2021-07-14)
+
+### Feat
+
+- improve manager tables (#165)
+
+## 1.18.1b3 (2021-07-13)
+
+### Feat
+
+- improved search for templates (#164)
+
+## 1.18.1b2 (2021-07-13)
+
+### Feat
+
+- changes related to Issue #146
+
+## 1.18.1b1 (2021-07-13)
+
+### Feat
+
+- all buttons open link on a new tab
+
+### Refactor
+
+- rename Service row ro Type
+
+## 1.17.17 (2021-06-28)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.67.0
+
+## 1.17.16 (2021-06-23)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.66.8
+
+## 1.17.15 (2021-06-23)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.66.7
+
+## 1.18.1b0 (2021-07-08)
+
+### Refactor
+
+- redesign naas manager (#153)
+
+## 1.18.0 (2021-06-28)
+
+### Feat
+
+- Merge dev on main
+
+## 1.17.17b3 (2021-06-28)
+
+### Fix
+
+- **flake8**: Remove wp_set_for_open_filebrowser as it is not used
+
+## 1.17.17b2 (2021-06-28)
+
+### Fix
+
+- **CI**: Fix CI
+
+### Refactor
+
+- **onboarding,downloader**: Remove dl_ prefix on downloaded files (#133)
+
+## 1.17.17b0 (2021-06-23)
+
+### Fix
+
+- **downloader**: Update redirect url to open downloaded file (#132)
+
+## 1.17.15b0 (2021-06-23)
+
+### Fix
+
+- **papermill**: Surround Papermill import with warning catching logic (#131)
+
+## 1.17.16 (2021-06-23)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.66.8
+
+## 1.17.15 (2021-06-23)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.66.7
+## 1.17.15b0 (2021-06-23)
+
+### Fix
+
+- **papermill**: Surround Papermill import with warning catching logic (#131)
+
+## 1.17.14 (2021-06-22)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.66.6
+
+## 1.17.13 (2021-06-22)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.66.5
+
+## 1.17.12 (2021-06-21)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.66.4
+
+## 1.17.11 (2021-06-21)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.66.3
+
+## 1.17.10 (2021-06-18)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.66.2
+
+## 1.17.9 (2021-06-18)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.66.1
+
+## 1.17.8 (2021-06-18)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.66.0
+
+## 1.17.7 (2021-06-17)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.65.1
+
+## 1.17.6 (2021-06-17)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.65.0
+
+## 1.17.5 (2021-06-15)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.64.0
+
+## 1.17.4 (2021-06-15)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.63.0
+
+## 1.17.3 (2021-06-14)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.62.0
+
+## 1.17.2 (2021-06-14)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.61.2
+
+## 1.17.1 (2021-06-14)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.61.1
+
+## 1.17.0 (2021-06-12)
+
+### Feat
+
+- **install**: Add a setCrossPlatformVolumeParameter function to fix volumes
+
+## 1.16.8 (2021-06-10)
+
+### Fix
+
+- **naas/runner/jobs.py**: Fix job not returning "runs" because of a JSON exception being triggered
+
+## 1.16.7 (2021-06-10)
+
+### Fix
+
+- **naas-runner**: Run naas runner in a Thread and restart it automatically
+
+## 1.16.6 (2021-06-10)
+
+### Refactor
+
+- **Dockerfile.dev**: Remove RUN rm -rf /home/$NB_USER/naas
+
+### Fix
+
+- **install-and-Dockerfile.dev**: Fixed livereload for development environment
+
+## 1.16.5 (2021-06-09)
+
+### Fix
+
+- **jobs.list**: Return 404 instead of 500 when no jobs are found for a Notebook (path)
+
+## 1.16.4 (2021-06-09)
+
+### Refactor
+
+- logger reformatted with black
+- fix unused variable
+
+## 1.16.3 (2021-06-09)
+
+### Fix
+
+- do not remove logs.csv
+
+## 1.16.2 (2021-06-09)
+
+### Fix
+
+- **scheduler.py**: Disable call to self.analytics(main_uid) every minutes
+
+## 1.16.1 (2021-06-08)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.61.0
+
+## 1.16.0 (2021-06-04)
+
+### Feat
+
+- add pymongo on naas
+
+## 1.15.21 (2021-06-04)
+
+### Fix
+
+- logger clear fixed
+
+## 1.15.20 (2021-06-02)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.60.0
+
 ## 1.15.19 (2021-05-31)
 
 ### Fix

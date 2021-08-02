@@ -10,11 +10,11 @@ class SqliteTable:
     __db = None
     __focused_table = ""
 
-    def __init__(self, cols=[], name="logs.db"):
+    def __init__(self, cols=[], file="logs.db", table="logs"):
         self.__columns = cols
-        self.__file_name = name
+        self.__file_name = file
         self.__create_connection()
-        self.create_table("logs")
+        self.create_table(table)
 
     def __get_csv_values(self, csv_file):
         return pd.read_csv(csv_file, sep=";")
@@ -47,9 +47,9 @@ class SqliteTable:
                 print(e)
 
     def clear(self):
-        self.execute_command(f"DELETE * FROM {self.__focused_table}")
+        self.execute_command(f"DELETE FROM {self.__focused_table}")
 
-    def search_in_db(self, value, table="", columns=None):
+    def search_in_db(self, value="", table="", columns=None):
         if table == "":
             table = self.__focused_table
         if columns is None:
@@ -81,16 +81,14 @@ class SqliteTable:
                     values += f"""'{value}'"""
             except Exception as e:
                 print(e)
-        self.execute_command(
-            f"Insert Into {table} ({keys}) Values({values})",
-            commit)
+        self.execute_command(f"Insert Into {table} ({keys}) Values({values})", commit)
 
     def get_db_content(self, table=""):
         if table == "":
             table = self.__focused_table
         try:
             cursor = self.__db.cursor()
-            cursor.execute(f'SELECT * FROM {table}')
+            cursor.execute(f"SELECT * FROM {table}")
             return cursor.fetchall()
         except Exception as e:
             print(e)
@@ -117,6 +115,4 @@ class SqliteTable:
                 columns += col + " TEXT"
             except Exception as e:
                 print(e)
-        self.execute_command(
-            f"Create Table IF NOT EXISTS {table} ({columns})",
-            False)
+        self.execute_command(f"Create Table IF NOT EXISTS {table} ({columns})", False)
