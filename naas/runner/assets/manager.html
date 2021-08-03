@@ -434,6 +434,7 @@
                 jobsState: 1,
                 historyState: 2,
                 accountState: 3,
+                maxState: 3,
                 debouceFilter: null,
                 serverLogParams: {
                     columnFilters: "",
@@ -789,7 +790,7 @@
                     window.open(fileUrl, '_blank');
                 },
                 setPageState(value) {
-                    if (value >= 0 && value <= 2)
+                    if (value >= 0 && value <= this.maxState)
                         this.pageState = value;
                 },
                 formatStatus(status) {
@@ -910,10 +911,36 @@
             <button @click="setPageState(accountState)" class="naas-tab" :class="accountActive ? 'naas-current-tab' : ''">💵 Account Balance</button>
             <a href="#" :href="linkToManager() + '?tab=' + pageState"
                 class="px-2 py-2 button-secondary naas-header-notebook border-object no-underline float-right">
-                <span class="refresh-button">
-                </span>
+<!--                <span class="refresh-button">
+                </span>-->
+                Refresh
             </a>
-            <div v-if="jobsActive">
+            <div v-if="templatesActive">
+                <vue-good-table class="border-object" :columns="columns_templates" :rows="templates" :search-options="{
+                    enabled: true,
+                    externalQuery: filter
+                }" :pagination-options="{
+                    enabled: filter === '',
+                    mode: 'records',
+                    perPage: 10,
+                    position: 'bottom',
+                    perPageDropdown: [5, 15, 20],
+                    dropdownAllowAll: true,
+                    nextLabel: 'next',
+                    prevLabel: 'prev',
+                    rowsPerPageLabel: 'Rows per page',
+                    ofLabel: 'of',
+                    pageLabel: 'page', // for 'pages' mode
+                    allLabel: 'All',
+                }" :sort-options="{
+                    enabled: true,
+                    initialSortBy: {field: 'tool', type: 'asc'}
+                }">
+                    <template slot="table-row" slot-scope="props">
+                    </template>
+                </vue-good-table>
+            </div>
+            <div v-else-if="jobsActive">
                 <vue-good-table class="border-object" :columns="columns_jobs" :rows="jobs" :search-options="{
                         enabled: true,
                         externalQuery: filter
@@ -969,7 +996,7 @@
                     </template>
                 </vue-good-table>
             </div>
-            <div v-if="historyActive">
+            <div v-else-if="historyActive">
                 <!-- <vue-loaders-line-scale v-if="loadingLog"/> -->
                 <div class="vld-parent">
                     <loading :active.sync="loadingLog" 
@@ -1006,7 +1033,8 @@
                                 {{stripNaasPath(props.formattedRow[props.column.field])}}
                             </span>
                             <span v-else-if="props.column.field == 'status'">
-                                <a href="#" v-if="props.row.status in status_dict" style="font-weight: bold;" :style="{color: status_dict[props.row.status].color}">
+                                <a href="#" v-if="props.row.status in status_dict" style="font-weight: bold;" :style="{color: status_dict[props.row.status].color}"
+                                    v-on:click="if (props.formattedRow.status == 'error') openError(props.formattedRow['error'], props.formattedRow['filepath']);">
                                     {{ status_dict[props.row.status].string }}</a>
                                 <p v-else>{{formatStatus(props.row.status)}}</p>
                             </span>
@@ -1022,27 +1050,14 @@
                     </vue-good-table>
                 </div>
             </div>
-            <div v-if="templatesActive">
-                <vue-good-table class="border-object" :columns="columns_templates" :rows="templates" :search-options="{
-                    enabled: true,
-                    externalQuery: filter
-                }" :pagination-options="{
-                    enabled: filter === '',
-                    mode: 'records',
-                    perPage: 10,
-                    position: 'bottom',
-                    perPageDropdown: [5, 15, 20],
-                    dropdownAllowAll: true,
-                    nextLabel: 'next',
-                    prevLabel: 'prev',
-                    rowsPerPageLabel: 'Rows per page',
-                    ofLabel: 'of',
-                    pageLabel: 'page', // for 'pages' mode
-                    allLabel: 'All',
-                }">
-                    <template slot="table-row" slot-scope="props">
-                    </template>
-                </vue-good-table>
+            <div v-else-if="accountActive" style="text-align: center;">
+                <div class="text-white" style="font-size: 26px; font-weight: bold; margin: 1em;">Account Balance is coming soon...</div>
+                <div class="text-2xs text-white center">
+                    In the meantime, please
+                    <a href="mailto:hello@naas.ai?subject=STATEMENT&body=STATEMENT" style="color: #22BC66; font-weight: bold;">send message 📧</a>
+                    to get your account statement.<br/>
+                    We will send it to you ASAP 🙏.
+                </div>
             </div>
             <div v-if="accountActive" style="text-align: center;">
                 <div class="text-white" style="font-size: 26px; font-weight: bold; margin: 1em;">Account Balance is coming soon...</div>
