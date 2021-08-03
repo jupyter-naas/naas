@@ -278,8 +278,8 @@ class Manager:
             result = pd.DataFrame()
             prod_files = self.get_naas()
             for file in prod_files:
-                home = os.environ['JUPYTER_SERVER_ROOT']
-                file = home + file["path"]
+                home = os.environ['HOME']
+                file = home + '/' + file["path"]
                 if isinstance(file, list):
                     file = file[-1]
                 new_prod = self.list_prod("list_history", file, False)
