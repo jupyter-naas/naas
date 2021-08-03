@@ -54,7 +54,7 @@
             padding-top: 20px;
         }
         .naas-tab {
-            font-size: 1.5em;
+            font-size: 1.2em;
             font-weight: bolder;
             font-family: Poppins,sans-serif;
             color: white;
@@ -115,6 +115,15 @@
         }
         .naas-current-tab {
             border-bottom: 5px solid #22BC66;
+        }
+        .refresh-button {
+            mask: url(https://upload.wikimedia.org/wikipedia/commons/c/ce/Ic_refresh_48px.svg);
+            display: inline-block;
+            width: 1.5em;
+            height: 1.5em;
+            background: black;
+            mask-size: cover;
+            vertical-align: bottom;
         }
         /**
         * Profile image component
@@ -234,7 +243,6 @@
             }
         }
     </style>
-    
     <script src="https://cdn.jsdelivr.net/npm/vue-loading-overlay@3"></script>
     <link href="https://cdn.jsdelivr.net/npm/vue-loading-overlay@3/dist/vue-loading.css" rel="stylesheet">
     <script type="module">
@@ -243,7 +251,9 @@
         import VueGoodTablePlugin from 'https://cdn.jsdelivr.net/npm/vue-good-table@2.21.1/dist/vue-good-table.esm.js';
         import * as VModal from 'https://cdn.jsdelivr.net/npm/vue-js-modal@2.0.0-rc.6/dist/index.min.js';
         import VueCodeHighlight from 'https://cdn.jsdelivr.net/npm/vue-code-highlight@0.7.6/dist/vue-code-highlight.esm.min.js';
+        import * as VRouter from 'https://cdn.jsdelivr.net/npm/vue-router@3.5.2/dist/vue-router.min.js';
 
+        Vue.use(VueRouter)
 
         const debouceTime = 800;
         Vue.use(window['vue-js-modal'].default);
@@ -251,7 +261,12 @@
         Vue.component('loading', VueLoading)
         Vue.use(VueCodeHighlight);
         Vue.use(VueGoodTablePlugin);
+        var router = new VueRouter({
+            mode: 'history',
+            routes: []
+        });
         const app = new Vue({
+            router,
             el: '#app',
             components: {
                 VueCodeHighlight
@@ -299,9 +314,9 @@
                         field: 'type',
                     },
                     {
-                        label: 'Value',
+                        label: 'Meta',
                         field: 'value',
-                        hidden: true
+                        hidden: false
                     },
                     {
                         label: 'Date',
@@ -316,9 +331,8 @@
                         field: 'status',
                     },
                     {
-                        label: 'Quantity',
+                        label: 'Last Duration',
                         field: 'lastRun',
-                        hidden: true,
                     },
                     {
                         label: 'Unit Price',
@@ -359,8 +373,16 @@
                         string: '❌ Not found',
                         color: '#f56565'
                     },
+                    'delete': {
+                        string: '❎ Deleted',
+                        color: '#22BC66'
+                    },
                     'healthy': {
-                        string: '✅ Active',
+                        string: '✅ Completed',
+                        color: '#22BC66'
+                    },
+                    'send': {
+                        string: '✅ Sent',
                         color: '#22BC66'
                     },
                     'installed': {
@@ -368,7 +390,7 @@
                         color: '#22BC66'
                     },
                     'started': {
-                        string: '🎽 Running',
+                        string: '🎽 Started',
                         color: '#36b3ed'
                     },
                     'busy': {
@@ -376,8 +398,8 @@
                         color: '#36b3ed'
                     },
                     'edited': {
-                        string: '✏️ Edited',
-                        color: '#ed8936'
+                        string: '✅ Active',
+                        color: '#22BC66'
                     }
                 },
                 type_dict: {
@@ -387,7 +409,7 @@
                     'asset': {
                         string: '🖼️ Asset'
                     },
-                    'webhook': {
+                    'notebook': {
                         string: '⚙️ Webhook'
                     },
                     'notification': {
@@ -397,7 +419,7 @@
                         string: '👈 Callback'
                     },
                     'dependency': {
-                        string: '✏️ 🔗 Dependency'
+                        string: '🔗 Dependency'
                     },
                     'secret': {
                         string: '🔑 Secret key'
@@ -411,6 +433,8 @@
                 templatesState: 0,
                 jobsState: 1,
                 historyState: 2,
+                accountState: 3,
+                maxState: 3,
                 debouceFilter: null,
                 serverLogParams: {
                     columnFilters: "",
@@ -476,28 +500,6 @@
                         `,
                         props: ['error', 'url']
                     }, { error, url }, { width: "70%", scrollable: true, height: 'auto' });
-                },
-                openStatement() {
-                    this.$modal.show({
-                        template: `
-                        <div class="w-full bg-white rounded-lg shadow-lg">
-                            <div class="flex justify-between px-5 py-4 border-b border-gray-100">
-                                <div>
-                                    <span class="text-lg font-bold text-gray-700">Account Balance (coming soon)</span>
-                                </div>
-                                <div>
-                                    <button><i class="text-red-500 transition duration-150 fa fa-times-circle hover:text-red-600"></i></button>
-                                </div>
-                            </div>
-                            <div>
-                                <center><span class="text-lg text-gray-700">Please send STATEMENT to hello@naas.ai to get your account statement.<br> We will send it to you ASAP 🙏.</span></center>
-                            </div>                        
-                            <div class="flex justify-end px-5 py-4">
-                            <button @click="$emit('close')" class="px-3 py-2 text-sm text-gray-500 transition duration-150 hover:text-gray-600">Close</button>
-                            </div>
-                        </div>
-                        `,
-                    }, {}, { width: "50%", scrollable: true, height: 'auto' });
                 },
                 openProfile() {
                     this.$modal.show({
@@ -712,6 +714,7 @@
                         }
                     }));
                     all_loads.push(axios.get('job').then((response) => {
+                        console.log("REFRESH JOBS")
                         if (response && !response.error) {
                             try {
                                 this.jobs = [];
@@ -788,7 +791,8 @@
                     window.open(fileUrl, '_blank');
                 },
                 setPageState(value) {
-                    this.pageState = value;
+                    if (value >= 0 && value <= this.maxState)
+                        this.pageState = value;
                 },
                 formatStatus(status) {
                     if (typeof status === 'string') {
@@ -806,6 +810,9 @@
                 },
                 templatesActive() {
                     return this.pageState == this.templatesState
+                },
+                accountActive() {
+                    return this.pageState == this.accountState
                 },
             },
             created: function () {
@@ -826,6 +833,8 @@
                     }
                 }
                 this.load_data();
+                if (this.$route.query.tab && !isNaN(this.$route.query.tab))
+                    this.setPageState(parseInt(this.$route.query.tab));
             }
         });
     </script>
@@ -867,7 +876,7 @@
                     <a href="https://docs.naas.ai/" target="_blank" rel="noopener" class="naas-header-green">Docs</a>       
                     <a href="https://github.com/orgs/jupyter-naas/projects/4?fullscreen=true" target="_blank" rel="noopener" class="naas-header-green">Roadmap</a>
                     <a href="https://aiclub-hq.slack.com/" target="_blank" rel="noopener" class="naas-header-green py-8">Slack</a>
-                    <a href="https://www.naas.ai/pricing" target="_blank" rel="noopener" class="naas-header-green">⚡️  Upgrade</a>         
+                    <a href="https://www.naas.ai/pricing" target="_blank" rel="noopener" class="naas-header-green">⚡️  Upgrade</a>
                     <button v-on:click="openProfile()" class="px-2 py-2 button-primary naas-header-black">Profile</button>
                     <!-- <a href="#" :href="linkToLab()"><button class="px-2 py-2 button-open naas-header-open border-object">Go to engine</button></a> -->
                     <a href="#" :href="linkToTemplate()" target="_blank"><button class="px-2 py-2 button-secondary naas-header-notebook border-object">➕ New</button></a> 
@@ -875,7 +884,6 @@
                 
             </div>
         </nav>
-        <button v-on:click="openStatement()" class="px-2 py-2 button-primary naas-credits">💲 Account Balance</a></button>
         <div class="flex items-center justify-center w-full naas-search md:px-12">          
             <div class="relative text-gray-900" style="width: 100%;">
                 <input type="text" name="search" v-model="filter" placeholder="Search..."
@@ -901,7 +909,38 @@
             <button @click="setPageState(templatesState)" class="naas-tab" :class="templatesActive ? 'naas-current-tab' : ''">😎 Templates</button>
             <button @click="setPageState(jobsState)" class="naas-tab" :class="jobsActive ? 'naas-current-tab' : ''">🌱 Tasks</button>
             <button @click="setPageState(historyState)" class="naas-tab" :class="historyActive ? 'naas-current-tab' : ''">🧬 History</button>
-            <div v-if="jobsActive">
+            <button @click="setPageState(accountState)" class="naas-tab" :class="accountActive ? 'naas-current-tab' : ''">💵 Account Balance</button>
+            <a href="#" :href="linkToManager() + '?tab=' + pageState"
+                class="px-2 py-2 button-secondary naas-header-notebook border-object no-underline float-right">
+                <span class="refresh-button">
+                </span>
+            </a>
+            <div v-if="templatesActive">
+                <vue-good-table class="border-object" :columns="columns_templates" :rows="templates" :search-options="{
+                    enabled: true,
+                    externalQuery: filter
+                }" :pagination-options="{
+                    enabled: filter === '',
+                    mode: 'records',
+                    perPage: 10,
+                    position: 'bottom',
+                    perPageDropdown: [5, 15, 20],
+                    dropdownAllowAll: true,
+                    nextLabel: 'next',
+                    prevLabel: 'prev',
+                    rowsPerPageLabel: 'Rows per page',
+                    ofLabel: 'of',
+                    pageLabel: 'page', // for 'pages' mode
+                    allLabel: 'All',
+                }" :sort-options="{
+                    enabled: true,
+                    initialSortBy: {field: 'tool', type: 'asc'}
+                }">
+                    <template slot="table-row" slot-scope="props">
+                    </template>
+                </vue-good-table>
+            </div>
+            <div v-else-if="jobsActive">
                 <vue-good-table class="border-object" :columns="columns_jobs" :rows="jobs" :search-options="{
                         enabled: true,
                         externalQuery: filter
@@ -918,6 +957,9 @@
                         ofLabel: 'of',
                         pageLabel: 'page', // for 'pages' mode
                         allLabel: 'All',
+                    }" :sort-options="{
+                        enabled: true,
+                        initialSortBy: {field: 'lastUpdate', type: 'desc'}
                     }">
                     <template slot="table-row" slot-scope="props">
                         <span v-if="props.column.field == 'status'">
@@ -926,10 +968,12 @@
                             <p v-else>{{formatStatus(props.row.status)}}</p>
                         </span>
                         <span v-else-if="props.column.field == 'value'">
+                            <a v-if="props.row.type == 'asset'">Download </a>
+                            <a v-else-if="props.row.type == 'notebook'">Call </a>
                             <a :href="openUrl(props.formattedRow[props.column.field], props.row.type)" target="_blank" rel="noopener" style="font-weight: bold; color: #4299e1;"
-                                v-if="props.row.type == 'asset' || props.row.type == 'notebook'">
-                                {{props.formattedRow[props.column.field].substring(0,6)}}
-                            </a>
+                                v-if="props.row.type == 'asset' || props.row.type == 'notebook'">here</a>
+                            <a v-else-if="props.row.type == 'scheduler'">Cron: {{props.formattedRow[props.column.field]}}</a>
+                            <a v-else-if="props.row.type == 'dependency'"></a>
                             <span v-else>{{props.formattedRow[props.column.field]}}</span>
                         </span>
                         <span v-else-if="props.column.field == 'type'">
@@ -943,10 +987,6 @@
                                 {{props.formattedRow[props.column.field].substring(0,6)}}
                             </a>
                         </span>
-                        <span v-else-if="props.column.field == 'path'">
-                            <a href="#" v-on:click="linkToJup(props.formattedRow[props.column.field])" target="_blank" rel="noopener"
-                                style="font-weight: bold; color: gray;">{{stripNaasPath(props.formattedRow[props.column.field])}}</a>
-                        </span>
                         <span v-else-if="props.column.field == 'lastRun'">
                             {{toMMSS(props.row.type, props.formattedRow[props.column.field])}}
                         </span>
@@ -956,7 +996,7 @@
                     </template>
                 </vue-good-table>
             </div>
-            <div v-if="historyActive">
+            <div v-else-if="historyActive">
                 <!-- <vue-loaders-line-scale v-if="loadingLog"/> -->
                 <div class="vld-parent">
                     <loading :active.sync="loadingLog" 
@@ -968,6 +1008,7 @@
                         externalQuery: filter
                     }" :sort-options="{
                         enabled: true,
+                        initialSortBy: {field: 'asctime', type: 'desc'}
                     }" :pagination-options="{
                         enabled: true,
                         mode: 'records',
@@ -1008,27 +1049,14 @@
                     </vue-good-table>
                 </div>
             </div>
-            <div v-if="templatesActive">
-                <vue-good-table class="border-object" :columns="columns_templates" :rows="templates" :search-options="{
-                    enabled: true,
-                    externalQuery: filter
-                }" :pagination-options="{
-                    enabled: filter === '',
-                    mode: 'records',
-                    perPage: 10,
-                    position: 'bottom',
-                    perPageDropdown: [5, 15, 20],
-                    dropdownAllowAll: true,
-                    nextLabel: 'next',
-                    prevLabel: 'prev',
-                    rowsPerPageLabel: 'Rows per page',
-                    ofLabel: 'of',
-                    pageLabel: 'page', // for 'pages' mode
-                    allLabel: 'All',
-                }">
-                    <template slot="table-row" slot-scope="props">
-                    </template>
-                </vue-good-table>
+            <div v-else-if="accountActive" style="text-align: center;">
+                <div class="text-white" style="font-size: 26px; font-weight: bold; margin: 1em;">Account Balance is coming soon...</div>
+                <div class="text-2xs text-white center">
+                    In the meantime, please
+                    <a href="mailto:hello@naas.ai?subject=STATEMENT&body=STATEMENT" style="color: #22BC66; font-weight: bold;">send message 📧</a>
+                    to get your account statement.<br/>
+                    We will send it to you ASAP 🙏.
+                </div>
             </div>
 
             <div class="col-start-2 py-4 pt-8" v-if="env && env.version">
