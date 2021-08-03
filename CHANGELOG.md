@@ -1,3 +1,38 @@
+## 1.21.0 (2021-08-02)
+
+## 1.21.0b0 (2021-08-02)
+
+## 1.19.1b8 (2021-08-02)
+
+### Feat
+
+- refresh button with logo centered
+- add refresh svg
+
+## 1.20.0 (2021-07-26)
+
+### Feat
+
+- default sorted by date
+- refresh button
+
+## 1.19.1b7 (2021-07-30)
+
+### Feat
+
+- deleted status added
+- add meta column in task table
+
+### Refactor
+
+- hide busy status in log + rename status in manager tables
+
+## 1.19.1b6 (2021-07-30)
+
+### Refactor
+
+- account balance is now a tab
+
 ## 1.19.1b5 (2021-07-28)
 
 ## 1.19.1b4 (2021-07-28)

@@ -1058,6 +1058,15 @@
                     We will send it to you ASAP 🙏.
                 </div>
             </div>
+            <div v-if="accountActive" style="text-align: center;">
+                <div class="text-white" style="font-size: 26px; font-weight: bold; margin: 1em;">Account Balance is coming soon...</div>
+                <div class="text-2xs text-white center">
+                    In the meantime, please
+                    <a href="mailto:hello@naas.ai?subject=STATEMENT&body=STATEMENT" style="color: #22BC66; font-weight: bold;">send message 📧</a>
+                    to get your account statement.<br/>
+                    We will send it to you ASAP 🙏.
+                </div>
+            </div>
 
             <div class="col-start-2 py-4 pt-8" v-if="env && env.version">
                 <h4 class="text-2xl font-semibold text-gray-800"><span class="text-white"></span></h4>
