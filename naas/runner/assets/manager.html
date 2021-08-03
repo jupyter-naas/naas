@@ -714,7 +714,6 @@
                         }
                     }));
                     all_loads.push(axios.get('job').then((response) => {
-                        console.log("REFRESH JOBS")
                         if (response && !response.error) {
                             try {
                                 this.jobs = [];
@@ -1033,7 +1032,8 @@
                                 {{stripNaasPath(props.formattedRow[props.column.field])}}
                             </span>
                             <span v-else-if="props.column.field == 'status'">
-                                <a href="#" v-if="props.row.status in status_dict" style="font-weight: bold;" :style="{color: status_dict[props.row.status].color}">
+                                <a href="#" v-if="props.row.status in status_dict" style="font-weight: bold;" :style="{color: status_dict[props.row.status].color}"
+                                    v-on:click="if (props.formattedRow.status == 'error') openError(props.formattedRow['error'], props.formattedRow['filepath']);">
                                     {{ status_dict[props.row.status].string }}</a>
                                 <p v-else>{{formatStatus(props.row.status)}}</p>
                             </span>
