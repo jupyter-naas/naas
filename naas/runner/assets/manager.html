@@ -117,12 +117,11 @@
             border-bottom: 5px solid #22BC66;
         }
         .refresh-button {
-            mask: url(https://upload.wikimedia.org/wikipedia/commons/c/ce/Ic_refresh_48px.svg);
+            background-image: url(https://upload.wikimedia.org/wikipedia/commons/c/ce/Ic_refresh_48px.svg);
             display: inline-block;
             width: 1.5em;
             height: 1.5em;
-            background: black;
-            mask-size: cover;
+            background-size: cover;
             vertical-align: bottom;
         }
         /**
@@ -911,9 +910,8 @@
             <button @click="setPageState(accountState)" class="naas-tab" :class="accountActive ? 'naas-current-tab' : ''">💵 Account Balance</button>
             <a href="#" :href="linkToManager() + '?tab=' + pageState"
                 class="px-2 py-2 button-secondary naas-header-notebook border-object no-underline float-right">
-<!--                <span class="refresh-button">
-                </span>-->
-                Refresh
+                <span class="refresh-button">
+                </span>
             </a>
             <div v-if="templatesActive">
                 <vue-good-table class="border-object" :columns="columns_templates" :rows="templates" :search-options="{
