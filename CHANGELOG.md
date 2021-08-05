@@ -1,3 +1,12 @@
+## 1.22.0b2 (2021-08-05)
+
+### Fix
+
+- **Version**: Fix version drift
+- change naas list comportement (#197)
+- loading logo displayed
+- refresh button icon fixed on windows
+
 ## 1.22.0b1 (2021-08-03)
 
 ### Fix
