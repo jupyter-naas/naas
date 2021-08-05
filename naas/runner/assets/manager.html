@@ -32,6 +32,14 @@
             padding-left: 12px;
             padding-right: 12px;
         }
+        .button-tertiary {
+            color: #22BC66;
+            background-color:#181c1e;
+            border: 2px solid #22BC66;
+            outline: none;
+            border-radius: 3px;
+            font-weight: 500;
+        }
         .button-open {
             background-color: #181c1e;
             padding-left: 12px;
@@ -907,9 +915,9 @@
             <button @click="setPageState(jobsState)" class="naas-tab" :class="jobsActive ? 'naas-current-tab' : ''">🌱 Tasks</button>
             <button @click="setPageState(historyState)" class="naas-tab" :class="historyActive ? 'naas-current-tab' : ''">🧬 History</button>
             <button @click="setPageState(accountState)" class="naas-tab" :class="accountActive ? 'naas-current-tab' : ''">💵 Account Balance</button>
-            <a href="#" :href="linkToManager() + '?tab=' + pageState"
-                class="px-2 py-2 button-secondary naas-header-notebook border-object no-underline float-right">
-                <span class="refresh-button">
+            <a href="#" @click="load_data()"
+                class="px-2 py-2 button-tertiary naas-header-notebook border-object no-underline float-right">
+                <span class="refresh-button" cursor="pointer">
                 </span>
             </a>
             <div v-if="templatesActive">
