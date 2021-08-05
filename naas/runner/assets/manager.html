@@ -33,9 +33,9 @@
             padding-right: 12px;
         }
         .button-tertiary {
-            color: #22BC66;
             background-color:#181c1e;
             border: 2px solid #22BC66;
+            color:#22BC66;
             outline: none;
             border-radius: 3px;
             font-weight: 500;
@@ -124,13 +124,14 @@
         .naas-current-tab {
             border-bottom: 5px solid #22BC66;
         }
-        .refresh-button {
+        .refresh-logo {
             background-image: url(https://upload.wikimedia.org/wikipedia/commons/c/ce/Ic_refresh_48px.svg);
             display: inline-block;
             width: 1.5em;
             height: 1.5em;
             background-size: cover;
             vertical-align: bottom;
+            filter: invert(54%) sepia(71%) saturate(486%) hue-rotate(94deg) brightness(95%) contrast(88%);
         }
         /**
         * Profile image component
@@ -914,12 +915,12 @@
             <button @click="setPageState(templatesState)" class="naas-tab" :class="templatesActive ? 'naas-current-tab' : ''">😎 Templates</button>
             <button @click="setPageState(jobsState)" class="naas-tab" :class="jobsActive ? 'naas-current-tab' : ''">🌱 Tasks</button>
             <button @click="setPageState(historyState)" class="naas-tab" :class="historyActive ? 'naas-current-tab' : ''">🧬 History</button>
-            <button @click="setPageState(accountState)" class="naas-tab" :class="accountActive ? 'naas-current-tab' : ''">💵 Account Balance</button>
-            <a href="#" @click="load_data()"
-                class="px-2 py-2 button-tertiary naas-header-notebook border-object no-underline float-right">
-                <span class="refresh-button" cursor="pointer">
+            <button @click="setPageState(accountState)" class="naas-tab" :class="accountActive ? 'naas-current-tab' : ''">💵 Account</button>
+            <button @click="load_data()"
+                class="px-2 py-2 button-tertiary border-object no-underline float-right">
+                <span class="refresh-logo" cursor="pointer">
                 </span>
-            </a>
+            </button>
             <div v-if="templatesActive">
                 <vue-good-table class="border-object" :columns="columns_templates" :rows="templates" :search-options="{
                     enabled: true,
@@ -1060,7 +1061,7 @@
                 <div class="text-2xs text-white center">
                     In the meantime, please
                     <a href="mailto:hello@naas.ai?subject=STATEMENT&body=STATEMENT" style="color: #22BC66; font-weight: bold;">send message 📧</a>
-                    to get your account statement.<br/>
+                    to hello@naas.ai to get your account statement.<br/>
                     We will send it to you ASAP 🙏.
                 </div>
             </div>
