@@ -279,7 +279,7 @@ class Manager:
             prod_files = self.get_naas()
             for file in prod_files:
                 home = os.environ["HOME"]
-                file = home + "/" + file["path"]
+                file = os.path.join(home, file["path"])
                 if isinstance(file, list):
                     file = file[-1]
                 new_prod = self.list_prod("list_history", file, False)
