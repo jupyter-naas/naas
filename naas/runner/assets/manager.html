@@ -842,7 +842,6 @@
     <div id="app" class="w-full bg-naas h-full">
         <div id="cs_loader_wrap" v-if="loading">
             <div id="cs_logo_wrap">
-                <img id="cs_logo_loading" alt="loading logo" src="asset/naas_fav.svg"/>
                 <div id="cs_spinner_loading"></div>
             </div>
         </div>
@@ -1049,15 +1048,6 @@
                 </div>
             </div>
             <div v-else-if="accountActive" style="text-align: center;">
-                <div class="text-white" style="font-size: 26px; font-weight: bold; margin: 1em;">Account Balance is coming soon...</div>
-                <div class="text-2xs text-white center">
-                    In the meantime, please
-                    <a href="mailto:hello@naas.ai?subject=STATEMENT&body=STATEMENT" style="color: #22BC66; font-weight: bold;">send message 📧</a>
-                    to get your account statement.<br/>
-                    We will send it to you ASAP 🙏.
-                </div>
-            </div>
-            <div v-if="accountActive" style="text-align: center;">
                 <div class="text-white" style="font-size: 26px; font-weight: bold; margin: 1em;">Account Balance is coming soon...</div>
                 <div class="text-2xs text-white center">
                     In the meantime, please
