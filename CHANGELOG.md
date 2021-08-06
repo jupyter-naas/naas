@@ -1,3 +1,13 @@
+## 1.22.0b3 (2021-08-06)
+
+### Refactor
+
+- refresh button redesign + evolve account balance design
+
+### Feat
+
+- redesign refresh button
+
 ## 1.22.0b2 (2021-08-05)
 
 ### Fix
