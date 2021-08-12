@@ -1,3 +1,67 @@
+## 1.22.0 (2021-08-12)
+
+## 1.22.0b4 (2021-08-09)
+
+## 1.22.0b3 (2021-08-06)
+
+### Refactor
+
+- refresh button redesign + evolve account balance design
+
+## 1.22.0b2 (2021-08-05)
+
+### Fix
+
+- **Version**: Fix version drift
+- change naas list comportement (#197)
+- loading logo displayed
+- refresh button icon fixed on windows
+
+### Feat
+
+- redesign refresh button
+
+## 1.22.0b0 (2021-08-03)
+
+### Fix
+
+- error logs can be opened
+- template fail to load fixed
+
+## 1.19.1b5 (2021-07-28)
+
+## 1.19.1b4 (2021-07-28)
+
+## 1.19.1b3 (2021-07-28)
+
+## 1.19.1b2 (2021-07-26)
+
+### Feat
+
+- rename busy to running
+
+## 1.19.1b1 (2021-07-22)
+
+### Fix
+
+- **fs-permissions**: /opt/conda/share/jupyter/lab/extensions
+
+## 1.19.1b0 (2021-07-22)
+
+### Fix
+
+- **Dependency**: Bump singleuser version 2.11.17b2
+- black format
+- prevent code from crash
+- black format
+- blank hisotry
+
+### Feat
+
+- status uppercase
+- technical rows are ignord
+- services are beatified + better system to exchange text in table
+
 ## 1.21.3 (2021-08-04)
 
 ### Fix
