@@ -117,4 +117,6 @@ class SqliteTable:
                 columns += col + " TEXT"
             except Exception as e:
                 print(e)
-        self.execute_command(f"CREATE TABLE IF NOT EXISTS {table} ({columns})", commit=False)
+        self.execute_command(
+            f"CREATE TABLE IF NOT EXISTS {table} ({columns})", commit=False
+        )
