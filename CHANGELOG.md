@@ -1,3 +1,11 @@
+## 1.22.6 (2021-08-17)
+
+## 1.22.2b0 (2021-08-17)
+
+### Fix
+
+- **Logger**: Improved SQL Query management for Logger (#207)
+
 ## 1.22.5 (2021-08-17)
 
 ### Fix
