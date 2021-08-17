@@ -1,3 +1,11 @@
+## 1.22.1 (2021-08-16)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.70.1
+
+## 1.22.0 (2021-08-12)
+
 ## 1.22.0b4 (2021-08-09)
 
 ## 1.22.0b3 (2021-08-06)
@@ -5,10 +13,6 @@
 ### Refactor
 
 - refresh button redesign + evolve account balance design
-
-### Feat
-
-- redesign refresh button
 
 ## 1.22.0b2 (2021-08-05)
 
@@ -19,7 +23,11 @@
 - loading logo displayed
 - refresh button icon fixed on windows
 
-## 1.22.0b1 (2021-08-03)
+### Feat
+
+- redesign refresh button
+
+## 1.22.0b0 (2021-08-03)
 
 ### Fix
 
@@ -59,6 +67,24 @@
 - status uppercase
 - technical rows are ignord
 - services are beatified + better system to exchange text in table
+
+## 1.21.3 (2021-08-04)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.70.0
+
+## 1.21.2 (2021-08-03)
+
+### Fix
+
+- manager hot fix (#196)
+
+## 1.21.1 (2021-08-03)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.69.3
 
 ## 1.21.0 (2021-08-02)
 
