@@ -48,17 +48,18 @@ class Logger:
     #            self.__sql.csv_to_sql(self.__logs_csv_file)
     #            os.remove(self.__logs_csv_file)
 
-    def add_log(self, data, levelname):
-        data["asctime"] = dt.datetime.now().strftime(self.__date_format)
-        data["levelname"] = levelname
-        data["name"] = self.__name
-        self.__sql.add_on_table(data)
+    def add_log(self, **kwargs):
+        kwargs["asctime"] = dt.datetime.now().strftime(self.__date_format)
+        kwargs["name"] = self.__name
+        return self.__sql.add_on_table(commit=True, **kwargs)
 
     def info(self, data):
-        self.add_log(data, "INFO")
+        data["levelname"] = "INFO"
+        return self.add_log(**data)
 
     def error(self, data):
-        self.add_log(data, "ERROR")
+        data["levelname"] = "ERROR"
+        return self.add_log(**data)
 
     def clear(self):
         self.__sql.clear()
