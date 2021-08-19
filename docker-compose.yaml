@@ -1,0 +1,18 @@
+version: "3.9"
+
+services:
+  naas:
+    build: .
+    environment:
+        "ALLOWED_IFRAME": ""
+        JUPYTER_TOKEN: 'naas'
+        JUPYTERHUB_URL: 'http://localhost:8888'
+    ports:
+      - 8888:8888
+      - 5000:5000
+    volumes:
+      - ~/.ssh:/home/ftp/.ssh
+      - .:/home/ftp/naas
+      - ../drivers:/home/ftp/drivers
+      - ../awesome-notebooks:/home/ftp/awesome-notebooks
+      - ../drivers/naas_drivers:/opt/conda/lib/python3.8/site-packages/naas_drivers
