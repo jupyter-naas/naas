@@ -1,27 +1,19 @@
-naas-run: np
+run:
 	docker-compose up
 
-../drivers:
-	git clone https://github.com/jupyter-naas/drivers.git ../drivers
-
-../awesome-notebooks:
-	git clone https://github.com/jupyter-naas/awesome-notebooks.git ../awesome-notebooks
-
-np: ../drivers ../awesome-notebooks
-
-naas-build:
+build:
 	docker-compose down
 	docker-compose build
 
-naas-run-bg: np
+run-bg:
 	docker-compose up -d
 
-naas-stop:
+stop:
 	docker-compose stop
 
-naas-down:
+down:
 	docker-compose down
 
-naas-logs:
+logs:
 	docker-compose logs -f
 

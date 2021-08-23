@@ -38,3 +38,6 @@ RUN /etc/naas/scripts/install_supp
 RUN /etc/naas/scripts/customize
 
 RUN fix-permissions /opt/conda/share/jupyter/lab/extensions
+
+ADD docker-entrypoint.sh /
+ENTRYPOINT ["/docker-entrypoint.sh"]
