@@ -1,11 +1,19 @@
-run:
+run: np
 	docker-compose up
+
+../drivers:
+	git clone https://github.com/jupyter-naas/drivers.git ../drivers
+
+../awesome-notebooks:
+	git clone https://github.com/jupyter-naas/awesome-notebooks.git ../awesome-notebooks
+
+np: ../drivers ../awesome-notebooks
 
 build:
 	docker-compose down
 	docker-compose build
 
-run-bg:
+run-bg: np
 	docker-compose up -d
 
 stop:
