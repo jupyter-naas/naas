@@ -16,3 +16,4 @@ services:
       - ../drivers:/home/ftp/drivers
       - ../awesome-notebooks:/home/ftp/awesome-notebooks
       - ../drivers/naas_drivers:/opt/conda/lib/python3.8/site-packages/naas_drivers
+      - ./data:/home/ftp/data
