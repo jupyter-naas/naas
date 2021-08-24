@@ -1,19 +1,14 @@
-run: np
+run:
 	docker-compose up
 
-../drivers:
-	git clone https://github.com/jupyter-naas/drivers.git ../drivers
-
-../awesome-notebooks:
-	git clone https://github.com/jupyter-naas/awesome-notebooks.git ../awesome-notebooks
-
-np: ../drivers ../awesome-notebooks
+sh:
+	docker-compose exec naas /bin/bash
 
 build:
 	docker-compose down
 	docker-compose build
 
-run-bg: np
+run-bg:
 	docker-compose up -d
 
 stop:
@@ -25,3 +20,8 @@ down:
 logs:
 	docker-compose logs -f
 
+dep-update:
+	echo "Updating 'naas' dependencies."
+	docker-compose exec naas pip install -e '/home/ftp/naas[dev]'
+	echo "Updating 'drivers' dependencies."
+	docker-compose exec naas pip install -e '/home/ftp/drivers'

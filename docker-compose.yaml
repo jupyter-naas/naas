@@ -4,7 +4,7 @@ services:
   naas:
     build:
       context: .
-      dockerfile: Dockerfile.dev
+      dockerfile: .docker/dev/Dockerfile.dev
     environment:
         "ALLOWED_IFRAME": ""
         JUPYTER_TOKEN: 'naas'
@@ -18,4 +18,5 @@ services:
       - ../drivers:/home/ftp/drivers
       - ../awesome-notebooks:/home/ftp/awesome-notebooks
       - ../drivers/naas_drivers:/opt/conda/lib/python3.8/site-packages/naas_drivers
-      - ./data:/home/ftp/data
+      - ./persistent:/home/ftp/persistent
+      - .docker/.cache/pip:/home/jovyan/.cache/pip
