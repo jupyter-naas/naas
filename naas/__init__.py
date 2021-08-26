@@ -50,6 +50,9 @@ try:
     os.symlink("/home/ftp/.naas/home/ftp", "⚡Production")
 except FileExistsError as e:
     print(e)
+except:
+    print('An error occured while creating production symlink.')
+    pass
 
 
 def get_last_version():
