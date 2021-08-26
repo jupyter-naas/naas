@@ -140,6 +140,6 @@ Welcome_to_Naas.ipynb
 # PyCharm
 .idea/
 
-# Persistent folder for naas
-persistent
+# file_sharing folder for naas
+file_sharing
 .docker/.cache

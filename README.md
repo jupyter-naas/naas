@@ -128,7 +128,7 @@ When you land in your freshly started naas, on the left you should see a file st
 ```
 .
 ├── awesome-notebooks
-├── persistent
+├── file_sharing
 ├── drivers
 ├── naas
 └── Welcome_to_Naas.ipynb
@@ -138,7 +138,7 @@ When naas is starting, it will automatically mount `../drivers` and `../awesome-
 
 `naas` folder corespond to `.` directory on your machine (where naas project is cloned).
 
-`persistent` directory  is a folder created next to `./naas` to allow easy file sharing between your computer and naas container. Every file that you will drop in this directory, either from naas or from your computer will be accesible on both naas and your machine.
+`file_sharing` directory  is a folder created next to `./naas` to allow easy file sharing between your computer and naas container. Every file that you will drop in this directory, either from naas or from your computer will be accesible on both naas and your machine.
 
 `Welcome_to_Naas.ipynb` is our welcoming notebook to get you a place to start your journey.
 
