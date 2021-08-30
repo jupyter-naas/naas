@@ -51,7 +51,7 @@ try:
 except FileExistsError as e:
     print(e)
 except:  # noqa: E722
-    print('An error occured while creating production symlink.')
+    print("An error occured while creating production symlink.")
     pass
 
 
