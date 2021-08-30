@@ -50,7 +50,7 @@ try:
     os.symlink("/home/ftp/.naas/home/ftp", "⚡ ➡️ Production")
 except FileExistsError as e:
     print(e)
-except:
+except:  # noqa: E722
     print('An error occured while creating production symlink.')
     pass
 
