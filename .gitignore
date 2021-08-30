@@ -139,3 +139,7 @@ Welcome_to_Naas.ipynb
 
 # PyCharm
 .idea/
+
+# file_sharing folder for naas
+file_sharing
+.docker/.cache

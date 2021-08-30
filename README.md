@@ -54,26 +54,93 @@ Test it in binder (WIP)
 
 # Run locally
 
-## Install
+### Requirements
 
-it will create and install all dependency in docker machine
-
-`./install`
-
-## Test local server
-
-`./install -ro`
-it will run your docker machine only.
-
-if you want to rebuild docker too `./install -r`
+- Docker
+- Make (Not needed on windows and not needed on Linux/MacOS if you prefer to use `docker-compose` directly).
 
 
-Then open your browser at the url:
-`http://localhost:8888`
 
-enter `naas` as password
+### ⚡Run
 
-if you want other password `./install.sh -t=mypassword`
+##### Linux / MacOS
+
+```bash
+make
+```
+
+Then you can go on http://localhost:8888/lab?token=naas
+
+##### Windows
+
+You just need to double click on the file `windows_start.bat`, this will open a terminal, start naas and open your browser on http://localhost:8888/lab?token=naas.
+
+
+
+### 🛑 Stop
+
+##### Linux / MacOS
+
+```bash
+make stop
+```
+
+or if you want to delete the container as well you can run
+
+```bash
+make down
+```
+
+
+
+##### Windows
+
+Double click on `windows_stop.bat`
+
+
+
+### 📦 Build
+
+You don't really have to run this, unless you changed something related to the `Dockerfile.dev`. The build process is done automatically when running naas (`make` or `make run`) if it never happened before.
+
+##### Linux / MacOS
+
+```bash
+make build
+```
+
+
+
+### 🔧 Open a shell in the container (root)
+
+##### Linux / MacOS
+
+```bash
+make sh
+```
+
+
+
+### File structure for local development
+
+When you land in your freshly started naas, on the left you should see a file structure like this:
+
+```
+.
+├── awesome-notebooks
+├── file_sharing
+├── drivers
+├── naas
+└── Welcome_to_Naas.ipynb
+```
+
+When naas is starting, it will automatically mount `../drivers` and `../awesome-notebooks` in your home directory of your naas. This means that if these directories does not exists on your machine it will create them and `git clone` [naas drivers](https://github.com/jupyter-naas/drivers) in `../drivers` and [awesome-notebooks](https://github.com/jupyter-naas/awesome-notebooks) in `../awesome-notebooks`.
+
+`naas` folder corespond to `.` directory on your machine (where naas project is cloned).
+
+`file_sharing` directory  is a folder created next to `./naas` to allow easy file sharing between your computer and naas container. Every file that you will drop in this directory, either from naas or from your computer will be accesible on both naas and your machine.
+
+`Welcome_to_Naas.ipynb` is our welcoming notebook to get you a place to start your journey.
 
 ### Api documentation
 
