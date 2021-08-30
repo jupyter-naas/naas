@@ -47,7 +47,7 @@ n_env.version = __version__
 # Create Production symlink.
 try:
     os.makedirs("/home/ftp/.naas/home/ftp", exist_ok=True)
-    os.symlink("/home/ftp/.naas/home/ftp", "⚡ ➡️ Production")
+    os.symlink("/home/ftp/.naas/home/ftp", "⚡ → Production")
 except FileExistsError as e:
     print(e)
 except:  # noqa: E722
