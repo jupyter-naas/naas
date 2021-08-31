@@ -1,3 +1,9 @@
+## 1.23.2 (2021-08-31)
+
+### Fix
+
+- **Production-symlink**: Execute it at loading of naas.runner and create it at /home/ftp/
+
 ## 1.23.1 (2021-08-31)
 
 ### Fix
