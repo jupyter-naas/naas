@@ -9,3 +9,4 @@ version_files = [
     "setup.py:version",
     "Dockerfile:NAAS_VERSION"
 ]
+
