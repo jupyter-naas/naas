@@ -1,18 +1,8 @@
-## 1.23.0b2 (2021-08-31)
+## 1.22.8 (2021-08-26)
 
 ### Fix
 
-- **Version**: manual bump
-
-### Feat
-
-- docker-compose for local development. (#217)
-
-## 1.23.0b1 (2021-08-26)
-
-### Feat
-
-- Create production symlink. (#216)
+- **dependency**: update naas_drivers 0.70.5
 
 ## 1.22.7 (2021-08-18)
 
