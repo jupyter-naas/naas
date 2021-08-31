@@ -1,3 +1,13 @@
+## 1.23.0b2 (2021-08-31)
+
+### Fix
+
+- **Version**: manual bump
+
+### Feat
+
+- docker-compose for local development. (#217)
+
 ## 1.23.0b1 (2021-08-26)
 
 ### Feat
