@@ -38,3 +38,5 @@ RUN /etc/naas/scripts/install_supp
 RUN /etc/naas/scripts/customize
 
 RUN fix-permissions /opt/conda/share/jupyter/lab/extensions
+
+ENV PATH="/home/ftp/.local/bin:${PATH}"
