@@ -1,5 +1,6 @@
 from .ntypes import t_scheduler, t_output, t_add, t_update, t_delete
 from .manager import Manager
+from IPython.display import display, Javascript
 import pandas as pd
 import pretty_cron
 import requests
@@ -91,6 +92,11 @@ class Scheduler:
         if not self.__check_cron(cron):
             print(f"WARNING : Recurrence wrong format {cron}")
             return
+        cron_string = pretty_cron.prettify_cron(cron)
+        if cron_string == "Every minute of every day":
+            display(Javascript("""
+            alert('Warning you just scheduled a notebook to run every minute!');
+            """))
         current_file = self.manager.get_path(path)
         status = t_add
         try:
@@ -108,8 +114,7 @@ class Scheduler:
             },
             debug,
         )
-        cron_string = pretty_cron.prettify_cron(cron)
-        print("👌 Well done! Your Notebook has been sent to production. \n")
+        print("👌 Well done! Your Notebook has been sent to production.\n")
         print(
             f'⏰ It will be scheduled "{cron_string}" (more on the syntax on https://crontab.guru/).\n'
         )
