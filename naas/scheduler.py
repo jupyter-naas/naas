@@ -134,4 +134,3 @@ class Scheduler:
         if all is True:
             self.clear(current_file, "all")
             self.clear_output(current_file, "all")
-            
