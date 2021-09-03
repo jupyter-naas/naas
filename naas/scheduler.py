@@ -94,9 +94,13 @@ class Scheduler:
             return
         cron_string = pretty_cron.prettify_cron(cron)
         if cron_string == "Every minute of every day":
-            display(Javascript("""
+            display(
+                Javascript(
+                    """
             alert('Warning you just scheduled a notebook to run every minute!');
-            """))
+            """
+                )
+            )
         current_file = self.manager.get_path(path)
         status = t_add
         try:
@@ -130,3 +134,4 @@ class Scheduler:
         if all is True:
             self.clear(current_file, "all")
             self.clear_output(current_file, "all")
+            
