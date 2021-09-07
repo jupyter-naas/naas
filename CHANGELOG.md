@@ -1,3 +1,30 @@
+## 1.24.0b0 (2021-09-07)
+
+### Fix
+
+- **Versions**: Manually bump
+
+### Feat
+
+- pop-in when a scheduler in set to every minute (#222)
+
+## 1.23.0b2 (2021-08-31)
+
+### Fix
+
+- **Version**: manual bump
+- **Flake8**: Remove error
+
+### Feat
+
+- docker-compose for local development. (#217)
+
+## 1.23.0b0 (2021-08-26)
+
+### Feat
+
+- Create production symlink. (#216)
+
 ## 1.23.3 (2021-08-26)
 
 ### Fix
