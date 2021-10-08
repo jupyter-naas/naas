@@ -1,4 +1,4 @@
-mmo<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml" class="bg-naas">
 
 <head>
@@ -250,6 +250,32 @@ mmo<!DOCTYPE html>
                 transform: rotate(360deg);
             }
         }
+
+        /* Tooltip container */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        /* Tooltip text */
+        .tooltip .tooltiptext {
+        visibility: hidden;
+        width: 120px;
+        background-color: white;
+        color: grey;
+        text-align: center;
+        padding: 5px 0;
+        border-radius: 6px;
+        
+        /* Position the tooltip text - see examples below! */
+        position: absolute;
+        z-index: 1;
+        }
+
+        /* Show the tooltip text when you mouse over the tooltip container */
+        .tooltip:hover .tooltiptext {
+        visibility: visible;
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/vue-loading-overlay@3"></script>
     <link href="https://cdn.jsdelivr.net/npm/vue-loading-overlay@3/dist/vue-loading.css" rel="stylesheet">
@@ -371,7 +397,7 @@ mmo<!DOCTYPE html>
                 columns_account: [
                     {
                         label: 'Transaction',
-                        field: '_id',
+                        field: 'META_1',
                     },
                     {
                         label: 'Type',
@@ -379,7 +405,7 @@ mmo<!DOCTYPE html>
                     },
                     {
                         label: 'Date',
-                        field: 'DATE',
+                        field: 'META_2',
                     },
                     {
                         label: 'Amount',
@@ -684,9 +710,21 @@ mmo<!DOCTYPE html>
                         console.error(err);
                     })
                 },
-                loadAccountJson() {
-                    return axios.get('https://api.jsonbin.io/b/61556ee74a82881d6c582996').then((response) => {
+                loadAccountBalance() {
+                    return axios.get('/naas/credits/balance').then((response) => {
                         if (response && !response.error) {
+                            this.accountBalance = response.data
+                        }
+                    }).catch((err) => {
+                        console.error(err);
+                    })
+                },
+                loadAccountJson() {
+                    return axios.get('/naas/credits/transactions').then((response) => {
+                        if (response && !response.error) {
+                            response.data.forEach(transaction => {
+                                transaction['CREDIT'] = transaction['CREDIT'].toFixed(2) + ' ⚡';
+                            })
                             this.account = response.data
                         }
                     }).catch((err) => {
@@ -813,6 +851,7 @@ mmo<!DOCTYPE html>
                     all_loads.push(this.loadLogItems());
                     all_loads.push(this.loadTemplatesItems());
                     all_loads.push(this.loadAccountJson());
+                    all_loads.push(this.loadAccountBalance());
                     return Promise.all(all_loads).then(()=> {
                         this.loading = false;
                     });
@@ -958,10 +997,20 @@ mmo<!DOCTYPE html>
                     <!-- <a href="#" :href="linkToLab()"><button class="px-2 py-2 button-open naas-header-open border-object">Go to engine</button></a> -->
                     <a href="#" :href="linkToTemplate()" target="_blank"><button class="px-2 py-2 button-secondary naas-header-notebook border-object">➕ New</button></a> 
                 </div>
-                
             </div>
         </nav>
-        <div class="flex items-center justify-center w-full naas-search md:px-12">          
+        <div class="flex md:px-12">
+            <div style="color:white;font-family: Poppins,sans-serif;font-size:2em;padding-top:15px">
+                {{ this.accountBalance.balance.toFixed(2) }}⚡
+            </div>  
+        </div>
+        <div class="flex md:px-12">
+            <div style="color:#dbdbdb;font-family: Poppins,sans-serif;font-size:0.7em" class="">
+                Credits available
+                <!-- <span class="tooltiptext">Tooltip text</span> -->
+            </div>
+        </div>
+        <div class="flex items-center justify-center w-full naas-search md:px-12">
             <div class="relative text-gray-900" style="width: 100%;">
                 <input type="text" name="search" v-model="filter" placeholder="Search..."
                     class="w-full h-10 px-5 pr-10 text-sm text-gray-900 bg-gray-100 focus:outline-none border-object">
@@ -1146,9 +1195,14 @@ mmo<!DOCTYPE html>
                     allLabel: 'All',
                 }" :sort-options="{
                     enabled: true,
-                    initialSortBy: {field: '_id', type: 'desc'}
+                    initialSortBy: {field: 'META_2', type: 'desc'}
                 }">
                     <template slot="table-row" slot-scope="props">
+                        <span v-if="props.column.field == 'TYPE'">
+                            <a href="#" v-if="props.row.TYPE.toLowerCase() in type_dict" style="font-weight: bold;">
+                                {{ type_dict[props.row.TYPE.toLowerCase()].string }}</a>
+                            <p v-else>{{props.row.TYPE}}</p>
+                        </span>
                     </template>
                 </vue-good-table>
             </div>

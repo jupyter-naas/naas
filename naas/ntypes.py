@@ -7,6 +7,7 @@ t_asset = "asset"
 t_downloader = "downloader"
 t_dependency = "dependency"
 t_scheduler = "scheduler"
+t_credits = "credits"
 
 t_secret = "secret"
 
