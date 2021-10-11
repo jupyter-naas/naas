@@ -1,3 +1,9 @@
+## 1.24.0b4 (2021-10-11)
+
+### Fix
+
+- **Manager**: Thee way we get balance and transactions
+
 ## 1.24.0b3 (2021-10-11)
 
 ### Fix
