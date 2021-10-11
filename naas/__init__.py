@@ -17,7 +17,7 @@ import requests
 import os
 import sys
 
-__version__ = "1.23.7"
+__version__ = "1.24.0b0"
 __github_repo = "jupyter-naas/naas"
 __doc_url = "https://naas.gitbook.io/naas/"
 __canny_js = '<script>!function(w,d,i,s){function l(){if(!d.getElementById(i)){var f=d.getElementsByTagName(s)[0],e=d.createElement(s);e.type="text/javascript",e.async=!0,e.src="https://canny.io/sdk.js",f.parentNode.insertBefore(e,f)}}if("function"!=typeof w.Canny){var c=function(){c.q.push(arguments)};c.q=[],w.Canny=c,"complete"===d.readyState?l():w.attachEvent?w.attachEvent("onload",l):w.addEventListener("load",l,!1)}}(window,document,"canny-jssdk","script");</script>'  # noqa: E501
@@ -43,6 +43,16 @@ def version():
 
 
 n_env.version = __version__
+
+# Create Production symlink.
+try:
+    os.makedirs("/home/ftp/.naas/home/ftp", exist_ok=True)
+    os.symlink("/home/ftp/.naas/home/ftp", "⚡ → Production")
+except FileExistsError as e:
+    print(e)
+except:  # noqa: E722
+    print("An error occured while creating production symlink.")
+    pass
 
 
 def get_last_version():
