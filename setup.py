@@ -51,7 +51,6 @@ setup(
         "pretty-cron==1.2.0",
         "APScheduler==3.7.0",
         "pycron==3.0.0",
-        "aiohttp==3.7.4",
         "html5lib==1.1",
         "Pillow==8.2.0",
         "markdown2==2.4.0",

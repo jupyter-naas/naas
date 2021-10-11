@@ -15,7 +15,6 @@ import traceback
 import requests
 import datetime
 import asyncio
-import aiohttp
 import pycron
 import time
 import pytz
@@ -24,10 +23,7 @@ import os
 
 
 async def fetch(url):
-    with aiohttp.ClientSession() as session:
-        async with session.get(url, timeout=n_env.scheduler_timeout) as response:
-            return await response.json()
-
+    return requests.get(url, timeout=n_env.scheduler_timeout).json()
 
 class Scheduler:
     __scheduler = None
@@ -170,8 +166,17 @@ class Scheduler:
                         }
                     )
                     try:
-                        await fetch(url=next_url)
-                    except:  # noqa: E722
+                        r = await fetch(url=next_url)
+                        self.__logger.info(
+                        {
+                            "id": uid,
+                            "type": t_scheduler,
+                            "status": r,
+                            "filepath": file_filepath,
+                            "url": next_url,
+                        }
+                    )
+                    except Exception as e:  # noqa: E722
                         tb = traceback.format_exc()
                         self.__logger.error(
                             {
@@ -179,7 +184,7 @@ class Scheduler:
                                 "type": t_scheduler,
                                 "status": t_error,
                                 "filepath": file_filepath,
-                                "error": "Error in next_url",
+                                "error": f'Error while calling next_url: exception[{str(e)}] traceback[{str(tb)}]',
                                 "traceback": str(tb),
                             }
                         )

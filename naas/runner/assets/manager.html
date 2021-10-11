@@ -717,6 +717,7 @@
                         }
                     }).catch((err) => {
                         console.error(err);
+                        this.accountBalance = {'balance': 0}
                     })
                 },
                 loadAccountJson() {
@@ -729,6 +730,7 @@
                         }
                     }).catch((err) => {
                         console.error(err);
+                        this.account = []
                     })
                 },
                 // loadAccountJson1() {
