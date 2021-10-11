@@ -711,7 +711,7 @@
                     })
                 },
                 loadAccountBalance() {
-                    return axios.get('/naas/credits/balance').then((response) => {
+                    return axios.get('credits/balance').then((response) => {
                         if (response && !response.error) {
                             this.accountBalance = response.data
                         }
@@ -721,7 +721,7 @@
                     })
                 },
                 loadAccountJson() {
-                    return axios.get('/naas/credits/transactions').then((response) => {
+                    return axios.get('credits/transactions').then((response) => {
                         if (response && !response.error) {
                             response.data.forEach(transaction => {
                                 transaction['CREDIT'] = transaction['CREDIT'].toFixed(2) + ' ⚡';
