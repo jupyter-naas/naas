@@ -8,6 +8,7 @@ from .controllers.notebooks import NbController
 from .controllers.timezone import TimezoneController
 from .controllers.jobs import JobsController
 from .controllers.logs import LogsController
+from .controllers.credits import CreditsController
 from sanic_openapi import swagger_blueprint
 from .controllers.env import EnvController
 from .controllers.performance import PerformanceController
@@ -38,6 +39,7 @@ from naas.ntypes import (
     t_secret,
     t_tz,
     t_downloader,
+    t_credits,
 )
 
 # TODO remove this fix when papermill and nest_asyncio support uvloop
@@ -88,6 +90,14 @@ class Runner:
             self.__app.add_route(
                 DownloaderController.as_view(self.__logger),
                 f"/{t_downloader}",
+            )
+            self.__app.add_route(
+                CreditsController.TransactionController.as_view(self.__logger),
+                f"/{t_credits}/transactions",
+            )
+            self.__app.add_route(
+                CreditsController.BalanceController.as_view(self.__logger),
+                f"/{t_credits}/balance",
             )
             self.__app.add_route(
                 AssetsController.as_view(

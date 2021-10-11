@@ -51,14 +51,13 @@ setup(
         "pretty-cron==1.2.0",
         "APScheduler==3.7.0",
         "pycron==3.0.0",
-        "aiohttp==3.7.4",
         "html5lib==1.1",
         "Pillow==8.2.0",
         "markdown2==2.4.0",
         "pandas==1.2.4",
         "escapism==1.0.1",
         "notebook==6.4.0",
-        "ipython==7.23.1",
+        "ipython==7.22.0",
         "ipykernel==5.5.3",
         "requests==2.25.1",
         "sentry-sdk==1.0.0",
@@ -69,7 +68,7 @@ setup(
         "beautifulsoup4==4.9.3",
         "tzdata",
         "pysqlite3==0.4.6",
-        "pymongo[srv]==3.11.4"
+        "pymongo[srv]==3.11.3"
     ],
     classifiers=[
         "Programming Language :: Python :: 3.9",

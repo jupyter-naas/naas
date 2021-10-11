@@ -22,7 +22,7 @@ jobs:
     - name: Install dependencies
       run: |
         python3 -m pip install -U pip
-        pip3 install -e '.[dev]'
+        pip3 install -e '.[fulldev]'
     - name: Run linters
       run: |
         black --check naas
