@@ -1,3 +1,65 @@
+## 1.24.0b1 (2021-10-11)
+
+## 1.23.9 (2021-10-08)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.72.0
+
+## 1.23.8 (2021-10-05)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.71.0
+
+## 1.23.7 (2021-09-27)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.70.11
+
+## 1.23.6 (2021-09-27)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.70.10
+
+## 1.23.5 (2021-09-20)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.70.9
+
+## 1.23.4 (2021-09-16)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.70.8
+
+## 1.23.3 (2021-08-31)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.70.7
+
+## 1.23.2 (2021-08-31)
+
+### Fix
+
+- **Production-symlink**: Execute it at loading of naas.runner and create it at /home/ftp/
+
+## 1.23.1 (2021-08-31)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.70.6
+
+## 1.23.0 (2021-08-31)
+
+### Feat
+
+- **CI/CD**: Trigger
+
 ## 1.24.0b0 (2021-09-07)
 
 ### Fix
