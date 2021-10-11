@@ -25,6 +25,7 @@ import os
 async def fetch(url):
     return requests.get(url, timeout=n_env.scheduler_timeout).json()
 
+
 class Scheduler:
     __scheduler = None
     __nb = None
@@ -168,14 +169,14 @@ class Scheduler:
                     try:
                         r = await fetch(url=next_url)
                         self.__logger.info(
-                        {
-                            "id": uid,
-                            "type": t_scheduler,
-                            "status": r,
-                            "filepath": file_filepath,
-                            "url": next_url,
-                        }
-                    )
+                            {
+                                "id": uid,
+                                "type": t_scheduler,
+                                "status": r,
+                                "filepath": file_filepath,
+                                "url": next_url,
+                            }
+                        )
                     except Exception as e:  # noqa: E722
                         tb = traceback.format_exc()
                         self.__logger.error(
@@ -184,7 +185,7 @@ class Scheduler:
                                 "type": t_scheduler,
                                 "status": t_error,
                                 "filepath": file_filepath,
-                                "error": f'Error while calling next_url: exception[{str(e)}] traceback[{str(tb)}]',
+                                "error": f"Error while calling next_url: exception[{str(e)}] traceback[{str(tb)}]",
                                 "traceback": str(tb),
                             }
                         )
