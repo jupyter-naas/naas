@@ -57,7 +57,7 @@ setup(
         "pandas==1.2.4",
         "escapism==1.0.1",
         "notebook==6.4.0",
-        "ipython==7.23.1",
+        "ipython==7.22.0",
         "ipykernel==5.5.3",
         "requests==2.25.1",
         "sentry-sdk==1.0.0",
