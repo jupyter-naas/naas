@@ -1,3 +1,9 @@
+## 1.24.0b3 (2021-10-11)
+
+### Fix
+
+- **Dependency**: Bump naas_drivers to 0.72.1
+
 ## 1.24.0b2 (2021-10-11)
 
 ### Feat
