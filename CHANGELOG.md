@@ -1,3 +1,9 @@
+## 1.24.0b7 (2021-10-12)
+
+### Refactor
+
+- Typo and padding for tooltip
+
 ## 1.24.0b6 (2021-10-12)
 
 ### Feat
