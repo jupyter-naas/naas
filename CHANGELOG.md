@@ -1,3 +1,9 @@
+## 1.24.0b8 (2021-10-14)
+
+### Fix
+
+- **Production-folder**: Remove old code still being present for some reason
+
 ## 1.24.0b7 (2021-10-12)
 
 ### Refactor
