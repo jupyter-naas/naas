@@ -68,7 +68,8 @@ setup(
         "beautifulsoup4==4.9.3",
         "tzdata",
         "pysqlite3==0.4.6",
-        "pymongo[srv]==3.11.3"
+        "pymongo[srv]==3.11.3",
+        "psycopg2-binary==2.9.1"
     ],
     classifiers=[
         "Programming Language :: Python :: 3.9",
