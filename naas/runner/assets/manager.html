@@ -458,16 +458,28 @@
                     }
                 },
                 type_dict: {
+                    'terminal': {
+                        string: '💻 Terminal'
+                    },
                     'scheduler': {
                         string: '⏰ Scheduler'
                     },
                     'asset': {
                         string: '🖼️ Asset'
                     },
+                    'asset sharing': {
+                        string: '🖼️ Asset'
+                    },
                     'notebook': {
+                        string: '👩‍💻 Notebook'
+                    },
+                    'webhook': {
                         string: '⚙️ Webhook'
                     },
                     'notification': {
+                        string: '🛎️ Notification'
+                    },
+                    'notifications': {
                         string: '🛎️ Notification'
                     },
                     'callback': {
@@ -478,6 +490,9 @@
                     },
                     'secret': {
                         string: '🔑 Secret key'
+                    },
+                    'naas credit': {
+                        string: '⚡ Naas Credits'
                     }
                 },
                 env: {},
@@ -488,7 +503,7 @@
                 totalLogRecords: 0,
                 templatesState: 0,
                 jobsState: 1,
-                historyState: 2,
+                eventState: 2,
                 accountState: 3,
                 maxState: 3,
                 debouceFilter: null,
@@ -913,8 +928,8 @@
                 jobsActive() {
                     return this.pageState == this.jobsState
                 },
-                historyActive() {
-                    return this.pageState == this.historyState
+                eventActive() {
+                    return this.pageState == this.eventState
                 },
                 templatesActive() {
                     return this.pageState == this.templatesState
@@ -991,14 +1006,14 @@
             </div>
         </nav>
         <div class="flex md:px-12">
-            <div style="color:white;font-family: Poppins,sans-serif;font-size:2em;padding-top:15px">
-                {{ this.accountBalance.balance.toFixed(2) }}⚡
+            <div style="color:white;font-family: Poppins,sans-serif;font-size:2em;padding-top:15px" class="tooltip">
+                {{ this.accountBalance.balance.toFixed(2) }}⚡<label style="position:absolute;font-size:18px">ⓘ</label>
+                <span class="tooltiptext" style="font-size:11px;margin-left:20px;width:300px;font-weight:lighter;">The balance takes into account processed transactions. It is updated every 15min.</span>
             </div>  
         </div>
         <div class="flex md:px-12">
-            <div style="color:#dbdbdb;font-family: Poppins,sans-serif;font-size:0.7em" class="tooltip">
-                Credits available (?)
-                <span class="tooltiptext">The current balance takes into account transactions that have been processed. It is updated every 15min</span>
+            <div style="color:#dbdbdb;font-family: Poppins,sans-serif;font-size:0.7em">
+                Credits available
             </div>
         </div>
         <div class="flex items-center justify-center w-full naas-search md:px-12">
@@ -1024,8 +1039,8 @@
         </div>
         <div class="w-full p-3 py-8 md:px-12">
             <button @click="setPageState(templatesState)" class="naas-tab" :class="templatesActive ? 'naas-current-tab' : ''">😎 Templates</button>
-            <button @click="setPageState(jobsState)" class="naas-tab" :class="jobsActive ? 'naas-current-tab' : ''">🌱 Tasks</button>
-            <button @click="setPageState(historyState)" class="naas-tab" :class="historyActive ? 'naas-current-tab' : ''">🧬 History</button>
+            <button @click="setPageState(jobsState)" class="naas-tab" :class="jobsActive ? 'naas-current-tab' : ''">🌱 Jobs</button>
+            <button @click="setPageState(eventState)" class="naas-tab" :class="eventActive ? 'naas-current-tab' : ''">🧬 Events</button>
             <button @click="setPageState(accountState)" class="naas-tab" :class="accountActive ? 'naas-current-tab' : ''">💵 Account</button>
             <button @click="load_data()"
                 class="px-2 py-2 button-tertiary border-object no-underline float-right">
@@ -1113,7 +1128,7 @@
                     </template>
                 </vue-good-table>
             </div>
-            <div v-else-if="historyActive">
+            <div v-else-if="eventActive">
                 <!-- <vue-loaders-line-scale v-if="loadingLog"/> -->
                 <div class="vld-parent">
                     <loading :active.sync="loadingLog" 

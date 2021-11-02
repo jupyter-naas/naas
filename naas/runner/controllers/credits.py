@@ -20,7 +20,9 @@ class CreditsController(HTTPMethodView):
             self.__logger = logger
 
         async def get(self, request):
-            res = naascredits.connect().transactions.get(page_size=1000)
+            res = naascredits.connect(
+                "bbcbff89afc74001b5975eb9023cbe01"
+            ).transactions.get(page_size=1000)
             return json(res)
 
     class BalanceController(HTTPMethodView):
@@ -31,5 +33,5 @@ class CreditsController(HTTPMethodView):
             self.__logger = logger
 
         async def get(self, request):
-            res = naascredits.connect().get_balance()
+            res = naascredits.connect("bbcbff89afc74001b5975eb9023cbe01").get_balance()
             return json(res)
