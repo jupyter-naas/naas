@@ -1,4 +1,32 @@
-## 1.24.0b9 (2021-10-14)
+## 1.23.16 (2021-10-26)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.74.4
+
+## 1.23.15 (2021-10-26)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.74.3
+
+## 1.23.14 (2021-10-26)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.74.2
+
+## 1.23.13 (2021-10-25)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.74.1
+
+## 1.23.12 (2021-10-25)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.74.0
 
 ## 1.23.11 (2021-10-14)
 
