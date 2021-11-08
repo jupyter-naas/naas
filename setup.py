@@ -14,7 +14,7 @@ dev_dep = [
     "pytest-mock==3.6.0",
     "pytest-sanic==1.7.0",
     "pytest-asyncio==0.15.1",
-    "requests-mock==1.9.2",
+    "requests-mock==1.9.3",
     "twine==3.4.1",
     "flake8==4.0.1",
     "pre-commit==2.12.1",
