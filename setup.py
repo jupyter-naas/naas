@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-NDV = "0.76.2"
+NDV = "0.76.3"
 
 driver_dep = [f'naas_drivers=={NDV}']
 dev_dep = [
@@ -16,7 +16,7 @@ dev_dep = [
     "pytest-asyncio==0.15.1",
     "requests-mock==1.9.2",
     "twine==3.4.1",
-    "flake8==3.9.2",
+    "flake8==4.0.1",
     "pre-commit==2.12.1",
     "black==21.5b1",
     "imgcompare==2.0.1",
@@ -25,7 +25,7 @@ dev_dep = [
 ]
 setup(
     name="naas",
-    version="2.0.0",
+    version="2.0.1",
     author="Martin Donadieu",
     author_email="martindonadieu@gmail.com",
     license="BSD",
