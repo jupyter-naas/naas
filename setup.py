@@ -15,7 +15,7 @@ dev_dep = [
     "pytest-sanic==1.7.0",
     "pytest-asyncio==0.15.1",
     "requests-mock==1.9.2",
-    "twine==3.4.1",
+    "twine==3.5.0",
     "flake8==3.9.1",
     "pre-commit==2.12.1",
     "black==21.5b1",
@@ -25,9 +25,9 @@ dev_dep = [
 ]
 setup(
     name="naas",
-    version="2.0.0",
-    author="Martin Donadieu",
-    author_email="martindonadieu@gmail.com",
+    version="2.0.1",
+    author="Maxime Jublou",
+    author_email="devops@cashstory.com",
     license="BSD",
     description="Scheduler system for notebooks",
     long_description=long_description,
