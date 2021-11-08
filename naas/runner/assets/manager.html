@@ -250,6 +250,32 @@
                 transform: rotate(360deg);
             }
         }
+
+        /* Tooltip container */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        /* Tooltip text */
+        .tooltip .tooltiptext {
+        visibility: hidden;
+        width: 120px;
+        background-color: white;
+        color: black;
+        text-align: center;
+        padding: 10px;
+        border-radius: 6px;
+        
+        /* Position the tooltip text - see examples below! */
+        position: absolute;
+        z-index: 1;
+        }
+
+        /* Show the tooltip text when you mouse over the tooltip container */
+        .tooltip:hover .tooltiptext {
+        visibility: visible;
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/vue-loading-overlay@3"></script>
     <link href="https://cdn.jsdelivr.net/npm/vue-loading-overlay@3/dist/vue-loading.css" rel="stylesheet">
@@ -368,6 +394,26 @@
                         globalSearchDisabled: true,
                     }
                 ],
+                columns_account: [
+                    {
+                        label: 'Transaction',
+                        field: 'META_1',
+                    },
+                    {
+                        label: 'Type',
+                        field: 'TYPE',
+                    },
+                    {
+                        label: 'Date',
+                        field: 'META_2',
+                    },
+                    {
+                        label: 'Amount',
+                        field: 'CREDIT',
+                        html: true,
+                        globalSearchDisabled: true,
+                    }
+                ],
                 // Below the dictionary we use to beautify status
                 status_dict: {
                     'error': {
@@ -412,16 +458,28 @@
                     }
                 },
                 type_dict: {
+                    'terminal': {
+                        string: '💻 Terminal'
+                    },
                     'scheduler': {
                         string: '⏰ Scheduler'
                     },
                     'asset': {
                         string: '🖼️ Asset'
                     },
+                    'asset sharing': {
+                        string: '🖼️ Asset'
+                    },
                     'notebook': {
+                        string: '👩‍💻 Notebook'
+                    },
+                    'webhook': {
                         string: '⚙️ Webhook'
                     },
                     'notification': {
+                        string: '🛎️ Notification'
+                    },
+                    'notifications': {
                         string: '🛎️ Notification'
                     },
                     'callback': {
@@ -432,16 +490,20 @@
                     },
                     'secret': {
                         string: '🔑 Secret key'
+                    },
+                    'naas credit': {
+                        string: '⚡ Naas Credits'
                     }
                 },
                 env: {},
                 logs: [],
                 templates: [],
+                account: [],
                 pageState: 0,
                 totalLogRecords: 0,
                 templatesState: 0,
                 jobsState: 1,
-                historyState: 2,
+                eventState: 2,
                 accountState: 3,
                 maxState: 3,
                 debouceFilter: null,
@@ -663,9 +725,60 @@
                         console.error(err);
                     })
                 },
-                loadTemplatesItems() {
+                loadAccountBalance() {
+                    return axios.get('credits/balance').then((response) => {
+                        if (response && !response.error) {
+                            this.accountBalance = response.data
+                        }
+                    }).catch((err) => {
+                        console.error(err);
+                        this.accountBalance = {'balance': 0}
+                    })
+                },
+                loadAccountJson() {
+                    return axios.get('credits/transactions').then((response) => {
+                        if (response && !response.error) {
+                            response.data.forEach(transaction => {
+                                transaction['CREDIT'] = transaction['CREDIT'].toFixed(2) + ' ⚡';
+                            })
+                            this.account = response.data
+                        }
+                    }).catch((err) => {
+                        console.error(err);
+                        this.account = []
+                    })
+                },
+                loadAccountItems() {
                     return axios.get('https://raw.githubusercontent.com/jupyter-naas/awesome-notebooks/master/templates.json').then((response) => {
                         if (response && !response.error) {
+                            try {
+                                let account = data
+                                for (let i = 0; i < account.length; i++) {
+                                    let tags = "";
+
+                                    if (account[i].tags != null)
+                                        for (let j = 0; j < account[i].tags.length; j++) {
+                                            tags += account[i].tags[j]
+                                            tags += " "
+                                        }
+                                    account[i].tags = tags
+                                    if ("action" in account[i])
+                                        account[i].action = account[i].action.replace("_parent", "_blank")
+                                }
+                                this.account = account
+                            } catch (err) {
+                                console.log("ERROR");
+                                console.error(err);
+                            }
+                        }
+
+                    }).catch((err) => {
+                        console.error(err);
+                    })
+                },
+                loadTemplatesItems() {
+                    return axios.get('https://raw.githubusercontent.com/jupyter-naas/awesome-notebooks/master/templates.json').then((response) => {
+                        if (response && !response.error) {4
                             try {
                                 let templates = response.data
                                 for (let i = 0; i < templates.length; i++) {
@@ -743,6 +856,8 @@
                     }));
                     all_loads.push(this.loadLogItems());
                     all_loads.push(this.loadTemplatesItems());
+                    all_loads.push(this.loadAccountJson());
+                    all_loads.push(this.loadAccountBalance());
                     return Promise.all(all_loads).then(()=> {
                         this.loading = false;
                     });
@@ -813,8 +928,8 @@
                 jobsActive() {
                     return this.pageState == this.jobsState
                 },
-                historyActive() {
-                    return this.pageState == this.historyState
+                eventActive() {
+                    return this.pageState == this.eventState
                 },
                 templatesActive() {
                     return this.pageState == this.templatesState
@@ -888,10 +1003,20 @@
                     <!-- <a href="#" :href="linkToLab()"><button class="px-2 py-2 button-open naas-header-open border-object">Go to engine</button></a> -->
                     <a href="#" :href="linkToTemplate()" target="_blank"><button class="px-2 py-2 button-secondary naas-header-notebook border-object">➕ New</button></a> 
                 </div>
-                
             </div>
         </nav>
-        <div class="flex items-center justify-center w-full naas-search md:px-12">          
+        <div class="flex md:px-12">
+            <div style="color:white;font-family: Poppins,sans-serif;font-size:2em;padding-top:15px" class="tooltip">
+                {{ this.accountBalance.balance.toFixed(2) }}⚡<label style="position:absolute;font-size:18px">ⓘ</label>
+                <span class="tooltiptext" style="font-size:11px;margin-left:20px;width:300px;font-weight:lighter;">The balance takes into account processed transactions. It is updated every 15min.</span>
+            </div>  
+        </div>
+        <div class="flex md:px-12">
+            <div style="color:#dbdbdb;font-family: Poppins,sans-serif;font-size:0.7em">
+                Credits available
+            </div>
+        </div>
+        <div class="flex items-center justify-center w-full naas-search md:px-12">
             <div class="relative text-gray-900" style="width: 100%;">
                 <input type="text" name="search" v-model="filter" placeholder="Search..."
                     class="w-full h-10 px-5 pr-10 text-sm text-gray-900 bg-gray-100 focus:outline-none border-object">
@@ -914,8 +1039,8 @@
         </div>
         <div class="w-full p-3 py-8 md:px-12">
             <button @click="setPageState(templatesState)" class="naas-tab" :class="templatesActive ? 'naas-current-tab' : ''">😎 Templates</button>
-            <button @click="setPageState(jobsState)" class="naas-tab" :class="jobsActive ? 'naas-current-tab' : ''">🌱 Tasks</button>
-            <button @click="setPageState(historyState)" class="naas-tab" :class="historyActive ? 'naas-current-tab' : ''">🧬 History</button>
+            <button @click="setPageState(jobsState)" class="naas-tab" :class="jobsActive ? 'naas-current-tab' : ''">🤖 Jobs</button>
+            <button @click="setPageState(eventState)" class="naas-tab" :class="eventActive ? 'naas-current-tab' : ''">🗓️ Events</button>
             <button @click="setPageState(accountState)" class="naas-tab" :class="accountActive ? 'naas-current-tab' : ''">💵 Account</button>
             <button @click="load_data()"
                 class="px-2 py-2 button-tertiary border-object no-underline float-right">
@@ -1003,7 +1128,7 @@
                     </template>
                 </vue-good-table>
             </div>
-            <div v-else-if="historyActive">
+            <div v-else-if="eventActive">
                 <!-- <vue-loaders-line-scale v-if="loadingLog"/> -->
                 <div class="vld-parent">
                     <loading :active.sync="loadingLog" 
@@ -1057,16 +1182,36 @@
                     </vue-good-table>
                 </div>
             </div>
-            <div v-else-if="accountActive" style="text-align: center;">
-                <div class="text-white" style="font-size: 26px; font-weight: bold; margin: 1em;">Account Balance is coming soon...</div>
-                <div class="text-2xs text-white center">
-                    In the meantime, please
-                    <a href="mailto:hello@naas.ai?subject=STATEMENT&body=STATEMENT" style="color: #22BC66; font-weight: bold;">send message 📧</a>
-                    to hello@naas.ai to get your account statement.<br/>
-                    We will send it to you ASAP 🙏.
-                </div>
+            <div v-if="accountActive">
+                <vue-good-table class="border-object" :columns="columns_account" :rows="account" :search-options="{
+                    enabled: true,
+                    externalQuery: filter
+                }" :pagination-options="{
+                    enabled: filter === '',
+                    mode: 'records',
+                    perPage: 10,
+                    position: 'bottom',
+                    perPageDropdown: [5, 15, 20],
+                    dropdownAllowAll: true,
+                    nextLabel: 'next',
+                    prevLabel: 'prev',
+                    rowsPerPageLabel: 'Rows per page',
+                    ofLabel: 'of',
+                    pageLabel: 'page', // for 'pages' mode
+                    allLabel: 'All',
+                }" :sort-options="{
+                    enabled: true,
+                    initialSortBy: {field: 'META_2', type: 'desc'}
+                }">
+                    <template slot="table-row" slot-scope="props">
+                        <span v-if="props.column.field == 'TYPE'">
+                            <a href="#" v-if="props.row.TYPE.toLowerCase() in type_dict" style="font-weight: bold;">
+                                {{ type_dict[props.row.TYPE.toLowerCase()].string }}</a>
+                            <p v-else>{{props.row.TYPE}}</p>
+                        </span>
+                    </template>
+                </vue-good-table>
             </div>
-
             <div class="col-start-2 py-4 pt-8" v-if="env && env.version">
                 <h4 class="text-2xl font-semibold text-gray-800"><span class="text-white"></span></h4>
                 <span

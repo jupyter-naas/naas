@@ -541,7 +541,7 @@ async def test_notebooks_res(mocker, requests_mock, test_runner, tmp_path):
     url = webhook.add(new_path)
     assert url.startswith(f"http://localhost:5001/{getUserb64()}/notebook/")
     token = url.split("/")[-1]
-    response = await test_runner.get(f"/{t_notebook}/{token}", timeout=10.0)
+    response = await test_runner.get(f"/{t_notebook}/{token}", timeout=30.0)
     assert response.status_code == 200
     assert response.headers.get("Content-Type") == "image/jpeg"
     res_img = response.content

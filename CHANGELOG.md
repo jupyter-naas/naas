@@ -1,3 +1,5 @@
+## 2.0.0b4 (2021-11-08)
+
 ## 1.23.21 (2021-11-05)
 
 ### Fix
@@ -27,6 +29,100 @@
 ### Fix
 
 - **dependency**: update naas_drivers 0.74.5
+
+## 2.0.0b3 (2021-11-02)
+
+### Fix
+
+- **Dependency**: Add psycopg2-binary
+
+## 2.0.0b2 (2021-11-02)
+
+### Fix
+
+- Remove temporary token
+
+## 2.0.0b1 (2021-11-02)
+
+## 2.0.0b0 (2021-11-02)
+
+### Fix
+
+- Version mismatch
+- **Lint**: Applied black
+
+### Refactor
+
+- **Credits**: Update how credits are shown
+
+## 1.24.0b9 (2021-10-14)
+
+## 1.24.0b8 (2021-10-14)
+
+### Fix
+
+- **Production-folder**: Remove old code still being present for some reason
+
+## 1.24.0b7 (2021-10-12)
+
+### Refactor
+
+- Typo and padding for tooltip
+
+## 1.24.0b6 (2021-10-12)
+
+### Feat
+
+- **Naas-manager**: Add tooltip on credits
+
+## 1.24.0b5 (2021-10-11)
+
+## 1.24.0b4 (2021-10-11)
+
+### Fix
+
+- **Manager**: Thee way we get balance and transactions
+
+## 1.24.0b3 (2021-10-11)
+
+### Fix
+
+- **Dependency**: Bump naas_drivers to 0.72.1
+
+## 1.24.0b2 (2021-10-11)
+
+### Feat
+
+- Credit consumption manager (#234)
+
+## 1.24.0b1 (2021-10-11)
+
+## 1.24.0b0 (2021-09-07)
+
+### Fix
+
+- **Versions**: Manually bump
+
+### Feat
+
+- pop-in when a scheduler in set to every minute (#222)
+
+## 1.23.0b2 (2021-08-31)
+
+### Fix
+
+- **Version**: manual bump
+- **Flake8**: Remove error
+
+### Feat
+
+- docker-compose for local development. (#217)
+
+## 1.23.0b0 (2021-08-26)
+
+### Feat
+
+- Create production symlink. (#216)
 
 ## 1.23.16 (2021-10-26)
 
@@ -69,6 +165,46 @@
 ### Fix
 
 - **dependency**: update naas_drivers 0.72.1
+
+## 1.24.0b8 (2021-10-14)
+
+### Fix
+
+- **Production-folder**: Remove old code still being present for some reason
+
+## 1.24.0b7 (2021-10-12)
+
+### Refactor
+
+- Typo and padding for tooltip
+
+## 1.24.0b6 (2021-10-12)
+
+### Feat
+
+- **Naas-manager**: Add tooltip on credits
+
+## 1.24.0b5 (2021-10-11)
+
+## 1.24.0b4 (2021-10-11)
+
+### Fix
+
+- **Manager**: Thee way we get balance and transactions
+
+## 1.24.0b3 (2021-10-11)
+
+### Fix
+
+- **Dependency**: Bump naas_drivers to 0.72.1
+
+## 1.24.0b2 (2021-10-11)
+
+### Feat
+
+- Credit consumption manager (#234)
+
+## 1.24.0b1 (2021-10-11)
 
 ## 1.23.9 (2021-10-08)
 
@@ -130,7 +266,34 @@
 
 - **CI/CD**: Trigger
 
-## 1.22.8 (2021-08-26)
+## 1.24.0b0 (2021-09-07)
+
+### Fix
+
+- **Versions**: Manually bump
+
+### Feat
+
+- pop-in when a scheduler in set to every minute (#222)
+
+## 1.23.0b2 (2021-08-31)
+
+### Fix
+
+- **Version**: manual bump
+- **Flake8**: Remove error
+
+### Feat
+
+- docker-compose for local development. (#217)
+
+## 1.23.0b0 (2021-08-26)
+
+### Feat
+
+- Create production symlink. (#216)
+
+## 1.23.3 (2021-08-26)
 
 ### Fix
 
