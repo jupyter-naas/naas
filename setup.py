@@ -66,7 +66,7 @@ setup(
         "sanic-openapi==0.6.2",
         "argparse==1.4.0",
         "nbclient==0.5.3",
-        "beautifulsoup4==4.9.3",
+        "beautifulsoup4==4.10.0",
         "tzdata",
         "pysqlite3==0.4.6",
         "pymongo[srv]==3.11.3",
