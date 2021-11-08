@@ -62,7 +62,7 @@ setup(
         "requests==2.25.1",
         "sentry-sdk==1.0.0",
         "sanic==20.12.2",
-        "sanic-openapi==0.6.2",
+        "sanic-openapi==21.6.1",
         "argparse==1.4.0",
         "nbclient==0.5.3",
         "beautifulsoup4==4.9.3",
