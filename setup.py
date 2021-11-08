@@ -60,7 +60,7 @@ setup(
         "ipython==7.22.0",
         "ipykernel==5.5.3",
         "requests==2.25.1",
-        "sentry-sdk==1.0.0",
+        "sentry-sdk==1.4.3",
         "sanic==20.12.2",
         "sanic-openapi==0.6.2",
         "argparse==1.4.0",
