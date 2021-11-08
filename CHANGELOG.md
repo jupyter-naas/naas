@@ -1,3 +1,9 @@
+## 2.0.0b3 (2021-11-02)
+
+### Fix
+
+- **Dependency**: Add psycopg2-binary
+
 ## 2.0.0b2 (2021-11-02)
 
 ### Fix
