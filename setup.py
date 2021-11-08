@@ -15,7 +15,7 @@ dev_dep = [
     "pytest-sanic==1.7.0",
     "pytest-asyncio==0.15.1",
     "requests-mock==1.9.2",
-    "twine==3.4.1",
+    "twine==3.5.0",
     "flake8==3.9.1",
     "pre-commit==2.12.1",
     "black==21.5b1",
@@ -25,7 +25,7 @@ dev_dep = [
 ]
 setup(
     name="naas",
-    version="2.0.1",
+    version="2.0.2",
     author="Maxime Jublou",
     author_email="devops@cashstory.com",
     license="BSD",
@@ -49,7 +49,7 @@ setup(
         "ipywidgets==7.6.3",
         "papermill==2.3.3",
         "pretty-cron==1.2.0",
-        "APScheduler==3.7.0",
+        "APScheduler==3.8.1",
         "pycron==3.0.0",
         "html5lib==1.1",
         "Pillow==8.2.0",
