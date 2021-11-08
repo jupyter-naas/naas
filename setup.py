@@ -26,8 +26,8 @@ dev_dep = [
 setup(
     name="naas",
     version="2.0.1",
-    author="Martin Donadieu",
-    author_email="martindonadieu@gmail.com",
+    author="Maxime Jublou",
+    author_email="devops@cashstory.com",
     license="BSD",
     description="Scheduler system for notebooks",
     long_description=long_description,
