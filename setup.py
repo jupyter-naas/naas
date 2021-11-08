@@ -26,8 +26,8 @@ dev_dep = [
 setup(
     name="naas",
     version="2.0.1",
-    author="Martin Donadieu",
-    author_email="martindonadieu@gmail.com",
+    author="Maxime Jublou",
+    author_email="devops@cashstory.com",
     license="BSD",
     description="Scheduler system for notebooks",
     long_description=long_description,
@@ -46,7 +46,7 @@ setup(
     install_requires=[
         "nbconvert==6.0.7",
         "nest_asyncio==1.5.1",
-        "ipywidgets==7.6.3",
+        "ipywidgets==7.6.5",
         "papermill==2.3.3",
         "pretty-cron==1.2.0",
         "APScheduler==3.7.0",
