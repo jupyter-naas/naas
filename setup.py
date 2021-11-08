@@ -57,7 +57,7 @@ setup(
         "markdown2==2.4.0",
         "pandas==1.2.4",
         "escapism==1.0.1",
-        "notebook==6.4.0",
+        "notebook==6.4.1",
         "ipython==7.22.0",
         "ipykernel==5.5.3",
         "requests==2.25.1",
