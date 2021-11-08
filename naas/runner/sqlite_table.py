@@ -36,15 +36,18 @@ class SqliteTable:
         except Exception as e:
             print(e)
 
-    def execute_command(self, command, commit=True):
+    def execute_command(self, command, commit=True, **kwargs):
+        ret = None
         if self.__db:
             try:
                 cursor = self.__db.cursor()
-                cursor.execute(command)
+                cursor.execute(command, kwargs)
                 if commit:
-                    cursor.execute("Commit")
+                    cursor.execute("COMMIT")
             except Exception as e:
                 print(e)
+                return e
+        return ret
 
     def clear(self):
         self.execute_command(f"DELETE FROM {self.__focused_table}")
@@ -67,21 +70,20 @@ class SqliteTable:
             print(e)
             return []
 
-    def add_on_table(self, to_add, commit=True, table=""):
-        keys = ""
-        values = ""
+    def add_on_table(self, commit=True, table="", **kwargs):
+        keys = []
+        values = []
         if table == "":
             table = self.__focused_table
-        for key, value in to_add.items():
-            try:
-                if type(value) is str:
-                    keys += "" if keys == "" else ","
-                    keys += key
-                    values += "" if values == "" else ","
-                    values += f"""'{value}'"""
-            except Exception as e:
-                print(e)
-        self.execute_command(f"Insert Into {table} ({keys}) Values({values})", commit)
+
+        for k, v in kwargs.items():
+            keys.append(k)
+            values.append(f":{k}")
+            if type(v) in [dict, object, list]:
+                kwargs[k] = str(kwargs[k])
+
+        cmd = f"INSERT INTO {table} ({','.join(keys)}) VALUES ({','.join(values)})"
+        return self.execute_command(cmd, commit=commit, **kwargs)
 
     def get_db_content(self, table=""):
         if table == "":
@@ -101,7 +103,7 @@ class SqliteTable:
                 data = {}
                 for col in self.__columns:
                     data[col] = row[col]
-                self.add_on_table(data, False)
+                self.add_on_table(commit=False, **data)
             self.__db.cursor().execute("Commit")
         except Exception as e:
             print(e)
@@ -115,4 +117,6 @@ class SqliteTable:
                 columns += col + " TEXT"
             except Exception as e:
                 print(e)
-        self.execute_command(f"Create Table IF NOT EXISTS {table} ({columns})", False)
+        self.execute_command(
+            f"CREATE TABLE IF NOT EXISTS {table} ({columns})", commit=False
+        )

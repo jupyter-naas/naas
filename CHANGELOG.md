@@ -1,9 +1,504 @@
+## 2.0.0 (2021-11-08)
+
+### Feat
+
+- Add credits (account) in naas manager. (#235)
+
+## 2.0.0b4 (2021-11-08)
+
+## 1.23.21 (2021-11-05)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.76.2
+
+## 1.23.20 (2021-11-05)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.76.1
+
+## 1.23.19 (2021-11-05)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.76.0
+
+## 1.23.18 (2021-11-05)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.75.0
+
+## 1.23.17 (2021-11-05)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.74.5
+
+## 2.0.0b3 (2021-11-02)
+
+### Fix
+
+- **Dependency**: Add psycopg2-binary
+
+## 2.0.0b2 (2021-11-02)
+
+### Fix
+
+- Remove temporary token
+
+## 2.0.0b1 (2021-11-02)
+
+## 2.0.0b0 (2021-11-02)
+
+### Fix
+
+- Version mismatch
+- **Lint**: Applied black
+
+### Refactor
+
+- **Credits**: Update how credits are shown
+
+## 1.24.0b9 (2021-10-14)
+
+## 1.24.0b8 (2021-10-14)
+
+### Fix
+
+- **Production-folder**: Remove old code still being present for some reason
+
+## 1.24.0b7 (2021-10-12)
+
+### Refactor
+
+- Typo and padding for tooltip
+
+## 1.24.0b6 (2021-10-12)
+
+### Feat
+
+- **Naas-manager**: Add tooltip on credits
+
+## 1.24.0b5 (2021-10-11)
+
+## 1.24.0b4 (2021-10-11)
+
+### Fix
+
+- **Manager**: Thee way we get balance and transactions
+
+## 1.24.0b3 (2021-10-11)
+
+### Fix
+
+- **Dependency**: Bump naas_drivers to 0.72.1
+
+## 1.24.0b2 (2021-10-11)
+
+### Feat
+
+- Credit consumption manager (#234)
+
+## 1.24.0b1 (2021-10-11)
+
+## 1.24.0b0 (2021-09-07)
+
+### Fix
+
+- **Versions**: Manually bump
+
+### Feat
+
+- pop-in when a scheduler in set to every minute (#222)
+
+## 1.23.0b2 (2021-08-31)
+
+### Fix
+
+- **Version**: manual bump
+- **Flake8**: Remove error
+
+### Feat
+
+- docker-compose for local development. (#217)
+
+## 1.23.0b0 (2021-08-26)
+
+### Feat
+
+- Create production symlink. (#216)
+
+## 1.23.16 (2021-10-26)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.74.4
+
+## 1.23.15 (2021-10-26)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.74.3
+
+## 1.23.14 (2021-10-26)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.74.2
+
+## 1.23.13 (2021-10-25)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.74.1
+
+## 1.23.12 (2021-10-25)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.74.0
+
+## 1.23.11 (2021-10-14)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.73.0
+
+## 1.23.10 (2021-10-11)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.72.1
+
+## 1.24.0b8 (2021-10-14)
+
+### Fix
+
+- **Production-folder**: Remove old code still being present for some reason
+
+## 1.24.0b7 (2021-10-12)
+
+### Refactor
+
+- Typo and padding for tooltip
+
+## 1.24.0b6 (2021-10-12)
+
+### Feat
+
+- **Naas-manager**: Add tooltip on credits
+
+## 1.24.0b5 (2021-10-11)
+
+## 1.24.0b4 (2021-10-11)
+
+### Fix
+
+- **Manager**: Thee way we get balance and transactions
+
+## 1.24.0b3 (2021-10-11)
+
+### Fix
+
+- **Dependency**: Bump naas_drivers to 0.72.1
+
+## 1.24.0b2 (2021-10-11)
+
+### Feat
+
+- Credit consumption manager (#234)
+
+## 1.24.0b1 (2021-10-11)
+
+## 1.23.9 (2021-10-08)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.72.0
+
+## 1.23.8 (2021-10-05)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.71.0
+
+## 1.23.7 (2021-09-27)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.70.11
+
+## 1.23.6 (2021-09-27)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.70.10
+
+## 1.23.5 (2021-09-20)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.70.9
+
+## 1.23.4 (2021-09-16)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.70.8
+
+## 1.23.3 (2021-08-31)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.70.7
+
+## 1.23.2 (2021-08-31)
+
+### Fix
+
+- **Production-symlink**: Execute it at loading of naas.runner and create it at /home/ftp/
+
+## 1.23.1 (2021-08-31)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.70.6
+
+## 1.23.0 (2021-08-31)
+
+### Feat
+
+- **CI/CD**: Trigger
+
+## 1.24.0b0 (2021-09-07)
+
+### Fix
+
+- **Versions**: Manually bump
+
+### Feat
+
+- pop-in when a scheduler in set to every minute (#222)
+
+## 1.23.0b2 (2021-08-31)
+
+### Fix
+
+- **Version**: manual bump
+- **Flake8**: Remove error
+
+### Feat
+
+- docker-compose for local development. (#217)
+
+## 1.23.0b0 (2021-08-26)
+
+### Feat
+
+- Create production symlink. (#216)
+
+## 1.23.3 (2021-08-26)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.70.5
+
+## 1.22.7 (2021-08-18)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.70.4
+
+## 1.22.6 (2021-08-17)
+
+## 1.22.2b0 (2021-08-17)
+
+### Fix
+
+- **Logger**: Improved SQL Query management for Logger (#207)
+
+## 1.22.5 (2021-08-17)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.70.3
+
+## 1.22.4 (2021-08-17)
+
+### Fix
+
+- **dependency**: update singleuser 2.11.19
+
+## 1.22.3 (2021-08-17)
+
+### Fix
+
+- **dependency**: update singleuser 2.11.18
+
+## 1.22.2 (2021-08-16)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.70.2
+
+## 1.22.1 (2021-08-16)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.70.1
+
+## 1.22.0 (2021-08-12)
+
+## 1.22.0b4 (2021-08-09)
+
+## 1.22.0b3 (2021-08-06)
+
+### Refactor
+
+- refresh button redesign + evolve account balance design
+
+## 1.22.0b2 (2021-08-05)
+
+### Fix
+
+- **Version**: Fix version drift
+- change naas list comportement (#197)
+- loading logo displayed
+- refresh button icon fixed on windows
+
+### Feat
+
+- redesign refresh button
+
+## 1.22.0b0 (2021-08-03)
+
+### Fix
+
+- error logs can be opened
+- template fail to load fixed
+
+## 1.19.1b5 (2021-07-28)
+
+## 1.19.1b4 (2021-07-28)
+
+## 1.19.1b3 (2021-07-28)
+
+## 1.19.1b2 (2021-07-26)
+
+### Feat
+
+- rename busy to running
+
+## 1.19.1b1 (2021-07-22)
+
+### Fix
+
+- **fs-permissions**: /opt/conda/share/jupyter/lab/extensions
+
+## 1.19.1b0 (2021-07-22)
+
+### Fix
+
+- **Dependency**: Bump singleuser version 2.11.17b2
+- black format
+- prevent code from crash
+- black format
+- blank hisotry
+
+### Feat
+
+- status uppercase
+- technical rows are ignord
+- services are beatified + better system to exchange text in table
+
+## 1.21.3 (2021-08-04)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.70.0
+
+## 1.21.2 (2021-08-03)
+
+### Fix
+
+- manager hot fix (#196)
+
+## 1.21.1 (2021-08-03)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.69.3
+
+## 1.21.0 (2021-08-02)
+
+## 1.21.0b0 (2021-08-02)
+
+## 1.19.1b8 (2021-08-02)
+
+### Feat
+
+- refresh button with logo centered
+- add refresh svg
+
 ## 1.20.0 (2021-07-26)
 
 ### Feat
 
 - default sorted by date
 - refresh button
+
+## 1.19.1b7 (2021-07-30)
+
+### Feat
+
+- deleted status added
+- add meta column in task table
+
+### Refactor
+
+- hide busy status in log + rename status in manager tables
+
+## 1.19.1b6 (2021-07-30)
+
+### Refactor
+
+- account balance is now a tab
+
+## 1.19.1b5 (2021-07-28)
+
+## 1.19.1b4 (2021-07-28)
+
+## 1.19.1b3 (2021-07-28)
+
+## 1.19.1b2 (2021-07-26)
+
+### Feat
+
+- rename busy to running
+- status uppercase
+- technical rows are ignord
+- services are beatified + better system to exchange text in table
+
+### Fix
+
+- black format
+- prevent code from crash
+- black format
+- blank hisotry
+
+## 1.19.1b1 (2021-07-22)
+
+### Fix
+
+- **fs-permissions**: /opt/conda/share/jupyter/lab/extensions
+
+## 1.19.1b0 (2021-07-22)
+
+### Fix
+
+- **Dependency**: Bump singleuser version 2.11.17b2
 
 ## 1.19.0 (2021-07-15)
 

@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-NDV = "0.69.2"
+NDV = "0.76.2"
 
 driver_dep = [f'naas_drivers=={NDV}']
 dev_dep = [
@@ -16,16 +16,16 @@ dev_dep = [
     "pytest-asyncio==0.15.1",
     "requests-mock==1.9.2",
     "twine==3.4.1",
-    "flake8==3.9.1",
+    "flake8==3.9.2",
     "pre-commit==2.12.1",
     "black==21.5b1",
     "imgcompare==2.0.1",
     "commitizen==2.17.4",
-    "pytest-cov==2.11.1",
+    "pytest-cov==2.12.1",
 ]
 setup(
     name="naas",
-    version="1.20.0",
+    version="2.0.0",
     author="Martin Donadieu",
     author_email="martindonadieu@gmail.com",
     license="BSD",
@@ -53,12 +53,12 @@ setup(
         "pycron==3.0.0",
         "aiohttp==3.7.4.post0",
         "html5lib==1.1",
-        "Pillow==8.2.0",
+        "Pillow==8.3.2",
         "markdown2==2.4.0",
         "pandas==1.2.4",
         "escapism==1.0.1",
         "notebook==6.4.0",
-        "ipython==7.23.1",
+        "ipython==7.22.0",
         "ipykernel==5.5.3",
         "requests==2.25.1",
         "sentry-sdk==1.0.0",
@@ -69,7 +69,8 @@ setup(
         "beautifulsoup4==4.9.3",
         "tzdata",
         "pysqlite3==0.4.6",
-        "pymongo[srv]==3.11.4"
+        "pymongo[srv]==3.11.3",
+        "psycopg2-binary==2.9.1"
     ],
     classifiers=[
         "Programming Language :: Python :: 3.9",

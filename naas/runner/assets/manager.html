@@ -32,6 +32,14 @@
             padding-left: 12px;
             padding-right: 12px;
         }
+        .button-tertiary {
+            background-color:#181c1e;
+            border: 2px solid #22BC66;
+            color:#22BC66;
+            outline: none;
+            border-radius: 3px;
+            font-weight: 500;
+        }
         .button-open {
             background-color: #181c1e;
             padding-left: 12px;
@@ -54,7 +62,7 @@
             padding-top: 20px;
         }
         .naas-tab {
-            font-size: 1.5em;
+            font-size: 1.2em;
             font-weight: bolder;
             font-family: Poppins,sans-serif;
             color: white;
@@ -115,6 +123,15 @@
         }
         .naas-current-tab {
             border-bottom: 5px solid #22BC66;
+        }
+        .refresh-logo {
+            background-image: url(https://upload.wikimedia.org/wikipedia/commons/c/ce/Ic_refresh_48px.svg);
+            display: inline-block;
+            width: 1.5em;
+            height: 1.5em;
+            background-size: cover;
+            vertical-align: bottom;
+            filter: invert(54%) sepia(71%) saturate(486%) hue-rotate(94deg) brightness(95%) contrast(88%);
         }
         /**
         * Profile image component
@@ -233,6 +250,32 @@
                 transform: rotate(360deg);
             }
         }
+
+        /* Tooltip container */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        /* Tooltip text */
+        .tooltip .tooltiptext {
+        visibility: hidden;
+        width: 120px;
+        background-color: white;
+        color: black;
+        text-align: center;
+        padding: 10px;
+        border-radius: 6px;
+        
+        /* Position the tooltip text - see examples below! */
+        position: absolute;
+        z-index: 1;
+        }
+
+        /* Show the tooltip text when you mouse over the tooltip container */
+        .tooltip:hover .tooltiptext {
+        visibility: visible;
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/vue-loading-overlay@3"></script>
     <link href="https://cdn.jsdelivr.net/npm/vue-loading-overlay@3/dist/vue-loading.css" rel="stylesheet">
@@ -274,7 +317,7 @@
                         field: 'filepath',
                     },
                     {
-                        label: 'Type',
+                        label: 'Service',
                         field: 'type',
                     },
                     {
@@ -305,9 +348,9 @@
                         field: 'type',
                     },
                     {
-                        label: 'Value',
+                        label: 'Meta',
                         field: 'value',
-                        hidden: true
+                        hidden: false
                     },
                     {
                         label: 'Date',
@@ -351,14 +394,118 @@
                         globalSearchDisabled: true,
                     }
                 ],
+                columns_account: [
+                    {
+                        label: 'Transaction',
+                        field: 'META_1',
+                    },
+                    {
+                        label: 'Type',
+                        field: 'TYPE',
+                    },
+                    {
+                        label: 'Date',
+                        field: 'META_2',
+                    },
+                    {
+                        label: 'Amount',
+                        field: 'CREDIT',
+                        html: true,
+                        globalSearchDisabled: true,
+                    }
+                ],
+                // Below the dictionary we use to beautify status
+                status_dict: {
+                    'error': {
+                        string: '❌ Error',
+                        color: '#f56565'
+                    },
+                    'exception': {
+                        string: '❌ Exception',
+                        color: '#f56565'
+                    },
+                    'not_found': {
+                        string: '❌ Not found',
+                        color: '#f56565'
+                    },
+                    'delete': {
+                        string: '❎ Deleted',
+                        color: '#22BC66'
+                    },
+                    'healthy': {
+                        string: '👌 Completed',
+                        color: '#22BC66'
+                    },
+                    'send': {
+                        string: '📩 Sent',
+                        color: '#22BC66'
+                    },
+                    'installed': {
+                        string: '✅ Active',
+                        color: '#22BC66'
+                    },
+                    'started': {
+                        string: '🎽 Started',
+                        color: '#36b3ed'
+                    },
+                    'busy': {
+                        string: '🎽 Running',
+                        color: '#36b3ed'
+                    },
+                    'edited': {
+                        string: '✅ Active',
+                        color: '#22BC66'
+                    }
+                },
+                type_dict: {
+                    'terminal': {
+                        string: '💻 Terminal'
+                    },
+                    'scheduler': {
+                        string: '⏰ Scheduler'
+                    },
+                    'asset': {
+                        string: '🖼️ Asset'
+                    },
+                    'asset sharing': {
+                        string: '🖼️ Asset'
+                    },
+                    'notebook': {
+                        string: '👩‍💻 Notebook'
+                    },
+                    'webhook': {
+                        string: '⚙️ Webhook'
+                    },
+                    'notification': {
+                        string: '🛎️ Notification'
+                    },
+                    'notifications': {
+                        string: '🛎️ Notification'
+                    },
+                    'callback': {
+                        string: '👈 Callback'
+                    },
+                    'dependency': {
+                        string: '🔗 Dependency'
+                    },
+                    'secret': {
+                        string: '🔑 Secret key'
+                    },
+                    'naas credit': {
+                        string: '⚡ Naas Credits'
+                    }
+                },
                 env: {},
                 logs: [],
                 templates: [],
+                account: [],
                 pageState: 0,
                 totalLogRecords: 0,
                 templatesState: 0,
                 jobsState: 1,
-                historyState: 2,
+                eventState: 2,
+                accountState: 3,
+                maxState: 3,
                 debouceFilter: null,
                 serverLogParams: {
                     columnFilters: "",
@@ -424,28 +571,6 @@
                         `,
                         props: ['error', 'url']
                     }, { error, url }, { width: "70%", scrollable: true, height: 'auto' });
-                },
-                openStatement() {
-                    this.$modal.show({
-                        template: `
-                        <div class="w-full bg-white rounded-lg shadow-lg">
-                            <div class="flex justify-between px-5 py-4 border-b border-gray-100">
-                                <div>
-                                    <span class="text-lg font-bold text-gray-700">Account Balance (coming soon)</span>
-                                </div>
-                                <div>
-                                    <button><i class="text-red-500 transition duration-150 fa fa-times-circle hover:text-red-600"></i></button>
-                                </div>
-                            </div>
-                            <div>
-                                <center><span class="text-lg text-gray-700">Please send STATEMENT to hello@naas.ai to get your account statement.<br> We will send it to you ASAP 🙏.</span></center>
-                            </div>                        
-                            <div class="flex justify-end px-5 py-4">
-                            <button @click="$emit('close')" class="px-3 py-2 text-sm text-gray-500 transition duration-150 hover:text-gray-600">Close</button>
-                            </div>
-                        </div>
-                        `,
-                    }, {}, { width: "50%", scrollable: true, height: 'auto' });
                 },
                 openProfile() {
                     this.$modal.show({
@@ -568,6 +693,7 @@
                     const query = {
                         limit: this.serverLogParams.perPage,
                         skip: this.serverLogParams.perPage * (this.serverLogParams.page - 1),
+                        technical_rows: false
                     }
                     if (this.serverLogParams.columnFilters !== "") {
                         query['search'] = this.serverLogParams.columnFilters;
@@ -584,12 +710,6 @@
                     return axios.get('log', { params: this.convertApiArgs() }).then((response) => {
                         if (response && !response.error) {
                             this.logs = response.data.data;
-                            for (let i = 0; i < this.logs.length; i++) {
-                                if (this.logs[i].type == this.logs[i].filepath) {
-                                    this.logs.splice(i, 1);
-                                    --i;
-                                }
-                            }
                             try {
                                 this.totalLogRecords = response.data.totalRecords;
                             } catch (err) {
@@ -605,9 +725,60 @@
                         console.error(err);
                     })
                 },
-                loadTemplatesItems() {
+                loadAccountBalance() {
+                    return axios.get('credits/balance').then((response) => {
+                        if (response && !response.error) {
+                            this.accountBalance = response.data
+                        }
+                    }).catch((err) => {
+                        console.error(err);
+                        this.accountBalance = {'balance': 0}
+                    })
+                },
+                loadAccountJson() {
+                    return axios.get('credits/transactions').then((response) => {
+                        if (response && !response.error) {
+                            response.data.forEach(transaction => {
+                                transaction['CREDIT'] = transaction['CREDIT'].toFixed(2) + ' ⚡';
+                            })
+                            this.account = response.data
+                        }
+                    }).catch((err) => {
+                        console.error(err);
+                        this.account = []
+                    })
+                },
+                loadAccountItems() {
                     return axios.get('https://raw.githubusercontent.com/jupyter-naas/awesome-notebooks/master/templates.json').then((response) => {
                         if (response && !response.error) {
+                            try {
+                                let account = data
+                                for (let i = 0; i < account.length; i++) {
+                                    let tags = "";
+
+                                    if (account[i].tags != null)
+                                        for (let j = 0; j < account[i].tags.length; j++) {
+                                            tags += account[i].tags[j]
+                                            tags += " "
+                                        }
+                                    account[i].tags = tags
+                                    if ("action" in account[i])
+                                        account[i].action = account[i].action.replace("_parent", "_blank")
+                                }
+                                this.account = account
+                            } catch (err) {
+                                console.log("ERROR");
+                                console.error(err);
+                            }
+                        }
+
+                    }).catch((err) => {
+                        console.error(err);
+                    })
+                },
+                loadTemplatesItems() {
+                    return axios.get('https://raw.githubusercontent.com/jupyter-naas/awesome-notebooks/master/templates.json').then((response) => {
+                        if (response && !response.error) {4
                             try {
                                 let templates = response.data
                                 for (let i = 0; i < templates.length; i++) {
@@ -685,6 +856,8 @@
                     }));
                     all_loads.push(this.loadLogItems());
                     all_loads.push(this.loadTemplatesItems());
+                    all_loads.push(this.loadAccountJson());
+                    all_loads.push(this.loadAccountBalance());
                     return Promise.all(all_loads).then(()=> {
                         this.loading = false;
                     });
@@ -741,7 +914,7 @@
                     window.open(fileUrl, '_blank');
                 },
                 setPageState(value) {
-                    if (value >= 0 && value <= 2)
+                    if (value >= 0 && value <= this.maxState)
                         this.pageState = value;
                 },
                 formatStatus(status) {
@@ -755,11 +928,14 @@
                 jobsActive() {
                     return this.pageState == this.jobsState
                 },
-                historyActive() {
-                    return this.pageState == this.historyState
+                eventActive() {
+                    return this.pageState == this.eventState
                 },
                 templatesActive() {
                     return this.pageState == this.templatesState
+                },
+                accountActive() {
+                    return this.pageState == this.accountState
                 },
             },
             created: function () {
@@ -791,7 +967,6 @@
     <div id="app" class="w-full bg-naas h-full">
         <div id="cs_loader_wrap" v-if="loading">
             <div id="cs_logo_wrap">
-                <img id="cs_logo_loading" alt="loading logo"/>
                 <div id="cs_spinner_loading"></div>
             </div>
         </div>
@@ -823,16 +998,25 @@
                     <a href="https://docs.naas.ai/" target="_blank" rel="noopener" class="naas-header-green">Docs</a>       
                     <a href="https://github.com/orgs/jupyter-naas/projects/4?fullscreen=true" target="_blank" rel="noopener" class="naas-header-green">Roadmap</a>
                     <a href="https://aiclub-hq.slack.com/" target="_blank" rel="noopener" class="naas-header-green py-8">Slack</a>
-                    <a href="https://www.naas.ai/pricing" target="_blank" rel="noopener" class="naas-header-green">⚡️  Upgrade</a>         
+                    <a href="https://www.naas.ai/pricing" target="_blank" rel="noopener" class="naas-header-green">⚡️  Upgrade</a>
                     <button v-on:click="openProfile()" class="px-2 py-2 button-primary naas-header-black">Profile</button>
                     <!-- <a href="#" :href="linkToLab()"><button class="px-2 py-2 button-open naas-header-open border-object">Go to engine</button></a> -->
                     <a href="#" :href="linkToTemplate()" target="_blank"><button class="px-2 py-2 button-secondary naas-header-notebook border-object">➕ New</button></a> 
                 </div>
-                
             </div>
         </nav>
-        <button v-on:click="openStatement()" class="px-2 py-2 button-primary naas-credits">💲 Account Balance</a></button>
-        <div class="flex items-center justify-center w-full naas-search md:px-12">          
+        <div class="flex md:px-12">
+            <div style="color:white;font-family: Poppins,sans-serif;font-size:2em;padding-top:15px" class="tooltip">
+                {{ this.accountBalance.balance.toFixed(2) }}⚡<label style="position:absolute;font-size:18px">ⓘ</label>
+                <span class="tooltiptext" style="font-size:11px;margin-left:20px;width:300px;font-weight:lighter;">The balance takes into account processed transactions. It is updated every 15min.</span>
+            </div>  
+        </div>
+        <div class="flex md:px-12">
+            <div style="color:#dbdbdb;font-family: Poppins,sans-serif;font-size:0.7em">
+                Credits available
+            </div>
+        </div>
+        <div class="flex items-center justify-center w-full naas-search md:px-12">
             <div class="relative text-gray-900" style="width: 100%;">
                 <input type="text" name="search" v-model="filter" placeholder="Search..."
                     class="w-full h-10 px-5 pr-10 text-sm text-gray-900 bg-gray-100 focus:outline-none border-object">
@@ -855,11 +1039,40 @@
         </div>
         <div class="w-full p-3 py-8 md:px-12">
             <button @click="setPageState(templatesState)" class="naas-tab" :class="templatesActive ? 'naas-current-tab' : ''">😎 Templates</button>
-            <button @click="setPageState(jobsState)" class="naas-tab" :class="jobsActive ? 'naas-current-tab' : ''">🌱 Tasks</button>
-            <button @click="setPageState(historyState)" class="naas-tab" :class="historyActive ? 'naas-current-tab' : ''">🧬 History</button>
-            <a href="#" :href="linkToManager() + '?tab=' + pageState"
-                                class="font-sans text-2xl font-bold text-gray-100 no-underline hover:text-#4299e1-dark float-right" position="right">Refresh</a>
-            <div v-if="jobsActive">
+            <button @click="setPageState(jobsState)" class="naas-tab" :class="jobsActive ? 'naas-current-tab' : ''">🤖 Jobs</button>
+            <button @click="setPageState(eventState)" class="naas-tab" :class="eventActive ? 'naas-current-tab' : ''">🗓️ Events</button>
+            <button @click="setPageState(accountState)" class="naas-tab" :class="accountActive ? 'naas-current-tab' : ''">💵 Account</button>
+            <button @click="load_data()"
+                class="px-2 py-2 button-tertiary border-object no-underline float-right">
+                <span class="refresh-logo" cursor="pointer">
+                </span>
+            </button>
+            <div v-if="templatesActive">
+                <vue-good-table class="border-object" :columns="columns_templates" :rows="templates" :search-options="{
+                    enabled: true,
+                    externalQuery: filter
+                }" :pagination-options="{
+                    enabled: filter === '',
+                    mode: 'records',
+                    perPage: 10,
+                    position: 'bottom',
+                    perPageDropdown: [5, 15, 20],
+                    dropdownAllowAll: true,
+                    nextLabel: 'next',
+                    prevLabel: 'prev',
+                    rowsPerPageLabel: 'Rows per page',
+                    ofLabel: 'of',
+                    pageLabel: 'page', // for 'pages' mode
+                    allLabel: 'All',
+                }" :sort-options="{
+                    enabled: true,
+                    initialSortBy: {field: 'tool', type: 'asc'}
+                }">
+                    <template slot="table-row" slot-scope="props">
+                    </template>
+                </vue-good-table>
+            </div>
+            <div v-else-if="jobsActive">
                 <vue-good-table class="border-object" :columns="columns_jobs" :rows="jobs" :search-options="{
                         enabled: true,
                         externalQuery: filter
@@ -882,26 +1095,23 @@
                     }">
                     <template slot="table-row" slot-scope="props">
                         <span v-if="props.column.field == 'status'">
-                            <a href="#" v-if="props.row.status === 'error' || props.row.status === 'exception' || props.row.status === 'not_found'" style="font-weight: bold; color: #f56565;"
-                                v-on:click="openError(props.formattedRow['error'], props.formattedRow['filepath'])">❌ {{ formatStatus(props.row.status) }}</a>
-                            <a href="#" v-else-if="props.row.status === 'healthy'"
-                                style="font-weight: bold; color: #22BC66;"
-                                v-on:click="openOutput(props.formattedRow['filepath'])">✅ Active</a>
-                            <a href="#" v-else-if="props.row.status === 'started'"
-                                style="font-weight: bold; color: #36b3ed;"
-                                v-on:click="openOutput(props.formattedRow['filepath'])">🎽 Running</a>
-                            <a href="#" v-else-if="props.row.status === 'edited'"
-                                style="font-weight: bold; color: #ed8936;;"
-                                v-on:click="openOutput(props.formattedRow['filepath'])">✏️ Edited</a>
-                            <p v-else>{{props.formattedRow[props.column.field]}}</p>
+                            <a href="#" v-if="props.row.status in status_dict" style="font-weight: bold;" :style="{color: status_dict[props.row.status].color}">
+                                {{ status_dict[props.row.status].string }}</a>
+                            <p v-else>{{formatStatus(props.row.status)}}</p>
                         </span>
                         <span v-else-if="props.column.field == 'value'">
+                            <a v-if="props.row.type == 'asset'">Download </a>
+                            <a v-else-if="props.row.type == 'notebook'">Call </a>
                             <a :href="openUrl(props.formattedRow[props.column.field], props.row.type)" target="_blank" rel="noopener" style="font-weight: bold; color: #4299e1;"
-                                v-if="props.row.type == 'asset' || props.row.type == 'notebook'"
-                                >
-                                {{props.formattedRow[props.column.field].substring(0,6)}}
-                            </a>
+                                v-if="props.row.type == 'asset' || props.row.type == 'notebook'">here</a>
+                            <a v-else-if="props.row.type == 'scheduler'">Cron: {{props.formattedRow[props.column.field]}}</a>
+                            <a v-else-if="props.row.type == 'dependency'"></a>
                             <span v-else>{{props.formattedRow[props.column.field]}}</span>
+                        </span>
+                        <span v-else-if="props.column.field == 'type'">
+                            <a href="#" v-if="props.row.type in type_dict" style="font-weight: bold;">
+                                {{ type_dict[props.row.type].string }}</a>
+                            <p v-else>{{props.row.type}}</p>
                         </span>
                         <span v-else-if="props.column.field == 'id'">
                             <a href="#" 
@@ -918,7 +1128,7 @@
                     </template>
                 </vue-good-table>
             </div>
-            <div v-if="historyActive">
+            <div v-else-if="eventActive">
                 <!-- <vue-loaders-line-scale v-if="loadingLog"/> -->
                 <div class="vld-parent">
                     <loading :active.sync="loadingLog" 
@@ -955,18 +1165,15 @@
                                 {{stripNaasPath(props.formattedRow[props.column.field])}}
                             </span>
                             <span v-else-if="props.column.field == 'status'">
-                                <a href="#" v-if="props.formattedRow['error']" style="font-weight: bold; color: #f56565;"
-                                    v-on:click="openError(props.formattedRow['error'], props.formattedRow['filepath'])">❌ Error</a>
-                                <a href="#" v-else-if="props.formattedRow[props.column.field] == 'healthy'"
-                                    style="font-weight: bold; color: #22BC66;"
-                                    v-on:click="openOutput(props.formattedRow['filepath'])">✅ Active</a>
-                                <a href="#" v-else-if="props.formattedRow[props.column.field] == 'started'"
-                                    style="font-weight: bold; color: #36b3ed;"
-                                    v-on:click="openOutput(props.formattedRow['filepath'])">🎽 Running</a>
-                                <a href="#" v-else-if="props.formattedRow[props.column.field] == 'edited'"
-                                    style="font-weight: bold; color: #ed8936;"
-                                    v-on:click="openOutput(props.formattedRow['filepath'])">✏️ Edited</a>
-                                <p v-else>{{props.formattedRow[props.column.field]}}</p>
+                                <a href="#" v-if="props.row.status in status_dict" style="font-weight: bold;" :style="{color: status_dict[props.row.status].color}"
+                                    v-on:click="if (props.formattedRow.status == 'error') openError(props.formattedRow['error'], props.formattedRow['filepath']);">
+                                    {{ status_dict[props.row.status].string }}</a>
+                                <p v-else>{{formatStatus(props.row.status)}}</p>
+                            </span>
+                            <span v-else-if="props.column.field == 'type'">
+                                <a href="#" v-if="props.row.type in type_dict" style="font-weight: bold;">
+                                    {{ type_dict[props.row.type].string }}</a>
+                                <p v-else>{{props.row.type}}</p>
                             </span>
                             <span v-else>
                                 {{props.formattedRow[props.column.field]}}
@@ -975,8 +1182,8 @@
                     </vue-good-table>
                 </div>
             </div>
-            <div v-if="templatesActive">
-                <vue-good-table class="border-object" :columns="columns_templates" :rows="templates" :search-options="{
+            <div v-if="accountActive">
+                <vue-good-table class="border-object" :columns="columns_account" :rows="account" :search-options="{
                     enabled: true,
                     externalQuery: filter
                 }" :pagination-options="{
@@ -992,12 +1199,19 @@
                     ofLabel: 'of',
                     pageLabel: 'page', // for 'pages' mode
                     allLabel: 'All',
+                }" :sort-options="{
+                    enabled: true,
+                    initialSortBy: {field: 'META_2', type: 'desc'}
                 }">
                     <template slot="table-row" slot-scope="props">
+                        <span v-if="props.column.field == 'TYPE'">
+                            <a href="#" v-if="props.row.TYPE.toLowerCase() in type_dict" style="font-weight: bold;">
+                                {{ type_dict[props.row.TYPE.toLowerCase()].string }}</a>
+                            <p v-else>{{props.row.TYPE}}</p>
+                        </span>
                     </template>
                 </vue-good-table>
             </div>
-
             <div class="col-start-2 py-4 pt-8" v-if="env && env.version">
                 <h4 class="text-2xl font-semibold text-gray-800"><span class="text-white"></span></h4>
                 <span
