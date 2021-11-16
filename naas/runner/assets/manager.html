@@ -408,8 +408,14 @@
                         field: 'META_2',
                     },
                     {
-                        label: 'Amount',
+                        label: 'Credits',
                         field: 'CREDIT',
+                        html: true,
+                        globalSearchDisabled: true,
+                    },
+                    {
+                        label: 'Dollars',
+                        field: 'CREDIT_DOLLAR',
                         html: true,
                         globalSearchDisabled: true,
                     }
@@ -597,15 +603,7 @@
                                     </div> 
                                 </div>
                             </div>
-                            <input type="text" placeholder="First name" class="w-full h-10 px-5 py-2 pr-10 text-sm text-gray-900 bg-gray-100 border-object profile-field">
-                            <input type="text" placeholder="Last name" class="w-full h-10 px-5 pr-10 text-sm text-gray-900 bg-gray-100 focus:outline-none border-object profile-field">
                             <input type="text" placeholder="Email" class="w-full h-10 px-5 pr-10 text-sm text-gray-900 bg-gray-100 focus:outline-none border-object profile-field">
-                            <input type="text" placeholder="Country" class="w-full h-10 px-5 pr-10 text-sm text-gray-900 bg-gray-100 focus:outline-none border-object profile-field">
-                            <input type="tel" placeholder="Phone number"  class="form-control w-full h-10 px-5 pr-10 text-sm text-gray-900 bg-gray-100 focus:outline-none border-object profile-field">                                              
-                            <input type="text" placeholder="LinkedIn profile" class="w-full h-10 px-5 pr-10 text-sm text-gray-900 bg-gray-100 focus:outline-none border-object profile-field">
-                            <input type="text" placeholder="Twitter profile" class="w-full h-10 px-5 pr-10 text-sm text-gray-900 bg-gray-100 focus:outline-none border-object profile-field">
-                            <input type="text" placeholder="Github profile" class="w-full h-10 px-5 pr-10 text-sm text-gray-900 bg-gray-100 focus:outline-none border-object profile-field">
-
                             </div>
                             
                             <div class="flex justify-end px-5 py-4">
@@ -732,7 +730,17 @@
                         }
                     }).catch((err) => {
                         console.error(err);
-                        this.accountBalance = {'balance': 0}
+                        this.accountBalance = {'balance': 0, 'balance_dollar': 0}
+                    })
+                },
+                loadAccountPlan() {
+                    return axios.get('plan').then((response) => {
+                        if (response && !response.error) {
+                            this.accountPlan = response.data
+                        }
+                    }).catch((err) => {
+                        console.error(err);
+                        this.accountBalance = {'plan': ''}
                     })
                 },
                 loadAccountJson() {
@@ -740,12 +748,20 @@
                         if (response && !response.error) {
                             response.data.forEach(transaction => {
                                 transaction['CREDIT'] = transaction['CREDIT'].toFixed(2) + ' ⚡';
+                                transaction['CREDIT_DOLLAR'] = transaction['CREDIT_DOLLAR'] || 0;
+                                transaction['CREDIT_DOLLAR'] = transaction['CREDIT_DOLLAR'].toFixed(2) + ' $';
                             })
                             this.account = response.data
                         }
                     }).catch((err) => {
                         console.error(err);
-                        this.account = []
+                        //this.account = []
+                        this.account = [{"SCENARIO": 202109, "USER": "bob@cashstory.com", "TYPE": "Scheduler", "META_1_DESC": "PATH", "META_1": "admin_naas/usage/script/update_users_credits.ipynb", "META_2_DESC": "DATE", "META_2": "2021-09-01 00:00:32", "META_3_DESC": "STATUS", "META_3": "error", "QUANTITY": 0.1796619455019633, "UNIT": "min. runtime", "UP": 1.0, "CREDIT": 0.1796619455019633, "DATE_EXTRACT": "2021-09-27 07:50:27", "CREDIT_DOLLAR": 1}, {"SCENARIO": 202109, "USER": "bob@cashstory.com", "TYPE": "Scheduler", "META_1_DESC": "PATH", "META_1": "admin_naas/usage/script/update_credits_spent.ipynb", "META_2_DESC": "DATE", "META_2": "2021-09-01 00:00:38", "META_3_DESC": "STATUS", "META_3": "error", "QUANTITY": 0.306216005484263, "UNIT": "min. runtime", "UP": 1.0, "CREDIT": 0.306216005484263, "DATE_EXTRACT": "2021-09-27 07:50:27", "CREDIT_DOLLAR": 1}]
+                        this.account.forEach(transaction => {
+                                transaction['CREDIT'] = transaction['CREDIT'].toFixed(2) + ' ⚡';
+                                transaction['CREDIT_DOLLAR'] = transaction['CREDIT_DOLLAR'] || 0;
+                                transaction['CREDIT_DOLLAR'] = transaction['CREDIT_DOLLAR'].toFixed(2) + ' $';
+                            })
                     })
                 },
                 loadAccountItems() {
@@ -858,6 +874,7 @@
                     all_loads.push(this.loadTemplatesItems());
                     all_loads.push(this.loadAccountJson());
                     all_loads.push(this.loadAccountBalance());
+                    //all_loads.push(this.loadAccountPlan());
                     return Promise.all(all_loads).then(()=> {
                         this.loading = false;
                     });
@@ -999,15 +1016,15 @@
                     <a href="https://github.com/orgs/jupyter-naas/projects/4?fullscreen=true" target="_blank" rel="noopener" class="naas-header-green">Roadmap</a>
                     <a href="https://aiclub-hq.slack.com/" target="_blank" rel="noopener" class="naas-header-green py-8">Slack</a>
                     <a href="https://www.naas.ai/pricing" target="_blank" rel="noopener" class="naas-header-green">⚡️  Upgrade</a>
-                    <button v-on:click="openProfile()" class="px-2 py-2 button-primary naas-header-black">Profile</button>
+                    <button v-on:click="openProfile()" class="px-2 py-2 button-primary naas-header-black">Account</button>
                     <!-- <a href="#" :href="linkToLab()"><button class="px-2 py-2 button-open naas-header-open border-object">Go to engine</button></a> -->
-                    <a href="#" :href="linkToTemplate()" target="_blank"><button class="px-2 py-2 button-secondary naas-header-notebook border-object">➕ New</button></a> 
+                    <a href="#" :href="linkToLab()" target="_blank"><button class="px-2 py-2 button-secondary naas-header-notebook border-object">Open JupyterLab</button></a> 
                 </div>
             </div>
         </nav>
         <div class="flex md:px-12">
             <div style="color:white;font-family: Poppins,sans-serif;font-size:2em;padding-top:15px" class="tooltip">
-                {{ this.accountBalance.balance.toFixed(2) }}⚡<label style="position:absolute;font-size:18px">ⓘ</label>
+                {{ this.accountBalance.balance.toFixed(2) }}⚡ ⇄ {{this.accountBalance.balance_dollar.toFixed(2)}}$ <label style="position:absolute;font-size:18px;margin-left:10px">ⓘ</label>
                 <span class="tooltiptext" style="font-size:11px;margin-left:20px;width:300px;font-weight:lighter;">The balance takes into account processed transactions. It is updated every 15min.</span>
             </div>  
         </div>
@@ -1041,7 +1058,7 @@
             <button @click="setPageState(templatesState)" class="naas-tab" :class="templatesActive ? 'naas-current-tab' : ''">😎 Templates</button>
             <button @click="setPageState(jobsState)" class="naas-tab" :class="jobsActive ? 'naas-current-tab' : ''">🤖 Jobs</button>
             <button @click="setPageState(eventState)" class="naas-tab" :class="eventActive ? 'naas-current-tab' : ''">🗓️ Events</button>
-            <button @click="setPageState(accountState)" class="naas-tab" :class="accountActive ? 'naas-current-tab' : ''">💵 Account</button>
+            <button @click="setPageState(accountState)" class="naas-tab" :class="accountActive ? 'naas-current-tab' : ''">💵 Usage</button>
             <button @click="load_data()"
                 class="px-2 py-2 button-tertiary border-object no-underline float-right">
                 <span class="refresh-logo" cursor="pointer">
