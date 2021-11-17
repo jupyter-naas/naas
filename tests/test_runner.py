@@ -26,6 +26,7 @@ import imgcompare
 from PIL import Image
 import nbformat
 import io
+import requests
 
 user = getpass.getuser()
 seps = os.sep + os.altsep if os.altsep else os.sep
@@ -39,10 +40,23 @@ def getUserb64():
     return username_base64
 
 
+def get_latest_version():
+    try:
+        r = requests.get("https://pypi.python.org/pypi/naas/json")
+        r.raise_for_status()
+        response = r.json()
+        version = (
+            response["urls"][0]["filename"].replace("naas-", "").replace(".tar.gz", "")
+        )
+        return version
+    except:  # noqa: E722
+        return ""
+
 def get_env():
     return {
         "status": "healthy",
         "version": n_env.version,
+        "latest_version": get_latest_version(),
         "NAAS_BASE_PATH": n_env.path_naas_folder,
         "JUPYTERHUB_USER": n_env.user,
         "JUPYTER_SERVER_ROOT": n_env.server_root,
