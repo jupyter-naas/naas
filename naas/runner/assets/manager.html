@@ -73,6 +73,11 @@
             color: #dddddd;
             transition: all 0.3s;
         }
+        .naas-text {
+            color: white;
+            font-family: Poppins,sans-serif;
+            font-size: 0.9em;
+        }
         .naas-manager-green {
             color: #22BC66;
             font-family: Poppins,sans-serif;
@@ -82,13 +87,13 @@
             color: white;
             margin-left: 3rem;
             font-family: Poppins,sans-serif;
-            font-size: 1.1em;
+            font-size: 1em;
         }
         .naas-header-green {
             color: #22BC66;
             padding-left: 35px;
             font-family: Poppins,sans-serif;
-            font-size: 1.1em;
+            font-size: 1em;
         }
         .naas-header-black {
             color: white;
@@ -97,7 +102,7 @@
             margin-left: 30px;
             background-color: b;
             font-family: Poppins,sans-serif;
-            font-size: 1.1em;
+            font-size: 1em;
         }
         .naas-header-open {
             color: #22BC66;
@@ -111,7 +116,7 @@
             margin-left: 0rem;
             margin-right: 0rem;
             font-family: Poppins,sans-serif;
-            font-size: 1.1em;
+            font-size: 0.9em;
         }
         .naas-tab:active {
             color: #22BC66;
@@ -164,9 +169,9 @@
         }
 
         .label.label-default.rank-label {
-            background-color: #191b1d;
-            color:white;
-            padding: 5px 10px 5px 10px;
+            background-color: #ffe142;
+            color:black;
+            padding: 5px 30px 5px 30px;
             border-radius: 27px;
         }
         /**
@@ -408,8 +413,14 @@
                         field: 'META_2',
                     },
                     {
-                        label: 'Amount',
+                        label: 'Credits',
                         field: 'CREDIT',
+                        html: true,
+                        globalSearchDisabled: true,
+                    },
+                    {
+                        label: 'Dollars',
+                        field: 'CREDIT_DOLLAR',
                         html: true,
                         globalSearchDisabled: true,
                     }
@@ -578,7 +589,7 @@
                         <div class="w-full bg-white rounded-lg shadow-lg">
                             <div class="flex justify-between px-5 py-4 border-b border-gray-100">
                                 <div>
-                                    <span class="text-lg font-bold text-gray-700">Profile (coming soon)</span>
+                                    <span class="text-lg font-bold text-gray-700">Account</span>
                                 </div>
                                 <div>
                                     <button><i class="text-red-500 transition duration-150 fa fa-times-circle hover:text-red-600"></i></button>
@@ -589,27 +600,22 @@
                                 <div class="row">
                                     <div class="profile-header-container">   
                                         <div class="profile-header-img">
-                                            <img class="img-circle" src="https://avatars.githubusercontent.com/u/47117399?v=4" />
                                             <div class="rank-label-container">
-                                                <span class="label label-default rank-label">Free Plan</span>
+                                                <span class="label label-default rank-label">${this.accountPlan['plan']}</span>
                                             </div>
                                         </div>
                                     </div> 
                                 </div>
                             </div>
-                            <input type="text" placeholder="First name" class="w-full h-10 px-5 py-2 pr-10 text-sm text-gray-900 bg-gray-100 border-object profile-field">
-                            <input type="text" placeholder="Last name" class="w-full h-10 px-5 pr-10 text-sm text-gray-900 bg-gray-100 focus:outline-none border-object profile-field">
-                            <input type="text" placeholder="Email" class="w-full h-10 px-5 pr-10 text-sm text-gray-900 bg-gray-100 focus:outline-none border-object profile-field">
-                            <input type="text" placeholder="Country" class="w-full h-10 px-5 pr-10 text-sm text-gray-900 bg-gray-100 focus:outline-none border-object profile-field">
-                            <input type="tel" placeholder="Phone number"  class="form-control w-full h-10 px-5 pr-10 text-sm text-gray-900 bg-gray-100 focus:outline-none border-object profile-field">                                              
-                            <input type="text" placeholder="LinkedIn profile" class="w-full h-10 px-5 pr-10 text-sm text-gray-900 bg-gray-100 focus:outline-none border-object profile-field">
-                            <input type="text" placeholder="Twitter profile" class="w-full h-10 px-5 pr-10 text-sm text-gray-900 bg-gray-100 focus:outline-none border-object profile-field">
-                            <input type="text" placeholder="Github profile" class="w-full h-10 px-5 pr-10 text-sm text-gray-900 bg-gray-100 focus:outline-none border-object profile-field">
+                            <input type="text" placeholder="${this.user['username']}" readonly class="w-full h-10 px-5 pr-10 text-sm text-gray-900 bg-gray-100 focus:outline-none border-object profile-field">                 
+                            <a href="${this.linkToPassword()}" target="_blank"><button class="w-full h-10 px-5 pr-10 text-white bg-black focus:outline-none border-object profile-field">Change password</button></a>
+                            <a href="${this.linkToToken()}" target="_blank"><button class="w-full h-10 px-5 pr-10 text-white bg-black focus:outline-none border-object profile-field">Access tokens</button></a>
+                            <a href="https://form.typeform.com/to/q659b6hS" target="_blank"><button class="w-full h-10 px-5 pr-10 text-white bg-red-600 focus:outline-none border-object profile-field">Delete my account</button></a>
+                            <a href="${this.linkToLogout()}" target="_blank"><button class="w-full h-10 px-5 pr-10 text-black bg-white-600 focus:outline-none border border-black border-object profile-field">Log out</button></a>
 
                             </div>
-                            
                             <div class="flex justify-end px-5 py-4">
-                            <button @click="$emit('close')" class="px-3 py-2 text-sm text-gray-500 transition duration-150 hover:text-gray-600">Close</button>
+                            <button @click="$emit('close')" class="px-3 py-2 text-sm text-gray-500 focus:outline-none transition duration-150 hover:text-gray-600">Close</button>
                             </div>
                         </div>
                         `,
@@ -729,10 +735,31 @@
                     return axios.get('credits/balance').then((response) => {
                         if (response && !response.error) {
                             this.accountBalance = response.data
+                            this.accountBalance['balance_dollar'] = this.accountBalance['balance_dollar'] || 0
                         }
                     }).catch((err) => {
                         console.error(err);
-                        this.accountBalance = {'balance': 0}
+                        this.accountBalance = {'balance': 0, 'balance_dollar': 0}
+                    })
+                },
+                loadAccountPlan() {
+                    return axios.get('credits/plan').then((response) => {
+                        if (response && !response.error) {
+                            this.accountPlan = response.data
+                        }
+                    }).catch((err) => {
+                        console.error(err);
+                        this.accountPlan = {'plan': ''}
+                    })
+                },
+                loadUser() {
+                    return axios.get('auth/user/me').then((response) => {
+                        if (response && !response.error) {
+                            this.user = response.data
+                        }
+                    }).catch((err) => {
+                        console.error(err);
+                        this.user = {'username': '', 'email': ''}
                     })
                 },
                 loadAccountJson() {
@@ -740,6 +767,8 @@
                         if (response && !response.error) {
                             response.data.forEach(transaction => {
                                 transaction['CREDIT'] = transaction['CREDIT'].toFixed(2) + ' ⚡';
+                                transaction['CREDIT_DOLLAR'] = transaction['CREDIT_DOLLAR'] || 0;
+                                transaction['CREDIT_DOLLAR'] = transaction['CREDIT_DOLLAR'].toFixed(4) + ' $';
                             })
                             this.account = response.data
                         }
@@ -822,6 +851,9 @@
                         window.open(newUrl, '_blank');
                     }
                 },
+                updateVersion() {
+                    return axios.get('version/update')
+                },
                 load_data() {
                     this.loading = true;
                     const all_loads = [];
@@ -858,6 +890,8 @@
                     all_loads.push(this.loadTemplatesItems());
                     all_loads.push(this.loadAccountJson());
                     all_loads.push(this.loadAccountBalance());
+                    all_loads.push(this.loadAccountPlan());
+                    all_loads.push(this.loadUser())
                     return Promise.all(all_loads).then(()=> {
                         this.loading = false;
                     });
@@ -896,6 +930,15 @@
                 },
                 linkToLab() {
                     return `${this.linkToHub()}/lab`
+                },
+                linkToPassword() {
+                    return `${this.linkToHub()}/hub/change-password`
+                },
+                linkToToken() {
+                    return `${this.linkToHub()}/hub/token`
+                },
+                linkToLogout() {
+                    return `${this.linkToHub()}/hub/logout`
                 },
                 linkToTemplate() {
                     return `https://app.naas.ai/user-redirect/naas/downloader?url=https://raw.githubusercontent.com/jupyter-naas/awesome-notebooks/master/template.ipynb`
@@ -992,22 +1035,21 @@
                                     d="M4 5h16a1 1 0 0 1 0 2H4a1 1 0 1 1 0-2zm0 6h16a1 1 0 0 1 0 2H4a1 1 0 0 1 0-2zm0 6h16a1 1 0 0 1 0 2H4a1 1 0 0 1 0-2z" />
                             </svg>
                         </button>
-                    </div>
+                    </div>  
                 </div>
                 <div class="flex flex-col hidden md:flex-row md:block">
-                    <a href="https://docs.naas.ai/" target="_blank" rel="noopener" class="naas-header-green">Docs</a>       
-                    <a href="https://github.com/orgs/jupyter-naas/projects/4?fullscreen=true" target="_blank" rel="noopener" class="naas-header-green">Roadmap</a>
-                    <a href="https://aiclub-hq.slack.com/" target="_blank" rel="noopener" class="naas-header-green py-8">Slack</a>
+                    <a href="https://docs.naas.ai/" target="_blank" rel="noopener" class="naas-header-green">Documentation</a>       
+                    <a href="https://github.com/orgs/jupyter-naas/projects/4?fullscreen=true" target="_blank" rel="noopener" class="naas-header-green">Github</a>
+                    <a href="https://aiclub-hq.slack.com/" target="_blank" rel="noopener" class="naas-header-green py-8">Community</a>
                     <a href="https://www.naas.ai/pricing" target="_blank" rel="noopener" class="naas-header-green">⚡️  Upgrade</a>
-                    <button v-on:click="openProfile()" class="px-2 py-2 button-primary naas-header-black">Profile</button>
-                    <!-- <a href="#" :href="linkToLab()"><button class="px-2 py-2 button-open naas-header-open border-object">Go to engine</button></a> -->
-                    <a href="#" :href="linkToTemplate()" target="_blank"><button class="px-2 py-2 button-secondary naas-header-notebook border-object">➕ New</button></a> 
+                    <button v-on:click="openProfile()" class="px-2 py-2 button-primary naas-header-black">Account</button>
+                    <a href="#" :href="linkToLab()" target="_blank"><button class="px-2 py-2 button-secondary naas-header-notebook border-object">Go to JupyterLab</button></a> 
                 </div>
             </div>
         </nav>
         <div class="flex md:px-12">
             <div style="color:white;font-family: Poppins,sans-serif;font-size:2em;padding-top:15px" class="tooltip">
-                {{ this.accountBalance.balance.toFixed(2) }}⚡<label style="position:absolute;font-size:18px">ⓘ</label>
+                {{ this.accountBalance.balance.toFixed(2) }}⚡ ⇄ {{this.accountBalance.balance_dollar.toFixed(2)}}$ <label style="position:absolute;font-size:18px;margin-left:10px">ⓘ</label>
                 <span class="tooltiptext" style="font-size:11px;margin-left:20px;width:300px;font-weight:lighter;">The balance takes into account processed transactions. It is updated every 15min.</span>
             </div>  
         </div>
@@ -1041,13 +1083,14 @@
             <button @click="setPageState(templatesState)" class="naas-tab" :class="templatesActive ? 'naas-current-tab' : ''">😎 Templates</button>
             <button @click="setPageState(jobsState)" class="naas-tab" :class="jobsActive ? 'naas-current-tab' : ''">🤖 Jobs</button>
             <button @click="setPageState(eventState)" class="naas-tab" :class="eventActive ? 'naas-current-tab' : ''">🗓️ Events</button>
-            <button @click="setPageState(accountState)" class="naas-tab" :class="accountActive ? 'naas-current-tab' : ''">💵 Account</button>
+            <button @click="setPageState(accountState)" class="naas-tab" :class="accountActive ? 'naas-current-tab' : ''">💵 Usage</button>
             <button @click="load_data()"
                 class="px-2 py-2 button-tertiary border-object no-underline float-right">
                 <span class="refresh-logo" cursor="pointer">
                 </span>
             </button>
             <div v-if="templatesActive">
+                <p class="pb-3 text-white">Access all the templates created by the community in <a href="https://github.com/jupyter-naas/awesome-notebooks" target="_blank"><u>Naas awesome-notebooks</u></a>  Github repository.</p>
                 <vue-good-table class="border-object" :columns="columns_templates" :rows="templates" :search-options="{
                     enabled: true,
                     externalQuery: filter
@@ -1073,6 +1116,7 @@
                 </vue-good-table>
             </div>
             <div v-else-if="jobsActive">
+                <p class="pb-3 text-white">Monitor active features in the "⚡ → Production" folder of your JupyterLab: scheduler, asset, webhook, notification.</p>
                 <vue-good-table class="border-object" :columns="columns_jobs" :rows="jobs" :search-options="{
                         enabled: true,
                         externalQuery: filter
@@ -1129,6 +1173,7 @@
                 </vue-good-table>
             </div>
             <div v-else-if="eventActive">
+                <p class="pb-3 text-white">Access the logs of all your jobs executions, and see errors messages.</p>
                 <!-- <vue-loaders-line-scale v-if="loadingLog"/> -->
                 <div class="vld-parent">
                     <loading :active.sync="loadingLog" 
@@ -1183,6 +1228,7 @@
                 </div>
             </div>
             <div v-if="accountActive">
+                <p class="pb-3 text-white">Access the complete detail of your activity with the <a href="https://app.naas.ai/user-redirect/naas/downloader?url=https://raw.githubusercontent.com/jupyter-naas/awesome-notebooks/master/Naas/Naas_Get_Transactions.ipynb" target="_blank"><u>Naas transactions</u></a> template.</p>
                 <vue-good-table class="border-object" :columns="columns_account" :rows="account" :search-options="{
                     enabled: true,
                     externalQuery: filter
@@ -1216,20 +1262,25 @@
                 <h4 class="text-2xl font-semibold text-gray-800"><span class="text-white"></span></h4>
                 <span
                     class="inline-block px-3 py-1 mr-2 text-sm font-semibold text-gray-700 bg-gray-200 border-object">Version: {{env.version}}</span>
+                    <span v-if="env.latest_version && env.latest_version.length > 0 && env.version != env.latest_version" v-on:click="updateVersion()" style="cursor:pointer;" class="inline-block px-3 py-1 mr-2 text-sm font-semibold text-black-700 bg-yellow-400 border-object">Update to {{env.latest_version}}</span>
                     <!-- <button class="px-2 py-2 text-gray-900 bg-gray-100 rounded hover:bg-gray-900 hover:text-gray-100 hover:font-medium md:mx-2" v-on:click="openPerformanceModal()">
                     Storage
                 </button> -->
+
             </div>
+            <p class="pt-5 text-white">Any questions? Please <a href="https://form.typeform.com/to/aH1v5ync" target="_blank"><u>contact us</u></a>.</p>
+            <p class="pt-5 text-white">🙏 We're working hard to build Naas, and need more help!<br>
+                If you know anybody who would like to contribute to open source - in engineering, marketing roles, and more - <a href="https://form.typeform.com/to/jdls9qZf" target="_blank"><u>please let us know</u></a> and tell your friends!</p>
         </div>
 
         <div id=footer>
-            <h3 class="text-2xs text-gray-400 center"><span class="text-white">Naas: Notebooks as a service</span></h3>
-            <h3><span class="text-white " style="font-size: 14px;">Opensourced by CashStory</span></h3>
+            <h3 class="text-2xs text-gray-400 center"><span class="text-white naas-text">Give us some 💚 on:</span></h3>
             <a href="https://github.com/jupyter-naas" target="_blank" rel="noopener"><img id=footerlogo src="https://cdn3.iconfinder.com/data/icons/social-media-2169/24/social_media_social_media_logo_github-1024.png" alt="Github logo"></a>
             <a href="https://www.youtube.com/channel/UCKKG5hzjXXU_rRdHHWQ8JHQ" target="_blank" rel="noopener"><img id=footerlogo src="https://cdn3.iconfinder.com/data/icons/2018-social-media-logotypes/1000/2018_social_media_popular_app_logo_youtube-1024.png" alt="Youtube logo"></a>
             <a href="https://twitter.com/JupyterNaas" target="_blank" rel="noopener"><img id=footerlogo src="https://cdn4.iconfinder.com/data/icons/social-messaging-ui-color-shapes-2-free/128/social-twitter-circle-128.png" alt="Twitter logo"></a>
             <a href="https://www.linkedin.com/company/naas-ai/" target="_blank" rel="noopener"><img id=footerlogo src="https://cdn0.iconfinder.com/data/icons/social-circle-3/72/Linkedin-1024.png" alt="LinkedIn logo"></a>
         </div>
+        
     </div>
 </body>
 

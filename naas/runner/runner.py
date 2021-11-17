@@ -1,6 +1,8 @@
 from .controllers.downloader import DownloaderController
 from sentry_sdk.integrations.sanic import SanicIntegration
 from .controllers.scheduler import SchedulerController
+from .controllers.version import VersionController
+from .controllers.auth import AuthController
 from .controllers.manager import ManagerController
 from .controllers.assets import AssetsController
 from .controllers.secret import SecretController
@@ -40,6 +42,8 @@ from naas.ntypes import (
     t_tz,
     t_downloader,
     t_credits,
+    t_auth,
+    t_version,
 )
 
 # TODO remove this fix when papermill and nest_asyncio support uvloop
@@ -98,6 +102,18 @@ class Runner:
             self.__app.add_route(
                 CreditsController.BalanceController.as_view(self.__logger),
                 f"/{t_credits}/balance",
+            )
+            self.__app.add_route(
+                CreditsController.PlanController.as_view(self.__logger),
+                f"/{t_credits}/plan",
+            )
+            self.__app.add_route(
+                AuthController.UserController.as_view(self.__logger),
+                f"/{t_auth}/user/me",
+            )
+            self.__app.add_route(
+                VersionController.UpdateController.as_view(self.__logger),
+                f"/{t_version}/update",
             )
             self.__app.add_route(
                 AssetsController.as_view(
