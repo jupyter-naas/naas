@@ -1,18 +1,26 @@
-from naas.runner.env_var import n_env
-import requests
+from sanic.views import HTTPMethodView
+from naas_drivers import naasauth
+from sanic.response import json
+import os
 
+TOKEN = os.environ.get('PROD_JUPYTERHUB_API_TOKEN', None)
 
-def get_hub_user(request):
-    try:
-        headers = (
-            {
-                "content-type": "application/json",
-                "authorization": request.headers.get("authorization", None),
-            },
-        )
-        req = requests.get(url=f"{n_env.hub_base}/hub/api/user", headers=headers)
-        req.raise_for_status()
-        jsn = req.json()
-        return jsn
-    except:  # noqa: E722
-        return None
+class AuthController(HTTPMethodView):
+    __logger = None
+
+    def __init__(self, logger, *args, **kwargs):
+        super(AuthController, self).__init__(*args, **kwargs)
+        self.__logger = logger
+
+    class UserController(HTTPMethodView):
+        __logger = None
+
+        def __init__(self, logger, *args, **kwargs):
+            super(AuthController.UserController, self).__init__(
+                *args, **kwargs
+            )
+            self.__logger = logger
+
+        async def get(self, request):
+            res = naasauth.connect(TOKEN).user.me()
+            return json(res)

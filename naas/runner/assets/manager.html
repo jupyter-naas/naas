@@ -597,13 +597,14 @@
                                         <div class="profile-header-img">
                                             <img class="img-circle" src="https://avatars.githubusercontent.com/u/47117399?v=4" />
                                             <div class="rank-label-container">
-                                                <span class="label label-default rank-label">Free Plan</span>
+                                                <span class="label label-default rank-label">${this.accountPlan['plan']}</span>
                                             </div>
                                         </div>
                                     </div> 
                                 </div>
                             </div>
-                            <input type="text" placeholder="Email" class="w-full h-10 px-5 pr-10 text-sm text-gray-900 bg-gray-100 focus:outline-none border-object profile-field">
+                            <label>Email</label>
+                            <input type="text" placeholder="${this.user['username']}" readonly class="w-full h-10 px-5 pr-10 text-sm text-gray-900 bg-gray-100 focus:outline-none border-object profile-field">
                             </div>
                             
                             <div class="flex justify-end px-5 py-4">
@@ -727,6 +728,7 @@
                     return axios.get('credits/balance').then((response) => {
                         if (response && !response.error) {
                             this.accountBalance = response.data
+                            this.accountBalance['balance_dollar'] = this.accountBalance['balance_dollar'] || 0
                         }
                     }).catch((err) => {
                         console.error(err);
@@ -734,13 +736,23 @@
                     })
                 },
                 loadAccountPlan() {
-                    return axios.get('plan').then((response) => {
+                    return axios.get('credits/plan').then((response) => {
                         if (response && !response.error) {
                             this.accountPlan = response.data
                         }
                     }).catch((err) => {
                         console.error(err);
-                        this.accountBalance = {'plan': ''}
+                        this.accountPlan = {'plan': ''}
+                    })
+                },
+                loadUser() {
+                    return axios.get('auth/user/me').then((response) => {
+                        if (response && !response.error) {
+                            this.user = response.data
+                        }
+                    }).catch((err) => {
+                        console.error(err);
+                        this.user = {'username': '', 'email': ''}
                     })
                 },
                 loadAccountJson() {
@@ -749,7 +761,7 @@
                             response.data.forEach(transaction => {
                                 transaction['CREDIT'] = transaction['CREDIT'].toFixed(2) + ' ⚡';
                                 transaction['CREDIT_DOLLAR'] = transaction['CREDIT_DOLLAR'] || 0;
-                                transaction['CREDIT_DOLLAR'] = transaction['CREDIT_DOLLAR'].toFixed(2) + ' $';
+                                transaction['CREDIT_DOLLAR'] = transaction['CREDIT_DOLLAR'].toFixed(4) + ' $';
                             })
                             this.account = response.data
                         }
@@ -760,7 +772,7 @@
                         this.account.forEach(transaction => {
                                 transaction['CREDIT'] = transaction['CREDIT'].toFixed(2) + ' ⚡';
                                 transaction['CREDIT_DOLLAR'] = transaction['CREDIT_DOLLAR'] || 0;
-                                transaction['CREDIT_DOLLAR'] = transaction['CREDIT_DOLLAR'].toFixed(2) + ' $';
+                                transaction['CREDIT_DOLLAR'] = transaction['CREDIT_DOLLAR'].toFixed(4) + ' $';
                             })
                     })
                 },
@@ -874,7 +886,8 @@
                     all_loads.push(this.loadTemplatesItems());
                     all_loads.push(this.loadAccountJson());
                     all_loads.push(this.loadAccountBalance());
-                    //all_loads.push(this.loadAccountPlan());
+                    all_loads.push(this.loadAccountPlan());
+                    all_loads.push(this.loadUser())
                     return Promise.all(all_loads).then(()=> {
                         this.loading = false;
                     });
