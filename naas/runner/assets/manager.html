@@ -857,6 +857,9 @@
                         window.open(newUrl, '_blank');
                     }
                 },
+                updateVersion() {
+                    return axios.get('version/update')
+                },
                 load_data() {
                     this.loading = true;
                     const all_loads = [];
@@ -1265,7 +1268,7 @@
                 <h4 class="text-2xl font-semibold text-gray-800"><span class="text-white"></span></h4>
                 <span
                     class="inline-block px-3 py-1 mr-2 text-sm font-semibold text-gray-700 bg-gray-200 border-object">Version: {{env.version}}</span>
-                    <span v-if="env.latest_version && env.latest_version.length > 0 && env.version != env.latest_version || true" class="inline-block px-3 py-1 mr-2 text-sm font-semibold text-black-700 bg-yellow-400 border-object">Update to {{env.latest_version}}</span>
+                    <span v-if="env.latest_version && env.latest_version.length > 0 && env.version != env.latest_version" v-on:click="updateVersion()" style="cursor:pointer;" class="inline-block px-3 py-1 mr-2 text-sm font-semibold text-black-700 bg-yellow-400 border-object">Update to {{env.latest_version}}</span>
                     <!-- <button class="px-2 py-2 text-gray-900 bg-gray-100 rounded hover:bg-gray-900 hover:text-gray-100 hover:font-medium md:mx-2" v-on:click="openPerformanceModal()">
                     Storage
                 </button> -->

@@ -9,6 +9,7 @@ t_dependency = "dependency"
 t_scheduler = "scheduler"
 t_credits = "credits"
 t_auth = "auth"
+t_version = "version"
 
 t_secret = "secret"
 
