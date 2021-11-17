@@ -774,13 +774,7 @@
                         }
                     }).catch((err) => {
                         console.error(err);
-                        //this.account = []
-                        this.account = [{"SCENARIO": 202109, "USER": "bob@cashstory.com", "TYPE": "Scheduler", "META_1_DESC": "PATH", "META_1": "admin_naas/usage/script/update_users_credits.ipynb", "META_2_DESC": "DATE", "META_2": "2021-09-01 00:00:32", "META_3_DESC": "STATUS", "META_3": "error", "QUANTITY": 0.1796619455019633, "UNIT": "min. runtime", "UP": 1.0, "CREDIT": 0.1796619455019633, "DATE_EXTRACT": "2021-09-27 07:50:27", "CREDIT_DOLLAR": 1}, {"SCENARIO": 202109, "USER": "bob@cashstory.com", "TYPE": "Scheduler", "META_1_DESC": "PATH", "META_1": "admin_naas/usage/script/update_credits_spent.ipynb", "META_2_DESC": "DATE", "META_2": "2021-09-01 00:00:38", "META_3_DESC": "STATUS", "META_3": "error", "QUANTITY": 0.306216005484263, "UNIT": "min. runtime", "UP": 1.0, "CREDIT": 0.306216005484263, "DATE_EXTRACT": "2021-09-27 07:50:27", "CREDIT_DOLLAR": 1}]
-                        this.account.forEach(transaction => {
-                                transaction['CREDIT'] = transaction['CREDIT'].toFixed(2) + ' ⚡';
-                                transaction['CREDIT_DOLLAR'] = transaction['CREDIT_DOLLAR'] || 0;
-                                transaction['CREDIT_DOLLAR'] = transaction['CREDIT_DOLLAR'].toFixed(4) + ' $';
-                            })
+                        this.account = []
                     })
                 },
                 loadAccountItems() {
@@ -1122,7 +1116,7 @@
                 </vue-good-table>
             </div>
             <div v-else-if="jobsActive">
-                <p class="pb-3 text-white">Monitor active features in the "→ ⚡ Production" folder of your JupyterLab: scheduler, asset, webhook, notification.</p>
+                <p class="pb-3 text-white">Monitor active features in the "⚡ → Production" folder of your JupyterLab: scheduler, asset, webhook, notification.</p>
                 <vue-good-table class="border-object" :columns="columns_jobs" :rows="jobs" :search-options="{
                         enabled: true,
                         externalQuery: filter
