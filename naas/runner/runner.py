@@ -43,7 +43,7 @@ from naas.ntypes import (
     t_downloader,
     t_credits,
     t_auth,
-    t_version
+    t_version,
 )
 
 # TODO remove this fix when papermill and nest_asyncio support uvloop

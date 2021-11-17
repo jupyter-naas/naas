@@ -3,7 +3,8 @@ from naas_drivers import naascredits
 from sanic.response import json
 import os
 
-TOKEN = os.environ.get('PROD_JUPYTERHUB_API_TOKEN', None)
+TOKEN = os.environ.get("PROD_JUPYTERHUB_API_TOKEN", None)
+
 
 class CreditsController(HTTPMethodView):
     __logger = None
@@ -16,9 +17,7 @@ class CreditsController(HTTPMethodView):
         __logger = None
 
         def __init__(self, logger, *args, **kwargs):
-            super(CreditsController.PlanController, self).__init__(
-                *args, **kwargs
-            )
+            super(CreditsController.PlanController, self).__init__(*args, **kwargs)
             self.__logger = logger
 
         async def get(self, request):
