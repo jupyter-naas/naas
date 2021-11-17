@@ -1107,7 +1107,7 @@
                 </vue-good-table>
             </div>
             <div v-else-if="jobsActive">
-                <p class="pb-3 text-white">Monitor all the active low-code features in the "→ ⚡ Production" folder: scheduler, asset, webhook, notification. To delete jobs please refer to the <a href="https://docs.naas.ai/features/scheduler#delete" target="_blank"><u>documentation</u></a>.</p>
+                <p class="pb-3 text-white">Monitor active features in the "→ ⚡ Production" folder of your JupyterLab: scheduler, asset, webhook, notification.</p>
                 <vue-good-table class="border-object" :columns="columns_jobs" :rows="jobs" :search-options="{
                         enabled: true,
                         externalQuery: filter
@@ -1252,7 +1252,7 @@
             <div class="col-start-2 py-4 pt-8" v-if="env && env.version">
                 <h4 class="text-2xl font-semibold text-gray-800"><span class="text-white"></span></h4>
                 <span class="inline-block px-3 py-1 mr-2 text-sm font-semibold text-gray-700 bg-gray-200 border-object">Version: {{env.version}}</span>
-                <a href="${this.linkToToken()}" target="_blank"><button class="inline-block px-3 py-1 mr-2 text-sm font-semibold text-white-300 bg-gray-500 border-object">Update version</button>
+                <a href="${this.linkToToken()}" target="_blank"><button class="inline-block px-3 py-1 mr-2 text-sm font-semibold text-white-300 bg-yellow-400 border-object">Update version</button>
             </div>
             <p class="pt-5 text-white">Any questions? Please <a href="https://form.typeform.com/to/aH1v5ync" target="_blank"><u>contact us</u></a>.</p>
             <p class="pt-5 text-white">🙏 We're working hard to build Naas, and need more help!<br>
