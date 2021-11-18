@@ -469,8 +469,23 @@
                     }
                 },
                 type_dict: {
-                    'terminal': {
+                    'Terminal': {
                         string: '💻 Terminal'
+                    },
+                    'Scheduler': {
+                        string: '⏰ Scheduler'
+                    },
+                    'Notebook': {
+                        string: '👩‍💻 Notebook'
+                    },
+                    'Webhook': {
+                        string: '⚙️ Webhook'
+                    },
+                    'Asset sharing': {
+                        string: '🖼️ Asset'
+                    },
+                    'Notifications': {
+                        string: '🛎️ Notification'
                     },
                     'scheduler': {
                         string: '⏰ Scheduler'
@@ -478,33 +493,30 @@
                     'asset': {
                         string: '🖼️ Asset'
                     },
-                    'asset sharing': {
-                        string: '🖼️ Asset'
-                    },
                     'notebook': {
-                        string: '👩‍💻 Notebook'
-                    },
-                    'webhook': {
                         string: '⚙️ Webhook'
-                    },
-                    'notification': {
-                        string: '🛎️ Notification'
-                    },
-                    'notifications': {
-                        string: '🛎️ Notification'
-                    },
-                    'callback': {
-                        string: '👈 Callback'
                     },
                     'dependency': {
                         string: '🔗 Dependency'
                     },
+                    'callback': {
+                        string: '👈 Callback'
+                    },
                     'secret': {
                         string: '🔑 Secret key'
                     },
-                    'naas credit': {
-                        string: '⚡ Naas Credits'
-                    }
+                    'Credit base': {
+                        string: '⚡ Credit Plan'
+                    },
+                    'Credit contribution': {
+                        string: '⚡ Credit Contribution'
+                    },
+                    'Credit deferral': {
+                        string: '⚡ Credit Deferral'
+                    },
+                    'Credit onboarding': {
+                        string: '⚡ Credit Onboarding'
+                    },
                 },
                 env: {},
                 logs: [],
@@ -1251,8 +1263,8 @@
                 }">
                     <template slot="table-row" slot-scope="props">
                         <span v-if="props.column.field == 'TYPE'">
-                            <a href="#" v-if="props.row.TYPE.toLowerCase() in type_dict" style="font-weight: bold;">
-                                {{ type_dict[props.row.TYPE.toLowerCase()].string }}</a>
+                            <a href="#" v-if="props.row.TYPE in type_dict" style="font-weight: bold;">
+                                {{ type_dict[props.row.TYPE].string }}</a>
                             <p v-else>{{props.row.TYPE}}</p>
                         </span>
                     </template>
