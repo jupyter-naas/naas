@@ -9,6 +9,7 @@ services:
         "ALLOWED_IFRAME": ""
         JUPYTER_TOKEN: 'naas'
         JUPYTERHUB_URL: 'http://localhost:8888'
+        PROD_JUPYTERHUB_API_TOKEN: ${PROD_JUPYTERHUB_API_TOKEN}
     ports:
       - 8888:8888
       - 5000:5000
@@ -20,3 +21,4 @@ services:
       - ../drivers/naas_drivers:/opt/conda/lib/python3.8/site-packages/naas_drivers
       - ./file_sharing:/home/ftp/file_sharing
       - .docker/.cache/pip:/home/jovyan/.cache/pip
+      - .docker/dev/docker-entrypoint.sh:/docker-entrypoint.sh

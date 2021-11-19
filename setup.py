@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-NDV = "0.76.3"
+NDV = "0.77.0"
 
 driver_dep = [f'naas_drivers=={NDV}']
 dev_dep = [
@@ -25,7 +25,7 @@ dev_dep = [
 ]
 setup(
     name="naas",
-    version="2.0.2",
+    version="2.1.0",
     author="Maxime Jublou",
     author_email="devops@cashstory.com",
     license="BSD",

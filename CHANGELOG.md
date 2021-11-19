@@ -1,3 +1,33 @@
+## 2.1.0 (2021-11-19)
+
+### Feat
+
+- Add dollars on naas manager (#254)
+
+## 2.1.0b3 (2021-11-19)
+
+### Fix
+
+- **Manager**: Fix links to hub/ pages
+
+## 2.1.0b2 (2021-11-19)
+
+### Fix
+
+- **Vresion**: version
+
+## 2.0.3 (2021-11-18)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.77.0
+
+## 2.1.0b1 (2021-11-18)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.77.0
+
 ## 2.0.2 (2021-11-08)
 
 ### Fix
