@@ -1,14 +1,8 @@
-## 2.1.0b1 (2021-11-18)
+## 2.0.3 (2021-11-18)
 
-### Feat
+### Fix
 
-- Feature/credit dollar (#253)
-
-## 2.1.0b0 (2021-11-17)
-
-### Feat
-
-- Feature/credit dollar (#251)
+- **dependency**: update naas_drivers 0.77.0
 
 ## 2.0.2 (2021-11-08)
 
