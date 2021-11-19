@@ -1,3 +1,9 @@
+## 2.1.0b3 (2021-11-19)
+
+### Fix
+
+- **Manager**: Fix links to hub/ pages
+
 ## 2.1.0b2 (2021-11-19)
 
 ### Fix
