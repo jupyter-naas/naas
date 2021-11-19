@@ -927,9 +927,9 @@
                     }
                     return `${minutes}:${seconds}`;
                 },
-                linkToHub() {
+                linkToHub(with_user = true) {
                     let base = `${this.env.JUPYTERHUB_URL}`
-                    if (this.env.JUPYTERHUB_USER && this.env.JUPYTERHUB_USER !== '') {
+                    if (with_user == true && this.env.JUPYTERHUB_USER && this.env.JUPYTERHUB_USER !== '') {
                         return `${this.env.JUPYTERHUB_URL}/user/${this.env.JUPYTERHUB_USER}`
                     }
                     if (base.search('://') === -1) {
@@ -944,13 +944,13 @@
                     return `${this.linkToHub()}/lab`
                 },
                 linkToPassword() {
-                    return `${this.linkToHub()}/hub/change-password`
+                    return `${this.linkToHub(false)}/hub/change-password`
                 },
                 linkToToken() {
-                    return `${this.linkToHub()}/hub/token`
+                    return `${this.linkToHub(false)}/hub/token`
                 },
                 linkToLogout() {
-                    return `${this.linkToHub()}/hub/logout`
+                    return `${this.linkToHub(false)}/hub/logout`
                 },
                 linkToTemplate() {
                     return `https://app.naas.ai/user-redirect/naas/downloader?url=https://raw.githubusercontent.com/jupyter-naas/awesome-notebooks/master/template.ipynb`
