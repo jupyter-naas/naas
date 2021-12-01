@@ -17,7 +17,7 @@ dev_dep = [
     "requests-mock==1.9.2",
     "twine==3.5.0",
     "flake8==3.9.1",
-    "pre-commit==2.12.1",
+    "pre-commit==2.16.0",
     "black==21.5b1",
     "imgcompare==2.0.1",
     "commitizen==2.17.4",
