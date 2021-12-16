@@ -1,3 +1,9 @@
+## 2.1.6 (2021-12-16)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.79.0
+
 ## 2.1.5 (2021-12-07)
 
 ### Fix
