@@ -52,7 +52,7 @@ setup(
         "APScheduler==3.7.0",
         "pycron==3.0.0",
         "html5lib==1.1",
-        "Pillow==8.2.0",
+        "Pillow==9.0.0",
         "markdown2==2.4.0",
         "pandas==1.2.4",
         "escapism==1.0.1",
