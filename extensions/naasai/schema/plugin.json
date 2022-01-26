@@ -1,0 +1,25 @@
+{
+  "jupyter.lab.shortcuts": [],
+  "title": "naasai",
+  "description": "naasai settings.",
+  "type": "object",
+  "properties": {},
+  "additionalProperties": false,
+    "jupyter.lab.menus": {
+      "main": [
+        {
+          "id": "jp-mainmenu-example-menu",
+          "label": "Main Menu Example",
+          "rank": 80,
+          "items": [
+            {
+              "command": "naasai:main-menu",
+              "args": {
+                "origin": "from the menu"
+              }
+            }
+          ]
+        }
+      ]
+    }
+}
