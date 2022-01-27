@@ -1,3 +1,9 @@
+## 2.2.0b2 (2022-01-27)
+
+### Fix
+
+- **naasai**: Change how naasai extension is built
+
 ## 2.2.0b1 (2022-01-27)
 
 ### Fix
