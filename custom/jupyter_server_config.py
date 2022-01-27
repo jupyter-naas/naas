@@ -26,7 +26,7 @@ c.ServerApp.tornado_settings = {
 c.ServerProxy.servers = {
     "naas": {
         "launcher_entry": {
-            "enabled": True,
+            "enabled": False,
             "icon_path": "/etc/naas/custom/naas_fav.svg",
             "title": "Naas manager",
         },

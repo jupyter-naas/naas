@@ -25,3 +25,6 @@ dep-update:
 	docker-compose exec naas pip install -e '/home/ftp/naas[dev]'
 	echo "Updating 'drivers' dependencies."
 	docker-compose exec naas pip install -e '/home/ftp/drivers'
+
+extension-watch:
+	docker-compose exec naas /bin/bash -c 'cd /home/ftp/naas/extensions/naasai && jlpm watch'

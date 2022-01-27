@@ -1,8 +1,104 @@
-## 2.1.1b0 (2021-11-19)
+## 2.1.17 (2022-01-26)
 
 ### Fix
 
-- dependencies (#239)
+- **dependency**: update naas_drivers 0.84.0
+
+## 2.1.16 (2022-01-26)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.83.2
+
+## 2.1.15 (2022-01-24)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.83.1
+
+## 2.1.14 (2022-01-24)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.83.0
+
+## 2.1.13 (2022-01-11)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.82.2
+
+## 2.1.12 (2022-01-10)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.82.1
+
+## 2.1.11 (2022-01-10)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.82.0
+
+## 2.1.10 (2021-12-23)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.81.2
+
+## 2.1.9 (2021-12-23)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.81.1
+
+## 2.1.8 (2021-12-23)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.81.0
+
+## 2.1.7 (2021-12-16)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.80.1
+
+## 2.1.6 (2021-12-16)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.79.0
+
+## 2.1.5 (2021-12-07)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.78.2
+
+## 2.1.4 (2021-12-07)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.78.0
+
+## 2.1.3 (2021-12-01)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.77.3
+
+## 2.1.2 (2021-12-01)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.77.2
+
+## 2.1.1 (2021-11-24)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.77.1
 
 ## 2.1.0 (2021-11-19)
 

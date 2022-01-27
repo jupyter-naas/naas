@@ -22,3 +22,4 @@ services:
       - ./file_sharing:/home/ftp/file_sharing
       - .docker/.cache/pip:/home/jovyan/.cache/pip
       - .docker/dev/docker-entrypoint.sh:/docker-entrypoint.sh
+      - ./custom/overrides.json:/opt/conda/share/jupyter/lab/settings/overrides.json
