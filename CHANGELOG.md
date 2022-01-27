@@ -1,3 +1,9 @@
+## 2.2.0b1 (2022-01-27)
+
+### Fix
+
+- **Dockerfile**: Remove jupyter labextension develop --overwrite
+
 ## 2.2.0b0 (2022-01-27)
 
 ### Feat
