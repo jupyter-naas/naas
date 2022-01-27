@@ -42,8 +42,8 @@ RUN cd /tmp/extensions/naasai \
     && jlpm build \
     && pip install -ve . \
     && mv naasai/labextension /opt/conda/share/jupyter/labextensions/naasai
-RUN jupyter labextension develop --overwrite '/opt/conda/share/jupyter/labextensions/naasai' \
-    && rm -rf /tmp/extensions/
+#RUN jupyter labextension develop --overwrite '/opt/conda/share/jupyter/labextensions/naasai' \
+RUN rm -rf /tmp/extensions/
 
 RUN fix-permissions /opt/conda/share/jupyter/lab/extensions
 
