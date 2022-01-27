@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-NDV = "0.82.1"
+NDV = "0.84.0"
 
 driver_dep = [f'naas_drivers=={NDV}']
 dev_dep = [
@@ -14,18 +14,18 @@ dev_dep = [
     "pytest-mock==3.6.0",
     "pytest-sanic==1.7.0",
     "pytest-asyncio==0.15.1",
-    "requests-mock==1.9.2",
+    "pre-commit==2.15.0",
     "twine==3.5.0",
-    "flake8==3.9.1",
-    "pre-commit==2.12.1",
+    "requests-mock==1.9.3",
+    "flake8==4.0.1",
     "black==21.5b1",
     "imgcompare==2.0.1",
-    "commitizen==2.17.4",
-    "pytest-cov==2.11.1",
+    "commitizen==2.17.13",
+    "pytest-cov==2.12.1",
 ]
 setup(
     name="naas",
-    version="2.1.12",
+    version="2.1.17",
     author="Maxime Jublou",
     author_email="devops@cashstory.com",
     license="BSD",
@@ -46,17 +46,18 @@ setup(
     install_requires=[
         "nbconvert==6.0.7",
         "nest_asyncio==1.5.1",
-        "ipywidgets==7.6.3",
+        "ipywidgets==7.6.5",
         "papermill==2.3.3",
         "pretty-cron==1.2.0",
-        "APScheduler==3.7.0",
+        "APScheduler==3.8.1",
         "pycron==3.0.0",
+        "aiohttp==3.7.4.post0",
         "html5lib==1.1",
-        "Pillow==8.2.0",
+        "Pillow==8.3.2",
         "markdown2==2.4.0",
         "pandas==1.2.4",
         "escapism==1.0.1",
-        "notebook==6.4.0",
+        "notebook==6.4.1",
         "ipython==7.22.0",
         "ipykernel==5.5.3",
         "requests==2.25.1",
@@ -65,7 +66,7 @@ setup(
         "sanic-openapi==0.6.2",
         "argparse==1.4.0",
         "nbclient==0.5.3",
-        "beautifulsoup4==4.9.3",
+        "beautifulsoup4==4.10.0",
         "tzdata",
         "pysqlite3==0.4.6",
         "pymongo[srv]==3.11.3",
