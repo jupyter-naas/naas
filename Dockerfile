@@ -37,13 +37,12 @@ COPY custom /etc/naas/custom
 RUN /etc/naas/scripts/install_supp
 RUN /etc/naas/scripts/customize
 
-COPY ./extensions /tmp/extensions
-RUN cd /tmp/extensions/naasai \
+RUN mkdir -p /opt/conda/share/jupyter/customextensions
+COPY ./extensions /opt/conda/share/jupyter/customextensions
+RUN cd /opt/conda/share/jupyter/customextensions/naasai \
     && jlpm build \
     && pip install -ve . \
-    && mv naasai/labextension /opt/conda/share/jupyter/labextensions/naasai
-#RUN jupyter labextension develop --overwrite '/opt/conda/share/jupyter/labextensions/naasai' \
-RUN rm -rf /tmp/extensions/
+    && jupyter labextension develop --overwrite .
 
 RUN fix-permissions /opt/conda/share/jupyter/lab/extensions
 
