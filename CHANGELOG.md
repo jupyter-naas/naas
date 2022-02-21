@@ -1,3 +1,9 @@
+## 2.1.29 (2022-02-21)
+
+### Fix
+
+- Make docker build in CI use local context.
+
 ## 2.1.28 (2022-02-21)
 
 ### Fix
