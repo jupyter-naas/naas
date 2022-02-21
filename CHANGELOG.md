@@ -1,3 +1,9 @@
+## 2.2.0b8 (2022-02-21)
+
+### Fix
+
+- **Extension**: Compute naas icon url dynamicly
+
 ## 2.2.0b7 (2022-02-21)
 
 ### Fix
