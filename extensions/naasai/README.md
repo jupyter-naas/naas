@@ -1,6 +1,6 @@
 # naasai
 
-[![Github Actions Status](https://github.com/github_username/naasai/workflows/Build/badge.svg)](https://github.com/github_username/naasai/actions/workflows/build.yml)
+[![Github Actions Status](https://github.com/jupyter-naas/naas/workflows/Build/badge.svg)](https://github.com/jupyter-naas/naas/actions/workflows/build.yml)
 
 A JupyterLab extension.
 

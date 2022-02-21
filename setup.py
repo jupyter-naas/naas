@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-NDV = "0.84.0"
+NDV = "0.86.2"
 
 driver_dep = [f'naas_drivers=={NDV}']
 dev_dep = [
@@ -58,7 +58,8 @@ setup(
         "pandas==1.2.4",
         "escapism==1.0.1",
         "notebook==6.4.1",
-        "ipython==7.22.0",
+        "MarkupSafe==2.0.1", # "notebook==6.4.0" is requesting a Jinja2 version <3.0 but Jinja2 is requesting the latest version of MarkupSafe which is not compatible with this older version of Jinja2.
+        "ipython==7.23.1",
         "ipykernel==5.5.3",
         "requests==2.25.1",
         "sentry-sdk==1.0.0",
@@ -70,7 +71,8 @@ setup(
         "tzdata",
         "pysqlite3==0.4.6",
         "pymongo[srv]==3.11.3",
-        "psycopg2-binary==2.9.1"
+        "psycopg2-binary==2.9.1",
+        "mprop==0.16.0"
     ],
     classifiers=[
         "Programming Language :: Python :: 3.9",
