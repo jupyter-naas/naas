@@ -23,4 +23,3 @@ cp /etc/naas/custom/naas_logo_n.ico /opt/conda/lib/python3.9/site-packages/noteb
 cp /etc/naas/custom/naas_logo_n.ico /opt/conda/lib/python3.9/site-packages/notebook/static/base/images/favicon.ico
 cat /etc/naas/custom/custom.css >> /opt/conda/share/jupyter/lab/themes/@jupyterlab/theme-light-extension/index.css
 cat /etc/naas/custom/custom.css >> /opt/conda/share/jupyter/lab/themes/@jupyterlab/theme-dark-extension/index.css
-cp /etc/naas/custom/naas-fav.png /opt/conda/lib/python3.9/site-packages/jupyter_server/static/favicons

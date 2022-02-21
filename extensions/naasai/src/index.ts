@@ -37,7 +37,9 @@ function initWidget() {
   // Add an image element to the content
   let ifrm = document.createElement('iframe');
   content.node.appendChild(ifrm);
-  ifrm.setAttribute('src', '/naas')
+  let splitted_url = window.location.href.split('/')
+  splitted_url[splitted_url.length-1] = 'naas'
+  ifrm.setAttribute('src', splitted_url.join('/'))
   ifrm.setAttribute('style', "width:100%;height:100%;")
 }
 
@@ -232,14 +234,16 @@ const plugin: JupyterFrontEndPlugin<void> = {
     }
 
     if (launcher) {
+      let splitted_url = window.location.href.split('/')
+      splitted_url[splitted_url.length-1] = 'static/favicons/favicon.ico'
+
       launcher.add({
         command: 'naasai:open-manager',
         category: 'Notebook',
-        kernelIconUrl: "http://127.0.0.1:8888/static/favicons/naas-fav.png",
+        kernelIconUrl: splitted_url.join('/'),
         rank: 100
       });
     }
-
   });
 
   app.started.then(function() {
