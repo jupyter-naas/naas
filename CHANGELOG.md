@@ -1,3 +1,9 @@
+## 2.2.0b9 (2022-02-21)
+
+### Fix
+
+- **extension**: Fix url replacements
+
 ## 2.2.0b8 (2022-02-21)
 
 ### Fix
