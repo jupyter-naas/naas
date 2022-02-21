@@ -49,7 +49,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
   requires: [ISettingRegistry, ICommandPalette, IMainMenu, ILauncher],
   activate: (app: JupyterFrontEnd, settingRegistry: ISettingRegistry | null, palette: ICommandPalette, mainMenu: IMainMenu, launcher: ILauncher | null) => {
     const { commands } = app;
-    eval('window.app = app');
+    //eval('window.app = app');
     console.log('JupyterLab extension naasai is activated!');
 
     if (settingRegistry) {
@@ -63,14 +63,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
         });
     }
 
-  
-
-    // // Create a blank content widget inside of a MainAreaWidget
-    // const content = new Widget();
-    // const widget = new MainAreaWidget({ content });
-    initWidget();
-    // Logic to know if there is any other widget open
-    //!!toArray(shell.widgets('main')).length;
+  initWidget();
 
   const naasMenu = new Menu({ commands });
 
@@ -228,69 +221,30 @@ const plugin: JupyterFrontEndPlugin<void> = {
   naasMenu.addItem({ command: naas_commands[9].command_name});
 
 
-    // // Add an application command
-    // const command: string = 'naasai:open-manager';
-    // app.commands.addCommand(command, {
-    //   label: 'Naas Manager',
-    //   execute: () => {
-    //     if (!widget.isAttached) {
-    //       // Attach the widget to the main work area if it's not there
-    //       app.shell.add(widget, 'main' ,{
-    //         'rank': -100000,
-    //         'activate': false
-    //       });
-    //     } else {
-    //       // Activate the widget
-    //       app.shell.activateById(widget.id);
-    //     }
+  app.restored.then(() => {
+    console.log('restored')
+    if (toArray(app.shell.widgets('main')).length == 0) {
+      app.commands.execute('naasai:open-manager');
+      app.commands.execute('launcher:create');
+      
+      // Activate the widget
+      app.shell.activateById(widget.id);
+    }
 
-    //   }
-    // });
+    if (launcher) {
+      launcher.add({
+        command: 'naasai:open-manager',
+        category: 'Notebook',
+        kernelIconUrl: "http://127.0.0.1:8888/static/favicons/naas-fav.png",
+        rank: 100
+      });
+    }
 
-    
+  });
 
-    // Add the command to the palette.
-    // palette.addItem({ command, category: 'Manager' });
-    
-
-    // naasMenu.addItem({ command });
-
-    app.restored.then(() => {
-      console.log('restored')
-      if (toArray(app.shell.widgets('main')).length == 0) {
-        app.commands.execute('naasai:open-manager');
-        app.commands.execute('launcher:create');
-        
-        // Activate the widget
-        app.shell.activateById(widget.id);
-      }
-
-      if (launcher) {
-        launcher.add({
-          command: 'naasai:open-manager',
-          category: 'Notebook',
-          kernelIconUrl: "http://127.0.0.1:8888/static/favicons/naas-fav.png",
-          rank: 100
-        });
-        // launcher.add({
-        //   command: 'naasai:welcome-to-naas',
-        //   category: 'Notebook',
-        //   kernelIconUrl: "http://127.0.0.1:8888/static/favicons/naas-fav.png",
-        //   rank: 101
-        // });
-      } else {
-        console.log('NO LAUNCHER')
-      }
-
-      //
-
-      // Should we show Naas Welcome tour?
-      // app.commands.execute('filebrowser:open', '/path/to/welcome_tour.ipynb');
-    })
-
-    app.started.then(function() {
-      console.log('naasai started')
-    })
+  app.started.then(function() {
+    console.log('naasai started')
+  })
 
   }
 };
