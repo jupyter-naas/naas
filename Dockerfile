@@ -1,3 +1,14 @@
+FROM jupyternaas/singleuser:2.12.0 as extension_builder
+
+USER root
+
+COPY ./extensions /tmp/extensions
+RUN cd /tmp/extensions/naasai \
+    && jlpm install \
+    && jlpm build \
+    && pip install -ve . \
+    && mv naasai/labextension /opt/conda/share/jupyter/labextensions/naasai
+
 FROM jupyternaas/singleuser:2.12.0
 
 # Build-time metadata as defined at http://label-schema.org
@@ -37,20 +48,7 @@ COPY custom /etc/naas/custom
 RUN /etc/naas/scripts/install_supp
 RUN /etc/naas/scripts/customize
 
-# RUN mkdir -p /opt/conda/share/jupyter/customextensions
-# COPY ./extensions /opt/conda/share/jupyter/customextensions
-# RUN cd /opt/conda/share/jupyter/customextensions/naasai \
-#     && jlpm build \
-#     && pip install -ve . \
-#     && jupyter labextension develop --overwrite .
-
-COPY ./extensions /tmp/extensions
-RUN cd /tmp/extensions/naasai \
-    && jlpm build \
-    && pip install -ve . \
-    && mv naasai/labextension /opt/conda/share/jupyter/labextensions/naasai
-#RUN jupyter labextension develop --overwrite '/opt/conda/share/jupyter/labextensions/naasai' \
-RUN rm -rf /tmp/extensions/
+COPY --from=extension_builder /opt/conda/share/jupyter/labextensions/naasai /opt/conda/share/jupyter/labextensions/naasai
 
 RUN fix-permissions /opt/conda/share/jupyter/lab/extensions
 
