@@ -16,10 +16,11 @@ sed -i "s|</head>|$CANNY</head>|g" /opt/conda/share/jupyter/lab/static/index.htm
 sed -i "s|</head>|$CRISP</head>|g" /opt/conda/share/jupyter/lab/static/index.html
 sed -i "s|</head>|$USER_INJECT</head>|g" /opt/conda/share/jupyter/lab/static/index.html
 cp /etc/naas/custom/naas_logo_n.ico /opt/conda/share/jupyterhub/static/favicon.ico
-cp /etc/naas/custom/naas_logo_n.ico /opt/conda/lib/python3.8/site-packages/jupyter_server/static/favicon.ico
-cp /etc/naas/custom/naas_logo_n.ico /opt/conda/lib/python3.8/site-packages/nbdime/webapp/static/favicon.ico
-cp /etc/naas/custom/naas_logo_n.ico /opt/conda/lib/python3.8/site-packages/jupyter_server/static/favicons/favicon.ico
-cp /etc/naas/custom/naas_logo_n.ico /opt/conda/lib/python3.8/site-packages/notebook/static/favicon.ico
-cp /etc/naas/custom/naas_logo_n.ico /opt/conda/lib/python3.8/site-packages/notebook/static/base/images/favicon.ico
+cp /etc/naas/custom/naas_logo_n.ico /opt/conda/lib/python3.9/site-packages/jupyter_server/static/favicon.ico
+cp /etc/naas/custom/naas_logo_n.ico /opt/conda/lib/python3.9/site-packages/nbdime/webapp/static/favicon.ico
+cp /etc/naas/custom/naas_logo_n.ico /opt/conda/lib/python3.9/site-packages/jupyter_server/static/favicons/favicon.ico
+cp /etc/naas/custom/naas_logo_n.ico /opt/conda/lib/python3.9/site-packages/notebook/static/favicon.ico
+cp /etc/naas/custom/naas_logo_n.ico /opt/conda/lib/python3.9/site-packages/notebook/static/base/images/favicon.ico
 cat /etc/naas/custom/custom.css >> /opt/conda/share/jupyter/lab/themes/@jupyterlab/theme-light-extension/index.css
 cat /etc/naas/custom/custom.css >> /opt/conda/share/jupyter/lab/themes/@jupyterlab/theme-dark-extension/index.css
+cp /etc/naas/custom/naas-fav.png /opt/conda/lib/python3.9/site-packages/jupyter_server/static/favicons

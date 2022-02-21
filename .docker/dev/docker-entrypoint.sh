@@ -12,6 +12,8 @@ pip install -e '/home/ftp/naas[dev]'
 # Install naas drivers dependencies in background.
 pip install -e '/home/ftp/drivers[dev]' &
 
+cd '/home/ftp/naas/extensions/naasai' && jlpm install && jlpm run build
+
 pip install -ve '/home/ftp/naas/extensions/naasai'
 
 jupyter labextension develop --overwrite '/home/ftp/naas/extensions/naasai'

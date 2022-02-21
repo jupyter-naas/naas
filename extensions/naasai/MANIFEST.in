@@ -12,7 +12,6 @@ graft naasai/labextension
 # Javascript files
 graft src
 graft style
-graft schema
 prune **/node_modules
 prune lib
 prune binder

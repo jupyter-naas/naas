@@ -1,6 +1,6 @@
 # naasai
 
-[![Github Actions Status](https://github.com/github_username/naasai/workflows/Build/badge.svg)](https://github.com/github_username/naasai/actions/workflows/build.yml)
+[![Github Actions Status](https://github.com/github_username/naasai-test/workflows/Build/badge.svg)](https://github.com/github_username/naasai-test/actions/workflows/build.yml)
 
 A JupyterLab extension.
 
@@ -73,7 +73,7 @@ pip uninstall naasai
 
 In development mode, you will also need to remove the symlink created by `jupyter labextension develop`
 command. To find its location, you can run `jupyter labextension list` to figure out where the `labextensions`
-folder is located. Then you can remove the symlink named `naasai` within that folder.
+folder is located. Then you can remove the symlink named `naasai-test` within that folder.
 
 ### Packaging the extension
 
