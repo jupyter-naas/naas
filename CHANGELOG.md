@@ -1,3 +1,9 @@
+## 2.2.0b4 (2022-02-21)
+
+### Feat
+
+- Jupyterlab naas extension (#288)
+
 ## 2.2.0b3 (2022-01-27)
 
 ### Fix
