@@ -1,3 +1,9 @@
+## 2.2.0b5 (2022-02-21)
+
+### Fix
+
+- Use local context for docker build in ci
+
 ## 2.2.0b4 (2022-02-21)
 
 ### Feat
