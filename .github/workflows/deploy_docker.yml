@@ -39,7 +39,6 @@ jobs:
           push: true
           tags: ${{ steps.prepare.outputs.tag }}
           context: .
-          platforms: linux/amd64,linux/arm64
       - uses: actions-ecosystem/action-get-latest-tag@v1
         id: get-latest-tag
 #      - uses: actions-ecosystem/action-regex-match@v2
