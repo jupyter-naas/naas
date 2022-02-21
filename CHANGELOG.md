@@ -1,3 +1,9 @@
+## 2.2.0b6 (2022-02-21)
+
+### Fix
+
+- Use multistage build to build our Jupyterlab Extension
+
 ## 2.2.0b5 (2022-02-21)
 
 ### Fix
