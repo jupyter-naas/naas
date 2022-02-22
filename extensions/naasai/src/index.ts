@@ -37,7 +37,7 @@ function initWidget() {
   // Add an image element to the content
   let ifrm = document.createElement('iframe');
   content.node.appendChild(ifrm);
-  ifrm.setAttribute('src', window.location.href.replace(/\/lab\/.*/g, '/naas'))
+  ifrm.setAttribute('src', window.location.href.replace(/\/lab.*/g, '/naas'))
   ifrm.setAttribute('style', "width:100%;height:100%;")
 }
 
@@ -238,7 +238,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
       launcher.add({
         command: 'naasai:open-manager',
         category: 'Notebook',
-        kernelIconUrl: window.location.href.replace(/\/lab\/.*/g, '/static/favicons/favicon.ico'),
+        kernelIconUrl: window.location.href.replace(/\/lab.*/g, '/static/favicons/favicon.ico'),
         rank: 100
       });
     }
