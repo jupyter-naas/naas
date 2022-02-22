@@ -1,3 +1,9 @@
+## 2.2.0b10 (2022-02-22)
+
+### Fix
+
+- **extension**: Fix regex for naas manager url
+
 ## 2.2.0b9 (2022-02-21)
 
 ### Fix
