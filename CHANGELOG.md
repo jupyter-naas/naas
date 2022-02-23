@@ -1,3 +1,9 @@
+## 2.2.0 (2022-02-23)
+
+### Fix
+
+- Update dependencies and add naas extension (#255)
+
 ## 2.2.0b12 (2022-02-23)
 
 ## 2.1.32 (2022-02-23)
