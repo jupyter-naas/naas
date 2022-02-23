@@ -1,176 +1,86 @@
-## 2.2.0b10 (2022-02-22)
+## 2.2.0b10 (2022-02-21)
 
 ### Fix
 
-- **extension**: Fix regex for naas manager url
+- Re enable cs_conf in CI/CD
 
-## 2.2.0b9 (2022-02-21)
-
-### Fix
-
-- **extension**: Fix url replacements
-
-## 2.2.0b8 (2022-02-21)
-
-### Fix
-
-- **Extension**: Compute naas icon url dynamicly
-
-## 2.2.0b7 (2022-02-21)
+## 2.1.30 (2022-02-21)
 
 ### Fix
 
 - Remove ARM build.
 
-## 2.2.0b6 (2022-02-21)
+## 2.1.29 (2022-02-21)
 
 ### Fix
 
-- Use multistage build to build our Jupyterlab Extension
+- Make docker build in CI use local context.
 
-## 2.2.0b5 (2022-02-21)
-
-### Fix
-
-- Use local context for docker build in ci
-
-## 2.2.0b4 (2022-02-21)
-
-### Feat
-
-- Jupyterlab naas extension (#288)
-
-## 2.2.0b3 (2022-01-27)
+## 2.1.28 (2022-02-21)
 
 ### Fix
 
-- **Extension**: Rollback extension build
+- fix version of MarkupSafe
 
-## 2.1.17 (2022-01-26)
-
-### Fix
-
-- **dependency**: update naas_drivers 0.84.0
-
-## 2.1.16 (2022-01-26)
+## 2.1.27 (2022-02-21)
 
 ### Fix
 
-- **dependency**: update naas_drivers 0.83.2
+- **dependency**: update naas_drivers 0.86.2
 
-## 2.1.15 (2022-01-24)
-
-### Fix
-
-- **dependency**: update naas_drivers 0.83.1
-
-## 2.1.14 (2022-01-24)
+## 2.1.26 (2022-02-18)
 
 ### Fix
 
-- **dependency**: update naas_drivers 0.83.0
+- **dependency**: update singleuser 2.12.0
 
-## 2.1.13 (2022-01-11)
-
-### Fix
-
-- **dependency**: update naas_drivers 0.82.2
-
-## 2.1.12 (2022-01-10)
+## 2.1.25 (2022-02-16)
 
 ### Fix
 
-- **dependency**: update naas_drivers 0.82.1
+- **dependency**: update naas_drivers 0.86.1
 
-## 2.1.11 (2022-01-10)
-
-### Fix
-
-- **dependency**: update naas_drivers 0.82.0
-
-## 2.1.10 (2021-12-23)
+## 2.1.24 (2022-02-11)
 
 ### Fix
 
-- **dependency**: update naas_drivers 0.81.2
+- **dependency**: update naas_drivers 0.86.0
 
-## 2.1.9 (2021-12-23)
-
-### Fix
-
-- **dependency**: update naas_drivers 0.81.1
-
-## 2.1.8 (2021-12-23)
+## 2.1.23 (2022-02-07)
 
 ### Fix
 
-- **dependency**: update naas_drivers 0.81.0
+- add missing mprop module (#282)
 
-## 2.1.7 (2021-12-16)
-
-### Fix
-
-- **dependency**: update naas_drivers 0.80.1
-
-## 2.1.6 (2021-12-16)
+## 2.1.22 (2022-02-01)
 
 ### Fix
 
-- **dependency**: update naas_drivers 0.79.0
+- update ipython version
 
-## 2.1.5 (2021-12-07)
-
-### Fix
-
-- **dependency**: update naas_drivers 0.78.2
-
-## 2.1.4 (2021-12-07)
+## 2.1.21 (2022-01-31)
 
 ### Fix
 
-- **dependency**: update naas_drivers 0.78.0
+- **dependency**: update naas_drivers 0.85.2
 
-## 2.1.3 (2021-12-01)
-
-### Fix
-
-- **dependency**: update naas_drivers 0.77.3
-
-## 2.1.2 (2021-12-01)
+## 2.1.20 (2022-01-29)
 
 ### Fix
 
-- **dependency**: update naas_drivers 0.77.2
+- **dependency**: update naas_drivers 0.85.1
 
-## 2.1.1 (2021-11-24)
-
-### Fix
-
-- **dependency**: update naas_drivers 0.77.1
-
-## 2.2.0b2 (2022-01-27)
+## 2.1.19 (2022-01-28)
 
 ### Fix
 
-- **naasai**: Change how naasai extension is built
+- **dependency**: update naas_drivers 0.85.0
 
-## 2.2.0b1 (2022-01-27)
-
-### Fix
-
-- **Dockerfile**: Remove jupyter labextension develop --overwrite
-
-## 2.2.0b0 (2022-01-27)
-
-### Feat
-
-- Custom extension (#276)
-
-## 2.1.1b0 (2021-11-19)
+## 2.1.18 (2022-01-28)
 
 ### Fix
 
-- dependencies (#239)
+- **dependency**: update naas_drivers 0.84.1
 
 ## 2.1.17 (2022-01-26)
 
