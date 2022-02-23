@@ -1,9 +1,20 @@
+FROM jupyternaas/singleuser:2.12.0 as extension_builder
+
+USER root
+
+COPY ./extensions /tmp/extensions
+RUN cd /tmp/extensions/naasai \
+    && jlpm install \
+    && jlpm build \
+    && pip install -ve . \
+    && mv naasai/labextension /opt/conda/share/jupyter/labextensions/naasai
+
 FROM jupyternaas/singleuser:2.12.0
 
 # Build-time metadata as defined at http://label-schema.org
 ARG BUILD_DATE
 ARG VCS_REF
-ENV NAAS_VERSION 2.1.32
+ENV NAAS_VERSION 2.2.0b12
 ENV JUPYTER_ENABLE_LAB 'yes'
 ENV NB_UMASK=022
 ENV NB_USER=ftp
@@ -36,6 +47,8 @@ COPY scripts /etc/naas/scripts
 COPY custom /etc/naas/custom
 RUN /etc/naas/scripts/install_supp
 RUN /etc/naas/scripts/customize
+
+COPY --from=extension_builder /opt/conda/share/jupyter/labextensions/naasai /opt/conda/share/jupyter/labextensions/naasai
 
 RUN fix-permissions /opt/conda/share/jupyter/lab/extensions
 
