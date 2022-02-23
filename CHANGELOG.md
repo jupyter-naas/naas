@@ -1,3 +1,89 @@
+## 2.2.0b11 (2022-02-23)
+
+## 2.1.31 (2022-02-21)
+
+### Fix
+
+- Re enable cs_conf in CI/CD
+
+## 2.1.30 (2022-02-21)
+
+### Fix
+
+- Remove ARM build.
+
+## 2.1.29 (2022-02-21)
+
+### Fix
+
+- Make docker build in CI use local context.
+
+## 2.1.28 (2022-02-21)
+
+### Fix
+
+- fix version of MarkupSafe
+
+## 2.1.27 (2022-02-21)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.86.2
+
+## 2.1.26 (2022-02-18)
+
+### Fix
+
+- **dependency**: update singleuser 2.12.0
+
+## 2.1.25 (2022-02-16)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.86.1
+
+## 2.1.24 (2022-02-11)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.86.0
+
+## 2.1.23 (2022-02-07)
+
+### Fix
+
+- add missing mprop module (#282)
+
+## 2.1.22 (2022-02-01)
+
+### Fix
+
+- update ipython version
+
+## 2.1.21 (2022-01-31)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.85.2
+
+## 2.1.20 (2022-01-29)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.85.1
+
+## 2.1.19 (2022-01-28)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.85.0
+
+## 2.1.18 (2022-01-28)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.84.1
+
 ## 2.2.0b10 (2022-02-21)
 
 ### Fix
