@@ -1,3 +1,9 @@
+## 2.2.7 (2022-03-16)
+
+### Fix
+
+- **Jobs**: Set scheduler status from started to installed at naas-runner boot. (#296)
+
 ## 2.2.6 (2022-03-16)
 
 ### Fix
