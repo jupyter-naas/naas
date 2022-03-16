@@ -84,6 +84,8 @@ class Assets:
             print("Missing file path")
             return
         token = os.urandom(30).hex()
+        if current_file.endswith(".png"):
+            token = f"{token}.png"
         status = t_add
         try:
             token = self.manager.get_value(current_file, False)
