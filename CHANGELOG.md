@@ -1,3 +1,10 @@
+## 2.2.5 (2022-03-16)
+
+### Fix
+
+- add png in token to integrate with notion
+- add png in token to integrate with notion
+
 ## 2.2.4 (2022-03-02)
 
 ### Fix
