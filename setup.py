@@ -49,7 +49,7 @@ setup(
         "ipywidgets==7.6.5",
         "papermill==2.3.3",
         "pretty-cron==1.2.0",
-        "APScheduler==3.8.1",
+        "APScheduler==3.9.1",
         "pycron==3.0.0",
         "aiohttp==3.7.4.post0",
         "html5lib==1.1",
