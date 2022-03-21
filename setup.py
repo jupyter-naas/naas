@@ -12,7 +12,7 @@ dev_dep = [
     "pytest==6.2.4",
     "pytest-tornasync==0.6.0.post2",
     "pytest-mock==3.6.0",
-    "pytest-sanic==1.7.0",
+    "pytest-sanic==1.9.1",
     "pytest-asyncio==0.15.1",
     "pre-commit==2.15.0",
     "twine==3.5.0",
