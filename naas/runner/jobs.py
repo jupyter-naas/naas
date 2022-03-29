@@ -83,7 +83,8 @@ class Jobs:
         else:
             uid = str(uuid.uuid4())
             self.__df = self.__get_save_from_file(uid)
-            self.__df.loc[self.__df["status"] == "started", "status"] = "installed"
+            if "status" in self.__df:
+                self.__df.loc[self.__df["status"] == "started", "status"] = "installed"
         self.__cleanup_jobs()
 
     def reload_jobs(self):
