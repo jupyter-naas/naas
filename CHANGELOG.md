@@ -1,3 +1,10 @@
+## 2.2.12 (2022-03-30)
+
+### Fix
+
+- force image to naas asset
+- force image image to naas asset
+
 ## 2.2.11 (2022-03-29)
 
 ### Fix
