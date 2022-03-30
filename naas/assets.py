@@ -77,14 +77,14 @@ class Assets:
         except:  # noqa: E722
             return None
 
-    def add(self, path=None, params={}, debug=False):
+    def add(self, path=None, params={}, debug=False, force_image=False):
         self.deprecatedPrint()
         current_file = self.manager.get_path(path)
         if current_file is None:
             print("Missing file path")
             return
         token = os.urandom(30).hex()
-        if current_file.endswith(".png"):
+        if current_file.endswith(".png") or force_image:
             token = f"{token}.png"
         status = t_add
         try:
