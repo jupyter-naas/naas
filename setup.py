@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
-NDV = "0.91.2"
+NDV = "0.91.3"
 
 driver_dep = [f'naas_drivers=={NDV}']
 dev_dep = [
