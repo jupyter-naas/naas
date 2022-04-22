@@ -48,6 +48,8 @@ COPY custom /etc/naas/custom
 RUN /etc/naas/scripts/install_supp
 RUN /etc/naas/scripts/customize
 
+RUN apt update && apt install --yes graphviz && rm -rf /var/lib/apt/lists/*
+
 COPY --from=extension_builder /opt/conda/share/jupyter/labextensions/naasai /opt/conda/share/jupyter/labextensions/naasai
 
 RUN fix-permissions /opt/conda/share/jupyter/lab/extensions
