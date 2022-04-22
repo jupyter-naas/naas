@@ -1,3 +1,9 @@
+## 2.3.0 (2022-04-22)
+
+### Feat
+
+- Install graphviz by default.
+
 ## 2.2.25 (2022-04-20)
 
 ### Fix
