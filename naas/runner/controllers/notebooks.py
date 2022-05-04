@@ -1,8 +1,10 @@
-from naas.ntypes import t_notebook, t_health, t_error, t_start, t_delete
+from naas.ntypes import t_notebook, t_health, t_error, t_start, t_delete, t_out_of_credits
 from sanic.views import HTTPMethodView
 from sanic.exceptions import ServerError
 import urllib
 import uuid
+import os
+from naas_drivers import naascredits
 
 
 def parse_data(request):
@@ -40,6 +42,21 @@ class NbController(HTTPMethodView):
             file_filepath = job.get("path")
             cur_job = job.copy()
             cur_job["params"] = {**(job.get("params", dict())), **(data)}
+            if not os.environ.get('JUPYTERHUB_API_TOKEN') is None :
+                if _.get(naascredits.connect().get_balance(), 'balance') <= 0:
+                    self.__logger.info(
+                        {
+                            "id": uid,
+                            "type": t_notebook,
+                            "status": t_out_of_credits,
+                            "filepath": file_filepath,
+                            "token": token,
+                        }
+                    )
+                    raise ServerError(
+                        {"error": "Out of credits"},
+                        status_code=401,
+                    )
             self.__logger.info(
                 {
                     "id": uid,

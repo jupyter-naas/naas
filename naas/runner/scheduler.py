@@ -6,6 +6,7 @@ from naas.ntypes import (
     t_error,
     t_busy,
     t_delete,
+    t_out_of_credits,
 )
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from naas.callback import Callback
@@ -21,6 +22,8 @@ import pytz
 import uuid
 import os
 
+from naas_drivers import naascredits
+import pydash as _
 
 async def fetch(url):
     return requests.get(url, timeout=n_env.scheduler_timeout).json()
@@ -109,6 +112,18 @@ class Scheduler:
                 and status != t_delete
                 and not running
             ):
+                if not os.environ.get('JUPYTERHUB_API_TOKEN') is None :
+                    if _.get(naascredits.connect().get_balance(), 'balance') <= 0:
+                        self.__logger.info(
+                            {
+                                "main_id": str(main_uid),
+                                "id": uid,
+                                "type": t_scheduler,
+                                "status": t_out_of_credits,
+                                "filepath": file_filepath,
+                            }
+                        )
+                        return
                 self.__logger.info(
                     {
                         "main_id": str(main_uid),

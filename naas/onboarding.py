@@ -108,7 +108,7 @@ def __get_onboarding_list():
     return url_list
 
 
-def init_onborading():
+def init_onboarding():
     #  jupyter lab workspaces import file_name.json
     try:
         if os.path.exists(n_env.custom_path):

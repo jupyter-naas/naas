@@ -41,6 +41,7 @@ t_busy = "busy"
 t_skip = "skiped"
 t_error = "error"
 t_health = "healthy"
+t_out_of_credits = "out_of_credits"
 
 mime_html = "text/html"
 mime_csv = "text/csv"

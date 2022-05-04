@@ -15,7 +15,7 @@ from sanic_openapi import swagger_blueprint
 from .controllers.env import EnvController
 from .controllers.performance import PerformanceController
 from .notifications import Notifications
-from naas.onboarding import init_onborading
+from naas.onboarding import init_onboarding
 from .proxy import escape_kubernet
 from .scheduler import Scheduler
 from .notebooks import Notebooks
@@ -74,7 +74,7 @@ class Runner:
         )
 
     async def initialize_before_start(self, app, loop):
-        init_onborading()
+        init_onboarding()
         if self.__jobs is None:
             self.__jobs = Jobs(self.__logger)
             self.__secret = Secret(self.__logger)

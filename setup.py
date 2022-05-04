@@ -73,7 +73,8 @@ setup(
         "pysqlite3==0.4.6",
         "pymongo[srv]==3.11.3",
         "psycopg2-binary==2.9.1",
-        "mprop==0.16.0"
+        "mprop==0.16.0",
+        "pydash==5.1.0"
     ],
     classifiers=[
         "Programming Language :: Python :: 3.9",
