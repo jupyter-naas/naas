@@ -19,10 +19,10 @@ class ByteSize(int):
 
     def __init__(self, *args, **kwargs):
         self.bytes = self.B = int(self)
-        self.kilobytes = self.kB = self / self._kB ** 1
-        self.megabytes = self.MB = self / self._kB ** 2
-        self.gigabytes = self.GB = self / self._kB ** 3
-        self.petabytes = self.PB = self / self._kB ** 4
+        self.kilobytes = self.kB = self / self._kB**1
+        self.megabytes = self.MB = self / self._kB**2
+        self.gigabytes = self.GB = self / self._kB**3
+        self.petabytes = self.PB = self / self._kB**4
         *suffixes, last = self._suffixes
         suffix = next(
             (suffix for suffix in suffixes if 1 < getattr(self, suffix) < self._kB),

@@ -25,6 +25,7 @@ import os
 from naas_drivers import naascredits
 import pydash as _
 
+
 async def fetch(url):
     return requests.get(url, timeout=n_env.scheduler_timeout).json()
 
@@ -112,8 +113,8 @@ class Scheduler:
                 and status != t_delete
                 and not running
             ):
-                if not os.environ.get('JUPYTERHUB_API_TOKEN') is None :
-                    if _.get(naascredits.connect().get_balance(), 'balance') <= 0:
+                if not os.environ.get("JUPYTERHUB_API_TOKEN") is None:
+                    if _.get(naascredits.connect().get_balance(), "balance") <= 0:
                         self.__logger.info(
                             {
                                 "main_id": str(main_uid),
