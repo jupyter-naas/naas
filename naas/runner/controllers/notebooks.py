@@ -50,7 +50,7 @@ class NbController(HTTPMethodView):
             file_filepath = job.get("path")
             cur_job = job.copy()
             cur_job["params"] = {**(job.get("params", dict())), **(data)}
-            if not os.environ.get("JUPYTERHUB_API_TOKEN") is None:
+            if not os.environ.get("JUPYTERHUB_API_TOKEN") is None and "app.naas.ai" in os.environ.get("JUPYTERHUB_URL", ''):
                 if _.get(naascredits.connect().get_balance(), "balance") <= 0:
                     self.__logger.info(
                         {
