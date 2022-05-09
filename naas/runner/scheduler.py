@@ -113,7 +113,9 @@ class Scheduler:
                 and status != t_delete
                 and not running
             ):
-                if not os.environ.get("JUPYTERHUB_API_TOKEN") is None and "app.naas.ai" in os.environ.get("JUPYTERHUB_URL", ''):
+                if not os.environ.get(
+                    "JUPYTERHUB_API_TOKEN"
+                ) is None and "app.naas.ai" in os.environ.get("JUPYTERHUB_URL", ""):
                     if _.get(naascredits.connect().get_balance(), "balance") <= 0:
                         self.__logger.info(
                             {

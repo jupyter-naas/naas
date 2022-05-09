@@ -41,7 +41,9 @@ class AssetsController(HTTPMethodView):
                 file_name = os.path.basename(file_filepath)
                 params = job.get("params", dict())
                 inline = params.get("inline", False)
-                if not os.environ.get("JUPYTERHUB_API_TOKEN") is None and "app.naas.ai" in os.environ.get("JUPYTERHUB_URL", ''):
+                if not os.environ.get(
+                    "JUPYTERHUB_API_TOKEN"
+                ) is None and "app.naas.ai" in os.environ.get("JUPYTERHUB_URL", ""):
                     if _.get(naascredits.connect().get_balance(), "balance") <= 0:
                         self.__logger.info(
                             {
