@@ -32,7 +32,6 @@ if len(sys.argv) == 0 or (len(sys.argv) > 0 and sys.argv[0] != "-m"):
     assets = Assets(True)
     asset = Assets()
     dependency = Dependency()
-    notifications = Notifications(True)
     notification = Notifications()
     callback = Callback()
     Domain = Domain()

@@ -10,28 +10,30 @@ import json
 import uuid
 import warnings
 import os
+import sys
+import pydash as _
+from naas_drivers import naascredits
 
 
 class Notifications:
     logger = None
 
     headers = None
-    deprecated_name = False
 
-    def __init__(self, deprecated_name=False, logger=None):
+    def __init__(self, logger=None):
         self.headers = {"Authorization": f"token {n_env.token}"}
         self.logger = logger
-        self.deprecated_name = deprecated_name
-
-    def deprecatedPrint(self):
-        # TODO remove this in june 2021
-        if self.deprecated_name:
-            warnings.warn(
-                "[Warning], naas.notifications is deprecated,\n use naas.notification instead, it will be remove in 1 june 2021"
-            )
 
     def send(self, email_to, subject, html, files=[], email_from=None):
-        self.deprecatedPrint()
+        if not os.environ.get(
+            "JUPYTERHUB_API_TOKEN"
+        ) is None and "app.naas.ai" in os.environ.get("JUPYTERHUB_URL", ""):
+            if _.get(naascredits.connect().get_balance(), "balance") <= 0:
+                print(
+                    "🛑 You are out of credits and therefore cannot send notifications.",
+                    file=sys.stderr,
+                )
+                return
         uid = str(uuid.uuid4())
         soup = BeautifulSoup(html, features="html5lib")
         content = soup.get_text()
@@ -83,7 +85,15 @@ class Notifications:
         files=[],
         email_from=None,
     ):
-        self.deprecatedPrint()
+        if not os.environ.get(
+            "JUPYTERHUB_API_TOKEN"
+        ) is None and "app.naas.ai" in os.environ.get("JUPYTERHUB_URL", ""):
+            if _.get(naascredits.connect().get_balance(), "balance") <= 0:
+                print(
+                    "🛑 You are out of credits and therefore cannot send notifications.",
+                    file=sys.stderr,
+                )
+                return
         if n_env.notif_api is None:
             jsn = {"id": uid, "type": "notification error", "error": "not configured"}
             if self.logger is not None:
@@ -160,14 +170,12 @@ class Notifications:
                 print(err)
 
     def status(self):
-        self.deprecatedPrint()
         req = requests.get(url=f"{n_env.notif_api}/")
         req.raise_for_status()
         jsn = req.json()
         return jsn
 
     def list(self):
-        self.deprecatedPrint()
         req = requests.get(
             url=f"{n_env.notif_api}/",
             headers=self.headers,
@@ -176,7 +184,6 @@ class Notifications:
         return pd.DataFrame(data=jsn.get("emails"))
 
     def list_all(self):
-        self.deprecatedPrint()
         req = requests.get(
             url=f"{n_env.notif_api}/admin",
             headers=self.headers,
