@@ -1,3 +1,15 @@
+## 2.3.14 (2022-05-13)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.96.9
+
+## 2.3.13 (2022-05-13)
+
+### Fix
+
+- Install naas_drivers[full]
+
 ## 2.3.12 (2022-05-13)
 
 ### Fix
