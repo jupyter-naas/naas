@@ -1,3 +1,9 @@
+## 2.3.12 (2022-05-13)
+
+### Fix
+
+- Does not install all drivers
+
 ## 2.3.11 (2022-05-13)
 
 ### Fix
