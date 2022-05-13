@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 NDV = "0.96.1"
 
-driver_dep = [f'naas_drivers[full]=={NDV}']
+driver_dep = [f'naas_drivers=={NDV}']
 dev_dep = [
     "syncer==1.3.0",
     "backports.zoneinfo==0.2.1",
