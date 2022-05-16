@@ -62,7 +62,7 @@ setup(
         "jinja2==3.0.3",
         "ipython==7.23.1",
         "ipykernel==5.5.3",
-        "requests==2.25.1",
+        "requests==2.27.1",
         "sentry-sdk==1.0.0",
         "sanic==20.12.2",
         "sanic-openapi==0.6.2",
