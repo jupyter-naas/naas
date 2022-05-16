@@ -18,7 +18,7 @@ dev_dep = [
     "twine==3.5.0",
     "requests-mock==1.9.3",
     "flake8==4.0.1",
-    "black==21.4b2",
+    "black>=21.4b2",
     "imgcompare==2.0.1",
     "commitizen==2.17.13",
     "pytest-cov==2.12.1",
