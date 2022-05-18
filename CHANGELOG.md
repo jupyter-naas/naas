@@ -1,3 +1,9 @@
+## 2.4.0 (2022-05-18)
+
+### Feat
+
+- 314 access to my account even if i dont have credits (#315)
+
 ## 2.3.20 (2022-05-17)
 
 ### Fix
