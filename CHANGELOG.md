@@ -1,3 +1,117 @@
+## 2.3.20 (2022-05-17)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.97.0
+
+## 2.3.19 (2022-05-17)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.96.13
+
+## 2.3.18 (2022-05-16)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.96.12
+
+## 2.3.17 (2022-05-16)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.96.11
+
+## 2.3.16 (2022-05-16)
+
+### Fix
+
+- Loosen black version
+
+## 2.3.15 (2022-05-13)
+
+### Fix
+
+- bump black
+
+## 2.3.14 (2022-05-13)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.96.9
+
+## 2.3.13 (2022-05-13)
+
+### Fix
+
+- Install naas_drivers[full]
+
+## 2.3.12 (2022-05-13)
+
+### Fix
+
+- Does not install all drivers
+
+## 2.3.11 (2022-05-13)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.96.8
+
+## 2.3.10 (2022-05-13)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.96.7
+
+## 2.3.9 (2022-05-13)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.96.6
+
+## 2.3.8 (2022-05-13)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.96.5
+
+## 2.3.7 (2022-05-13)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.96.4
+
+## 2.3.6 (2022-05-13)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.96.3
+
+## 2.3.5 (2022-05-13)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.96.2
+
+## 2.3.4 (2022-05-13)
+
+### Fix
+
+- Trigger ci
+
+## 2.3.3 (2022-05-12)
+
+### Fix
+
+- trigger ci
+
+## 2.3.2 (2022-05-12)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.96.1
+
 ## 2.3.1 (2022-04-28)
 
 ### Fix

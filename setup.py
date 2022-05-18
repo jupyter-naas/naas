@@ -3,9 +3,9 @@ from setuptools import setup, find_packages
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
-NDV = "0.95.0"
+NDV = "0.97.0"
 
-driver_dep = [f'naas_drivers=={NDV}']
+driver_dep = [f'naas_drivers[full]=={NDV}']
 dev_dep = [
     "syncer==1.3.0",
     "backports.zoneinfo==0.2.1",
@@ -18,14 +18,14 @@ dev_dep = [
     "twine==3.5.0",
     "requests-mock==1.9.3",
     "flake8==4.0.1",
-    "black==21.5b1",
+    "black>=21.4b2",
     "imgcompare==2.0.1",
     "commitizen==2.17.13",
     "pytest-cov==2.12.1",
 ]
 setup(
     name="naas",
-    version="2.3.1",
+    version="2.3.20",
     author="Maxime Jublou",
     author_email="devops@cashstory.com",
     license="BSD",
