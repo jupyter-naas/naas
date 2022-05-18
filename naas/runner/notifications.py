@@ -8,7 +8,6 @@ import requests
 import base64
 import json
 import uuid
-import warnings
 import os
 import sys
 import pydash as _
