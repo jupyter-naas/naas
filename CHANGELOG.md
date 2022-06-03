@@ -1,3 +1,9 @@
+## 2.4.4 (2022-06-03)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.99.0
+
 ## 2.4.3 (2022-06-03)
 
 ### Fix
