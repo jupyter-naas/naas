@@ -1,9 +1,19 @@
 from sanic.views import HTTPMethodView
 from sanic import response
 from sanic.exceptions import ServerError
-from naas.ntypes import t_asset, t_health, t_error, t_start, t_send, t_delete
+from naas.ntypes import (
+    t_asset,
+    t_health,
+    t_error,
+    t_start,
+    t_send,
+    t_delete,
+    t_out_of_credits,
+)
 import uuid
 import os
+import pydash as _
+from naas_drivers import naascredits
 
 
 class AssetsController(HTTPMethodView):
@@ -31,6 +41,24 @@ class AssetsController(HTTPMethodView):
                 file_name = os.path.basename(file_filepath)
                 params = job.get("params", dict())
                 inline = params.get("inline", False)
+                if not os.environ.get(
+                    "JUPYTERHUB_API_TOKEN"
+                ) is None and "app.naas.ai" in os.environ.get("JUPYTERHUB_URL", ""):
+                    if _.get(naascredits.connect().get_balance(), "balance") <= 0:
+                        self.__logger.info(
+                            {
+                                "id": uid,
+                                "type": t_asset,
+                                "status": t_out_of_credits,
+                                "filepath": file_filepath,
+                                "token": token,
+                            }
+                        )
+                        raise ServerError(
+                            {"error": "Out of credits"},
+                            status_code=401,
+                        )
+
                 self.__logger.info(
                     {
                         "id": uid,

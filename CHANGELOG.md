@@ -1,3 +1,57 @@
+## 2.4.8 (2022-06-14)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.101.2
+
+## 2.4.7 (2022-06-09)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.101.1
+
+## 2.4.6 (2022-06-08)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.101.0
+
+## 2.4.5 (2022-06-06)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.100.0
+
+## 2.4.4 (2022-06-03)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.99.0
+
+## 2.4.3 (2022-06-03)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.98.2
+
+## 2.4.2 (2022-06-02)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.98.1
+
+## 2.4.1 (2022-06-02)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.98.0
+
+## 2.4.0 (2022-05-18)
+
+### Feat
+
+- 314 access to my account even if i dont have credits (#315)
+
 ## 2.3.20 (2022-05-17)
 
 ### Fix

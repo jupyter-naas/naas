@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
-NDV = "0.97.0"
+NDV = "0.101.2"
 
 driver_dep = [f'naas_drivers[full]=={NDV}']
 dev_dep = [
@@ -25,7 +25,7 @@ dev_dep = [
 ]
 setup(
     name="naas",
-    version="2.3.20",
+    version="2.4.8",
     author="Maxime Jublou",
     author_email="devops@cashstory.com",
     license="BSD",
@@ -73,7 +73,8 @@ setup(
         "pysqlite3==0.4.6",
         "pymongo[srv]==3.11.3",
         "psycopg2-binary==2.9.1",
-        "mprop==0.16.0"
+        "mprop==0.16.0",
+        "pydash==5.1.0"
     ],
     classifiers=[
         "Programming Language :: Python :: 3.9",

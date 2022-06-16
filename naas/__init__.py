@@ -17,7 +17,7 @@ import requests
 import os
 import sys
 
-__version__ = "2.3.20"
+__version__ = "2.4.8"
 __github_repo = "jupyter-naas/naas"
 __doc_url = "https://naas.gitbook.io/naas/"
 __canny_js = '<script>!function(w,d,i,s){function l(){if(!d.getElementById(i)){var f=d.getElementsByTagName(s)[0],e=d.createElement(s);e.type="text/javascript",e.async=!0,e.src="https://canny.io/sdk.js",f.parentNode.insertBefore(e,f)}}if("function"!=typeof w.Canny){var c=function(){c.q.push(arguments)};c.q=[],w.Canny=c,"complete"===d.readyState?l():w.attachEvent?w.attachEvent("onload",l):w.addEventListener("load",l,!1)}}(window,document,"canny-jssdk","script");</script>'  # noqa: E501
@@ -32,7 +32,6 @@ if len(sys.argv) == 0 or (len(sys.argv) > 0 and sys.argv[0] != "-m"):
     assets = Assets(True)
     asset = Assets()
     dependency = Dependency()
-    notifications = Notifications(True)
     notification = Notifications()
     callback = Callback()
     Domain = Domain()
