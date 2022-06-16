@@ -1,3 +1,9 @@
+## 2.4.9 (2022-06-16)
+
+### Fix
+
+- Load secrets everytime from fs
+
 ## 2.4.8 (2022-06-14)
 
 ### Fix
