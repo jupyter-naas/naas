@@ -128,6 +128,9 @@ class Secret:
     async def find_by_name(self, uid, name):
         res = None
         async with self.__storage_sem:
+            uid = str(uuid.uuid4())
+            self.__df = self.__get_save_from_file(uid)
+            self.__cleanup_secrets()
             try:
                 if len(self.__df) > 0:
                     cur_jobs = self.__df[self.__df.name == name]
@@ -154,6 +157,9 @@ class Secret:
         data = []
         try:
             async with self.__storage_sem:
+                uid = str(uuid.uuid4())
+                self.__df = self.__get_save_from_file(uid)
+                self.__cleanup_secrets()
                 data = self.__df.to_dict("records")
                 for row in data:
                     row["secret"] = self.__decode(row.get("secret", ""))
