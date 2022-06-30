@@ -57,7 +57,9 @@ def naasStarter():
     while True:
         logging.info("Refreshing naas starter")
         os.system('git clone https://github.com/jupyter-naas/starters.git /home/ftp/.naas/starters|| (cd /home/ftp/.naas/starters && git reset --hard && git pull)')
-        os.system('cp -r /home/ftp/.naas/starters/* /home/ftp && rm /home/ftp/README.md')
+        os.system('mkdir -p "/home/ftp/⚡ Get started with Naas"')
+        os.system('chmod -R 555 "/home/ftp/⚡ Get started with Naas"')
+        os.system('cp -r /home/ftp/.naas/starters/* "/home/ftp/⚡ Get started with Naas" && rm "/home/ftp/⚡ Get started with Naas/README.md"')
         time.sleep(ONE_HOUR)
 
 runner = threading.Thread(target=naasRunner, args=(naas_port,))
