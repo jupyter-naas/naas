@@ -1,3 +1,10 @@
+## 2.6.1 (2022-06-30)
+
+### Fix
+
+- remove Welcome to Naas from root folder
+- remove Welcome to Naas from root folder
+
 ## 2.6.0 (2022-06-30)
 
 ### Fix
