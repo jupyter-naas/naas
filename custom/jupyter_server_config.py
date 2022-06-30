@@ -64,6 +64,7 @@ def naasStarter():
         os.system('git clone https://github.com/jupyter-naas/starters.git /home/ftp/.naas/starters|| (cd /home/ftp/.naas/starters && git reset --hard && git pull)')
         os.system(f'mkdir -p "/home/ftp/{folder_name}"')
         os.system(f'cp -r /home/ftp/.naas/starters/* "/home/ftp/{folder_name}" && rm "/home/ftp/{folder_name}/README.md"')
+        os.system('rm /home/ftp/Welcome_to_Naas.ipynb')
         time.sleep(ONE_HOUR)
 
 runner = threading.Thread(target=naasRunner, args=(naas_port,))
