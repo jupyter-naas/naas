@@ -1,3 +1,9 @@
+## 2.5.0 (2022-06-30)
+
+### Feat
+
+- Auto pull naas starter and move it in /home/ftp (#317)
+
 ## 2.4.12 (2022-06-27)
 
 ### Fix
