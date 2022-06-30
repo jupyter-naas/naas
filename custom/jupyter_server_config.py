@@ -56,10 +56,15 @@ ONE_HOUR:float = 3600.0
 def naasStarter():
     while True:
         logging.info("Refreshing naas starter")
+        folder_name = '⚡ Get started with Naas'
+
+        # Change this to remove a folder from the home directory of the user.
+        os.system('rm -rf /home/ftp/old_folder_name_42')
+
         os.system('git clone https://github.com/jupyter-naas/starters.git /home/ftp/.naas/starters|| (cd /home/ftp/.naas/starters && git reset --hard && git pull)')
-        os.system('mkdir -p "/home/ftp/⚡ Get started with Naas"')
-        os.system('chmod -R 555 "/home/ftp/⚡ Get started with Naas"')
-        os.system('cp -r /home/ftp/.naas/starters/* "/home/ftp/⚡ Get started with Naas" && rm "/home/ftp/⚡ Get started with Naas/README.md"')
+        os.system(f'mkdir -p "/home/ftp/{folder_name}"')
+        os.system(f'chmod -R 555 "/home/ftp/{folder_name}"')
+        os.system(f'cp -r /home/ftp/.naas/starters/* "/home/ftp/{folder_name}" && rm "/home/ftp/{folder_name}/README.md"')
         time.sleep(ONE_HOUR)
 
 runner = threading.Thread(target=naasRunner, args=(naas_port,))
