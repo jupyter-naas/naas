@@ -1,3 +1,15 @@
+## 2.6.0 (2022-06-30)
+
+### Fix
+
+- Do not set starter dir as RO
+- Add the possibility to rm an existing dir
+- Update where starter pack is downloaded
+
+### Feat
+
+- Auto pull naas starter and move it in /home/ftp
+
 ## 2.5.0 (2022-06-30)
 
 ### Feat
