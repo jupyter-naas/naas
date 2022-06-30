@@ -63,7 +63,6 @@ def naasStarter():
 
         os.system('git clone https://github.com/jupyter-naas/starters.git /home/ftp/.naas/starters|| (cd /home/ftp/.naas/starters && git reset --hard && git pull)')
         os.system(f'mkdir -p "/home/ftp/{folder_name}"')
-        os.system(f'chmod -R 555 "/home/ftp/{folder_name}"')
         os.system(f'cp -r /home/ftp/.naas/starters/* "/home/ftp/{folder_name}" && rm "/home/ftp/{folder_name}/README.md"')
         time.sleep(ONE_HOUR)
 
