@@ -1,69 +1,51 @@
-![GitHub license](https://img.shields.io/github/license/jupyter-naas/drivers)
-![Bump version](https://github.com/jupyter-naas/naas/workflows/Bump%20version/badge.svg)
-![Upload Python Package](https://github.com/jupyter-naas/naas/workflows/Upload%20Python%20Package/badge.svg)
-![codecov](https://codecov.io/gh/jupyter-naas/naas/branch/main/graph/badge.svg?token=UC3SAL8S0U)
-![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)
-[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=jupyter-naas_naas&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=jupyter-naas_naas)
-<a href="#badge">
-  <img alt="semantic-release" src="https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg">
-</a>
-<a href="http://commitizen.github.io/cz-cli/"><img alt="Commitizen friendly" src="https://img.shields.io/badge/commitizen-friendly-brightgreen.svg"></a>
-![PyPI](https://img.shields.io/pypi/v/naas)
-
-# 🎱 Naas in short
-
-The Naas project and its hosted version naas.ai is open-source, it transforms Jupyter Notebooks in a safe production environment thanks to micro-services(like a scheduler) accessible in « low-code ».
-
-The product is based on 3 elements: features, drivers and templates.
-The templates enable "data geeks" to kickstart projects in minutes, the low-code drivers act as connectors to facilitate access to tools, and complex libraries (database, API, ML algorithm...) while the low-code features (scheduling, asset sharing, notifications...) enable faster iteration and deployment of outputs to end users, in a headless manner.
-
-Naas is forever free to use with 100 credits/month.
-Open your account
-PS: If you contribute to this library of open-source notebooks templates, you can X2 your monthly credits 🏆
-
-# Documentation 
-
-<p>
-  <a href="https://naas.gitbook.io/naas/" title="Redirect to Documentation">
-    <img width="200px" src="https://raw.githubusercontent.com/jupyter-naas/naas/main/images/gitbook.svg" alt="Gitbooks naas" />
-  </a>
- </p>
-
-# Issue
-
-If you found a bug or need a new feature, please open an Issue here. 
+<p align="center"><img alt="Naas Logo" src="https://i.imgur.com/ZpcvnKi.jpg")
+"></p><
 
 
-# Try Naas on Binder
 
-You can try out some of Naas features using the My Binder service.
+## :sparkles: Welcome to Naas!
 
-Click on a link below to try Naas, on a sandbox environment, without having to install anything.
-Test it in binder (WIP)
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/jupyter-naas/naas/main?urlpath=lab)
+Notebooks as a service (Naas) is an open source platform that allows anyone touching data (business analysts, scientists and engineers) to create powerful data engines combining automation, analytics and AI from the comfort of their Jupyter notebooks.
 
-## Install Naas only
+Naas is an attempt to propose an alternative to Google Colab, powered by the community.
+
+In addition to Google Colab, Naas platform upgrade notebooks with with 3 low-code layers: features, drivers, templates.
+
+- **Templates** enable the user to create automated data jobs and reports in minutes.
+- **Drivers** act as connectors to push and/or pull data from databases, APIs, and Machine Learning algorithms and more.
+- **Features** transform Jupyter in a production ready environment with scheduling, asset sharing, and notifications.
+
+
+
+## 🚀 Quick Start
+
+Try all of Naas's features for free using -- [Naas cloud](https://app.naas.ai/hub/login) -- a stable environment, without having to install anything.
+
+    
+## ⚙️ Installation
+    
+Check out our step by step guide on how to [set up Naas locally.]()
+
+<!-- ## ⚙️ Installation
+
+### Install only Naas
 
 `pip3 install naas`
 
-## Install Naas with drivers
+### Install Naas with drivers
 
 `pip3 install 'naas[full]'`
 
----
-
-# Run locally
+## :hourglass: Run locally
 
 ### Requirements
 
 - Docker
 - Make (Not needed on windows and not needed on Linux/MacOS if you prefer to use `docker-compose` directly).
 
+### Run
 
-
-### ⚡Run
-
-##### Linux / MacOS
+**Linux / MacOS**
 
 ```bash
 make
@@ -71,55 +53,44 @@ make
 
 Then you can go on http://localhost:8888/lab?token=naas
 
-##### Windows
+**Windows**
 
 You just need to double click on the file `windows_start.bat`, this will open a terminal, start naas and open your browser on http://localhost:8888/lab?token=naas.
 
+## 🛑 Stop
 
-
-### 🛑 Stop
-
-##### Linux / MacOS
+**Linux / MacOS**
 
 ```bash
 make stop
 ```
-
 or if you want to delete the container as well you can run
 
 ```bash
 make down
 ```
 
-
-
-##### Windows
+**Windows**
 
 Double click on `windows_stop.bat`
 
-
-
-### 📦 Build
+## 📦 Build
 
 You don't really have to run this, unless you changed something related to the `Dockerfile.dev`. The build process is done automatically when running naas (`make` or `make run`) if it never happened before.
 
-##### Linux / MacOS
+**Linux / MacOS**
 
 ```bash
 make build
 ```
 
+### Open a shell in the container (root)
 
-
-### 🔧 Open a shell in the container (root)
-
-##### Linux / MacOS
+**Linux / MacOS**
 
 ```bash
 make sh
 ```
-
-
 
 ### File structure for local development
 
@@ -181,9 +152,34 @@ To go faster you can use `isolated Manager` to reload only manager and not full 
 
 You can commit from jupyter or from your local IDE, code of Naas is sync between docker machine and your computer
 
-this auto publish by github action on main branch
+this auto publish by github action on main branch -->
 
-# Supporters: 
+
+## ❤️ Contributing
+
+We value all kinds of contributions - not just code. We are paticularly motivated to support new contributors and people who are looking to learn and develop their skills.
+
+
+Please read our [contibuting guidelines](https://docs.naas.ai/contributing-to-naas) on how to get started.
+
+
+## 🤔 Community Support
+
+The naas [documentation](https://docs.naas.ai/) is a great place to start and to get answers for general questions.
+
+- [Slack](https://join.slack.com/t/naas-club/shared_invite/zt-1970s5rie-dXXkigAdEJYc~LPdQIEaLA) (Live Discussions)
+- [GitHub Issues](https://github.com/jupyter-naas/naas/issues/new) (Report Bugs)
+- [GitHub Discussions](https://github.com/jupyter-naas/naas/discussions) (Questions, Feature Requests)
+- [Twitter](https://twitter.com/JupyterNaas) (Latest News)
+- [YouTube](https://www.youtube.com/c/naas-ai) (Video Tutorials)
+- [Previous Community calls](https://naas-official.notion.site/3450f449df704f008c82004fd61f69ce?v=059be6a284e740e5b1013a57812a17f0) (Video call discussions with the naas team & other contributors.)
+- [Naas's community page](https://www.notion.so/naas-official/Naas-Official-8150e2c35f9248049c48d3fe021b49bb) (To know more)
+
+## :page_with_curl: License
+
+The project is licensed under  [AGPL-3.0](https://opensource.org/licenses/AGPL-3.0)
+
+<!-- ## Supporters: 
 <p>
   <a href="http://sentry.com" title="Redirect to Sentry">
     <img width="200px" src="https://raw.githubusercontent.com/jupyter-naas/naas/main/images/sentry.svg" alt="Sentry" />
@@ -193,7 +189,4 @@ this auto publish by github action on main branch
   </a>
 </p>
 
-### Authors:
-* [Jeremy Ravenel](https://github.com/jravenel)
-* [Maxime Jublou](https://github.com/Dr0p42)
-* [Martin Donadieu](https://github.com/riderx)
+**Authors:** [Jeremy Ravenel](https://github.com/jravenel), [Maxime Jublou](https://github.com/Dr0p42), [Martin Donadieu](https://github.com/riderx) -->
