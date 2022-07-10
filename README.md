@@ -1,6 +1,5 @@
 <p align="center"><img alt="Naas Logo" src="https://i.imgur.com/ZpcvnKi.jpg")
-"></p><
-
+"></p>
 
 
 ## :sparkles: Welcome to Naas!
