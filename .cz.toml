@@ -1,7 +1,7 @@
 [tool.commitizen]
 name = "cz_conventional_commits"
 tag_format = "$major.$minor.$patch$prerelease"
-version = "2.6.8"
+version = "2.6.9"
 version_files = [
     "naas/__init__.py",
     "naas/runner/runner.py",
