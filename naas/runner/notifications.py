@@ -67,9 +67,7 @@ class Notifications:
             print("👌 💌 Email has been sent successfully !")
         except Exception as err:
             if self.logger is not None:
-                self.logger.error(
-                    json.dumps({"id": uid, "type": "email error", "error": str(err)})
-                )
+                self.logger.error({"id": uid, "type": "email error", "error": str(err)})
             else:
                 print(err)
 
@@ -96,7 +94,7 @@ class Notifications:
         if n_env.notif_api is None:
             jsn = {"id": uid, "type": "notification error", "error": "not configured"}
             if self.logger is not None:
-                self.logger.error(json.dumps(jsn))
+                self.logger.error(jsn)
             else:
                 print(jsn)
             return jsn
@@ -160,11 +158,7 @@ class Notifications:
             return jsn
         except Exception as err:
             if self.logger is not None:
-                self.logger.error(
-                    json.dumps(
-                        {"id": uid, "type": "notification error", "error": str(err)}
-                    )
-                )
+                self.logger.error({"id": uid, "type": "notification error", "error": str(err)})
             else:
                 print(err)
 
