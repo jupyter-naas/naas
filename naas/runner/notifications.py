@@ -6,7 +6,6 @@ import pandas as pd
 import pretty_cron
 import requests
 import base64
-import json
 import uuid
 import os
 import sys
