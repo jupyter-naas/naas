@@ -158,7 +158,9 @@ class Notifications:
             return jsn
         except Exception as err:
             if self.logger is not None:
-                self.logger.error({"id": uid, "type": "notification error", "error": str(err)})
+                self.logger.error(
+                    {"id": uid, "type": "notification error", "error": str(err)}
+                )
             else:
                 print(err)
 
