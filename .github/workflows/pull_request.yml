@@ -25,6 +25,7 @@ jobs:
         pip3 install -e '.[fulldev]'
     - name: Run linters
       run: |
+        pip3 install black==22.6.0
         black --check naas
         flake8 naas
     - name: Run test and linters
