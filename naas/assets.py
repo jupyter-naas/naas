@@ -95,7 +95,7 @@ class Assets:
         url = self.manager.proxy_url(self.role, token)
         if self.manager.is_production():
             print("No add done, you are in production\n")
-            return url
+            return None
         # "path", "type", "params", "value", "status"
         self.manager.add_prod(
             {
