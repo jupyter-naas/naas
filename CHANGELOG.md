@@ -1,3 +1,9 @@
+## 2.6.14 (2022-08-31)
+
+### Fix
+
+- return None if asset.add in production
+
 ## 2.6.13 (2022-08-26)
 
 ### Fix
