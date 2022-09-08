@@ -1,3 +1,9 @@
+## 2.6.16 (2022-09-08)
+
+### Fix
+
+- dependency add params to print result
+
 ## 2.6.15 (2022-09-08)
 
 ### Fix
