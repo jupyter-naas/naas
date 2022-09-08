@@ -35,7 +35,7 @@ class Dependency:
             return df
         return json_filtered
 
-    def add(self, path=None, debug=False):
+    def add(self, path=None, debug=False, print_result=True):
         if self.manager.is_production():
             print("No add done, you are in production\n")
             return self.manager.get_path(path)
@@ -56,11 +56,13 @@ class Dependency:
             },
             debug,
         )
-        msg = (
-            "👌 Well done! Your Dependency has been sent to production. \n",
-            'PS: to remove the "Dependency" feature, just replace .add by .delete',
-        )
-        return msg
+        if print_result:
+            print(
+                f"👌 Well done! Your Dependency {current_file} has been sent to production. \n"
+            )
+            print(
+                'PS: to remove the "Dependency" feature, just replace .add by .delete'
+            )
 
     def delete(self, path=None, all=True, debug=False):
         if self.manager.is_production():
