@@ -56,9 +56,11 @@ class Dependency:
             },
             debug,
         )
-        message = ("👌 Well done! Your Dependency has been sent to production. \n",
-                   'PS: to remove the "Dependency" feature, just replace .add by .delete')
-        return message
+        msg = (
+            "👌 Well done! Your Dependency has been sent to production. \n",
+            'PS: to remove the "Dependency" feature, just replace .add by .delete',
+        )
+        return msg
 
     def delete(self, path=None, all=True, debug=False):
         if self.manager.is_production():
