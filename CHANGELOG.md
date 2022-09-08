@@ -1,3 +1,10 @@
+## 2.6.15 (2022-09-08)
+
+### Fix
+
+- lint code with black
+- return success message and not print()
+
 ## 2.6.14 (2022-08-31)
 
 ### Fix
