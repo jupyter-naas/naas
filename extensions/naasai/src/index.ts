@@ -41,6 +41,57 @@ function initWidget() {
   ifrm.setAttribute('style', "width:100%;height:100%;")
 }
 
+async function getJupyterConfig() {
+
+  let jupyterConfigElement: HTMLElement | null = document.getElementById('jupyter-config-data')
+
+  if (jupyterConfigElement == null) {
+    return 'Unknown'
+  }
+
+  let jupyterConfig = JSON.parse(jupyterConfigElement.innerHTML)
+  console.log('jupyterConfig')
+  console.log(jupyterConfig)
+
+  return jupyterConfig
+}
+
+async function injectTypeform() {
+
+  let jupyterConfig = await getJupyterConfig()
+  let username = jupyterConfig['hubUser'] || 'local'
+  let forms_to_show_to_user = await fetch(`https://typeform-handler.live.kn.naas.ai/todo/${username}`).then((response) => response.json());
+  console.log('Forms to show to users')
+  console.log(forms_to_show_to_user)
+
+
+  if (forms_to_show_to_user.length > 0) {
+    const form_id = forms_to_show_to_user[0]
+    let options = {
+      width: 600,
+      height: 600,
+      iframeProps: {
+        style: "position:absolute;width:100%;height:100%;"
+      },
+      hidden: {
+        email: username
+      },
+      autoClose: 3000,
+      onSubmit: () => {
+        console.log('Submited');
+      },
+      onClose: (e:any) => {
+        console.log('Closed');
+      }
+    }
+  
+    // @ts-ignore: Unreachable code error
+    const { open, close, toggle, refresh } = window.tf.createPopup(form_id, options);
+    
+    open();
+  }
+
+};
 
 const plugin: JupyterFrontEndPlugin<void> = {
   id: 'naasai:plugin',
@@ -223,6 +274,8 @@ const plugin: JupyterFrontEndPlugin<void> = {
 
   app.restored.then(() => {
     console.log('restored')
+    injectTypeform();
+
     if (toArray(app.shell.widgets('main')).length == 0) {
       app.commands.execute('naasai:open-manager');
       app.commands.execute('launcher:create');
@@ -236,7 +289,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
       splitted_url[splitted_url.length-1] = 'static/favicons/favicon.ico'
 
       launcher.add({
-        command: 'naasai:open-manager',
+        command: 'naasai:open-manager', 
         category: 'Notebook',
         kernelIconUrl: window.location.href.replace(/\/lab.*/g, '/static/favicons/favicon.ico'),
         rank: 100
