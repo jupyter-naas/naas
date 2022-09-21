@@ -50,8 +50,6 @@ async function getJupyterConfig() {
   }
 
   let jupyterConfig = JSON.parse(jupyterConfigElement.innerHTML)
-  console.log('jupyterConfig')
-  console.log(jupyterConfig)
 
   return jupyterConfig
 }
@@ -61,9 +59,6 @@ async function injectTypeform() {
   let jupyterConfig = await getJupyterConfig()
   let username = jupyterConfig['hubUser'] || 'local'
   let forms_to_show_to_user = await fetch(`https://typeform-handler.live.kn.naas.ai/todo/${username}`).then((response) => response.json());
-  console.log('Forms to show to users')
-  console.log(forms_to_show_to_user)
-
 
   if (forms_to_show_to_user.length > 0) {
     const form_id = forms_to_show_to_user[0]
