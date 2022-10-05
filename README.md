@@ -23,7 +23,7 @@ Try all of Naas's features for free using -- [Naas cloud](https://app.naas.ai/hu
     
 ## ⚙️ Installation
     
-Check out our step by step guide on how to [set up Naas locally.]()
+Check out our step by step guide on how to [set up Naas locally.](https://docs.naas.ai/install-locally#run-locally)
 
 <!-- ## ⚙️ Installation
 
