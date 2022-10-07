@@ -77,7 +77,7 @@ class Assets:
         except:  # noqa: E722
             return None
 
-    def add(self, path=None, params={}, debug=False, force_image=False):
+    def add(self, path=None, params={}, debug=False, force_image=False, override_prod=False):
         self.deprecatedPrint()
         current_file = self.manager.get_path(path)
         if current_file is None:
@@ -94,8 +94,11 @@ class Assets:
             pass
         url = self.manager.proxy_url(self.role, token)
         if self.manager.is_production():
-            print("No add done, you are in production\n")
-            return None
+            if override_prod is False:
+                print("No add done, you are in production\n")
+                return None
+            else:
+                print('Adding asset to production anyway')
         # "path", "type", "params", "value", "status"
         self.manager.add_prod(
             {
