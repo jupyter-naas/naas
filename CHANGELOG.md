@@ -1,3 +1,9 @@
+## 2.7.4 (2022-10-10)
+
+### Fix
+
+- Working on assets in production (#349)
+
 ## 2.7.3 (2022-10-06)
 
 ### Fix
