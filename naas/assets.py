@@ -77,7 +77,9 @@ class Assets:
         except:  # noqa: E722
             return None
 
-    def add(self, path=None, params={}, debug=False, force_image=False, override_prod=False):
+    def add(
+        self, path=None, params={}, debug=False, force_image=False, override_prod=False
+    ):
         self.deprecatedPrint()
         current_file = self.manager.get_path(path)
         if current_file is None:
@@ -98,7 +100,9 @@ class Assets:
                 print("No add done, you are in production\n")
                 return None
             else:
-                print('Adding asset to production anyway')
+                if os.path.exists(current_file) is False:
+                    current_file = os.path.join(os.getcwd(), path)
+                print("Adding assets to production anyway.")
         # "path", "type", "params", "value", "status"
         self.manager.add_prod(
             {
