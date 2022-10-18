@@ -56,10 +56,10 @@ ONE_HOUR:float = 3600.0
 def naasStarter():
     while True:
         logging.info("Refreshing naas starter")
-        folder_name = '⚡ Get started with Naas'
+        folder_name = '__tutorials__'
 
         # Change this to remove a folder from the home directory of the user.
-        os.system('rm -rf /home/ftp/old_folder_name_42')
+        os.system('rm -rf /home/ftp/⚡ Get started with Naas')
 
         os.system('git clone https://github.com/jupyter-naas/starters.git /home/ftp/.naas/starters|| (cd /home/ftp/.naas/starters && git reset --hard && git pull)')
         os.system(f'mkdir -p "/home/ftp/{folder_name}"')
