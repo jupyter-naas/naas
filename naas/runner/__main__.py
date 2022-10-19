@@ -7,7 +7,8 @@ def createProductionSymlink():
     # Create Production symlink.
     try:
         os.makedirs("/home/ftp/.naas/home/ftp", exist_ok=True)
-        os.symlink("/home/ftp/.naas/home/ftp", "/home/ftp/⚡ → Production")
+        os.symlink("/home/ftp/.naas/home/ftp", "/home/ftp/__production__")
+        os.remove('/home/ftp/⚡ → Production')
     except FileExistsError as e:
         print(e)
         pass
