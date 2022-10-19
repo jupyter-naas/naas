@@ -67,8 +67,24 @@ def naasStarter():
         os.system('rm /home/ftp/Welcome_to_Naas.ipynb')
         time.sleep(ONE_HOUR)
 
+def naasTemplates():
+    while True:
+        logging.info("Refreshing templates")
+        folder_name = '__templates__'
+
+        # Change this to remove a folder from the home directory of the user.
+        #os.system('rm -rf /home/ftp/')
+
+        os.system('git clone https://github.com/jupyter-naas/awesome-notebooks.git /home/ftp/.naas/awesome-notebooks|| (cd /home/ftp/.naas/awesome-notebooks && git reset --hard && git pull)')
+        os.system(f'mkdir -p "/home/ftp/{folder_name}"')
+        os.system(f'cp -r /home/ftp/.naas/awesome-notebooks/* "/home/ftp/{folder_name}" && rm "/home/ftp/{folder_name}/README.md"')
+        time.sleep(ONE_HOUR)
+
 runner = threading.Thread(target=naasRunner, args=(naas_port,))
 runner.start()
 
 starter = threading.Thread(target=naasStarter, args=())
 starter.start()
+
+templates = threading.Thread(target=naasTemplates, args=())
+templates.start()
