@@ -1132,7 +1132,7 @@
                 </vue-good-table>
             </div>
             <div v-else-if="jobsActive">
-                <p class="pb-3 text-white">Monitor active features in the "⚡ → Production" folder of your JupyterLab: scheduler, asset, webhook, notification.</p>
+                <p class="pb-3 text-white">Monitor active features in the "__production__" folder of your JupyterLab: scheduler, asset, webhook, notification.</p>
                 <vue-good-table class="border-object" :columns="columns_jobs" :rows="jobs" :search-options="{
                         enabled: true,
                         externalQuery: filter
