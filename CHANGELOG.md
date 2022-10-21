@@ -1,3 +1,9 @@
+## 2.7.7 (2022-10-21)
+
+### Fix
+
+- Rename starter and production folder. Also pull __templates__ (#354)
+
 ## 2.7.6 (2022-10-13)
 
 ### Fix
