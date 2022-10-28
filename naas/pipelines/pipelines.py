@@ -145,7 +145,7 @@ class Step():
         })
         return tasks
     
-    def show_dag(self, depth:int = 0 ,net: Network = None):
+    def show_dag(self, depth:int = 0 ,net: Network = None, height: str = "1000px", width: str = "100%"):
         """Return a Pyvis Network representing the whole Pipeline.
 
         This is a recursive function.
@@ -158,7 +158,7 @@ class Step():
             Network: Pyvis Network
         """
         if net is None:
-            net = Network(directed=True, notebook=True, bgcolor='#212121', font_color='#ffffff', layout=True)
+            net = Network(directed=True, notebook=True, bgcolor='#212121', font_color='#ffffff', layout=True, height=height, width=width)
             net.toggle_physics(False)
         if isinstance(self, ParallelStep):
             node_label = 'Parallel Step'
@@ -230,6 +230,11 @@ class Step():
         net = self.show_dag()
         html_content = net.generate_html(notebook=False)
         return html_content
+
+    def export_html(self, filename: str = 'diagram_export.html', width:str = "100%", height:str = "1000px"):
+        net = self.show_dag(width=width, height=height)
+        html_content = net.generate_html(notebook=False)
+        with open(filename, 'w') as f: f.write(html_content)
 
 class ParallelStep(Step):
     """A specific type of step that will start all it's `Steps` in parrallel using threads.
