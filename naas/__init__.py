@@ -13,6 +13,7 @@ import ipywidgets as widgets
 from .assets import Assets
 from .secret import Secret
 from .api import Api
+from .pipelines import pipelines
 import requests
 import os
 import sys
