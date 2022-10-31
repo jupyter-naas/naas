@@ -76,7 +76,7 @@ setup(
         "mprop==0.16.0",
         "pydash==5.1.0",
         "pyvis==0.3.0",
-        "rich==12.6.0"
+        "rich"
     ],
     classifiers=[
         "Programming Language :: Python :: 3.9",
