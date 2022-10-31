@@ -2,29 +2,21 @@ from pyvis.network import Network
 import uuid
 import threading
 import papermill as pm
-from inspect import currentframe, getframeinfo, getmodulename
 from enum import Enum
 import time
-from IPython.utils import io
 
 from typing import Literal
 
-from IPython.display import clear_output
+from IPython.display import clear_output, display
 from IPython.core.display import HTML
 
 import os
 import random
 import datetime
 
-from rich.progress import track
 from rich.progress import (
-    BarColumn,
-    DownloadColumn,
     Progress,
-    TaskID,
     TextColumn,
-    TimeRemainingColumn,
-    TransferSpeedColumn,
     SpinnerColumn,
 )
 
@@ -107,7 +99,7 @@ class Step:
         self.node_image = None
         self.output = None
         self.error_step = error_step
-        if error_step == False:
+        if error_step is False:
             self.on_error = Step(f"{self.name}@on_error", error_step=True)
         else:
             self.on_error = None
@@ -146,7 +138,7 @@ class Step:
             tasks += s.get_all_steps(
                 depth + 2 if isinstance(self, ParallelStep) else depth + 1
             )
-        if self.on_error != None and (
+        if self.on_error is not None and (
             len(self.on_error.steps) > 0 or len(self.on_error.next_steps) > 0
         ):
             tasks += self.on_error.get_all_steps(depth + 1)
@@ -233,7 +225,7 @@ class Step:
                 step.show_dag(depth=depth + 2, net=net)
                 for s in self.steps:
                     net.add_edge(s.name, step.name)
-        if self.on_error != None and (
+        if self.on_error is not None and (
             len(self.on_error.steps) > 0 or len(self.on_error.next_steps) > 0
         ):
             self.on_error.show_dag(depth=depth + 1, net=net)
@@ -339,7 +331,8 @@ class ParallelStep(Step):
 
 
 class Pipeline(Step):
-    """This must be the first step of the pipeline. It will give a lot of feedback when running the Pipeline but also setup the ExecutionContext.
+    """This must be the first step of the pipeline.
+    It will give a lot of feedback when running the Pipeline but also setup the ExecutionContext.
 
     Args:
         Step (Step): The base Step class
@@ -442,7 +435,7 @@ class Pipeline(Step):
         """Start the execution of the pipeline.
 
         Args:
-            style (Literal[&#39;diagram&#39;, &#39;progess&#39;], optional): Wether to display the progress with HTML diagram or progress bars. Defaults to 'diagram'.
+            style (Literal[&#39;diagram&#39;, &#39;progess&#39;], optional): Display style. Defaults to 'diagram'.
             monitor (bool, optional): Wether to display in live the status of the execution. Defaults to True.
             outputs_path (str, optional): Path to where we will store the outputs. Defaults to ''.
 
@@ -521,7 +514,7 @@ class DummyErrorStep(Step):
         self.status = StepStatus.RUNNING
         time.sleep(random.randrange(3))
         self.status = StepStatus.ERRORED
-        if self.on_error != None and (
+        if self.on_error is not None and (
             len(self.on_error.steps) > 0 or len(self.on_error.next_steps) > 0
         ):
             self.on_error.run(ctx)
@@ -565,12 +558,12 @@ class NotebookStep(Step):
             )
             pm.execute_notebook(self.notebook_path, out_file, progress_bar=False)
             self.status = StepStatus.COMPLETED
-        except Exception as e:
+        except Exception:
             self.status = StepStatus.ERRORED
 
         if self.status == StepStatus.COMPLETED:
             self.run_next_steps(ctx)
-        elif self.on_error != None and (
+        elif self.on_error is not None and (
             len(self.on_error.steps) > 0 or len(self.on_error.next_steps) > 0
         ):
             self.on_error.run(ctx)
