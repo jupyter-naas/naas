@@ -1,3 +1,9 @@
+## 2.8.0 (2022-11-01)
+
+### Feat
+
+- Add logic to be able to create pipelines on naas. (#358)
+
 ## 2.7.9 (2022-10-28)
 
 ### Fix
