@@ -71,7 +71,7 @@ setup(
         "beautifulsoup4==4.10.0",
         "tzdata",
         "pysqlite3==0.4.6",
-        "pymongo[srv]==3.11.3",
+        "pymongo[srv]==4.3.2",
         "psycopg2-binary==2.9.1",
         "mprop==0.16.0",
         "pydash==5.1.0",
