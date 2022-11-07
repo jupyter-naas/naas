@@ -1,3 +1,9 @@
+## 2.8.2 (2022-11-07)
+
+### Fix
+
+- Remove old Get started with naas folder
+
 ## 2.8.1 (2022-11-01)
 
 ### Fix
