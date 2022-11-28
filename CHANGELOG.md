@@ -1,3 +1,9 @@
+## 2.8.4 (2022-11-28)
+
+### Fix
+
+- **Pipeline**: Rename into pipeline and comply to requested definition (#364)
+
 ## 2.8.3 (2022-11-23)
 
 ### Fix
