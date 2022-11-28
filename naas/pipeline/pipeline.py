@@ -185,10 +185,8 @@ class Step:
             node_label = "Parallel Step"
             color = status_color_rel[self.status]
         else:
-            if isinstance(self, End) or isinstance(self, Pipeline):
-                color = status_color_rel[self.status]
-            else:
-                color = status_color_rel[self.status]
+            # if isinstance(self, End) or isinstance(self, Pipeline):
+            color = status_color_rel[self.status]
             node_label = self.name
         if self.node_image:
             net.add_node(
@@ -463,6 +461,10 @@ class Pipeline(Step):
         if monitor is True:
             for monitor_process in self.monitors:
                 monitor_process.join()
+
+
+# To make it more usable.
+Start: Pipeline = Pipeline
 
 
 class End(Step):
