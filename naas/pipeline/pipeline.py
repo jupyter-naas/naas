@@ -464,8 +464,10 @@ class Pipeline(Step):
             for monitor_process in self.monitors:
                 monitor_process.join()
 
+
 # To make it more usable.
-Start : Pipeline = Pipeline
+Start: Pipeline = Pipeline
+
 
 class End(Step):
     """A visual step enhancing the representation of the Diagram view.
