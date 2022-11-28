@@ -14,7 +14,7 @@ from .assets import Assets
 from .secret import Secret
 from .api import Api
 
-from .pipeline import *
+from .pipeline import *  # noqa: F403,F401
 import requests
 import os
 import sys
