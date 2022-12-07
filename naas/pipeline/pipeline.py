@@ -531,8 +531,9 @@ class NotebookStep(Step):
     """
 
     notebook_path: str = None
+    parameters: dict = {}
 
-    def __init__(self, name: str, notebook_path: str):
+    def __init__(self, name: str, notebook_path: str, parameters: dict = {}):
         """Constructor of the NotebookStep.
 
         Args:
@@ -541,6 +542,7 @@ class NotebookStep(Step):
         """
         super().__init__(name)
         self.notebook_path = notebook_path
+        self.parameters = parameters
 
     def run(self, ctx: ExecutionContext):
         """This will run the Notebook and store the output using the ExecutionContext.output_path
@@ -558,7 +560,12 @@ class NotebookStep(Step):
                 ctx.output_path,
                 f"{sanitized_name}.{os.path.basename(self.notebook_path)}",
             )
-            pm.execute_notebook(self.notebook_path, out_file, progress_bar=False)
+            pm.execute_notebook(
+                self.notebook_path,
+                out_file,
+                progress_bar=False,
+                parameters=self.parameters,
+            )
             self.status = StepStatus.COMPLETED
         except Exception:
             self.status = StepStatus.ERRORED
