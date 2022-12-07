@@ -1,3 +1,9 @@
+## 2.9.0 (2022-12-07)
+
+### Feat
+
+- Allow to pass parameters to NotebookStep (#366)
+
 ## 2.8.8 (2022-12-02)
 
 ### Fix
