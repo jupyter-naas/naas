@@ -1,3 +1,9 @@
+## 2.9.1 (2023-01-10)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.108.0
+
 ## 2.9.0 (2022-12-07)
 
 ### Feat
