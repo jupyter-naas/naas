@@ -58,7 +58,7 @@ async function injectTypeform() {
 
   let jupyterConfig = await getJupyterConfig()
   let username = jupyterConfig['hubUser'] || 'local'
-  let forms_to_show_to_user = await fetch(`https://typeform-handler.live.kn.naas.ai/todo/${username}`).then((response) => response.json());
+  let forms_to_show_to_user = await fetch(`https://typeform-handler.live.space.naas.ai/todo/${username}`).then((response) => response.json());
 
   if (forms_to_show_to_user.length > 0) {
     const form_id = forms_to_show_to_user[0]
