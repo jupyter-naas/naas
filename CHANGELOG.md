@@ -1,3 +1,9 @@
+## 2.10.1 (2023-01-26)
+
+### Fix
+
+- raise error if not self.on_error (#376)
+
 ## 2.10.0 (2023-01-26)
 
 ### Feat
