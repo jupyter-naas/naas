@@ -567,8 +567,10 @@ class NotebookStep(Step):
                 parameters=self.parameters,
             )
             self.status = StepStatus.COMPLETED
-        except Exception:
-            self.status = StepStatus.ERRORED
+        except Exception as e:
+            self.status = StepStatus.ERRORED        
+            if not self.on_error:
+                raise Exception(e)
 
         if self.status == StepStatus.COMPLETED:
             self.run_next_steps(ctx)
@@ -576,3 +578,4 @@ class NotebookStep(Step):
             len(self.on_error.steps) > 0 or len(self.on_error.next_steps) > 0
         ):
             self.on_error.run(ctx)
+
