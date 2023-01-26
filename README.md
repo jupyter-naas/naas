@@ -2,6 +2,7 @@
 "></p>
 
 
+
 ## :sparkles: Welcome to Naas!
 
 Notebooks as a service (Naas) is an open source platform that allows anyone touching data (business analysts, scientists and engineers) to create powerful data engines combining automation, analytics and AI from the comfort of their Jupyter notebooks.
