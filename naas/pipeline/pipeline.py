@@ -541,6 +541,8 @@ class NotebookStep(Step):
             notebook_path (str): Path to the Notebook to execute.
         """
         super().__init__(name)
+        if not os.path.exists(notebook_path):
+            raise Exception("Your notebook path does not exist.")
         self.notebook_path = notebook_path
         self.parameters = parameters
 
