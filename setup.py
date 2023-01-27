@@ -76,7 +76,7 @@ setup(
         "mprop==0.16.0",
         "pydash==5.1.0",
         "pyvis==0.2.1",
-        "naas_data_product",
+        "naas-data-product",
         "rich"
     ],
     classifiers=[
