@@ -1,3 +1,10 @@
+## 2.10.2 (2023-03-02)
+
+### Fix
+
+- Bump commitizen
+- **dependency**: update naas_drivers 0.109.0
+
 ## 2.10.1 (2023-01-26)
 
 ### Fix
