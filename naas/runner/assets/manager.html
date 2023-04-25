@@ -543,44 +543,6 @@
                         props: ['error', 'url']
                     }, { error, url }, { width: "70%", scrollable: true, height: 'auto' });
                 },
-                openProfile() {
-                    this.$modal.show({
-                        template: `
-                        <div class="w-full bg-white rounded-lg shadow-lg">
-                            <div class="flex justify-between px-5 py-4 border-b border-gray-100">
-                                <div>
-                                    <span class="text-lg font-bold text-gray-700">Account</span>
-                                </div>
-                                <div>
-                                    <button><i class="text-red-500 transition duration-150 fa fa-times-circle hover:text-red-600"></i></button>
-                                </div>
-                            </div>
-                            <div id=profile class="profile-data">
-                            <div class="container">
-                                <div class="row">
-                                    <div class="profile-header-container">   
-                                        <div class="profile-header-img">
-                                            <div class="rank-label-container">
-                                                <span class="label label-default rank-label">${this.accountPlan['plan']}</span>
-                                            </div>
-                                        </div>
-                                    </div> 
-                                </div>
-                            </div>
-                            <input type="text" placeholder="${this.user['username']}" readonly class="w-full h-10 px-5 pr-10 text-sm text-gray-900 bg-gray-100 focus:outline-none border-object profile-field">                 
-                            <a href="${this.linkToPassword()}" target="_blank"><button class="w-full h-10 px-5 pr-10 text-white bg-black focus:outline-none border-object profile-field">Change password</button></a>
-                            <a href="${this.linkToToken()}" target="_blank"><button class="w-full h-10 px-5 pr-10 text-white bg-black focus:outline-none border-object profile-field">Access tokens</button></a>
-                            <a href="https://form.typeform.com/to/q659b6hS" target="_blank"><button class="w-full h-10 px-5 pr-10 text-white bg-red-600 focus:outline-none border-object profile-field">Delete my account</button></a>
-                            <a href="${this.linkToLogout()}" target="_blank"><button class="w-full h-10 px-5 pr-10 text-black bg-white-600 focus:outline-none border border-black border-object profile-field">Log out</button></a>
-
-                            </div>
-                            <div class="flex justify-end px-5 py-4">
-                            <button @click="$emit('close')" class="px-3 py-2 text-sm text-gray-500 focus:outline-none transition duration-150 hover:text-gray-600">Close</button>
-                            </div>
-                        </div>
-                        `,
-                    }, {}, { width: "50%", scrollable: true, height: 'auto' });
-                },
                 updateLogParams(newProps) {
                     this.serverLogParams = Object.assign({}, this.serverLogParams, newProps);
                 },
@@ -637,16 +599,6 @@
                         this.loadingLog = false;
                     }).catch((err) => {
                         console.error(err);
-                    })
-                },
-                loadAccountPlan() {
-                    return axios.get('credits/plan').then((response) => {
-                        if (response && !response.error) {
-                            this.accountPlan = response.data
-                        }
-                    }).catch((err) => {
-                        console.error(err);
-                        this.accountPlan = {'plan': ''}
                     })
                 },
                 loadUser() {
@@ -713,7 +665,6 @@
                         }
                     }));
                     all_loads.push(this.loadLogItems());
-                    all_loads.push(this.loadAccountPlan());
                     all_loads.push(this.loadUser())
                     return Promise.all(all_loads).then(()=> {
                         this.loading = false;
@@ -852,11 +803,7 @@
                     </div>  
                 </div>
                 <div class="flex flex-col hidden md:flex-row md:block">
-                    <a href="https://docs.naas.ai/" target="_blank" rel="noopener" class="naas-header-green">Documentation</a>       
-                    <a href="https://github.com/orgs/jupyter-naas/projects/4?fullscreen=true" target="_blank" rel="noopener" class="naas-header-green">Github</a>
-                    <a href="https://aiclub-hq.slack.com/" target="_blank" rel="noopener" class="naas-header-green py-8">Community</a>
-                    <a href="https://www.naas.ai/pricing" target="_blank" rel="noopener" class="naas-header-green">⚡️  Upgrade</a>
-                    <button v-on:click="openProfile()" class="px-2 py-2 button-primary naas-header-black">Account</button>
+                    <a href="https://mychatgpt.naas.ai/account" target="_blank" rel="noopener" class="naas-header-green">Account</a>
                     <!-- <a href="#" :href="linkToLab()" target="_blank"><button class="px-2 py-2 button-secondary naas-header-notebook border-object">Go to JupyterLab</button></a>  -->
                 </div>
             </div>
