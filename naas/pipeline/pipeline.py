@@ -442,7 +442,7 @@ class Pipeline(Step):
         """
         if self.execution_ctx is not None:
             raise PipelineAlreadyRan("This pipeline have already been executed.")
-        self.execution_ctx = ExecutionContext()
+        self.execution_ctx = ExecutionContext(outputs_path)
         self.status = StepStatus.RUNNING
         self.monitors = []
         if monitor is True:
