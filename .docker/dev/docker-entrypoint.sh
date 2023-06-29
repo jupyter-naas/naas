@@ -18,5 +18,7 @@ pip install -ve '/home/ftp/naas/extensions/naasai'
 
 jupyter labextension develop --overwrite '/home/ftp/naas/extensions/naasai'
 
+cd /home/ftp/
+
 # Start jupyterlab.
 tini -g -- "start-notebook.sh"  
