@@ -1,3 +1,9 @@
+## 2.11.2 (2023-07-05)
+
+### Fix
+
+- Remove codecov upload for now
+
 ## 2.11.1 (2023-07-05)
 
 ### Fix
