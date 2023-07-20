@@ -1,3 +1,9 @@
+## 2.11.3b0 (2023-07-20)
+
+### Fix
+
+- 388 naas manager remove templates (#389)
+
 ## 2.11.2 (2023-07-05)
 
 ### Fix
