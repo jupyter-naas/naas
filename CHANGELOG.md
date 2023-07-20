@@ -1,3 +1,21 @@
+## 2.11.2 (2023-07-05)
+
+### Fix
+
+- Remove codecov upload for now
+
+## 2.11.1 (2023-07-05)
+
+### Fix
+
+- **dependency**: update naas_drivers 0.110.2
+
+## 2.11.0 (2023-06-29)
+
+### Feat
+
+- Introduced User-Defined outputs_path for Pipeline Execution (#402)
+
 ## 2.10.3 (2023-03-02)
 
 ### Fix

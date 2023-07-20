@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
-NDV = "0.109.1"
+NDV = "0.110.2"
 
 driver_dep = [f'naas_drivers[full]=={NDV}']
 dev_dep = [
@@ -25,7 +25,7 @@ dev_dep = [
 ]
 setup(
     name="naas",
-    version="2.10.3",
+    version="2.11.2",
     author="Maxime Jublou",
     author_email="devops@cashstory.com",
     license="BSD",
@@ -76,7 +76,8 @@ setup(
         "mprop==0.16.0",
         "pydash==5.1.0",
         "pyvis==0.3.0",
-        "rich"
+        "rich",
+        "tzlocal==2.1"
     ],
     classifiers=[
         "Programming Language :: Python :: 3.9",
