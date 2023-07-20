@@ -1,3 +1,13 @@
+## 2.11.3 (2023-07-20)
+
+### Fix
+
+- Applied linters
+- Rework based on workspace arrival
+- Remove links at the top and update the account button
+- Remove usage and credits
+- Remove templates tab
+
 ## 2.11.2 (2023-07-05)
 
 ### Fix
