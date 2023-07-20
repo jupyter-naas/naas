@@ -20,7 +20,7 @@ dev_dep = [
     "flake8==4.0.1",
     "black>=21.4b2",
     "imgcompare==2.0.1",
-    "commitizen==2.17.13",
+    "commitizen==3.5.3",
     "pytest-cov==2.12.1",
 ]
 setup(
