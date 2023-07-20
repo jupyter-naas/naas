@@ -28,7 +28,7 @@ c.ServerProxy.servers = {
         "launcher_entry": {
             "enabled": False,
             "icon_path": "/etc/naas/custom/naas_fav.svg",
-            "title": "Naas manager",
+            "title": "Naas Lab Manager",
         },
         "new_browser_tab": False,
         "timeout": 30,

@@ -29,7 +29,7 @@ LABEL org.label-schema.build-date=$BUILD_DATE \
     org.label-schema.url="https://naas.ai" \
     org.label-schema.vcs-ref=$VCS_REF \
     org.label-schema.vcs-url="https://github.com/jupyter-naas/naas" \
-    org.label-schema.vendor="Cashstory, Inc." \
+    org.label-schema.vendor="Naas AI, Inc." \
     org.label-schema.version=$NAAS_VERSION \
     org.label-schema.schema-version="1.0"
 
