@@ -14,7 +14,7 @@ FROM jupyternaas/singleuser:2.12.0
 # Build-time metadata as defined at http://label-schema.org
 ARG BUILD_DATE
 ARG VCS_REF
-ENV NAAS_VERSION 2.10.3
+ENV NAAS_VERSION 2.11.2
 ENV JUPYTER_ENABLE_LAB 'yes'
 ENV NB_UMASK=022
 ENV NB_USER=ftp
@@ -29,7 +29,7 @@ LABEL org.label-schema.build-date=$BUILD_DATE \
     org.label-schema.url="https://naas.ai" \
     org.label-schema.vcs-ref=$VCS_REF \
     org.label-schema.vcs-url="https://github.com/jupyter-naas/naas" \
-    org.label-schema.vendor="Cashstory, Inc." \
+    org.label-schema.vendor="Naas AI, Inc." \
     org.label-schema.version=$NAAS_VERSION \
     org.label-schema.schema-version="1.0"
 

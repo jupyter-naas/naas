@@ -39,7 +39,7 @@ class ExecutionContext:
     output_dir: str = None
     output_path: str = None
 
-    def __init__(self, output_dir: str = "pipeline_executions"):
+    def __init__(self, output_dir: str):
         self.execution_id = str(uuid.uuid4())
         self.output_dir = output_dir
         self.timestamp = datetime.datetime.now()
@@ -428,7 +428,7 @@ class Pipeline(Step):
         self,
         style: Literal["diagram", "progess"] = "diagram",
         monitor: bool = True,
-        outputs_path="",
+        outputs_path="pipeline_executions",
     ):
         """Start the execution of the pipeline.
 
@@ -442,7 +442,7 @@ class Pipeline(Step):
         """
         if self.execution_ctx is not None:
             raise PipelineAlreadyRan("This pipeline have already been executed.")
-        self.execution_ctx = ExecutionContext()
+        self.execution_ctx = ExecutionContext(outputs_path)
         self.status = StepStatus.RUNNING
         self.monitors = []
         if monitor is True:
@@ -494,7 +494,6 @@ class DummyStep(Step):
     """
 
     def __init__(self, name):
-
         super().__init__(name)
         self.output = None
 
@@ -570,7 +569,7 @@ class NotebookStep(Step):
             )
             self.status = StepStatus.COMPLETED
         except Exception as e:
-            self.status = StepStatus.ERRORED        
+            self.status = StepStatus.ERRORED
             if not self.on_error:
                 raise Exception(e)
 
@@ -580,4 +579,3 @@ class NotebookStep(Step):
             len(self.on_error.steps) > 0 or len(self.on_error.next_steps) > 0
         ):
             self.on_error.run(ctx)
-

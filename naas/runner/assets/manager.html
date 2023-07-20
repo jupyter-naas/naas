@@ -11,9 +11,9 @@
     <meta charset="utf-8">
     <meta name="theme-color" content="#000000">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="apple-mobile-web-app-title" content="Naas manager">
+    <meta name="apple-mobile-web-app-title" content="Naas Lab Manager">
     <meta name="mobile-web-app-capable" content="yes">
-    <title>Naas manager</title>
+    <title>Naas Lab Manager</title>
     <style>
         /**
         * General design component
@@ -82,12 +82,6 @@
             color: #22BC66;
             font-family: Poppins,sans-serif;
             font-size: 1.1em;
-        }
-        .naas-credits {
-            color: white;
-            margin-left: 3rem;
-            font-family: Poppins,sans-serif;
-            font-size: 1em;
         }
         .naas-header-green {
             color: #22BC66;
@@ -379,52 +373,6 @@
                         hidden: true,
                     }
                 ],
-                columns_templates: [
-                    {
-                        label: 'Tool',
-                        field: 'tool',
-                    },
-                    {
-                        label: 'Notebook',
-                        field: 'notebook',
-                    },
-                    {
-                        label: 'Tags',
-                        field: 'tags',
-                    },
-                    {
-                        label: 'Action',
-                        field: 'action',
-                        html: true,
-                        globalSearchDisabled: true,
-                    }
-                ],
-                columns_account: [
-                    {
-                        label: 'Transaction',
-                        field: 'META_1',
-                    },
-                    {
-                        label: 'Type',
-                        field: 'TYPE',
-                    },
-                    {
-                        label: 'Date',
-                        field: 'META_2',
-                    },
-                    {
-                        label: 'Credits',
-                        field: 'CREDIT',
-                        html: true,
-                        globalSearchDisabled: true,
-                    },
-                    {
-                        label: 'Dollars',
-                        field: 'CREDIT_DOLLAR',
-                        html: true,
-                        globalSearchDisabled: true,
-                    }
-                ],
                 // Below the dictionary we use to beautify status
                 status_dict: {
                     'error': {
@@ -524,15 +472,11 @@
                 },
                 env: {},
                 logs: [],
-                templates: [],
-                account: [],
                 pageState: 0,
                 totalLogRecords: 0,
-                templatesState: 0,
-                jobsState: 1,
-                eventState: 2,
-                accountState: 3,
-                maxState: 3,
+                jobsState: 0,
+                eventState: 1,
+                maxState: 1,
                 debouceFilter: null,
                 serverLogParams: {
                     columnFilters: "",
@@ -599,96 +543,6 @@
                         props: ['error', 'url']
                     }, { error, url }, { width: "70%", scrollable: true, height: 'auto' });
                 },
-                openProfile() {
-                    this.$modal.show({
-                        template: `
-                        <div class="w-full bg-white rounded-lg shadow-lg">
-                            <div class="flex justify-between px-5 py-4 border-b border-gray-100">
-                                <div>
-                                    <span class="text-lg font-bold text-gray-700">Account</span>
-                                </div>
-                                <div>
-                                    <button><i class="text-red-500 transition duration-150 fa fa-times-circle hover:text-red-600"></i></button>
-                                </div>
-                            </div>
-                            <div id=profile class="profile-data">
-                            <div class="container">
-                                <div class="row">
-                                    <div class="profile-header-container">   
-                                        <div class="profile-header-img">
-                                            <div class="rank-label-container">
-                                                <span class="label label-default rank-label">${this.accountPlan['plan']}</span>
-                                            </div>
-                                        </div>
-                                    </div> 
-                                </div>
-                            </div>
-                            <input type="text" placeholder="${this.user['username']}" readonly class="w-full h-10 px-5 pr-10 text-sm text-gray-900 bg-gray-100 focus:outline-none border-object profile-field">                 
-                            <a href="${this.linkToPassword()}" target="_blank"><button class="w-full h-10 px-5 pr-10 text-white bg-black focus:outline-none border-object profile-field">Change password</button></a>
-                            <a href="${this.linkToToken()}" target="_blank"><button class="w-full h-10 px-5 pr-10 text-white bg-black focus:outline-none border-object profile-field">Access tokens</button></a>
-                            <a href="https://form.typeform.com/to/q659b6hS" target="_blank"><button class="w-full h-10 px-5 pr-10 text-white bg-red-600 focus:outline-none border-object profile-field">Delete my account</button></a>
-                            <a href="${this.linkToLogout()}" target="_blank"><button class="w-full h-10 px-5 pr-10 text-black bg-white-600 focus:outline-none border border-black border-object profile-field">Log out</button></a>
-
-                            </div>
-                            <div class="flex justify-end px-5 py-4">
-                            <button @click="$emit('close')" class="px-3 py-2 text-sm text-gray-500 focus:outline-none transition duration-150 hover:text-gray-600">Close</button>
-                            </div>
-                        </div>
-                        `,
-                    }, {}, { width: "50%", scrollable: true, height: 'auto' });
-                },
-                /*openPerformanceModal() {
-                    this.$modal.show({
-                        created() {
-                            axios.get('performance', {}).then((response) => {
-                                if (response && !response.error) {
-                                    try {
-                                        this.cpu = response.data.cpu;
-                                        this.ram = response.data.ram;
-                                        this.storage = response.data.storage;
-                                    } catch (err) {
-                                        console.error(err);
-                                    }
-                                }
-                            }).then(() => {
-                                this.loadingLog = false;
-                            }).catch((err) => {
-                                console.error(err);
-                            })
-                        },
-                        data() {
-                            return {
-                                cpu: "/",
-                                ram: "/",
-                                storage: "/"
-                            }
-                        },
-                        template: `
-                        <div class="w-full bg-white rounded-lg shadow-lg">
-                            <div class="flex justify-between px-5 py-4 border-b border-gray-100">
-                                <div>
-                                    <span class="text-lg font-bold text-gray-700">Performances</span>
-                                </div>
-                                <div>
-                                    <button><i class="text-red-500 transition duration-150 fa fa-times-circle hover:text-red-600"></i></button>
-                                </div>
-                            </div>
-                        
-                            <div class="px-10 text-gray-600">
-                                <pre class="-my-12 break-words whitespace-pre-wrap">
-                                    <code>
-                                        Storage: {{ storage }}<br/>
-                                    </code>
-                                </pre>
-                            </div>
-                        
-                            <div class="flex justify-end px-5 py-4">
-                            <button @click="$emit('close')" class="px-3 py-2 text-sm text-gray-500 transition duration-150 hover:text-gray-600">Close</button>
-                            </div>
-                        </div>
-                        `,
-                    }, {}, { width: "70%", scrollable: true, height: 'auto' });
-                },*/
                 updateLogParams(newProps) {
                     this.serverLogParams = Object.assign({}, this.serverLogParams, newProps);
                 },
@@ -747,27 +601,6 @@
                         console.error(err);
                     })
                 },
-                loadAccountBalance() {
-                    return axios.get('credits/balance').then((response) => {
-                        if (response && !response.error) {
-                            this.accountBalance = response.data
-                            this.accountBalance['balance_dollar'] = this.accountBalance['balance_dollar'] || 0
-                        }
-                    }).catch((err) => {
-                        console.error(err);
-                        this.accountBalance = {'balance': 0, 'balance_dollar': 0}
-                    })
-                },
-                loadAccountPlan() {
-                    return axios.get('credits/plan').then((response) => {
-                        if (response && !response.error) {
-                            this.accountPlan = response.data
-                        }
-                    }).catch((err) => {
-                        console.error(err);
-                        this.accountPlan = {'plan': ''}
-                    })
-                },
                 loadUser() {
                     return axios.get('auth/user/me').then((response) => {
                         if (response && !response.error) {
@@ -776,77 +609,6 @@
                     }).catch((err) => {
                         console.error(err);
                         this.user = {'username': '', 'email': ''}
-                    })
-                },
-                loadAccountJson() {
-                    return axios.get('credits/transactions').then((response) => {
-                        if (response && !response.error) {
-                            response.data.forEach(transaction => {
-                                transaction['CREDIT'] = transaction['CREDIT'].toFixed(2) + ' ⚡';
-                                transaction['CREDIT_DOLLAR'] = transaction['CREDIT_DOLLAR'] || 0;
-                                transaction['CREDIT_DOLLAR'] = transaction['CREDIT_DOLLAR'].toFixed(4) + ' $';
-                            })
-                            this.account = response.data
-                        }
-                    }).catch((err) => {
-                        console.error(err);
-                        this.account = []
-                    })
-                },
-                loadAccountItems() {
-                    return axios.get('https://raw.githubusercontent.com/jupyter-naas/awesome-notebooks/master/templates.json').then((response) => {
-                        if (response && !response.error) {
-                            try {
-                                let account = data
-                                for (let i = 0; i < account.length; i++) {
-                                    let tags = "";
-
-                                    if (account[i].tags != null)
-                                        for (let j = 0; j < account[i].tags.length; j++) {
-                                            tags += account[i].tags[j]
-                                            tags += " "
-                                        }
-                                    account[i].tags = tags
-                                    if ("action" in account[i])
-                                        account[i].action = account[i].action.replace("_parent", "_blank")
-                                }
-                                this.account = account
-                            } catch (err) {
-                                console.log("ERROR");
-                                console.error(err);
-                            }
-                        }
-
-                    }).catch((err) => {
-                        console.error(err);
-                    })
-                },
-                loadTemplatesItems() {
-                    return axios.get('https://raw.githubusercontent.com/jupyter-naas/awesome-notebooks/master/templates.json').then((response) => {
-                        if (response && !response.error) {4
-                            try {
-                                let templates = response.data
-                                for (let i = 0; i < templates.length; i++) {
-                                    let tags = "";
-
-                                    if (templates[i].tags != null)
-                                        for (let j = 0; j < templates[i].tags.length; j++) {
-                                            tags += templates[i].tags[j]
-                                            tags += " "
-                                        }
-                                    templates[i].tags = tags
-                                    if ("action" in templates[i])
-                                        templates[i].action = templates[i].action.replace("_parent", "_blank")
-                                }
-                                this.templates = templates
-                            } catch (err) {
-                                console.log("ERROR");
-                                console.error(err);
-                            }
-                        }
-
-                    }).catch((err) => {
-                        console.error(err);
                     })
                 },
                 stripNaasPath(path) {
@@ -903,10 +665,6 @@
                         }
                     }));
                     all_loads.push(this.loadLogItems());
-                    all_loads.push(this.loadTemplatesItems());
-                    all_loads.push(this.loadAccountJson());
-                    all_loads.push(this.loadAccountBalance());
-                    all_loads.push(this.loadAccountPlan());
                     all_loads.push(this.loadUser())
                     return Promise.all(all_loads).then(()=> {
                         this.loading = false;
@@ -956,9 +714,6 @@
                 linkToLogout() {
                     return `${this.linkToHub(false)}/hub/logout`
                 },
-                linkToTemplate() {
-                    return `https://app.naas.ai/user-redirect/naas/downloader?url=https://raw.githubusercontent.com/jupyter-naas/awesome-notebooks/master/template.ipynb`
-                },
                 linkToJupOutput(link) {
                     const partial = this.stripNaasPath(link);
                     const partialList = partial.split('/');
@@ -989,13 +744,7 @@
                 },
                 eventActive() {
                     return this.pageState == this.eventState
-                },
-                templatesActive() {
-                    return this.pageState == this.templatesState
-                },
-                accountActive() {
-                    return this.pageState == this.accountState
-                },
+                }
             },
             created: function () {
                 const uri = window.location.href.split('?');
@@ -1038,7 +787,7 @@
                         </div>
                         <div class="my-auto">
                             <a href="#" :href="linkToManager()"
-                                class="font-sans naas-manager-green text-2xl font-bold text-gray-100 no-underline hover:text-#4299e1-dark">manager</a>
+                                class="font-sans naas-manager-green text-2xl font-bold text-gray-100 no-underline hover:text-#4299e1-dark">Lab Manager</a>
                         </div>
                     </div>
                     <div class="md:hidden">
@@ -1054,84 +803,26 @@
                     </div>  
                 </div>
                 <div class="flex flex-col hidden md:flex-row md:block">
-                    <a href="https://docs.naas.ai/" target="_blank" rel="noopener" class="naas-header-green">Documentation</a>       
-                    <a href="https://github.com/orgs/jupyter-naas/projects/4?fullscreen=true" target="_blank" rel="noopener" class="naas-header-green">Github</a>
-                    <a href="https://aiclub-hq.slack.com/" target="_blank" rel="noopener" class="naas-header-green py-8">Community</a>
-                    <a href="https://www.naas.ai/pricing" target="_blank" rel="noopener" class="naas-header-green">⚡️  Upgrade</a>
-                    <button v-on:click="openProfile()" class="px-2 py-2 button-primary naas-header-black">Account</button>
+                    <a href="https://naas.ai/account/dashboard" target="_blank" rel="noopener" class="naas-header-green">Dashboard</a>
                     <!-- <a href="#" :href="linkToLab()" target="_blank"><button class="px-2 py-2 button-secondary naas-header-notebook border-object">Go to JupyterLab</button></a>  -->
                 </div>
             </div>
         </nav>
-        <div class="flex md:px-12">
-            <div style="color:white;font-family: Poppins,sans-serif;font-size:2em;padding-top:15px" class="tooltip">
-                {{ this.accountBalance.balance.toFixed(2) }}⚡ ⇄ {{this.accountBalance.balance_dollar.toFixed(2)}}$ <label style="position:absolute;font-size:18px;margin-left:10px">ⓘ</label>
-                <span class="tooltiptext" style="font-size:11px;margin-left:20px;width:300px;font-weight:lighter;">The balance takes into account processed transactions. It is updated every 15min.</span>
-            </div>  
-        </div>
-        <div class="flex md:px-12">
-            <div style="color:#dbdbdb;font-family: Poppins,sans-serif;font-size:0.7em">
-                Credits available
-            </div>
-        </div>
         <div class="flex items-center justify-center w-full naas-search md:px-12">
             <div class="relative text-gray-900" style="width: 100%;">
-                <input type="text" name="search" v-model="filter" placeholder="Search..."
-                    class="w-full h-10 px-5 pr-10 text-sm text-gray-900 bg-gray-100 focus:outline-none border-object">
-                <button type="submit" class="absolute top-0 right-0 mt-3 mr-4">
-                    <svg v-if="filter == ''" class="w-4 h-4 fill-current" xmlns="http://www.w3.org/2000/svg"
-                        xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px" y="0px"
-                        viewBox="0 0 56.966 56.966" style="enable-background:new 0 0 56.966 56.966;"
-                        xml:space="preserve" width="512px" height="512px">
-                        <path
-                            d="M55.146,51.887L41.588,37.786c3.486-4.144,5.396-9.358,5.396-14.786c0-12.682-10.318-23-23-23s-23,10.318-23,23  s10.318,23,23,23c4.761,0,9.298-1.436,13.177-4.162l13.661,14.208c0.571,0.593,1.339,0.92,2.162,0.92  c0.779,0,1.518-0.297,2.079-0.837C56.255,54.982,56.293,53.08,55.146,51.887z M23.984,6c9.374,0,17,7.626,17,17s-7.626,17-17,17  s-17-7.626-17-17S14.61,6,23.984,6z" />
-                    </svg>
-                    <svg v-if="filter != ''" @click="filter= ''" class="w-4 h-4 fill-current"
-                        viewBox="0 0 20 20">
-                        <path
-                            d="M10.185,1.417c-4.741,0-8.583,3.842-8.583,8.583c0,4.74,3.842,8.582,8.583,8.582S18.768,14.74,18.768,10C18.768,5.259,14.926,1.417,10.185,1.417 M10.185,17.68c-4.235,0-7.679-3.445-7.679-7.68c0-4.235,3.444-7.679,7.679-7.679S17.864,5.765,17.864,10C17.864,14.234,14.42,17.68,10.185,17.68 M10.824,10l2.842-2.844c0.178-0.176,0.178-0.46,0-0.637c-0.177-0.178-0.461-0.178-0.637,0l-2.844,2.841L7.341,6.52c-0.176-0.178-0.46-0.178-0.637,0c-0.178,0.176-0.178,0.461,0,0.637L9.546,10l-2.841,2.844c-0.178,0.176-0.178,0.461,0,0.637c0.178,0.178,0.459,0.178,0.637,0l2.844-2.841l2.844,2.841c0.178,0.178,0.459,0.178,0.637,0c0.178-0.176,0.178-0.461,0-0.637L10.824,10z">
-                        </path>
-                    </svg>
-                </button>
+                <input type="text" name="search" v-model="filter" placeholder="🔎 Filter Jobs or Events"
+                    class=" h-10 px-5 pr-10 text-sm text-gray-900 bg-gray-100 focus:outline-none border-object">
             </div>
         </div>
         <div class="w-full p-3 py-8 md:px-12">
-            <button @click="setPageState(templatesState)" class="naas-tab" :class="templatesActive ? 'naas-current-tab' : ''">😎 Templates</button>
             <button @click="setPageState(jobsState)" class="naas-tab" :class="jobsActive ? 'naas-current-tab' : ''">🤖 Jobs</button>
             <button @click="setPageState(eventState)" class="naas-tab" :class="eventActive ? 'naas-current-tab' : ''">🗓️ Events</button>
-            <button @click="setPageState(accountState)" class="naas-tab" :class="accountActive ? 'naas-current-tab' : ''">💵 Usage</button>
             <button @click="load_data()"
                 class="px-2 py-2 button-tertiary border-object no-underline float-right">
                 <span class="refresh-logo" cursor="pointer">
                 </span>
             </button>
-            <div v-if="templatesActive">
-                <p class="pb-3 text-white">Access all the templates created by the community in <a href="https://github.com/jupyter-naas/awesome-notebooks" target="_blank"><u>Naas awesome-notebooks</u></a>  Github repository.</p>
-                <vue-good-table class="border-object" :columns="columns_templates" :rows="templates" :search-options="{
-                    enabled: true,
-                    externalQuery: filter
-                }" :pagination-options="{
-                    enabled: filter === '',
-                    mode: 'records',
-                    perPage: 10,
-                    position: 'bottom',
-                    perPageDropdown: [5, 15, 20],
-                    dropdownAllowAll: true,
-                    nextLabel: 'next',
-                    prevLabel: 'prev',
-                    rowsPerPageLabel: 'Rows per page',
-                    ofLabel: 'of',
-                    pageLabel: 'page', // for 'pages' mode
-                    allLabel: 'All',
-                }" :sort-options="{
-                    enabled: true,
-                    initialSortBy: {field: 'tool', type: 'asc'}
-                }">
-                    <template slot="table-row" slot-scope="props">
-                    </template>
-                </vue-good-table>
-            </div>
-            <div v-else-if="jobsActive">
+            <div v-if="jobsActive">
                 <p class="pb-3 text-white">Monitor active features in the "__production__" folder of your JupyterLab: scheduler, asset, webhook, notification.</p>
                 <vue-good-table class="border-object" :columns="columns_jobs" :rows="jobs" :search-options="{
                         enabled: true,
@@ -1243,37 +934,6 @@
                     </vue-good-table>
                 </div>
             </div>
-            <div v-if="accountActive">
-                <p class="pb-3 text-white">Access the complete detail of your activity with the <a href="https://app.naas.ai/user-redirect/naas/downloader?url=https://raw.githubusercontent.com/jupyter-naas/awesome-notebooks/master/Naas/Naas_Get_Transactions.ipynb" target="_blank"><u>Naas transactions</u></a> template.</p>
-                <vue-good-table class="border-object" :columns="columns_account" :rows="account" :search-options="{
-                    enabled: true,
-                    externalQuery: filter
-                }" :pagination-options="{
-                    enabled: filter === '',
-                    mode: 'records',
-                    perPage: 10,
-                    position: 'bottom',
-                    perPageDropdown: [5, 15, 20],
-                    dropdownAllowAll: true,
-                    nextLabel: 'next',
-                    prevLabel: 'prev',
-                    rowsPerPageLabel: 'Rows per page',
-                    ofLabel: 'of',
-                    pageLabel: 'page', // for 'pages' mode
-                    allLabel: 'All',
-                }" :sort-options="{
-                    enabled: true,
-                    initialSortBy: {field: 'META_2', type: 'desc'}
-                }">
-                    <template slot="table-row" slot-scope="props">
-                        <span v-if="props.column.field == 'TYPE'">
-                            <a href="#" v-if="props.row.TYPE in type_dict" style="font-weight: bold;">
-                                {{ type_dict[props.row.TYPE].string }}</a>
-                            <p v-else>{{props.row.TYPE}}</p>
-                        </span>
-                    </template>
-                </vue-good-table>
-            </div>
             <div class="col-start-2 py-4 pt-8" v-if="env && env.version">
                 <h4 class="text-2xl font-semibold text-gray-800"><span class="text-white"></span></h4>
                 <span
@@ -1284,19 +944,7 @@
                 </button> -->
 
             </div>
-            <p class="pt-5 text-white">Any questions? Please <a href="https://form.typeform.com/to/aH1v5ync" target="_blank"><u>contact us</u></a>.</p>
-            <p class="pt-5 text-white">🙏 We're working hard to build Naas, and need more help!<br>
-                If you know anybody who would like to contribute to open source - in engineering, marketing roles, and more - <a href="https://form.typeform.com/to/jdls9qZf" target="_blank"><u>please let us know</u></a> and tell your friends!</p>
         </div>
-
-        <div id=footer>
-            <h3 class="text-2xs text-gray-400 center"><span class="text-white naas-text">Give us some 💚 on:</span></h3>
-            <a href="https://github.com/jupyter-naas" target="_blank" rel="noopener"><img id=footerlogo src="https://cdn3.iconfinder.com/data/icons/social-media-2169/24/social_media_social_media_logo_github-1024.png" alt="Github logo"></a>
-            <a href="https://www.youtube.com/channel/UCKKG5hzjXXU_rRdHHWQ8JHQ" target="_blank" rel="noopener"><img id=footerlogo src="https://cdn3.iconfinder.com/data/icons/2018-social-media-logotypes/1000/2018_social_media_popular_app_logo_youtube-1024.png" alt="Youtube logo"></a>
-            <a href="https://twitter.com/JupyterNaas" target="_blank" rel="noopener"><img id=footerlogo src="https://cdn4.iconfinder.com/data/icons/social-messaging-ui-color-shapes-2-free/128/social-twitter-circle-128.png" alt="Twitter logo"></a>
-            <a href="https://www.linkedin.com/company/naas-ai/" target="_blank" rel="noopener"><img id=footerlogo src="https://cdn0.iconfinder.com/data/icons/social-circle-3/72/Linkedin-1024.png" alt="LinkedIn logo"></a>
-        </div>
-        
     </div>
 </body>
 

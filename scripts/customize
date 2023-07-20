@@ -13,7 +13,7 @@ if [[ $NAAS_INSTALL_BINDER == "yes" ]]; then
     cp /etc/naas/custom/jupyter_server_config.py /home/jovyan/.jupyter/jupyter_notebook_config.py
 fi
 # Custom naas design
-sed -i 's/JupyterLab/Naas/g' /opt/conda/share/jupyter/lab/static/index.html
+sed -i 's/JupyterLab/Lab/g' /opt/conda/share/jupyter/lab/static/index.html
 sed -i "s|</head>|$CANNY</head>|g" /opt/conda/share/jupyter/lab/static/index.html
 sed -i "s|</head>|$CRISP</head>|g" /opt/conda/share/jupyter/lab/static/index.html
 sed -i "s|</head>|$USER_INJECT</head>|g" /opt/conda/share/jupyter/lab/static/index.html

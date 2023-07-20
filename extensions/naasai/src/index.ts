@@ -30,7 +30,7 @@ function initWidget() {
   content = new Widget();
   widget = new MainAreaWidget({ content });
   widget.id = 'naasai';
-  widget.title.label = 'Naas manager';
+  widget.title.label = 'Naas Lab Manager';
   widget.title.closable = true;
     
 
@@ -122,7 +122,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
       palette_category: 'Naas',
       add_menu: true,
       command: {
-        label: 'Manager',
+        label: 'Lab Manager',
         execute: () => {
           if (!widget.isAttached) {
             // Attach the widget to the main work area if it's not there
@@ -142,13 +142,35 @@ const plugin: JupyterFrontEndPlugin<void> = {
       }
     },
     {
+      command_name : 'naasai:open-naas-search',
+      palette_category: 'Naas',
+      add_menu: true,
+      command: {
+        label: 'Naas Search',
+        execute: () => {
+          window.open('https://naas.ai/search', '_blank');
+        }
+      }
+    },
+    {
+      command_name : 'naasai:open-naas-mychatgpt',
+      palette_category: 'Naas',
+      add_menu: true,
+      command: {
+        label: 'MyChatGPT',
+        execute: () => {
+          window.open('https://naas.ai/chat', '_blank');
+        }
+      }
+    },
+    {
       command_name : 'naasai:open-upgrade',
       palette_category: 'Naas',
       add_menu: true,
       command: {
         label: 'Upgrade',
         execute: () => {
-          window.open('https://www.naas.ai/pricing', '_blank');
+          window.open('https://site.naas.ai/pricing', '_blank');
         }
       }
     },
@@ -159,7 +181,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
       command: {
         label: 'Documentation',
         execute: () => {
-          window.open('https://docs.naas.ai', '_blank');
+          window.open('https://site.naas.ai/docs/get-started/introduction', '_blank');
         }
       }
     },
@@ -192,7 +214,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
       command: {
         label: 'Roadmap',
         execute: () => {
-          window.open('https://github.com/orgs/jupyter-naas/projects/4?fullscreen=true', '_blank');
+          window.open('https://github.com/orgs/jupyter-naas/projects/10/views/13', '_blank');
         }
       }
     },
@@ -258,13 +280,16 @@ const plugin: JupyterFrontEndPlugin<void> = {
   naasMenu.addItem({ command: naas_commands[1].command_name});
   naasMenu.addItem({ command: naas_commands[2].command_name});
   naasMenu.addItem({ command: naas_commands[3].command_name});
+  naasMenu.addItem({type: "separator"})
   naasMenu.addItem({ command: naas_commands[4].command_name});
   naasMenu.addItem({ command: naas_commands[5].command_name});
-  naasMenu.addItem({type: "separator"})
   naasMenu.addItem({ command: naas_commands[6].command_name});
   naasMenu.addItem({ command: naas_commands[7].command_name});
+  naasMenu.addItem({type: "separator"})
   naasMenu.addItem({ command: naas_commands[8].command_name});
   naasMenu.addItem({ command: naas_commands[9].command_name});
+  naasMenu.addItem({ command: naas_commands[10].command_name});
+  naasMenu.addItem({ command: naas_commands[11].command_name});
 
 
   app.restored.then(() => {
