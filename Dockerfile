@@ -39,7 +39,7 @@ RUN mkdir /home/$NB_USER && \
     && rm jupyter-notebook \
     && ln -s jupyter-server jupyter-notebook
 
-RUN python3 -m pip install --no-cache-dir --upgrade pip && python3 -m pip --version
+# RUN python3 -m pip install --no-cache-dir --upgrade pip && python3 -m pip --version
 RUN python3 -m pip install --no-cache-dir --upgrade --use-deprecated=legacy-resolver naas[full]==$NAAS_VERSION
 
 RUN mkdir /etc/naas
