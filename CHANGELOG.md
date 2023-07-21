@@ -1,3 +1,9 @@
+## 2.11.4 (2023-07-21)
+
+### Fix
+
+- Working on build fixing. Disqble pip upgrade
+
 ## 2.11.3 (2023-07-20)
 
 ### Fix
