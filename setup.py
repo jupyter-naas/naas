@@ -55,7 +55,7 @@ setup(
         "html5lib==1.1",
         "Pillow==8.3.2",
         "markdown2==2.4.0",
-        "pandas==1.2.4",
+        "pandas==1.5.3",
         "escapism==1.0.1",
         "notebook==6.4.1",
         "MarkupSafe==2.0.1", # "notebook==6.4.0" is requesting a Jinja2 version <3.0 but Jinja2 is requesting the latest version of MarkupSafe which is not compatible with this older version of Jinja2.
