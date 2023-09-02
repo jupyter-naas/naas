@@ -1,3 +1,9 @@
+## 2.12.0 (2023-09-02)
+
+### Feat
+
+- Implement passing pipeline_output_path (#420)
+
 ## 2.11.9 (2023-08-31)
 
 ### Fix
