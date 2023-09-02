@@ -565,7 +565,7 @@ class NotebookStep(Step):
                 self.notebook_path,
                 out_file,
                 progress_bar=False,
-                parameters={'pipeline_output_path': ctx.output_path} | self.parameters,
+                parameters={"pipeline_output_path": ctx.output_path} | self.parameters,
             )
             self.status = StepStatus.COMPLETED
         except Exception as e:
