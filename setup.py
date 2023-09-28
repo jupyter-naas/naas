@@ -72,7 +72,7 @@ setup(
         "tzdata",
         "pysqlite3==0.4.6",
         "pymongo[srv]==3.11.3",
-        "psycopg2-binary==2.9.1",
+        "psycopg2-binary==2.9.8",
         "mprop==0.16.0",
         "pydash==5.1.0",
         "pyvis==0.3.0",
