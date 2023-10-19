@@ -75,6 +75,7 @@ def naasStarter():
         time.sleep(ONE_HOUR)
 
 
+
 def naasTemplates():
     while True:
         logging.info("Refreshing templates")
@@ -93,6 +94,43 @@ def naasTemplates():
         time.sleep(ONE_HOUR)
 
 
+def naasABIInstaller():
+    while True:
+        try:
+            logging.info("Refreshing ABI setup")
+
+            config = [
+                {
+                    'repository': 'https://github.com/jupyter-naas/abi.git',
+                    'target': '/home/ftp/__abi__',
+                    'version': 'main',
+                    'entrypoints': ['models/__chat_plugin__.ipynb']
+                }
+            ]
+
+            for c in config:
+                os.system(
+                    f"git clone {c['repository']} {c['target']}|| (cd /home/ftp/.naas/awesome-notebooks && git reset --hard && git pull)"
+                )
+                
+                os.system(
+                    f"cd {c['target']} && git reset --hard && git checkout {c['version']} && git pull"
+                )
+                for entrypoint in c['entrypoints']:
+                    working_directory = os.path.join(c['target'], '/'.join(entrypoint.split('/')[:1]))
+                    
+                    execute_cmd = f"cd {working_directory} && jupyter nbconvert --execute {entrypoint.split('/')[-1]} --to notebook --output {entrypoint.split('/')[-1]}.setup-execution.ipynb" 
+
+                    os.system(
+                        execute_cmd
+                    )
+        except Exception as e:
+            logging.error(f'Exception while installing ABI', e)
+        FIVE_MINUTES = 300
+        time.sleep(FIVE_MINUTES)
+
+
+
 runner = threading.Thread(target=naasRunner, args=(naas_port,))
 runner.start()
 
@@ -101,3 +139,6 @@ starter.start()
 
 templates = threading.Thread(target=naasTemplates, args=())
 templates.start()
+
+abiInstaller = threading.Thread(target=naasABIInstaller, args=())
+abiInstaller.start()
