@@ -25,7 +25,7 @@ dev_dep = [
 ]
 setup(
     name="naas",
-    version="2.12.9",
+    version="2.12.10",
     author="Maxime Jublou",
     author_email="devops@cashstory.com",
     license="BSD",
