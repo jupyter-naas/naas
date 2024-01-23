@@ -44,7 +44,7 @@ setup(
         "fulldev": dev_dep + driver_dep
     },
     install_requires=[
-        "nbconvert==6.0.7",
+        "nbconvert==7.9.2",
         "nest_asyncio==1.5.1",
         "ipywidgets==7.6.5",
         "papermill==2.3.3",
