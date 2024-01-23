@@ -47,7 +47,7 @@ setup(
         "nbconvert==6.0.7",
         "nest_asyncio==1.5.1",
         "ipywidgets==7.6.5",
-        "papermill==2.3.3",
+        "papermill==2.4.0",
         "pretty-cron==1.2.0",
         "APScheduler==3.8.1",
         "pycron==3.0.0",
