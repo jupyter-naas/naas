@@ -10,6 +10,8 @@ class Secret:
     def __get_remote_secret(self, name: str):
         try:
             return naas_python.secret.get(name)
+        except naas_python.domains.secret.SecretSchema.SecretNotFound:
+            return None
         except:
             print("Secret get failed")
             return False
@@ -28,15 +30,15 @@ class Secret:
             naas_python.secret.delete(name=name)
             return True
         except:
-            print("Secret not found")
+            #print("Secret not found")
             return False
             
     def __list_remote_secret(self):
-        try:
+        # try:
             return naas_python.secret.list()
-        except:
-            print("Secret list failed")
-            return False
+        # except:
+        #     print("Secret list failed")
+        #     return False
         
     def list(self):
         local_secret = None
@@ -123,11 +125,11 @@ class Secret:
                 local_secret = item
                 break  
         
-        try:
-            remote_secret = self.__get_remote_secret(name=name)
-        except:
-            print("Try Again")
-            return None
+        # try:
+        remote_secret = self.__get_remote_secret(name=name)
+        # except:
+        #     print("Try Again")
+        #     return None
     
         #if the secret exists on api.naas.ai
         # AND exists locally, then I remove the local version.   
@@ -151,8 +153,6 @@ class Secret:
             # I use that value
             if remote_secret is not None :
                 return remote_secret.value
-            else:
-                print("Secret not found \n")
         return default_value
     
     def __old_get(self, name=None, default_value=None):

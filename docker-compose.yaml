@@ -13,6 +13,7 @@ services:
     ports:
       - 8888:8888
       - 5000:5000
+      - 38745:38745
     volumes:
       - ~/.ssh:/home/ftp/.ssh
       - .:/home/ftp/naas
