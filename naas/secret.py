@@ -24,6 +24,15 @@ class Secret:
         except:
             print("Secret creation failed")
             return False
+        
+    def __create_remote_bulk_secret(self, secrets:str):
+        try:
+            naas_python.secret.bulk_create(secrets)
+            return True
+            # print("\nYour Secret has been moved to naas.ai 👌\n")
+        except:
+            print("Secret creation failed")
+            return False
             
     def __delete_remote_secret(self, name:str):
         try:
@@ -53,6 +62,7 @@ class Secret:
         # local secret dataframe
         local_secret = self.__old_list()
         
+        
         if local_secret.empty:
             return remote_secret
 
@@ -67,14 +77,21 @@ class Secret:
             self.__old_delete(row['name'])
     
         # If the secret exists locally and does not exists in api.naas.ai, I create it in api.naas.ai and I delete the local version.
+        secrets_list=[]
         selected_secrets = merged_secrets_df[merged_secrets_df['_merge'] == "right_only"]
         for index, row in selected_secrets.iterrows():
-            self.__create_remote_secret(name=row['name'], value=row['secret'])
+            # self.__create_remote_secret(name=row['name'], value=row['secret'])
+            name = row['name']
+            value = row['secret']
+            new_secret = { "name": name, "value": value }
+            secrets_list.append(new_secret)
+            
             
             new_row = pd.DataFrame({'name': [row['name']], 'secret': [row['secret']]})
             remote_secret = remote_secret.append(new_row, ignore_index=True)
             
             self.__old_delete(row['name'])
+        self.__create_remote_bulk_secret({"secrets":secrets_list})
         
         return remote_secret
         
