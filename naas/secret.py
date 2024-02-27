@@ -12,13 +12,12 @@ class Secret:
             if self.__check_api() :
                 return naas_python.secret.get(name)
             else :
-                print("API is not available")
+                print("Naas.api service request failed. Please retry again in few seconds.")
                 return False
         except naas_python.domains.secret.SecretSchema.SecretNotFound:
-            print("Secret not found")
             return False
         except:
-            print("Secret get failed")
+            print("Secret get failed. Please retry again in few seconds.")
             return False
         
     def __create_remote_secret(self, name: str, value: str):
@@ -28,10 +27,10 @@ class Secret:
                 return True
                 # print("\nYour Secret has been moved to naas.ai 👌\n")
             else :
-                print("API is not available")
+                print("Naas.api service request failed. Please retry again in few seconds.")
                 return False            
         except:
-            print("Secret creation failed")
+            print("Secret creation failed. Please retry again in few seconds.")
             return False
         
     def __create_remote_bulk_secret(self, secrets:str):
@@ -41,10 +40,10 @@ class Secret:
                 return True
                 # print("\nYour Secret has been moved to naas.ai 👌\n")
             else :
-                print("API is not available")
+                print("Naas.api service request failed. Please retry again in few seconds.")
                 return False              
         except:
-            print("Secret creation failed")
+            print("Secret creation failed. Please retry again in few seconds.")
             return False
             
     def __delete_remote_secret(self, name:str):
@@ -53,7 +52,7 @@ class Secret:
                 naas_python.secret.delete(name=name)
                 return True
             else :
-                print("API is not available")
+                print("Naas.api service request failed. Please retry again in few seconds.")
                 return False   
         except:
             #print("Secret not found")
@@ -64,7 +63,7 @@ class Secret:
         if self.__check_api() :
             return naas_python.secret.list()
         else :
-            print("API is not available")
+            print("Naas.api service request failed. Please retry again in few seconds.")
             return False          
         # except:
         #     print("Secret list failed")
