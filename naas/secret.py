@@ -11,7 +11,8 @@ class Secret:
         try:
             return naas_python.secret.get(name)
         except naas_python.domains.secret.SecretSchema.SecretNotFound:
-            return None
+            print("Secret not found")
+            return False
         except:
             print("Secret get failed")
             return False
@@ -117,20 +118,6 @@ class Secret:
         self.__create_remote_secret(name=name, value=secret)
         self.__old_delete(name)
 
-    def __old_add(self, name=None, secret=None):
-        obj = {"name": name, "secret": secret, "status": t_add}
-        try:
-            r = requests.post(f"{n_env.api}/{t_secret}", json=obj)
-            r.raise_for_status()
-            print("👌 Well done! Your Secret has been sent to production. \n")
-            print('PS: to remove the "Secret" feature, just replace .add by .delete')
-        except requests.exceptions.ConnectionError as err:
-            print(error_busy, err)
-            raise
-        except requests.exceptions.HTTPError as err:
-            print(error_reject, err)
-            raise
-
     def get(self, name=None, default_value=None):
         all_secret = self.__old_list(True)
         local_secret = None
@@ -195,6 +182,20 @@ class Secret:
             r = requests.post(f"{n_env.api}/{t_secret}", json=obj)
             r.raise_for_status()
             # print("👌 Well done! Your Secret has been remove in production. \n")
+        except requests.exceptions.ConnectionError as err:
+            print(error_busy, err)
+            raise
+        except requests.exceptions.HTTPError as err:
+            print(error_reject, err)
+            raise
+
+    def __old_add(self, name=None, secret=None):
+        obj = {"name": name, "secret": secret, "status": t_add}
+        try:
+            r = requests.post(f"{n_env.api}/{t_secret}", json=obj)
+            r.raise_for_status()
+            print("👌 Well done! Your Secret has been sent to production. \n")
+            print('PS: to remove the "Secret" feature, just replace .add by .delete')
         except requests.exceptions.ConnectionError as err:
             print(error_busy, err)
             raise
