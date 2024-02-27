@@ -9,7 +9,11 @@ class Secret:
     
     def __get_remote_secret(self, name: str):
         try:
-            return naas_python.secret.get(name)
+            if self.__check_api() :
+                return naas_python.secret.get(name)
+            else :
+                print("API is not available")
+                return False
         except naas_python.domains.secret.SecretSchema.SecretNotFound:
             print("Secret not found")
             return False
@@ -19,36 +23,61 @@ class Secret:
         
     def __create_remote_secret(self, name: str, value: str):
         try:
-            naas_python.secret.create(name, value)
-            return True
-            # print("\nYour Secret has been moved to naas.ai 👌\n")
+            if self.__check_api() :
+                naas_python.secret.create(name, value)
+                return True
+                # print("\nYour Secret has been moved to naas.ai 👌\n")
+            else :
+                print("API is not available")
+                return False            
         except:
             print("Secret creation failed")
             return False
         
     def __create_remote_bulk_secret(self, secrets:str):
         try:
-            naas_python.secret.bulk_create(secrets)
-            return True
-            # print("\nYour Secret has been moved to naas.ai 👌\n")
+            if self.__check_api() :
+                naas_python.secret.bulk_create(secrets)
+                return True
+                # print("\nYour Secret has been moved to naas.ai 👌\n")
+            else :
+                print("API is not available")
+                return False              
         except:
             print("Secret creation failed")
             return False
             
     def __delete_remote_secret(self, name:str):
         try:
-            naas_python.secret.delete(name=name)
-            return True
+            if self.__check_api() :
+                naas_python.secret.delete(name=name)
+                return True
+            else :
+                print("API is not available")
+                return False   
         except:
             #print("Secret not found")
             return False
             
     def __list_remote_secret(self):
         # try:
+        if self.__check_api() :
             return naas_python.secret.list()
+        else :
+            print("API is not available")
+            return False          
         # except:
         #     print("Secret list failed")
         #     return False
+        
+    def __check_api(self, url="https://api.naas.ai/"):
+        response = requests.get(url)
+        if response.status_code == 200:
+            data = response.json()
+            if 'status' in data and data['status'] == 'ok':
+                return True
+        else:
+            return False
         
     def list(self):
         local_secret = None
