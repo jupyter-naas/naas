@@ -74,10 +74,11 @@ setup(
         "pymongo[srv]==3.11.3",
         "psycopg2-binary==2.9.1",
         "mprop==0.16.0",
-        "pydash==5.1.0",
+        "pydash==7.0.7",
         "pyvis==0.3.0",
         "rich",
-        "tzlocal==2.1"
+        "tzlocal==2.1",
+        "naas-python==1.3.0"
     ],
     classifiers=[
         "Programming Language :: Python :: 3.9",
