@@ -19,6 +19,7 @@ class Secret:
         except naas_python.domains.secret.SecretSchema.SecretNotFound:
             print("Secret not found.")
             return None
+        #noqa: E722
         except:
             print("Secret get failed. Please retry again in few seconds.")
             return None
@@ -34,6 +35,7 @@ class Secret:
                     "Naas.api service request failed. Please retry again in few seconds."
                 )
                 return False
+        #noqa: E722
         except:
             print("Secret creation failed. Please retry again in few seconds.")
             return False
@@ -49,6 +51,7 @@ class Secret:
                     "Naas.api service request failed. Please retry again in few seconds."
                 )
                 return False
+        #noqa: E722
         except:
             print("Secret creation failed. Please retry again in few seconds.")
             return False
@@ -63,6 +66,7 @@ class Secret:
                     "Naas.api service request failed. Please retry again in few seconds."
                 )
                 return False
+        #noqa: E722
         except:
             # print("Secret not found")
             return False
