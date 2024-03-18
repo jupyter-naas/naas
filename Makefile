@@ -4,6 +4,9 @@ run:
 sh:
 	docker-compose exec naas /bin/bash
 
+prod-build:
+	docker build . -t naas:latest
+
 build:
 	docker-compose down
 	docker-compose build
