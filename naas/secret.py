@@ -21,6 +21,7 @@ class Secret:
             return None
         # noqa: E722
         except Exception as e:
+            e = e
             print("Secret get failed. Please retry again in few seconds.")
             return None
 
@@ -37,6 +38,7 @@ class Secret:
                 return False
         # noqa: E722
         except Exception as e:
+            e = e
             print("Secret creation failed. Please retry again in few seconds.")
             return False
 
@@ -53,6 +55,7 @@ class Secret:
                 return False
         # noqa: E722
         except Exception as e:
+            e = e
             print("Secret creation failed. Please retry again in few seconds.")
             return False
 
@@ -68,6 +71,7 @@ class Secret:
                 return False
         # noqa: E722
         except Exception as e:
+            e = e
             # print("Secret not found")
             return False
 
