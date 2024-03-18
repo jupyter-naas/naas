@@ -21,8 +21,7 @@ class Secret:
             return None
         # noqa: E722
         except Exception as e:
-            e = e
-            print("Secret get failed. Please retry again in few seconds.")
+            print("Secret get failed. Please retry again in few seconds.", e)
             return None
 
     def __create_remote_secret(self, name: str, value: str):
@@ -38,8 +37,7 @@ class Secret:
                 return False
         # noqa: E722
         except Exception as e:
-            e = e
-            print("Secret creation failed. Please retry again in few seconds.")
+            print("Secret creation failed. Please retry again in few seconds.", e)
             return False
 
     def __create_remote_bulk_secret(self, secrets: str):
@@ -55,8 +53,7 @@ class Secret:
                 return False
         # noqa: E722
         except Exception as e:
-            e = e
-            print("Secret creation failed. Please retry again in few seconds.")
+            print("Secret creation failed. Please retry again in few seconds.", e)
             return False
 
     def __delete_remote_secret(self, name: str):
@@ -71,7 +68,7 @@ class Secret:
                 return False
         # noqa: E722
         except Exception as e:
-            e = e
+            print(e)
             # print("Secret not found")
             return False
 
