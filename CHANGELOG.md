@@ -1,3 +1,20 @@
+## 2.14.0 (2024-03-18)
+
+### Feat
+
+- create remote bulk secrets list
+
+### Fix
+
+- linter
+- Add make prod-build
+- get secret return None
+- Bump ci python version to 3.9
+- Bump naas-python
+- lint secret.py
+- better error message
+- Few updates to make it more like the legacy
+
 ## 2.13.6 (2024-03-18)
 
 ### Fix
