@@ -15,12 +15,13 @@ class Secret:
                 print(
                     "Naas.api service request failed. Please retry again in few seconds."
                 )
-                return False
+                return None
         except naas_python.domains.secret.SecretSchema.SecretNotFound:
-            return False
+            print("Secret not found.")
+            return None
         except:
             print("Secret get failed. Please retry again in few seconds.")
-            return False
+            return None
 
     def __create_remote_secret(self, name: str, value: str):
         try:
@@ -169,6 +170,7 @@ class Secret:
 
         # try:
         remote_secret = self.__get_remote_secret(name=name)
+        
         # except:
         #     print("Try Again")
         #     return None
