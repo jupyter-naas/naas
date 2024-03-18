@@ -1,3 +1,9 @@
+## 2.13.0 (2024-03-18)
+
+### Feat
+
+- Update naas.secret with new method (#438)
+
 ## 2.12.19 (2024-03-14)
 
 ### Fix
