@@ -1,3 +1,10 @@
+## 2.14.6 (2024-03-19)
+
+### Fix
+
+- Bump naas-python
+- Bump naas-python
+
 ## 2.14.5 (2024-03-18)
 
 ### Fix
