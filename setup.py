@@ -78,7 +78,7 @@ setup(
         "pyvis==0.3.0",
         "rich",
         "tzlocal==2.1",
-        "naas-python==1.3.1"
+        "naas-python==1.3.3"
     ],
     classifiers=[
         "Programming Language :: Python :: 3.9",
