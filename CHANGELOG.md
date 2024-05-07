@@ -1,3 +1,9 @@
+## 2.14.11 (2024-05-07)
+
+### Fix
+
+- Update typing_extensions version
+
 ## 2.14.10 (2024-05-07)
 
 ### Fix
