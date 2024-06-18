@@ -78,7 +78,7 @@ setup(
         "pyvis==0.3.0",
         "rich",
         "tzlocal==2.1",
-        "naas-python==1.3.3",
+        "naas-python==1.4.0",
         "typing_extensions==4.11.0"
     ],
     classifiers=[
