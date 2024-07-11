@@ -96,8 +96,9 @@ def naasTemplates():
 runner = threading.Thread(target=naasRunner, args=(naas_port,))
 runner.start()
 
-starter = threading.Thread(target=naasStarter, args=())
-starter.start()
+# Temporary disable to fix server boot
+# starter = threading.Thread(target=naasStarter, args=())
+# starter.start()
 
-templates = threading.Thread(target=naasTemplates, args=())
-templates.start()
+# templates = threading.Thread(target=naasTemplates, args=())
+# templates.start()
