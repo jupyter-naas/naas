@@ -1,3 +1,9 @@
+## 2.14.16 (2024-07-11)
+
+### Fix
+
+- Remove awesome notebooks and starter pull
+
 ## 2.14.15 (2024-07-02)
 
 ### Fix
